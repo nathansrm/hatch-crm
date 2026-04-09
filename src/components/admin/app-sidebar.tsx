@@ -8,7 +8,7 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
-import { CanAccess, useGetIdentity } from "ra-core";
+import { CanAccess, useGetIdentity, useTranslate } from "ra-core";
 import { Link, useMatch } from "react-router";
 import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,9 +27,10 @@ import {
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
-  const { darkModeLogo } = useConfigurationContext();
+  const { darkModeLogo, title } = useConfigurationContext();
   const { data: identity } = useGetIdentity();
   const { openMobile, setOpenMobile } = useSidebar();
+  const translate = useTranslate();
 
   const handleClick = () => {
     if (openMobile) {
@@ -51,10 +52,10 @@ export function AppSidebar() {
                 <img
                   className="h-8 w-auto shrink-0 rounded-sm object-contain"
                   src={darkModeLogo}
-                  alt="Hatch CRM"
+                  alt={title}
                 />
                 <span className="text-base font-semibold text-sidebar-foreground">
-                  Hatch CRM
+                  {title}
                 </span>
               </Link>
             </SidebarMenuButton>
@@ -67,26 +68,26 @@ export function AppSidebar() {
             <SidebarMenu>
               <NavMenuItem
                 icon={House}
-                label="Dashboard"
+                label={translate("ra.page.dashboard", { _: "Dashboard" })}
                 to="/"
                 onClick={handleClick}
                 end
               />
               <NavMenuItem
                 icon={Handshake}
-                label="Deals"
+                label={translate("resources.deals.name", { smart_count: 2, _: "Deals" })}
                 to="/deals"
                 onClick={handleClick}
               />
               <NavMenuItem
                 icon={Users}
-                label="Contacts"
+                label={translate("resources.contacts.name", { smart_count: 2, _: "Contacts" })}
                 to="/contacts"
                 onClick={handleClick}
               />
               <NavMenuItem
                 icon={Building2}
-                label="Companies"
+                label={translate("resources.companies.name", { smart_count: 2, _: "Companies" })}
                 to="/companies"
                 onClick={handleClick}
               />
@@ -94,27 +95,29 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{translate("crm.sidebar.administration", { _: "Administration" })}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <CanAccess resource="sales" action="list">
                 <NavMenuItem
                   icon={UserCog}
-                  label="Sales"
+                  label={translate("resources.sales.name", { smart_count: 2, _: "Sales" })}
                   to="/sales"
                   onClick={handleClick}
                 />
               </CanAccess>
-              <NavMenuItem
-                icon={Cable}
-                label="Integration Log"
-                to="/integration_log"
-                onClick={handleClick}
-              />
+              <CanAccess resource="integration_log" action="list">
+                <NavMenuItem
+                  icon={Cable}
+                  label={translate("resources.integration_log.name", { smart_count: 2, _: "Integration Log" })}
+                  to="/integration_log"
+                  onClick={handleClick}
+                />
+              </CanAccess>
               <CanAccess resource="configuration" action="edit">
                 <NavMenuItem
                   icon={Settings}
-                  label="Settings"
+                  label={translate("crm.settings.title", { _: "Settings" })}
                   to="/settings"
                   onClick={handleClick}
                 />

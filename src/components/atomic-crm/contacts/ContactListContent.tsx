@@ -176,7 +176,7 @@ const ContactItemContent = ({
                 date: lastActivity,
               })}
             </div>
-            <Status status={contact.status} />
+            <Status status={contact.status} showLabel />
           </div>
         )}
       </Link>

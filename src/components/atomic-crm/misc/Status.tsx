@@ -5,9 +5,11 @@ import { useConfigurationContext } from "../root/ConfigurationContext";
 export const Status = ({
   status,
   className,
+  showLabel = false,
 }: {
   status: string;
   className?: string;
+  showLabel?: boolean;
 }) => {
   const { noteStatuses } = useConfigurationContext();
   if (!status || !noteStatuses) return null;
@@ -29,7 +31,7 @@ export const Status = ({
         className="inline-block w-2 h-2 rounded-full"
         style={{ backgroundColor: statusObject.color }}
       />
-      <span>{statusObject.label}</span>
+      {showLabel && <span>{statusObject.label}</span>}
     </div>
   );
 };

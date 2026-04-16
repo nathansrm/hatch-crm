@@ -1,14 +1,18 @@
 import { Draggable } from "@hello-pangea/dnd";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { useRedirect, RecordContextProvider } from "ra-core";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { NumberField } from "@/components/admin/number-field";
 import { SelectField } from "@/components/admin/select-field";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
+import { getBottleneckLabel } from "./bottleneckLabels";
 import { getDealDecayLevel, type DecayLevel } from "./dealUtils";
+import { stackInfo } from "./stackInfo";
 import { stageColorMap } from "./stageColors";
 
 const decayStyles: Record<DecayLevel, string> = {
@@ -41,6 +45,20 @@ export const DealCardContent = ({
   const { dealCategories, currency } = useConfigurationContext();
   const colors = stageColorMap[deal.stage];
   const decay = getDealDecayLevel(deal);
+  const stackSlugs = Array.isArray(deal.software_stack)
+    ? deal.software_stack.filter(Boolean)
+    : [];
+  const visibleStackSlugs = stackSlugs.slice(0, 2);
+  const remainingStackCount = stackSlugs.length - visibleStackSlugs.length;
+  const hasOwnerSignal = deal.dm_present !== undefined && deal.dm_present !== null;
+  const hasHoursWasted =
+    deal.hours_wasted_per_week !== undefined &&
+    deal.hours_wasted_per_week !== null;
+  const hasEnrichment =
+    !!deal.primary_bottleneck ||
+    stackSlugs.length > 0 ||
+    hasOwnerSignal ||
+    hasHoursWasted;
   const redirect = useRedirect();
   const handleClick = () => {
     redirect(`/deals/${deal.id}/show`, undefined, undefined, undefined, {
@@ -115,6 +133,49 @@ export const DealCardContent = ({
                 )}
                 d stale
               </p>
+            )}
+            {hasEnrichment && (
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {deal.primary_bottleneck && (
+                  <Badge
+                    variant="outline"
+                    className="max-w-[120px] truncate px-1.5 py-0 text-[10px]"
+                    title={deal.primary_bottleneck}
+                  >
+                    {getBottleneckLabel(deal.primary_bottleneck)}
+                  </Badge>
+                )}
+                {visibleStackSlugs.map((slug) => (
+                  <Badge
+                    key={slug}
+                    variant="outline"
+                    className="max-w-[110px] truncate px-1.5 py-0 text-[10px]"
+                    title={stackInfo[slug]?.name ?? slug}
+                  >
+                    {stackInfo[slug]?.name ?? slug}
+                  </Badge>
+                ))}
+                {remainingStackCount > 0 && (
+                  <span className="text-[10px] text-muted-foreground">
+                    +{remainingStackCount} more
+                  </span>
+                )}
+                {hasOwnerSignal && (
+                  <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                    {deal.dm_present ? (
+                      <CheckCircle2 size={12} className="text-emerald-500" />
+                    ) : (
+                      <XCircle size={12} className="text-muted-foreground" />
+                    )}
+                    {deal.dm_present ? "Owner" : "No Owner"}
+                  </span>
+                )}
+                {hasHoursWasted && (
+                  <span className="text-[11px] text-muted-foreground">
+                    {deal.hours_wasted_per_week}h/wk
+                  </span>
+                )}
+              </div>
             )}
           </CardContent>
         </Card>

@@ -67,6 +67,18 @@ export const generateDeals = (db: Db): Deal[] => {
       index: 0,
     };
   });
+
+  random.arrayElements(deals, 4).forEach((deal) => {
+    deal.stage = "won";
+    deal.project_status = random.arrayElement(["on_track", "at_risk"]);
+    deal.project_progress_pct = datatype.number({ min: 30, max: 80 });
+    deal.projected_hours = datatype.number({ min: 20, max: 80 });
+    deal.project_started_at = randomDate(
+      add(new Date(), { weeks: -6 }),
+      add(new Date(), { weeks: -2 }),
+    ).toISOString();
+  });
+
   // compute index based on stage
   defaultDealStages.forEach((stage) => {
     deals

@@ -5,9 +5,20 @@ import {
   defaultDealCategories,
   defaultDealStages,
 } from "../../../root/defaultConfiguration";
+import { stackInfo } from "../../../deals/stackInfo";
 import type { Deal } from "../../../types";
 import type { Db } from "./types";
 import { randomDate } from "./utils";
+
+const predictiveBottlenecks = [
+  "Lead response speed",
+  "Estimating turnaround",
+  "Job scheduling",
+  "Invoicing delays",
+  "Manual data entry",
+];
+
+const predictiveStackSlugs = Object.keys(stackInfo);
 
 export const generateDeals = (db: Db): Deal[] => {
   const deals = Array.from(Array(50).keys()).map((id) => {
@@ -26,6 +37,7 @@ export const generateDeals = (db: Db): Deal[] => {
     )
       .toISOString()
       .split("T")[0];
+    const isEnriched = Math.random() < 0.6;
 
     return {
       id,
@@ -34,30 +46,18 @@ export const generateDeals = (db: Db): Deal[] => {
       contact_ids: contacts.map((contact) => contact.id),
       category: random.arrayElement(defaultDealCategories).value,
       stage: random.arrayElement(defaultDealStages).value,
-      primary_bottleneck: random.arrayElement([
-        "scheduling",
-        "quoting",
-        "invoicing",
-        "communication",
-        "job-tracking",
-        "lead-follow-up",
-      ]),
-      software_stack: random.arrayElements(
-        [
-          "quickbooks",
-          "excel",
-          "google-sheets",
-          "whatsapp",
-          "pen-and-paper",
-          "jobber",
-          "housecall-pro",
-          "servicetitan",
-        ],
-        datatype.number({ min: 1, max: 3 }),
-      ),
-      dm_present: Math.random() < 0.7,
-      hours_wasted_per_week: datatype.number({ min: 5, max: 25 }),
-      response_time_hours: datatype.number({ min: 1, max: 72 }),
+      ...(isEnriched
+        ? {
+            primary_bottleneck: random.arrayElement(predictiveBottlenecks),
+            software_stack: random.arrayElements(
+              predictiveStackSlugs,
+              datatype.number({ min: 1, max: 3 }),
+            ),
+            dm_present: Math.random() < 0.5,
+            hours_wasted_per_week: datatype.number({ min: 2, max: 20 }),
+            response_time_hours: datatype.number({ min: 1, max: 72 }),
+          }
+        : {}),
       description: lorem.paragraphs(datatype.number({ min: 1, max: 4 })),
       amount: datatype.number(1000) * 100,
       created_at,

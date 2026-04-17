@@ -1,6 +1,7 @@
 import { AlertTriangle, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
 import { useGetIdentity, useGetList, useTimeout } from "ra-core";
+import { Link } from "react-router";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,17 +12,14 @@ import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Contact, ContactNote, Deal, Task } from "../types";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
-import { HotContacts } from "./HotContacts";
 import { KPICards } from "./KPICards";
-import { PipelineSummary } from "./PipelineSummary";
-import { StaleDeals } from "./StaleDeals";
 import { TasksList } from "./TasksList";
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
 import { CapacityPanel } from "./widgets/CapacityPanel";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
 
-type MobileView = "dashboard" | "sales" | "delivery";
+type MobileView = "dashboard" | "delivery";
 
 const TERMINAL_WON_STAGE = "won";
 const TERMINAL_LOST_STAGE = "lost";
@@ -46,12 +44,14 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
           <img
             className="[.light_&]:hidden h-6"
             src={darkModeLogo}
-            alt={title}
+            alt=""
+            aria-hidden="true"
           />
           <img
             className="[.dark_&]:hidden h-6"
             src={lightModeLogo}
-            alt={title}
+            alt=""
+            aria-hidden="true"
           />
           <h1 className="text-xl font-semibold">{title}</h1>
         </div>
@@ -98,24 +98,30 @@ const DealSummaryRow = () => {
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      <Card className="gap-2 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Won
-        </p>
-        <p className="text-2xl font-bold tabular-nums">{wonCount}</p>
-      </Card>
-      <Card className="gap-2 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Pending
-        </p>
-        <p className="text-2xl font-bold tabular-nums">{pendingCount}</p>
-      </Card>
-      <Card className="gap-2 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Lost
-        </p>
-        <p className="text-2xl font-bold tabular-nums">{lostCount}</p>
-      </Card>
+      <Link to="/deals">
+        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Won
+          </p>
+          <p className="text-2xl font-bold tabular-nums">{wonCount}</p>
+        </Card>
+      </Link>
+      <Link to="/deals">
+        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Pending
+          </p>
+          <p className="text-2xl font-bold tabular-nums">{pendingCount}</p>
+        </Card>
+      </Link>
+      <Link to="/deals">
+        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Lost
+          </p>
+          <p className="text-2xl font-bold tabular-nums">{lostCount}</p>
+        </Card>
+      </Link>
     </div>
   );
 };
@@ -142,22 +148,7 @@ const UrgencyMetricCard = ({
   </Card>
 );
 
-const DashboardView = () => (
-  <div className="flex flex-col gap-6">
-    <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-      <p className="text-sm text-muted-foreground">
-        Pipeline overview, activity, and upcoming tasks.
-      </p>
-    </div>
-    <KPICards variant="overview" columns={2} />
-    <DealSummaryRow />
-    <DashboardActivityLog />
-    <TasksList />
-  </div>
-);
-
-const SalesView = () => {
+const DashboardView = () => {
   const { identity } = useGetIdentity();
   const todayKey = getTodayDateKey();
 
@@ -190,12 +181,8 @@ const SalesView = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Sales</h1>
-        <p className="text-sm text-muted-foreground">
-          Urgency metrics, pipeline, and your active tasks.
-        </p>
-      </div>
+      <h1 className="sr-only">Dashboard</h1>
+      <KPICards variant="overview" columns={2} />
       <div className="flex flex-col gap-4">
         <UrgencyMetricCard
           borderClassName={
@@ -228,13 +215,9 @@ const SalesView = () => {
           value={followUpsDueCount}
         />
       </div>
-      <KPICards variant="sales" columns={2} />
-      <Card className="p-5">
-        <PipelineSummary variant="bars" />
-      </Card>
-      <StaleDeals />
-      <TasksList variant="sales" />
-      <HotContacts />
+      <DealSummaryRow />
+      <DashboardActivityLog />
+      <TasksList />
     </div>
   );
 };
@@ -259,7 +242,6 @@ const DeliveryView = () => (
 
 const VIEW_LABELS: Record<MobileView, string> = {
   dashboard: "Dashboard",
-  sales: "Sales",
   delivery: "Delivery",
 };
 
@@ -271,7 +253,7 @@ const ViewSwitcher = ({
   onChange: (view: MobileView) => void;
 }) => (
   <div className="flex gap-2">
-    {(["dashboard", "sales", "delivery"] as const).map((view) => (
+    {(["dashboard", "delivery"] as const).map((view) => (
       <button
         key={view}
         type="button"
@@ -331,7 +313,6 @@ export const MobileDashboard = () => {
       <div className="mt-1 flex flex-col gap-6">
         <ViewSwitcher activeView={activeView} onChange={setActiveView} />
         {activeView === "dashboard" ? <DashboardView /> : null}
-        {activeView === "sales" ? <SalesView /> : null}
         {activeView === "delivery" ? <DeliveryView /> : null}
       </div>
     </Wrapper>

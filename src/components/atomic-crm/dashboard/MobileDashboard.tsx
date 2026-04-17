@@ -25,6 +25,7 @@ type MobileView = "dashboard" | "sales" | "delivery";
 
 const TERMINAL_WON_STAGE = "won";
 const TERMINAL_LOST_STAGE = "lost";
+const TERMINAL_STAGES = [TERMINAL_WON_STAGE, TERMINAL_LOST_STAGE];
 
 const getTodayDateKey = () => {
   const date = new Date();
@@ -176,7 +177,9 @@ const SalesView = () => {
   );
 
   const staleDealsCount =
-    deals?.filter((deal) => getDealDecayLevel(deal) !== "none").length ?? 0;
+    deals
+      ?.filter((deal) => !TERMINAL_STAGES.includes(deal.stage))
+      .filter((deal) => getDealDecayLevel(deal) !== "none").length ?? 0;
   const overdueTasksCount =
     tasks?.filter((task) => {
       const dueDateKey = getDateKey(task.due_date);
@@ -195,19 +198,31 @@ const SalesView = () => {
       </div>
       <div className="flex flex-col gap-4">
         <UrgencyMetricCard
-          borderClassName="border-l-destructive"
+          borderClassName={
+            staleDealsCount > 0
+              ? "border-l-destructive"
+              : "border-l-emerald-500"
+          }
           icon={AlertTriangle}
           label="Stale Deals"
           value={staleDealsCount}
         />
         <UrgencyMetricCard
-          borderClassName="border-l-destructive"
+          borderClassName={
+            overdueTasksCount > 0
+              ? "border-l-destructive"
+              : "border-l-emerald-500"
+          }
           icon={Clock}
           label="Overdue Tasks"
           value={overdueTasksCount}
         />
         <UrgencyMetricCard
-          borderClassName="border-l-amber-500"
+          borderClassName={
+            followUpsDueCount > 0
+              ? "border-l-amber-500"
+              : "border-l-emerald-500"
+          }
           icon={Calendar}
           label="Follow-ups Due"
           value={followUpsDueCount}

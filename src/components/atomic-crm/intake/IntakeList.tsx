@@ -162,16 +162,10 @@ const StatusTabBar = () => {
     return map;
   }, [allLeads]);
 
-  const reviewCount = useMemo(
-    () =>
-      allLeads.filter((lead) => lead.current_draft_status === "ai_reviewed")
-        .length,
-    [allLeads],
-  );
-
   const baseFilters = useMemo(() => {
     const next = { ...filterValues };
     delete next.status;
+    delete next["status@eq"];
     delete next["status@in"];
     return next;
   }, [filterValues]);
@@ -186,18 +180,19 @@ const StatusTabBar = () => {
   ] as const;
 
   const activeTabId =
-    typeof filterValues.status === "string" &&
+    typeof (filterValues["status@eq"] ?? filterValues.status) === "string" &&
     ACTIVE_PIPELINE_STATUSES.includes(
-      filterValues.status as (typeof ACTIVE_PIPELINE_STATUSES)[number],
+      (filterValues["status@eq"] ??
+        filterValues.status) as (typeof ACTIVE_PIPELINE_STATUSES)[number],
     )
-      ? filterValues.status
+      ? (filterValues["status@eq"] ?? filterValues.status)
       : "all";
 
   const handleTabClick = (tabId: string) => {
     const filter =
       tabId === "all"
         ? { ...baseFilters, "status@in": ACTIVE_PIPELINE_FILTER }
-        : { ...baseFilters, status: tabId };
+        : { ...baseFilters, "status@eq": tabId };
     setFilters(filter, displayedFilters);
   };
 
@@ -211,22 +206,27 @@ const StatusTabBar = () => {
             key={tab.id}
             type="button"
             className={cn(
-              "rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors",
+              "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors",
               isActive
                 ? "border border-primary/35 bg-primary/12 text-primary"
                 : "border border-border bg-white text-muted-foreground",
             )}
             onClick={() => handleTabClick(tab.id)}
           >
-            {tab.label} ({tab.count})
+            <span>{tab.label}</span>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 text-xs",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "bg-muted text-muted-foreground",
+              )}
+            >
+              {tab.count}
+            </span>
           </button>
         );
       })}
-      {reviewCount > 0 ? (
-        <Badge variant="default" className="ml-auto self-center rounded-full">
-          {reviewCount} ready for review
-        </Badge>
-      ) : null}
     </div>
   );
 };
@@ -297,8 +297,7 @@ const DesktopIntakeTable = () => {
             {translate("resources.intake_leads.fields.status", { _: "Status" })}
           </TableHead>
           <TableHead>Outreach Progress</TableHead>
-          <TableHead>Draft Status</TableHead>
-          <TableHead className="text-right">
+          <TableHead>
             {translate("ra.action.actions", { _: "Actions" })}
           </TableHead>
           <TableHead className="w-12" />
@@ -335,14 +334,8 @@ const DesktopIntakeTable = () => {
                 <TableCell>
                   <OutreachProgress record={record} />
                 </TableCell>
-                <TableCell>
-                  <DraftStatusBadge status={record.current_draft_status} />
-                </TableCell>
-                <TableCell
-                  className="text-right"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <div className="flex justify-end gap-2">
+                <TableCell onClick={(event) => event.stopPropagation()}>
+                  <div className="flex gap-2">
                     <IntakeActionButton
                       record={record}
                       onToggleExpanded={toggleExpanded}
@@ -360,7 +353,7 @@ const DesktopIntakeTable = () => {
               </TableRow>
               {expanded ? (
                 <TableRow className="bg-muted/20 hover:bg-muted/20">
-                  <TableCell colSpan={9} className="p-4">
+                  <TableCell colSpan={8} className="p-4">
                     <IntakeExpandedRow record={record} />
                   </TableCell>
                 </TableRow>
@@ -370,43 +363,6 @@ const DesktopIntakeTable = () => {
         })}
       </TableBody>
     </Table>
-  );
-};
-
-const DraftStatusBadge = ({
-  status,
-}: {
-  status: IntakeLead["current_draft_status"];
-}) => {
-  if (status === "none") {
-    return <span className="text-sm text-muted-foreground">-</span>;
-  }
-
-  const config: Record<string, { label: string; className: string }> = {
-    drafting: {
-      label: "Drafting",
-      className: "bg-muted text-muted-foreground",
-    },
-    ai_reviewed: {
-      label: "Ready for Review",
-      className: "border-blue-500/50 bg-blue-50 text-blue-700",
-    },
-    approved: {
-      label: "Approved",
-      className: "border-primary/50 bg-primary/10 text-primary",
-    },
-    sent: {
-      label: "Sent",
-      className: "border-green-500/50 bg-green-50 text-green-700",
-    },
-  };
-
-  const { label, className } = config[status] ?? { label: status, className: "" };
-
-  return (
-    <Badge variant="outline" className={cn("rounded-full", className)}>
-      {label}
-    </Badge>
   );
 };
 

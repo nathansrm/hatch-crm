@@ -82,8 +82,8 @@ export const KPICards = ({
 
   return (
     <div className={gridClass}>
-      <Link to="/deals" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
+      <Link to="/deals">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <DollarSign className="h-5 w-5 text-emerald-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
@@ -102,9 +102,8 @@ export const KPICards = ({
       </Link>
       <Link
         to={`/deals?filter=${encodeURIComponent(JSON.stringify({ stage: "won" }))}`}
-        className="transition-opacity hover:opacity-80"
       >
-        <Card className="cursor-pointer gap-3 p-4">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <Trophy className="h-5 w-5 text-cyan-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
@@ -117,8 +116,8 @@ export const KPICards = ({
           </div>
         </Card>
       </Link>
-      <Link to="/deals" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
+      <Link to="/deals">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <Percent className="h-5 w-5 text-violet-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
@@ -137,8 +136,8 @@ export const KPICards = ({
           </div>
         </Card>
       </Link>
-      <Link to="/tasks" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
+      <Link to="/tasks">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <AlertCircle className="h-5 w-5 text-amber-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">

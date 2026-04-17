@@ -4,6 +4,7 @@ import {
   useCreatePath,
   useListContext,
   useRecordContext,
+  useReference,
   useTranslate,
 } from "ra-core";
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
@@ -19,10 +20,18 @@ export const CompanyCard = (props: { record?: Company }) => {
   const record = useRecordContext<Company>(props);
   const translate = useTranslate();
   const { companySectors } = useConfigurationContext();
+  const { referenceRecord, isLoading } = useReference<{ id: string; name: string }>({
+    reference: "trade_types",
+    id: record?.trade_type_id ?? "",
+  });
   if (!record) return null;
 
   const sector = companySectors.find((s) => s.value === record.sector);
   const sectorLabel = sector?.label;
+  const subtitle =
+    !record.trade_type_id || isLoading || !referenceRecord
+      ? sectorLabel
+      : referenceRecord.name;
 
   return (
     <Link
@@ -38,7 +47,7 @@ export const CompanyCard = (props: { record?: Company }) => {
           <CompanyAvatar />
           <div className="text-center mt-1">
             <h6 className="text-sm font-medium">{record.name}</h6>
-            <p className="text-xs text-muted-foreground">{sectorLabel}</p>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
           </div>
         </div>
         <div className="flex flex-row w-full justify-between gap-2">

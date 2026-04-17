@@ -21,7 +21,7 @@ const predictiveBottlenecks = [
 const predictiveStackSlugs = Object.keys(stackInfo);
 
 export const generateDeals = (db: Db): Deal[] => {
-  const deals = Array.from(Array(50).keys()).map((id) => {
+  const deals = Array.from(Array(50).keys()).map((id): Deal => {
     const company = random.arrayElement(db.companies);
     company.nb_deals = (company.nb_deals ?? 0) + 1;
     const contacts = random.arrayElements(
@@ -84,7 +84,7 @@ export const generateDeals = (db: Db): Deal[] => {
     deals
       .filter((deal) => deal.stage === stage.value)
       .forEach((deal, index) => {
-        deals[deal.id].index = index;
+        deal.index = index;
       });
   });
   return deals;

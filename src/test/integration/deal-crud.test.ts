@@ -67,7 +67,7 @@ describe("Deal CRUD with contacts", () => {
       .insert({
         name: "HVAC Retrofit Project",
         company_id: companyId,
-        stage: "discovery",
+        stage: "lead",
         amount: 25000,
         sales_id: salesId,
         contact_ids: [],

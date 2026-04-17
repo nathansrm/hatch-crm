@@ -1,4 +1,4 @@
-import { FolderKanban } from "lucide-react";
+import { format } from "date-fns";
 import { useGetList } from "ra-core";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -21,9 +21,9 @@ const statusCopy: Record<(typeof ACTIVE_PROJECT_STATUSES)[number], string> = {
 
 const statusClassName: Record<(typeof ACTIVE_PROJECT_STATUSES)[number], string> =
   {
-    at_risk: "border-amber-200 bg-amber-50 text-amber-700",
-    behind: "border-red-200 bg-red-50 text-red-700",
-    on_track: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    at_risk: "bg-amber-100 text-amber-700",
+    behind: "bg-red-100 text-red-700",
+    on_track: "bg-emerald-100 text-emerald-700",
   };
 
 export const ActiveProjectsGrid = () => {
@@ -51,22 +51,17 @@ export const ActiveProjectsGrid = () => {
     ) ?? [];
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center">
-        <div className="mr-3 flex">
-          <FolderKanban className="text-muted-foreground h-6 w-6" />
-        </div>
-        <h2 className="text-xl font-semibold text-muted-foreground">
-          Active Projects
-        </h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-xl font-semibold">Active Projects</h2>
+        <Badge variant="secondary">{activeProjects.length}</Badge>
       </div>
       {activeProjects.length === 0 ? (
         <Card className="p-4 text-sm text-muted-foreground">
-          No active projects. Won deals pending handoff will appear here once
-          started.
+          No active projects yet.
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {activeProjects.map((deal) => {
             const status = deal.project_status as
               | (typeof ACTIVE_PROJECT_STATUSES)[number]
@@ -78,28 +73,32 @@ export const ActiveProjectsGrid = () => {
             }
 
             return (
-              <Card key={deal.id} className="p-4">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-medium text-muted-foreground">
+              <Card key={deal.id} className="flex flex-col gap-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-base font-semibold">
                       {companyNameById.get(deal.company_id as number) ??
                         "Unknown company"}
                     </p>
-                    <Badge
-                      variant="outline"
-                      className={statusClassName[status]}
-                    >
-                      {statusCopy[status]}
-                    </Badge>
+                    <p className="text-sm text-muted-foreground">{deal.name}</p>
                   </div>
-                  <p className="text-lg font-semibold">{deal.name}</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{progress}% complete</span>
-                      <span>{deal.projected_hours ?? 0}h projected</span>
-                    </div>
-                    <Progress value={progress} />
-                  </div>
+                  <Badge
+                    variant="outline"
+                    className={`rounded-full border-0 px-2 py-0.5 text-xs font-semibold ${statusClassName[status]}`}
+                  >
+                    {statusCopy[status]}
+                  </Badge>
+                </div>
+                <Progress value={progress} className="h-2" />
+                <div className="flex justify-between text-xs font-medium text-muted-foreground">
+                  <span>{progress}% complete</span>
+                  {deal.project_started_at ? (
+                    <span>
+                      {`Started ${format(new Date(deal.project_started_at), "MMM d")}`}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
                 </div>
               </Card>
             );

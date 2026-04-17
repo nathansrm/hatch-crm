@@ -1,4 +1,4 @@
-import { ArrowRightLeft } from "lucide-react";
+import { format } from "date-fns";
 import { useGetList, useRefresh, useUpdate } from "ra-core";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,18 +12,18 @@ type CompanyRecord = {
   name: string;
 };
 
+type SalesRecord = {
+  id: number | string;
+  first_name: string;
+  last_name: string;
+};
+
 const formatCurrency = (value: number, currency: string) =>
   value.toLocaleString(undefined, {
     style: "currency",
     currency,
     maximumFractionDigits: 0,
   });
-
-const getDaysSinceWon = (deal: Deal) => {
-  const wonDate = new Date(deal.updated_at ?? deal.created_at);
-  const elapsedMs = Date.now() - wonDate.getTime();
-  return Math.max(0, Math.floor(elapsedMs / 86_400_000));
-};
 
 export const HandoffQueue = () => {
   const { currency } = useConfigurationContext();
@@ -39,12 +39,25 @@ export const HandoffQueue = () => {
       pagination: { page: 1, perPage: 10000 },
     });
 
-  if (dealsPending || companiesPending) {
+  const { data: sales, isPending: salesPending } = useGetList<SalesRecord>(
+    "sales",
+    {
+      pagination: { page: 1, perPage: 100 },
+    },
+  );
+
+  if (dealsPending || companiesPending || salesPending) {
     return null;
   }
 
   const companyNameById = new Map(
     (companies ?? []).map((company) => [company.id, company.name]),
+  );
+  const salesNameById = new Map(
+    (sales ?? []).map((sale) => [
+      sale.id,
+      `${sale.first_name} ${sale.last_name}`.trim(),
+    ]),
   );
   const pendingHandoffDeals =
     deals?.filter((deal) => deal.stage === "won" && deal.project_status == null) ??
@@ -83,54 +96,70 @@ export const HandoffQueue = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center">
-        <div className="mr-3 flex">
-          <ArrowRightLeft className="text-muted-foreground h-6 w-6" />
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold">Deal Handoff Queue</h2>
+          <Badge variant="secondary">{pendingHandoffDeals.length}</Badge>
         </div>
-        <h2 className="flex-1 text-xl font-semibold text-muted-foreground">
-          Handoff Queue
-        </h2>
-        <Badge variant="secondary">{pendingHandoffDeals.length}</Badge>
+        <p className="text-sm text-muted-foreground">Recently closed-won</p>
       </div>
-      <Card className="overflow-hidden p-0">
-        {pendingHandoffDeals.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground">
-            No deals pending handoff. All won deals are in delivery.
-          </div>
-        ) : (
-          <table className="w-full text-sm">
-            <tbody>
-              {pendingHandoffDeals.map((deal) => (
-                <tr key={deal.id} className="border-b last:border-b-0">
-                  <td className="px-4 py-3">
-                    <span className="font-medium">
-                      {companyNameById.get(deal.company_id as number) ??
-                        "Unknown company"}{" "}
-                      &middot; {deal.name}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right font-medium">
-                    {formatCurrency(deal.amount ?? 0, currency)}
-                  </td>
-                  <td className="px-4 py-3 text-right text-muted-foreground">
-                    {getDaysSinceWon(deal)} days since won
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button
-                      size="sm"
-                      onClick={() => handleStartOnboarding(deal)}
-                      disabled={isUpdating}
-                    >
-                      Start Onboarding
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </Card>
+      {pendingHandoffDeals.length === 0 ? (
+        <Card className="p-4 text-sm text-muted-foreground">
+          No deals pending handoff. All won deals are in delivery.
+        </Card>
+      ) : (
+        pendingHandoffDeals.map((deal) => (
+          <Card
+            key={deal.id}
+            className="flex flex-col gap-4 border-l-4 border-l-amber-500 p-4"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0 space-y-1">
+                <p className="text-base font-semibold">
+                  {companyNameById.get(deal.company_id as number) ??
+                    "Unknown company"}
+                </p>
+                <p className="text-sm text-muted-foreground">{deal.name}</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => handleStartOnboarding(deal)}
+                disabled={isUpdating}
+              >
+                Start Onboarding
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg bg-muted/40 p-3">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Deal Value
+                </span>
+                <p className="text-sm font-semibold">
+                  {formatCurrency(deal.amount ?? 0, currency)}
+                </p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-3">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Won Date
+                </span>
+                <p className="text-sm font-semibold">
+                  {format(new Date(deal.updated_at), "MMM d")}
+                </p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-3">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Sales
+                </span>
+                <p className="text-sm font-semibold">
+                  {salesNameById.get(deal.sales_id as number | string) ??
+                    "Unassigned"}
+                </p>
+              </div>
+            </div>
+          </Card>
+        ))
+      )}
     </div>
   );
 };

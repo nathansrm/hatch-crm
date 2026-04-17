@@ -1,23 +1,9 @@
-import {
-  ArrowRightLeft,
-  DollarSign,
-  FolderOpen,
-  Gauge,
-} from "lucide-react";
 import { useGetList } from "ra-core";
 import { Card } from "@/components/ui/card";
 
-import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
 
 const ACTIVE_PROJECT_STATUSES = ["on_track", "at_risk", "behind"] as const;
-
-const formatCurrency = (value: number, currency: string) =>
-  value.toLocaleString(undefined, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  });
 
 export const calcUtilization = (deals: Deal[], weeklyCapacity: number): number =>
   weeklyCapacity <= 0
@@ -29,19 +15,15 @@ export const calcUtilization = (deals: Deal[], weeklyCapacity: number): number =
       );
 
 export const DeliveryKPIs = () => {
-  const { currency } = useConfigurationContext();
   const { data: deals, isPending } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
   });
 
   if (isPending) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <div
-            key={index}
-            className="h-24 rounded-xl bg-muted animate-pulse"
-          />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Card key={index} className="h-28 animate-pulse bg-muted p-4" />
         ))}
       </div>
     );
@@ -58,56 +40,43 @@ export const DeliveryKPIs = () => {
     ) ?? [];
   const weeklyCapacity = 40; // TODO: fetch from agency_settings table in live mode
   const capacityUtilization = calcUtilization(activeProjects, weeklyCapacity);
-  const pendingHandoffValue = pendingHandoffDeals.reduce(
-    (sum, deal) => sum + (deal.amount ?? 0),
-    0,
-  );
-  const capacityColorClass =
-    capacityUtilization < 80
-      ? "text-emerald-600"
-      : capacityUtilization <= 95
-        ? "text-amber-600"
-        : "text-destructive";
+  const capacityBorderClass =
+    capacityUtilization < 85
+      ? "border-l-emerald-500"
+      : capacityUtilization <= 100
+        ? "border-l-amber-500"
+        : "border-l-red-500";
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Card className="gap-3 p-4">
-        <ArrowRightLeft className="h-5 w-5 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <Card className="border-l-4 border-l-amber-500 p-4">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Deals Pending Handoff
           </p>
-          <p className="text-2xl font-bold">{pendingHandoffDeals.length}</p>
+          <p className="text-3xl font-bold">{pendingHandoffDeals.length}</p>
+          <p className="text-sm text-muted-foreground">
+            ready for onboarding
+          </p>
         </div>
       </Card>
-      <Card className="gap-3 p-4">
-        <FolderOpen className="h-5 w-5 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">
+      <Card className="border-l-4 border-l-blue-400 p-4">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Active Projects
           </p>
-          <p className="text-2xl font-bold">{activeProjects.length}</p>
+          <p className="text-3xl font-bold">{activeProjects.length}</p>
+          <p className="text-sm text-muted-foreground">in delivery</p>
         </div>
       </Card>
-      <Card className="gap-3 p-4">
-        <Gauge className="h-5 w-5 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">
+      <Card className={`border-l-4 p-4 ${capacityBorderClass}`}>
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Capacity Utilization
           </p>
-          <p className={`text-2xl font-bold ${capacityColorClass}`}>
-            {capacityUtilization}%
-          </p>
-        </div>
-      </Card>
-      <Card className="gap-3 p-4">
-        <DollarSign className="h-5 w-5 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">
-            Pending Handoff Value
-          </p>
-          <p className="text-2xl font-bold">
-            {formatCurrency(pendingHandoffValue, currency)}
+          <p className="text-3xl font-bold">{capacityUtilization}%</p>
+          <p className="text-sm text-muted-foreground">
+            of weekly capacity
           </p>
         </div>
       </Card>

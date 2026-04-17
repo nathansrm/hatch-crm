@@ -19,7 +19,7 @@ export const SignupPage = () => {
   const queryClient = useQueryClient();
   const dataProvider = useDataProvider<CrmDataProvider>();
   const {
-    darkModeLogo: logo,
+    lightModeLogo: logo,
     title,
     googleWorkplaceDomain,
   } = useConfigurationContext();
@@ -80,10 +80,27 @@ export const SignupPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { isValid },
+    formState: { errors, isValid },
   } = useForm<SignUpData>({
     mode: "onChange",
   });
+
+  const firstNameLabel = translate("crm.auth.first_name", {
+    _: "First name",
+  });
+  const lastNameLabel = translate("crm.auth.last_name", {
+    _: "Last name",
+  });
+  const emailLabel = translate("ra.auth.email", {
+    _: "Email",
+  });
+  const passwordLabel = translate("ra.auth.password", {
+    _: "Password",
+  });
+
+  const getRequiredMessage = (label: string) => `${label} is required`;
+  const getFieldErrorMessage = (message: unknown) =>
+    typeof message === "string" ? message : undefined;
 
   if (isPending) {
     return <LoginSkeleton />;
@@ -101,12 +118,7 @@ export const SignupPage = () => {
   return (
     <div className="h-screen p-8">
       <div className="flex items-center gap-4">
-        <img
-          src={logo}
-          alt={title}
-          width={24}
-          className="filter brightness-0 invert"
-        />
+        <img src={logo} alt={title} width={24} />
         <h1 className="text-xl font-semibold">{title}</h1>
       </div>
       <div className="h-full">
@@ -121,46 +133,88 @@ export const SignupPage = () => {
               _: "Create the first user account to complete the setup.",
             })}
           </p>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
             <div className="flex flex-col gap-2">
-              <Label htmlFor="first_name">
-                {translate("crm.auth.first_name")}
-              </Label>
+              <Label htmlFor="first_name">{firstNameLabel}</Label>
               <Input
-                {...register("first_name", { required: true })}
+                {...register("first_name", {
+                  required: getRequiredMessage(firstNameLabel),
+                })}
                 id="first_name"
                 type="text"
-                required
+                aria-invalid={errors.first_name ? true : undefined}
+                aria-describedby={
+                  errors.first_name ? "first_name-error" : undefined
+                }
               />
+              {getFieldErrorMessage(errors.first_name?.message) ? (
+                <p id="first_name-error" className="text-sm text-destructive">
+                  {getFieldErrorMessage(errors.first_name?.message)}
+                </p>
+              ) : null}
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="last_name">
-                {translate("crm.auth.last_name")}
-              </Label>
+              <Label htmlFor="last_name">{lastNameLabel}</Label>
               <Input
-                {...register("last_name", { required: true })}
+                {...register("last_name", {
+                  required: getRequiredMessage(lastNameLabel),
+                })}
                 id="last_name"
                 type="text"
-                required
+                aria-invalid={errors.last_name ? true : undefined}
+                aria-describedby={
+                  errors.last_name ? "last_name-error" : undefined
+                }
               />
+              {getFieldErrorMessage(errors.last_name?.message) ? (
+                <p id="last_name-error" className="text-sm text-destructive">
+                  {getFieldErrorMessage(errors.last_name?.message)}
+                </p>
+              ) : null}
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email">{translate("ra.auth.email")}</Label>
+              <Label htmlFor="email">{emailLabel}</Label>
               <Input
-                {...register("email", { required: true })}
+                {...register("email", {
+                  required: getRequiredMessage(emailLabel),
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
+                })}
                 id="email"
                 type="email"
-                required
+                aria-invalid={errors.email ? true : undefined}
+                aria-describedby={errors.email ? "email-error" : undefined}
               />
+              {getFieldErrorMessage(errors.email?.message) ? (
+                <p id="email-error" className="text-sm text-destructive">
+                  {getFieldErrorMessage(errors.email?.message)}
+                </p>
+              ) : null}
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password">{translate("ra.auth.password")}</Label>
+              <Label htmlFor="password">{passwordLabel}</Label>
               <Input
-                {...register("password", { required: true })}
+                {...register("password", {
+                  required: getRequiredMessage(passwordLabel),
+                })}
                 id="password"
                 type="password"
-                required
+                aria-invalid={errors.password ? true : undefined}
+                aria-describedby={
+                  errors.password ? "password-error" : undefined
+                }
               />
+              {getFieldErrorMessage(errors.password?.message) ? (
+                <p id="password-error" className="text-sm text-destructive">
+                  {getFieldErrorMessage(errors.password?.message)}
+                </p>
+              ) : null}
             </div>
             <div className="flex flex-col gap-4 justify-between items-center mt-8">
               <Button

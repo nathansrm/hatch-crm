@@ -139,6 +139,10 @@ export type Deal = {
   dm_present?: boolean;
   hours_wasted_per_week?: number;
   response_time_hours?: number;
+  projected_hours?: number;
+  project_status?: "on_track" | "at_risk" | "behind" | "complete";
+  project_progress_pct?: number;
+  project_started_at?: string;
 } & Pick<RaRecord, "id">;
 
 export type DealNote = {

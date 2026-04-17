@@ -21,9 +21,10 @@ export const defaultCompanySectors = [
 ];
 
 export const defaultDealStages = [
-  { value: "discovery", label: "Discovery" },
-  { value: "solutions-mapping", label: "Solutions Mapping" },
-  { value: "proposal-under-review", label: "Proposal Under Review" },
+  { value: "lead", label: "Lead" },
+  { value: "qualified", label: "Qualified" },
+  { value: "audit-scheduled", label: "Audit Scheduled" },
+  { value: "proposal-sent", label: "Proposal Sent" },
   { value: "won", label: "Won" },
   { value: "lost", label: "Lost" },
 ];

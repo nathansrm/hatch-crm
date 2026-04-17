@@ -22,7 +22,7 @@ export const DealCreateSheet = ({
       redirect={false}
       defaultValues={{
         sales_id: identity?.id,
-        stage: "discovery",
+        stage: "lead",
         amount: 0,
         contact_ids: [],
         index: 0,

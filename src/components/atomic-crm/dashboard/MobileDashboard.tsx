@@ -53,7 +53,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
             alt=""
             aria-hidden="true"
           />
-          <h1 className="text-xl font-semibold">{title}</h1>
+          <h1 className="sr-only">{title}</h1>
         </div>
       </MobileHeader>
       <MobileContent>{children}</MobileContent>

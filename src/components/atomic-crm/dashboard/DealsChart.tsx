@@ -87,6 +87,10 @@ export const DealsChart = memo(() => {
     },
     { min: 0, max: 0 },
   );
+  const scaledMin = range.min * 1.2;
+  const scaledMax = range.max * 1.2;
+  // nivo ResponsiveBar throws when the y-axis has zero range (all deals in untracked stages)
+  if (scaledMin === scaledMax) return null;
   return (
     <div className="flex flex-col">
       <div className="flex items-center mb-4">
@@ -107,8 +111,8 @@ export const DealsChart = memo(() => {
           padding={0.3}
           valueScale={{
             type: "linear",
-            min: range.min * 1.2,
-            max: range.max * 1.2,
+            min: scaledMin,
+            max: scaledMax,
           }}
           indexScale={{ type: "band", round: true }}
           enableGridX={true}

@@ -440,11 +440,11 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
     afterGetOne: async (result) => {
       const dealId = result.data?.id;
       if (dealId) {
-        const { data: contactIds } = await getSupabaseClient()
+        const { data: contactIds, error } = await getSupabaseClient()
           .from("deal_contacts")
           .select("contact_id")
           .eq("deal_id", dealId);
-        if (contactIds) {
+        if (!error && contactIds) {
           result.data.contact_ids = contactIds.map((row) => row.contact_id);
         }
       }

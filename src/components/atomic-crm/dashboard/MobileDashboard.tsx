@@ -149,9 +149,7 @@ const DashboardView = () => (
         Pipeline overview, activity, and upcoming tasks.
       </p>
     </div>
-    <div className="[&>div]:!grid-cols-2 [&>div]:gap-3">
-      <KPICards variant="overview" />
-    </div>
+    <KPICards variant="overview" columns={2} />
     <DealSummaryRow />
     <DashboardActivityLog />
     <TasksList />
@@ -189,6 +187,12 @@ const SalesView = () => {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight">Sales</h1>
+        <p className="text-sm text-muted-foreground">
+          Urgency metrics, pipeline, and your active tasks.
+        </p>
+      </div>
       <div className="flex flex-col gap-4">
         <UrgencyMetricCard
           borderClassName="border-l-destructive"
@@ -209,9 +213,7 @@ const SalesView = () => {
           value={followUpsDueCount}
         />
       </div>
-      <div className="[&>div]:!grid-cols-2 [&>div]:gap-3">
-        <KPICards variant="sales" />
-      </div>
+      <KPICards variant="sales" columns={2} />
       <Card className="p-5">
         <PipelineSummary variant="bars" />
       </Card>

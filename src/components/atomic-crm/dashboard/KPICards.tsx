@@ -21,11 +21,19 @@ const formatCurrency = (value: number, currency: string) =>
 
 type KPICardsProps = {
   variant?: "overview" | "sales";
+  columns?: 2 | 4;
 };
 
-export const KPICards = ({ variant = "overview" }: KPICardsProps) => {
+export const KPICards = ({
+  variant = "overview",
+  columns = 4,
+}: KPICardsProps) => {
   const { currency } = useConfigurationContext();
   const { identity, isPending: identityPending } = useGetIdentity();
+  const gridClass =
+    columns === 2
+      ? "grid grid-cols-2 gap-4"
+      : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4";
 
   const { data: deals, isPending: dealsPending } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
@@ -43,7 +51,7 @@ export const KPICards = ({ variant = "overview" }: KPICardsProps) => {
 
   if (identityPending || dealsPending || tasksPending) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className={gridClass}>
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
@@ -76,7 +84,7 @@ export const KPICards = ({ variant = "overview" }: KPICardsProps) => {
     }).length ?? 0;
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={gridClass}>
       <Link to="/deals" className="transition-opacity hover:opacity-80">
         <Card className="cursor-pointer gap-3 p-4">
           <DollarSign className="h-5 w-5 text-muted-foreground" />

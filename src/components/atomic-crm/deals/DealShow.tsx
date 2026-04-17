@@ -27,7 +27,9 @@ import { NotesIterator } from "../notes/NotesIterator";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { ContactList } from "./ContactList";
+import { DecisionContextBlock } from "./DecisionContextBlock";
 import { findDealLabel, formatISODateString } from "./dealUtils";
+import { StackBlock } from "./StackBlock";
 import { stageColorMap } from "./stageColors";
 
 export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
@@ -59,7 +61,7 @@ const DealShowContent = () => {
     <>
       <div className="space-y-2">
         {record.archived_at ? <ArchivedTitle /> : null}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start mb-8">
             <div className="flex items-center gap-4">
               <ReferenceField
@@ -86,8 +88,43 @@ const DealShowContent = () => {
             </div>
           </div>
 
-          <div className="flex gap-8 m-4">
-            <div className="flex flex-col mr-10">
+          <div className="mt-4 flex flex-wrap gap-6">
+            <div className="flex min-w-[140px] flex-col">
+              <span className="text-xs text-muted-foreground tracking-wide">
+                {translate("resources.deals.fields.stage")}
+              </span>
+              <div>
+                <Badge
+                  style={{
+                    backgroundColor:
+                      stageColorMap[record.stage]?.bg ?? "#F5F5F4",
+                    color: stageColorMap[record.stage]?.text ?? "#1A1A2E",
+                    border: `1px solid ${
+                      stageColorMap[record.stage]?.border ?? "#E5E5E3"
+                    }`,
+                  }}
+                >
+                  {findDealLabel(dealStages, record.stage)}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="flex min-w-[140px] flex-col">
+              <span className="text-xs text-muted-foreground tracking-wide">
+                {translate("resources.deals.fields.amount")}
+              </span>
+              <span className="text-sm">
+                {record.amount.toLocaleString("en-US", {
+                  notation: "compact",
+                  style: "currency",
+                  currency,
+                  currencyDisplay: "narrowSymbol",
+                  minimumSignificantDigits: 3,
+                })}
+              </span>
+            </div>
+
+            <div className="flex min-w-[160px] flex-col">
               <span className="text-xs text-muted-foreground tracking-wide">
                 {translate("resources.deals.fields.expected_closing_date")}
               </span>
@@ -105,23 +142,8 @@ const DealShowContent = () => {
               </div>
             </div>
 
-            <div className="flex flex-col mr-10">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.amount")}
-              </span>
-              <span className="text-sm">
-                {record.amount.toLocaleString("en-US", {
-                  notation: "compact",
-                  style: "currency",
-                  currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
-                })}
-              </span>
-            </div>
-
             {record.category && (
-              <div className="flex flex-col mr-10">
+              <div className="flex min-w-[140px] flex-col">
                 <span className="text-xs text-muted-foreground tracking-wide">
                   {translate("resources.deals.fields.category")}
                 </span>
@@ -131,64 +153,54 @@ const DealShowContent = () => {
                 </span>
               </div>
             )}
-
-            <div className="flex flex-col mr-10">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.stage")}
-              </span>
-              <Badge
-                style={{
-                  backgroundColor:
-                    stageColorMap[record.stage]?.bg ?? "#F5F5F4",
-                  color: stageColorMap[record.stage]?.text ?? "#1A1A2E",
-                  border: `1px solid ${
-                    stageColorMap[record.stage]?.border ?? "#E5E5E3"
-                  }`,
-                }}
-              >
-                {findDealLabel(dealStages, record.stage)}
-              </Badge>
-            </div>
           </div>
 
-          {!!record.contact_ids?.length && (
-            <div className="m-4">
-              <div className="flex flex-col min-h-12 mr-10">
-                <span className="text-xs text-muted-foreground tracking-wide">
-                  {translate("resources.deals.fields.contact_ids")}
-                </span>
-                <ReferenceArrayField
-                  source="contact_ids"
-                  reference="contacts_summary"
+          <Separator className="mt-4" />
+
+          <div className="mt-4 flex flex-col gap-6 md:flex-row">
+            <div className="flex min-w-0 flex-1 flex-col gap-4">
+              <DecisionContextBlock record={record} />
+              <StackBlock record={record} />
+
+              {record.description && (
+                <section className="rounded-lg border p-4 space-y-2 whitespace-pre-line">
+                  <h3 className="text-sm font-semibold">
+                    {translate("resources.deals.fields.description")}
+                  </h3>
+                  <p className="text-sm leading-6">{record.description}</p>
+                </section>
+              )}
+
+              <section className="rounded-lg border p-4">
+                <InfiniteListBase
+                  resource="deal_notes"
+                  filter={{ deal_id: record.id }}
+                  sort={{ field: "date", order: "DESC" }}
+                  perPage={25}
+                  disableSyncWithLocation
+                  storeKey={false}
+                  empty={<NoteCreate reference={"deals"} />}
                 >
-                  <ContactList />
-                </ReferenceArrayField>
-              </div>
+                  <NotesIterator reference="deals" />
+                </InfiniteListBase>
+              </section>
             </div>
-          )}
 
-          {record.description && (
-            <div className="m-4 whitespace-pre-line">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.description")}
-              </span>
-              <p className="text-sm leading-6">{record.description}</p>
+            <div className="flex w-full flex-col gap-4 md:w-64 md:shrink-0">
+              {!!record.contact_ids?.length && (
+                <section className="rounded-lg border p-4 space-y-3">
+                  <h3 className="text-sm font-semibold">
+                    {translate("resources.deals.fields.contact_ids")}
+                  </h3>
+                  <ReferenceArrayField
+                    source="contact_ids"
+                    reference="contacts_summary"
+                  >
+                    <ContactList />
+                  </ReferenceArrayField>
+                </section>
+              )}
             </div>
-          )}
-
-          <div className="m-4">
-            <Separator className="mb-4" />
-            <InfiniteListBase
-              resource="deal_notes"
-              filter={{ deal_id: record.id }}
-              sort={{ field: "date", order: "DESC" }}
-              perPage={25}
-              disableSyncWithLocation
-              storeKey={false}
-              empty={<NoteCreate reference={"deals"} />}
-            >
-              <NotesIterator reference="deals" />
-            </InfiniteListBase>
           </div>
         </div>
       </div>

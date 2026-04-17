@@ -1,12 +1,12 @@
 import { AlertTriangle } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
-import { useConfigurationContext } from "../root/ConfigurationContext";
-import type { Deal } from "../types";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import { stageColorMap } from "../deals/stageColors";
-import { Badge } from "@/components/ui/badge";
+import { useConfigurationContext } from "../root/ConfigurationContext";
+import type { Deal } from "../types";
 
 const TERMINAL_STAGES = ["won", "lost"];
 
@@ -21,8 +21,8 @@ export const StaleDeals = () => {
   });
 
   const staleDeals = (deals ?? [])
-    .filter((d) => !TERMINAL_STAGES.includes(d.stage))
-    .filter((d) => getDealDecayLevel(d) !== "none")
+    .filter((deal) => !TERMINAL_STAGES.includes(deal.stage))
+    .filter((deal) => getDealDecayLevel(deal) !== "none")
     .sort(
       (a, b) =>
         new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime(),
@@ -34,7 +34,7 @@ export const StaleDeals = () => {
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
         <div className="mr-3 flex">
-          <AlertTriangle className="text-amber-500 w-6 h-6" />
+          <AlertTriangle className="h-6 w-6 text-amber-500" />
         </div>
         <h2 className="text-xl font-semibold text-muted-foreground">
           Stale Deals
@@ -43,25 +43,44 @@ export const StaleDeals = () => {
           {staleDeals.length}
         </Badge>
       </div>
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <table className="w-full text-sm">
+          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2.5 text-left font-medium">Name</th>
+              <th className="px-3 py-2.5 text-left font-medium">Stage</th>
+              <th className="px-3 py-2.5 text-left font-medium">
+                Last Activity
+              </th>
+              <th className="px-3 py-2.5 text-right font-medium">Value</th>
+              <th className="px-3 py-2.5 text-right font-medium">
+                Days Stale
+              </th>
+            </tr>
+          </thead>
           <tbody>
             {staleDeals.map((deal) => {
               const decay = getDealDecayLevel(deal);
               const days = Math.floor(
                 (Date.now() - new Date(deal.updated_at).getTime()) / 86400000,
               );
-              const stage = dealStages.find((s) => s.value === deal.stage);
+              const stage = dealStages.find((item) => item.value === deal.stage);
               const colors = stageColorMap[deal.stage];
 
               return (
                 <tr
                   key={deal.id}
-                  className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer transition-colors"
+                  className="cursor-pointer border-b transition-colors hover:bg-muted/50 last:border-b-0"
                   onClick={() =>
-                    redirect(`/deals/${deal.id}/show`, undefined, undefined, undefined, {
-                      _scrollToTop: false,
-                    })
+                    redirect(
+                      `/deals/${deal.id}/show`,
+                      undefined,
+                      undefined,
+                      undefined,
+                      {
+                        _scrollToTop: false,
+                      },
+                    )
                   }
                 >
                   <td className="px-3 py-2.5">
@@ -78,9 +97,12 @@ export const StaleDeals = () => {
                       {stage?.label ?? deal.stage}
                     </Badge>
                   </td>
+                  <td className="px-3 py-2.5 text-muted-foreground">
+                    {days}d ago
+                  </td>
                   <td className="px-3 py-2.5 text-right">
                     <span className="font-medium">
-                      {deal.amount.toLocaleString("en-US", {
+                      {(deal.amount ?? 0).toLocaleString("en-US", {
                         notation: "compact",
                         style: "currency",
                         currency,

@@ -1,8 +1,8 @@
 import { Plus, Users } from "lucide-react";
 import { useGetIdentity, useGetList, useTranslate } from "ra-core";
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Tooltip,
@@ -11,9 +11,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { SimpleList } from "../simple-list/SimpleList";
 import { Avatar } from "../contacts/Avatar";
+import { SimpleList } from "../simple-list/SimpleList";
 import type { Contact } from "../types";
+
+const getEngagementBadge = (status?: string) => {
+  if (status === "hot") {
+    return {
+      className: "rounded-full border-transparent bg-red-100 text-red-700",
+      label: "Hot",
+    };
+  }
+
+  if (status === "warm") {
+    return {
+      className: "rounded-full border-transparent bg-amber-100 text-amber-700",
+      label: "Warm",
+    };
+  }
+
+  return {
+    className: "rounded-full border-transparent bg-slate-100 text-slate-700",
+    label: "Cooling",
+  };
+};
 
 export const HotContacts = () => {
   const { identity } = useGetIdentity();
@@ -29,14 +50,14 @@ export const HotContacts = () => {
       sort: { field: "last_seen", order: "DESC" },
       filter: { status: "hot", sales_id: identity?.id },
     },
-    { enabled: Number.isInteger(identity?.id) },
+    { enabled: identity?.id != null },
   );
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
         <div className="mr-3 flex">
-          <Users className="text-muted-foreground w-6 h-6" />
+          <Users className="h-6 w-6 text-muted-foreground" />
         </div>
         <h2 className="text-xl font-semibold text-muted-foreground">
           {translate("resources.contacts.hot.title")}
@@ -56,7 +77,7 @@ export const HotContacts = () => {
                 asChild
               >
                 <Link to="/contacts/create">
-                  <Plus className="w-4 h-4 text-primary" />
+                  <Plus className="h-4 w-4 text-primary" />
                 </Link>
               </Button>
             </TooltipTrigger>
@@ -87,17 +108,32 @@ export const HotContacts = () => {
                     })
                   : contact.title || contact.company_name}
               </span>
-              {contact.last_seen && (
+              {contact.last_seen ? (
                 <span className="text-muted-foreground/60">
-                  &middot; {new Date(contact.last_seen).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                  &middot;{" "}
+                  {new Date(contact.last_seen).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </span>
-              )}
+              ) : null}
             </span>
           )}
+          rightIcon={(contact) => {
+            const badge = getEngagementBadge(contact.status);
+
+            return (
+              <Badge
+                className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${badge.className}`}
+              >
+                {badge.label}
+              </Badge>
+            );
+          }}
           leftAvatar={(contact) => <Avatar record={contact} />}
           empty={
             <div className="p-4">
-              <p className="text-sm mb-4">
+              <p className="mb-4 text-sm">
                 {translate("resources.contacts.hot.empty_hint")}
               </p>
               <p className="text-sm">

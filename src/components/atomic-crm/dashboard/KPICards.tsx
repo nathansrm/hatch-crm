@@ -19,7 +19,11 @@ const formatCurrency = (value: number, currency: string) =>
     maximumFractionDigits: 0,
   });
 
-export const KPICards = () => {
+type KPICardsProps = {
+  variant?: "overview" | "sales";
+};
+
+export const KPICards = ({ variant = "overview" }: KPICardsProps) => {
   const { currency } = useConfigurationContext();
   const { identity, isPending: identityPending } = useGetIdentity();
 
@@ -34,7 +38,7 @@ export const KPICards = () => {
       sort: { field: "due_date", order: "ASC" },
       filter: { sales_id: identity?.id },
     },
-    { enabled: !!identity },
+    { enabled: identity?.id != null },
   );
 
   if (identityPending || dealsPending || tasksPending) {
@@ -50,14 +54,16 @@ export const KPICards = () => {
     );
   }
 
-  const pipelineValue =
-    deals
-      ?.filter((deal) => !["won", "lost"].includes(deal.stage))
-      .reduce((sum, deal) => sum + (deal.amount ?? 0), 0) ?? 0;
-
+  const activeDeals =
+    deals?.filter((deal) => !["won", "lost"].includes(deal.stage)) ?? [];
+  const pipelineValue = activeDeals.reduce(
+    (sum, deal) => sum + (deal.amount ?? 0),
+    0,
+  );
   const wonDeals = deals?.filter((deal) => deal.stage === "won") ?? [];
   const dealsWon = wonDeals.length;
-  const closedDeals = deals?.filter((deal) => ["won", "lost"].includes(deal.stage)).length ?? 0;
+  const closedDeals =
+    deals?.filter((deal) => ["won", "lost"].includes(deal.stage)).length ?? 0;
   const startOfToday = today();
 
   const overdueTasks =
@@ -72,7 +78,7 @@ export const KPICards = () => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Link to="/deals" className="transition-opacity hover:opacity-80">
-        <Card className="gap-3 p-4 cursor-pointer">
+        <Card className="cursor-pointer gap-3 p-4">
           <DollarSign className="h-5 w-5 text-muted-foreground" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
@@ -81,6 +87,11 @@ export const KPICards = () => {
             <p className="text-2xl font-bold">
               {formatCurrency(pipelineValue, currency)}
             </p>
+            {variant === "sales" ? (
+              <p className="text-xs text-muted-foreground">
+                {activeDeals.length} active deals
+              </p>
+            ) : null}
           </div>
         </Card>
       </Link>
@@ -88,34 +99,39 @@ export const KPICards = () => {
         to={`/deals?filter=${encodeURIComponent(JSON.stringify({ stage: "won" }))}`}
         className="transition-opacity hover:opacity-80"
       >
-        <Card className="gap-3 p-4 cursor-pointer">
+        <Card className="cursor-pointer gap-3 p-4">
           <Trophy className="h-5 w-5 text-muted-foreground" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
               Deals Won
             </p>
             <p className="text-2xl font-bold">{dealsWon}</p>
+            {variant === "sales" ? (
+              <p className="text-xs text-muted-foreground">+{dealsWon} won</p>
+            ) : null}
           </div>
         </Card>
       </Link>
-      <Link
-        to="/deals"
-        className="transition-opacity hover:opacity-80"
-      >
-        <Card className="gap-3 p-4 cursor-pointer">
+      <Link to="/deals" className="transition-opacity hover:opacity-80">
+        <Card className="cursor-pointer gap-3 p-4">
           <Percent className="h-5 w-5 text-muted-foreground" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Win Rate</p>
             <p className="text-2xl font-bold">
               {closedDeals > 0
                 ? `${Math.round((dealsWon / closedDeals) * 100)}%`
-                : "—"}
+                : "\u2014"}
             </p>
+            {variant === "sales" ? (
+              <p className="text-xs text-muted-foreground">
+                {closedDeals} closed
+              </p>
+            ) : null}
           </div>
         </Card>
       </Link>
       <Link to="/tasks" className="transition-opacity hover:opacity-80">
-        <Card className="gap-3 p-4 cursor-pointer">
+        <Card className="cursor-pointer gap-3 p-4">
           <AlertCircle className="h-5 w-5 text-muted-foreground" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
@@ -128,6 +144,11 @@ export const KPICards = () => {
             >
               {overdueTasks}
             </p>
+            {variant === "sales" ? (
+              <p className="text-xs text-muted-foreground">
+                {overdueTasks > 0 ? "Needs attention" : "All clear"}
+              </p>
+            ) : null}
           </div>
         </Card>
       </Link>

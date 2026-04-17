@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import {
   Form,
   email,
@@ -33,6 +34,7 @@ export const LoginPage = (props: { redirectTo?: string }) => {
   } = useConfigurationContext();
   const { redirectTo } = props;
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const hasDisplayedRecoveryNotification = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,31 +70,33 @@ export const LoginPage = (props: { redirectTo?: string }) => {
   }, [location.pathname, location.search, navigate, notify]);
 
   const handleSubmit: SubmitHandler<FieldValues> = (values) => {
+    setErrorMessage(null);
     setLoading(true);
     login(values, redirectTo)
       .then(() => {
         setLoading(false);
       })
       .catch((error) => {
-        setLoading(false);
-        notify(
+        const resolvedMessage =
           typeof error === "string"
             ? error
             : typeof error === "undefined" || !error.message
               ? "ra.auth.sign_in_error"
-              : error.message,
-          {
-            type: "error",
-            messageArgs: {
-              _:
-                typeof error === "string"
-                  ? error
-                  : error && error.message
-                    ? error.message
-                    : undefined,
-            },
+              : error.message;
+
+        setLoading(false);
+        setErrorMessage(resolvedMessage);
+        notify(resolvedMessage, {
+          type: "error",
+          messageArgs: {
+            _:
+              typeof error === "string"
+                ? error
+                : error && error.message
+                  ? error.message
+                  : undefined,
           },
-        );
+        });
       });
   };
 
@@ -123,6 +127,15 @@ export const LoginPage = (props: { redirectTo?: string }) => {
             </div>
             {disableEmailPasswordAuthentication ? null : (
               <Form className="space-y-8" onSubmit={handleSubmit} noValidate>
+                {errorMessage && (
+                  <div
+                    role="alert"
+                    className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+                  >
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    {errorMessage}
+                  </div>
+                )}
                 <TextInput
                   label="ra.auth.email"
                   source="email"
@@ -141,7 +154,14 @@ export const LoginPage = (props: { redirectTo?: string }) => {
                     className="cursor-pointer"
                     disabled={loading}
                   >
-                    {translate("ra.auth.sign_in")}
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {"Signing in\u2026"}
+                      </>
+                    ) : (
+                      translate("ra.auth.sign_in")
+                    )}
                   </Button>
                 </div>
               </Form>

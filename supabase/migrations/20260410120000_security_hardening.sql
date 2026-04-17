@@ -96,6 +96,7 @@ grant all on function public.update_updated_at() to service_role;
 -- 6. Fix integration_log RLS — admin-only, not all authenticated
 -- ============================================================
 drop policy if exists "authenticated_select_integration_log" on public.integration_log;
+drop policy if exists "admin_select_integration_log" on public.integration_log;
 create policy "admin_select_integration_log" on public.integration_log
   for select to authenticated using (public.is_admin());
 
@@ -105,4 +106,4 @@ create policy "admin_select_integration_log" on public.integration_log
 drop policy if exists "authenticated_delete_attachments" on storage.objects;
 create policy "authenticated_delete_attachments" on storage.objects
   for delete to authenticated
-  using (bucket_id = 'attachments' and owner_id = auth.uid());
+  using (bucket_id = 'attachments' and owner_id = auth.uid()::text);

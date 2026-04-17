@@ -53,10 +53,7 @@ export const KPICards = ({
     return (
       <div className={gridClass}>
         {Array.from({ length: 4 }).map((_, index) => (
-          <div
-            key={index}
-            className="h-24 rounded-xl bg-muted animate-pulse"
-          />
+          <div key={index} className="h-24 rounded-xl bg-muted animate-pulse" />
         ))}
       </div>
     );
@@ -85,9 +82,9 @@ export const KPICards = ({
 
   return (
     <div className={gridClass}>
-      <Link to="/deals" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
-          <DollarSign className="h-5 w-5 text-muted-foreground" />
+      <Link to="/deals">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
+          <DollarSign className="h-5 w-5 text-emerald-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
               Pipeline Value
@@ -105,10 +102,9 @@ export const KPICards = ({
       </Link>
       <Link
         to={`/deals?filter=${encodeURIComponent(JSON.stringify({ stage: "won" }))}`}
-        className="transition-opacity hover:opacity-80"
       >
-        <Card className="cursor-pointer gap-3 p-4">
-          <Trophy className="h-5 w-5 text-muted-foreground" />
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
+          <Trophy className="h-5 w-5 text-cyan-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
               Deals Won
@@ -120,11 +116,13 @@ export const KPICards = ({
           </div>
         </Card>
       </Link>
-      <Link to="/deals" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
-          <Percent className="h-5 w-5 text-muted-foreground" />
+      <Link to="/deals">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
+          <Percent className="h-5 w-5 text-violet-500" />
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Win Rate</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Win Rate
+            </p>
             <p className="text-2xl font-bold">
               {closedDeals > 0
                 ? `${Math.round((dealsWon / closedDeals) * 100)}%`
@@ -138,9 +136,9 @@ export const KPICards = ({
           </div>
         </Card>
       </Link>
-      <Link to="/tasks" className="transition-opacity hover:opacity-80">
-        <Card className="cursor-pointer gap-3 p-4">
-          <AlertCircle className="h-5 w-5 text-muted-foreground" />
+      <Link to="/tasks">
+        <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
+          <AlertCircle className="h-5 w-5 text-amber-500" />
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">
               Overdue Tasks

@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { useGetIdentity, useGetList } from "ra-core";
 import { useSearchParams } from "react-router";
 import { Card } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getDealDecayLevel } from "../deals/dealUtils";
 import type { Contact, ContactNote, Deal, Task } from "../types";
@@ -26,10 +21,10 @@ import { TasksList } from "./TasksList";
 const DASHBOARD_VIEW_STORAGE_KEY = "crm_dashboard_tab";
 const TERMINAL_STAGES = ["won", "lost"];
 
-type DashboardView = "dashboard" | "sales" | "delivery";
+type DashboardView = "dashboard" | "delivery";
 
 const normalizeDashboardView = (value: string | null): DashboardView | null => {
-  if (value === "dashboard" || value === "sales" || value === "delivery") {
+  if (value === "dashboard" || value === "delivery") {
     return value;
   }
 
@@ -50,73 +45,7 @@ const getTodayDateKey = () => {
 
 const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
 
-const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => (
-  <div className="space-y-6">
-    <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-      <p className="text-sm text-muted-foreground">
-        Pipeline overview, activity, and upcoming tasks.
-      </p>
-    </div>
-    <KPICards variant="overview" />
-    <div className="space-y-4">
-      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-        Revenue
-      </p>
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div className="xl:col-span-8">
-          {totalDeal ? (
-            <Card className="p-4">
-              <DealsChart />
-            </Card>
-          ) : null}
-        </div>
-        <div className="xl:col-span-4">
-          <Card className="p-5">
-            <DealsByTradeType />
-          </Card>
-        </div>
-      </div>
-    </div>
-    <div className="space-y-4">
-      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-        Activity
-      </p>
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div className="xl:col-span-8">
-          <DashboardActivityLog />
-        </div>
-        <div className="xl:col-span-4">
-          <TasksList />
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const UrgencyMetricCard = ({
-  borderClassName,
-  icon: Icon,
-  label,
-  value,
-}: {
-  borderClassName: string;
-  icon: typeof AlertTriangle;
-  label: string;
-  value: number;
-}) => (
-  <Card className={`gap-0 border-l-4 p-4 ${borderClassName}`}>
-    <div className="flex items-center gap-3">
-      <Icon className="h-5 w-5 text-muted-foreground" />
-      <div className="space-y-1">
-        <p className="text-2xl font-bold tabular-nums">{value}</p>
-        <p className="text-sm text-muted-foreground">{label}</p>
-      </div>
-    </div>
-  </Card>
-);
-
-const SalesDashboardContent = () => {
+const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => {
   const { identity } = useGetIdentity();
   const todayKey = getTodayDateKey();
 
@@ -151,6 +80,13 @@ const SalesDashboardContent = () => {
 
   return (
     <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="sr-only">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
+          Pipeline overview, activity, and upcoming tasks.
+        </p>
+      </div>
+      <KPICards variant="overview" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <UrgencyMetricCard
           borderClassName={
@@ -181,22 +117,77 @@ const SalesDashboardContent = () => {
           value={followUpsDueCount}
         />
       </div>
-      <KPICards variant="sales" />
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div className="flex flex-col gap-6 xl:col-span-7">
-          <Card className="p-5">
-            <PipelineSummary variant="bars" />
-          </Card>
-          <StaleDeals />
-        </div>
-        <div className="flex flex-col gap-6 xl:col-span-5">
-          <TasksList variant="sales" />
-          <HotContacts />
+      <div className="space-y-4">
+        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Revenue
+        </p>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+          <div className="xl:col-span-8">
+            {totalDeal ? (
+              <Card className="p-4">
+                <DealsChart />
+              </Card>
+            ) : null}
+          </div>
+          <div className="xl:col-span-4">
+            <Card className="p-5">
+              <DealsByTradeType />
+            </Card>
+          </div>
         </div>
       </div>
+      <div className="space-y-4">
+        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Pipeline
+        </p>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+          <div className="flex flex-col gap-6 xl:col-span-7">
+            <Card className="p-5">
+              <PipelineSummary variant="bars" />
+            </Card>
+            <StaleDeals />
+          </div>
+        </div>
+      </div>
+      <div className="space-y-4">
+        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Activity
+        </p>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+          <div className="xl:col-span-8">
+            <DashboardActivityLog />
+          </div>
+          <div className="xl:col-span-4">
+            <TasksList />
+          </div>
+        </div>
+      </div>
+      <HotContacts />
     </div>
   );
 };
+
+const UrgencyMetricCard = ({
+  borderClassName,
+  icon: Icon,
+  label,
+  value,
+}: {
+  borderClassName: string;
+  icon: typeof AlertTriangle;
+  label: string;
+  value: number;
+}) => (
+  <Card className={`gap-0 border-l-4 p-4 ${borderClassName}`}>
+    <div className="flex items-center gap-3">
+      <Icon className="h-5 w-5 text-muted-foreground" />
+      <div className="space-y-1">
+        <p className="text-2xl font-bold tabular-nums">{value}</p>
+        <p className="text-sm text-muted-foreground">{label}</p>
+      </div>
+    </div>
+  </Card>
+);
 
 export const Dashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -282,18 +273,20 @@ export const Dashboard = () => {
   return (
     <div className="mt-1">
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6 grid h-auto w-full grid-cols-3 md:w-fit">
+        <TabsList className="mb-6 grid h-auto w-full grid-cols-2 md:w-fit">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="sales">Sales</TabsTrigger>
           <TabsTrigger value="delivery">Delivery</TabsTrigger>
         </TabsList>
-        <TabsContent value="dashboard">
+        <TabsContent
+          value="dashboard"
+          className="data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-150"
+        >
           <DashboardOverview totalDeal={totalDeal} />
         </TabsContent>
-        <TabsContent value="sales">
-          <SalesDashboardContent />
-        </TabsContent>
-        <TabsContent value="delivery">
+        <TabsContent
+          value="delivery"
+          className="data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-150"
+        >
           <DeliveryDashboard />
         </TabsContent>
       </Tabs>

@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Form, required, useLogin, useNotify, useTranslate } from "ra-core";
+import {
+  Form,
+  email,
+  required,
+  useLogin,
+  useNotify,
+  useTranslate,
+} from "ra-core";
 import type { SubmitHandler, FieldValues } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -115,12 +122,12 @@ export const LoginPage = (props: { redirectTo?: string }) => {
               </h1>
             </div>
             {disableEmailPasswordAuthentication ? null : (
-              <Form className="space-y-8" onSubmit={handleSubmit}>
+              <Form className="space-y-8" onSubmit={handleSubmit} noValidate>
                 <TextInput
                   label="ra.auth.email"
                   source="email"
                   type="email"
-                  validate={required()}
+                  validate={[required(), email()]}
                 />
                 <TextInput
                   label="ra.auth.password"

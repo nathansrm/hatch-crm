@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { useGetIdentity, useGetList } from "ra-core";
 import { useSearchParams } from "react-router";
 import { Card } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getDealDecayLevel } from "../deals/dealUtils";
 import type { Contact, ContactNote, Deal, Task } from "../types";
@@ -53,7 +48,7 @@ const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
 const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => (
   <div className="space-y-6">
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+      <h1 className="sr-only">Dashboard</h1>
       <p className="text-sm text-muted-foreground">
         Pipeline overview, activity, and upcoming tasks.
       </p>
@@ -162,9 +157,7 @@ const SalesDashboardContent = () => {
         />
         <UrgencyMetricCard
           borderClassName={
-            overdueTasksCount > 0
-              ? "border-l-red-500"
-              : "border-l-emerald-500"
+            overdueTasksCount > 0 ? "border-l-red-500" : "border-l-emerald-500"
           }
           icon={Clock}
           label="Overdue Tasks"

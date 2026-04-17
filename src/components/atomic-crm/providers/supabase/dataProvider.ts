@@ -437,6 +437,41 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
       }
       return result;
     },
+    afterGetOne: async (result) => {
+      const dealId = result.data?.id;
+      if (dealId) {
+        const { data: contactIds } = await getSupabaseClient()
+          .from("deal_contacts")
+          .select("contact_id")
+          .eq("deal_id", dealId);
+        if (contactIds) {
+          result.data.contact_ids = contactIds.map((row) => row.contact_id);
+        }
+      }
+      return result;
+    },
+    afterGetList: async (result) => {
+      const dealIds = result.data.map((deal: Deal) => deal.id).filter((id): id is number => !!id);
+      if (dealIds.length > 0) {
+        const { data: dealContacts } = await getSupabaseClient()
+          .from("deal_contacts")
+          .select("deal_id, contact_id")
+          .in("deal_id", dealIds);
+
+        if (dealContacts) {
+          const contactMap = new Map<number, number[]>();
+          for (const dc of dealContacts) {
+            const existing = contactMap.get(dc.deal_id) || [];
+            contactMap.set(dc.deal_id, [...existing, dc.contact_id]);
+          }
+          result.data = result.data.map((deal: Deal) => ({
+            ...deal,
+            contact_ids: contactMap.get(deal.id as number) ?? [],
+          }));
+        }
+      }
+      return result;
+    },
   },
 ];
 

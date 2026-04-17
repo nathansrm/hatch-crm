@@ -143,6 +143,7 @@ export type Deal = {
   project_status?: "on_track" | "at_risk" | "behind" | "complete";
   project_progress_pct?: number;
   project_started_at?: string;
+  follow_up_date?: string;
 } & Pick<RaRecord, "id">;
 
 export type DealNote = {

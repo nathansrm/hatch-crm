@@ -100,14 +100,37 @@ export const DealsChart = memo(() => {
         <h2 className="text-xl font-semibold text-muted-foreground">
           {translate("crm.dashboard.deals_chart")}
         </h2>
+        <div className="ml-auto flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ background: "#22C55E" }}
+            />
+            {wonLabel}
+          </span>
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ background: "#4AC1E0" }}
+            />
+            Pending
+          </span>
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ background: "#EF4444" }}
+            />
+            {lostLabel}
+          </span>
+        </div>
       </div>
-      <div className="h-[400px]">
+      <div className="h-[280px]">
         <ResponsiveBar
           data={months}
           indexBy="date"
           keys={["won", "pending", "lost"]}
           colors={["#22C55E", "#4AC1E0", "#EF4444"]}
-          margin={{ top: 30, right: 50, bottom: 30, left: 0 }}
+          margin={{ top: 10, right: 10, bottom: 30, left: 55 }}
           padding={0.3}
           valueScale={{
             type: "linear",
@@ -115,8 +138,8 @@ export const DealsChart = memo(() => {
             max: scaledMax,
           }}
           indexScale={{ type: "band", round: true }}
-          enableGridX={true}
-          enableGridY={false}
+          enableGridX={false}
+          enableGridY={true}
           enableLabel={false}
           tooltip={({ value, indexValue }) => (
             <div className="p-2 bg-secondary rounded shadow inline-flex items-center gap-1 text-secondary-foreground">
@@ -127,22 +150,6 @@ export const DealsChart = memo(() => {
               })}
             </div>
           )}
-          axisTop={{
-            tickSize: 0,
-            tickPadding: 12,
-            style: {
-              ticks: {
-                text: {
-                  fill: "var(--color-muted-foreground)",
-                },
-              },
-              legend: {
-                text: {
-                  fill: "var(--color-muted-foreground)",
-                },
-              },
-            },
-          }}
           axisBottom={{
             legendPosition: "middle",
             legendOffset: 50,
@@ -161,10 +168,15 @@ export const DealsChart = memo(() => {
               },
             },
           }}
-          axisLeft={null}
-          axisRight={{
-            format: (v: any) => `${Math.abs(v / 1000)}k`,
-            tickValues: 8,
+          axisLeft={{
+            tickSize: 0,
+            tickPadding: 12,
+            tickValues: 5,
+            format: (v: any) => {
+              const abs = Math.abs(v);
+              if (abs >= 1000) return `${abs / 1000}k`;
+              return `${abs}`;
+            },
             style: {
               ticks: {
                 text: {
@@ -178,31 +190,6 @@ export const DealsChart = memo(() => {
               },
             },
           }}
-          markers={
-            [
-              {
-                axis: "y",
-                value: 0,
-                lineStyle: { strokeOpacity: 0 },
-                textStyle: { fill: "#22C55E" },
-                legend: wonLabel,
-                legendPosition: "top-left",
-                legendOrientation: "vertical",
-              },
-              {
-                axis: "y",
-                value: 0,
-                lineStyle: {
-                  stroke: "#EF4444",
-                  strokeWidth: 1,
-                },
-                textStyle: { fill: "#EF4444" },
-                legend: lostLabel,
-                legendPosition: "bottom-left",
-                legendOrientation: "vertical",
-              },
-            ] as any
-          }
         />
       </div>
     </div>

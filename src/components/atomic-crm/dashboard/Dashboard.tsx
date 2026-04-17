@@ -52,27 +52,43 @@ const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
 
 const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => (
   <div className="space-y-6">
+    <div className="space-y-1">
+      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+      <p className="text-sm text-muted-foreground">
+        Pipeline overview, activity, and upcoming tasks.
+      </p>
+    </div>
     <KPICards variant="overview" />
-    <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-      <div className="xl:col-span-8">
-        {totalDeal ? (
-          <Card className="p-4">
-            <DealsChart />
+    <div className="space-y-4">
+      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+        Revenue
+      </p>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div className="xl:col-span-8">
+          {totalDeal ? (
+            <Card className="p-4">
+              <DealsChart />
+            </Card>
+          ) : null}
+        </div>
+        <div className="xl:col-span-4">
+          <Card className="p-5">
+            <DealsByTradeType />
           </Card>
-        ) : null}
-      </div>
-      <div className="xl:col-span-4">
-        <Card className="p-5">
-          <DealsByTradeType />
-        </Card>
+        </div>
       </div>
     </div>
-    <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-      <div className="xl:col-span-8">
-        <DashboardActivityLog />
-      </div>
-      <div className="xl:col-span-4">
-        <TasksList />
+    <div className="space-y-4">
+      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+        Activity
+      </p>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div className="xl:col-span-8">
+          <DashboardActivityLog />
+        </div>
+        <div className="xl:col-span-4">
+          <TasksList />
+        </div>
       </div>
     </div>
   </div>

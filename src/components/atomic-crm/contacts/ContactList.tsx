@@ -14,7 +14,6 @@ import { ExportButton } from "@/components/admin/export-button";
 import { List } from "@/components/admin/list";
 import { SelectAllButton } from "@/components/admin/select-all-button";
 import { SortButton } from "@/components/admin/sort-button";
-import { Card } from "@/components/ui/card";
 
 import type { Company, Contact, Sale, Tag } from "../types";
 import { BulkTagButton } from "./BulkTagButton";
@@ -52,7 +51,7 @@ export const ContactList = () => {
 };
 
 const ContactListLayoutDesktop = () => {
-  const { data, isPending, filterValues } = useListContext();
+  const { data, isPending, filterValues, total } = useListContext();
 
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
 
@@ -61,17 +60,89 @@ const ContactListLayoutDesktop = () => {
   if (!data?.length && !hasFilters) return <ContactEmpty />;
 
   return (
-    <div className="flex flex-row gap-8">
-      <ContactListFilter />
-      <div className="w-full flex flex-col gap-4">
-        <Card className="py-0">
-          <ContactListContent />
-        </Card>
+    <>
+      <div style={{ padding: "0 0 20px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 10.5,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#4DC8E8",
+              fontWeight: 700,
+            }}
+          >
+            People
+          </span>
+          <span
+            style={{
+              height: 1,
+              width: 24,
+              background: "rgba(77,200,232,0.4)",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontFamily: '"Manrope Variable", ui-sans-serif',
+                fontSize: 26,
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                color: "#ECEEF5",
+              }}
+            >
+              Contacts
+            </h1>
+            <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
+              <span
+                style={{
+                  fontFamily: '"JetBrains Mono", ui-monospace',
+                  fontWeight: 600,
+                  color: "#ECEEF5",
+                }}
+              >
+                {total ?? 0}
+              </span>
+              {" contacts in the pipeline"}
+            </p>
+          </div>
+        </div>
       </div>
-      <BulkActionsToolbar>
-        <ContactBulkActionButtons />
-      </BulkActionsToolbar>
-    </div>
+      <div className="flex flex-row gap-8">
+        <ContactListFilter />
+        <div className="w-full flex flex-col gap-4">
+          <div
+            style={{
+              background: "#0D1424",
+              border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 12,
+              overflow: "hidden",
+            }}
+          >
+            <ContactListContent />
+          </div>
+        </div>
+        <BulkActionsToolbar>
+          <ContactBulkActionButtons />
+        </BulkActionsToolbar>
+      </div>
+    </>
   );
 };
 

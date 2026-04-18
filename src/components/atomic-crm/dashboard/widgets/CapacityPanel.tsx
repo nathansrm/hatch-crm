@@ -78,14 +78,47 @@ export const CapacityPanel = () => {
       : "bg-emerald-50 text-emerald-700 font-semibold";
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-3">
-        <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-500" />
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold">Capacity Warning</h2>
-          <p className="text-sm text-muted-foreground">
-            Active project workload
-          </p>
+    <section
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 12,
+        padding: "20px 22px",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          paddingBottom: 12,
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          marginBottom: 12,
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-500" />
+          <div className="space-y-1">
+            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-amber-400">
+              Capacity
+            </div>
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#ECEEF5",
+              }}
+            >
+              Capacity warning
+            </h2>
+          </div>
         </div>
       </div>
       <Card className="overflow-hidden p-0">
@@ -149,6 +182,6 @@ export const CapacityPanel = () => {
           </tbody>
         </table>
       </Card>
-    </div>
+    </section>
   );
 };

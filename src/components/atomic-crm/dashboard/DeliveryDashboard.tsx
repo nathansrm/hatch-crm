@@ -1,4 +1,3 @@
-import { TasksList } from "./TasksList";
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
 import { CapacityPanel } from "./widgets/CapacityPanel";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
@@ -6,20 +5,22 @@ import { HandoffQueue } from "./widgets/HandoffQueue";
 
 export const DeliveryDashboard = () => {
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">
-          Delivery Dashboard
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Handoff queue, active project load, and capacity.
-        </p>
-      </div>
+    <main
+      style={{
+        padding: "24px 28px 48px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+        background: "#060A16",
+        flex: 1,
+        overflowY: "auto",
+        minHeight: 0,
+      }}
+    >
       <DeliveryKPIs />
       <HandoffQueue />
       <CapacityPanel />
       <ActiveProjectsGrid />
-      <TasksList variant="sales" />
-    </div>
+    </main>
   );
 };

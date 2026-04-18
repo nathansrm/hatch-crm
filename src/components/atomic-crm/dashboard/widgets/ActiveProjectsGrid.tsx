@@ -57,7 +57,14 @@ export const ActiveProjectsGrid = () => {
         <Badge variant="secondary">{activeProjects.length}</Badge>
       </div>
       {activeProjects.length === 0 ? (
-        <Card className="p-4 text-sm text-muted-foreground">
+        <Card
+          className="p-4 text-sm text-muted-foreground"
+          style={{
+            background: "#0D1424",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 12,
+          }}
+        >
           No active projects yet.
         </Card>
       ) : (
@@ -73,7 +80,15 @@ export const ActiveProjectsGrid = () => {
             }
 
             return (
-              <Card key={deal.id} className="flex flex-col gap-3 p-4">
+              <Card
+                key={deal.id}
+                className="flex flex-col gap-3 p-4"
+                style={{
+                  background: "#0D1424",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: 12,
+                }}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1">
                     <p className="text-base font-semibold">

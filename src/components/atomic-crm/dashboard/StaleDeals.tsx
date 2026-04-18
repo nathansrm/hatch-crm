@@ -31,17 +31,75 @@ export const StaleDeals = () => {
   if (isPending || staleDeals.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center">
-        <div className="mr-3 flex">
-          <AlertTriangle className="h-6 w-6 text-amber-500" />
+    <section
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 12,
+        padding: "20px 22px",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          paddingBottom: 12,
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          marginBottom: 12,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+          <AlertTriangle
+            className="mt-0.5"
+            size={16}
+            style={{ color: "#F5B84A", flexShrink: 0 }}
+          />
+          <div>
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "#F5B84A",
+                fontWeight: 700,
+                marginBottom: 4,
+              }}
+            >
+              Attention
+            </div>
+            <h3
+              style={{
+                margin: 0,
+                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                fontSize: 16,
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+                color: "#ECEEF5",
+              }}
+            >
+              Stale deals
+            </h3>
+          </div>
         </div>
-        <h2 className="text-xl font-semibold text-muted-foreground">
-          Stale Deals
-        </h2>
-        <Badge variant="secondary" className="ml-2">
-          {staleDeals.length}
-        </Badge>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#F5B84A",
+            background: "rgba(245,184,74,0.08)",
+            border: "1px solid rgba(245,184,74,0.25)",
+            padding: "3px 9px",
+            borderRadius: 5,
+          }}
+        >
+          {staleDeals.length} stuck
+        </span>
       </div>
       <Card className="overflow-hidden p-0">
         <table className="w-full text-sm">
@@ -126,6 +184,6 @@ export const StaleDeals = () => {
           </tbody>
         </table>
       </Card>
-    </div>
+    </section>
   );
 };

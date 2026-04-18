@@ -96,13 +96,44 @@ export const HandoffQueue = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
+    <section
+      style={{
+        background: "#0D1424",
+        border: "1px solid rgba(255,255,255,0.07)",
+        borderRadius: 12,
+        padding: "20px 22px",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+      }}
+    >
+      <div className="mb-4 space-y-1">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-xl font-semibold">Deal Handoff Queue</h2>
+          <div>
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "#F5B84A",
+                fontWeight: 700,
+                marginBottom: 4,
+              }}
+            >
+              Handoff Queue
+            </div>
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#ECEEF5",
+              }}
+            >
+              Recently closed-won
+            </h2>
+          </div>
           <Badge variant="secondary">{pendingHandoffDeals.length}</Badge>
         </div>
-        <p className="text-sm text-muted-foreground">Recently closed-won</p>
       </div>
       {pendingHandoffDeals.length === 0 ? (
         <Card className="p-4 text-sm text-muted-foreground">
@@ -160,6 +191,6 @@ export const HandoffQueue = () => {
           </Card>
         ))
       )}
-    </div>
+    </section>
   );
 };

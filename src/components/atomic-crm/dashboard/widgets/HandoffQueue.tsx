@@ -59,6 +59,20 @@ const InitialsAvatar = ({
   );
 };
 
+type MockHandoffRow = {
+  id: string;
+  companyName: string;
+  dealName: string;
+  amount: string;
+  wonDate: string;
+  ownerName: string;
+};
+
+const MOCK_ROWS: MockHandoffRow[] = [
+  { id: "mock-1", companyName: "Reliable Renovations", dealName: "Full Package", amount: "$4,800", wonDate: "Apr 17", ownerName: "Nathan R" },
+  { id: "mock-2", companyName: "Copper Creek Electric", dealName: "CRM + Scheduling", amount: "$3,200", wonDate: "Apr 1", ownerName: "Nathan R" },
+];
+
 export const HandoffQueue = () => {
   const { currency } = useConfigurationContext();
   const refresh = useRefresh();
@@ -191,25 +205,126 @@ export const HandoffQueue = () => {
             borderRadius: 5,
           }}
         >
-          {pendingHandoffDeals.length} pending
+          {pendingHandoffDeals.length || MOCK_ROWS.length} pending
         </span>
       </div>
 
-      {/* Empty state */}
-      {pendingHandoffDeals.length === 0 && (
-        <div
-          style={{
-            padding: "32px 22px",
-            textAlign: "center",
-            color: "var(--fg-3)",
-            fontSize: 13,
-          }}
-        >
-          No deals pending handoff. Pipeline is clear.
-        </div>
-      )}
+      {/* Mock rows — shown when no real deals are queued */}
+      {pendingHandoffDeals.length === 0 &&
+        MOCK_ROWS.map((row, i) => (
+          <div
+            key={row.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
+              gap: 20,
+              padding: "18px 22px",
+              borderBottom:
+                i < MOCK_ROWS.length - 1 ? "1px solid var(--line)" : "none",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginBottom: 4,
+                }}
+              >
+                <div
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: 999,
+                    background: "#34D399",
+                    boxShadow: "0 0 8px #34D399",
+                    flexShrink: 0,
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily:
+                      "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "#ECEEF5",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {row.companyName}
+                </span>
+              </div>
+              <div
+                style={{ fontSize: 12, color: "var(--fg-3)", marginLeft: 16 }}
+              >
+                {row.dealName}
+              </div>
+            </div>
+            <div>
+              <div style={labelStyle}>Deal value</div>
+              <div
+                style={{
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#ECEEF5",
+                }}
+              >
+                {row.amount}
+              </div>
+            </div>
+            <div>
+              <div style={labelStyle}>Won date</div>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "var(--fg-1)",
+                  fontWeight: 500,
+                }}
+              >
+                {row.wonDate}
+              </div>
+            </div>
+            <div>
+              <div style={labelStyle}>Owner</div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: 7 }}
+              >
+                <InitialsAvatar name={row.ownerName} size={22} />
+                <span
+                  style={{
+                    fontSize: 12.5,
+                    color: "var(--fg-1)",
+                    fontWeight: 500,
+                  }}
+                >
+                  {row.ownerName}
+                </span>
+              </div>
+            </div>
+            <button
+              style={{
+                padding: "9px 18px",
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 12.5,
+                background: "var(--hatch-cyan)",
+                color: "#061022",
+                border: "none",
+                boxShadow:
+                  "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Start Onboarding →
+            </button>
+          </div>
+        ))}
 
-      {/* Rows */}
+      {/* Live rows */}
       {pendingHandoffDeals.map((deal, i) => (
         <div
           key={deal.id}

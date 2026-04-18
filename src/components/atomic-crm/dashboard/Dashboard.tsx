@@ -495,8 +495,24 @@ const WON_GOAL = 10;
 const ObsKPIWon = () => {
   const { data: deals } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
+    filter: { "archived_at@is": null },
   });
-  const wonCount = (deals ?? []).filter((deal) => deal.stage === "won").length;
+  const now = new Date();
+  const qStartMonth = Math.floor(now.getMonth() / 3) * 3;
+  const qtdStart = new Date(now.getFullYear(), qStartMonth, 1);
+  const priorQStart = new Date(now.getFullYear(), qStartMonth - 3, 1);
+
+  const wonDeals = (deals ?? []).filter((d) => d.stage === "won");
+  const qtdWon = wonDeals.filter((d) => {
+    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    return ts !== null && ts >= qtdStart;
+  });
+  const priorQWon = wonDeals.filter((d) => {
+    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    return ts !== null && ts >= priorQStart && ts < qtdStart;
+  });
+  const wonCount = qtdWon.length;
+  const wonDelta = wonCount - priorQWon.length;
   const filled = Math.min(wonCount, WON_GOAL);
 
   return (
@@ -569,14 +585,19 @@ const ObsKPIWon = () => {
             gap: 3,
             padding: "3px 8px",
             borderRadius: 5,
-            background: "rgba(52,211,153,0.15)",
-            border: "1px solid rgba(52,211,153,0.35)",
-            color: "#34D399",
+            background: wonDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
+            border: wonDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
+            color: wonDelta >= 0 ? "#34D399" : "#EF5A6F",
             fontSize: 11,
             fontWeight: 700,
           }}
         >
-          <TrendingUp size={11} strokeWidth={2.5} /> +2
+          {wonDelta >= 0 ? (
+            <TrendingUp size={11} strokeWidth={2.5} />
+          ) : (
+            <TrendingDown size={11} strokeWidth={2.5} />
+          )}{" "}
+          {wonDelta >= 0 ? "+" : ""}{wonDelta}
         </span>
       </div>
       <div style={{ fontSize: 11.5, color: "#5C6784", marginBottom: 16 }}>this quarter</div>
@@ -632,15 +653,43 @@ const ObsKPIWon = () => {
 const ObsKPIWinRate = () => {
   const { data: deals } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
+    filter: { "archived_at@is": null },
   });
-  const closedDeals = (deals ?? []).filter((deal) =>
-    ["won", "lost"].includes(deal.stage),
+  const now = new Date();
+  const t90 = new Date(now); t90.setDate(t90.getDate() - 90);
+  const t180 = new Date(now); t180.setDate(t180.getDate() - 180);
+
+  const isClosed = (d: Deal) => ["won", "lost"].includes(d.stage);
+  const inWindow = (d: Deal, from: Date, to: Date) => {
+    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    return ts !== null && ts >= from && ts < to;
+  };
+
+  const closedDeals = (deals ?? []).filter(
+    (d) => isClosed(d) && inWindow(d, t90, now),
   );
-  const wonDeals = closedDeals.filter((deal) => deal.stage === "won");
+  const priorClosed = (deals ?? []).filter(
+    (d) => isClosed(d) && inWindow(d, t180, t90),
+  );
+
   const winRate =
     closedDeals.length > 0
-      ? Math.round((wonDeals.length / closedDeals.length) * 100)
+      ? Math.round(
+          (closedDeals.filter((d) => d.stage === "won").length /
+            closedDeals.length) *
+            100,
+        )
       : 0;
+  const priorWinRate =
+    priorClosed.length > 0
+      ? Math.round(
+          (priorClosed.filter((d) => d.stage === "won").length /
+            priorClosed.length) *
+            100,
+        )
+      : null;
+  const winRateDelta =
+    priorWinRate !== null ? winRate - priorWinRate : null;
 
   return (
     <section
@@ -707,22 +756,29 @@ const ObsKPIWinRate = () => {
             >
               {closedDeals.length > 0 ? `${winRate}%` : "—"}
             </div>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 3,
-                padding: "3px 8px",
-                borderRadius: 5,
-                background: "rgba(239,90,111,0.15)",
-                border: "1px solid rgba(239,90,111,0.35)",
-                color: "#EF5A6F",
-                fontSize: 11,
-                fontWeight: 700,
-              }}
-            >
-              <TrendingDown size={11} strokeWidth={2.5} /> -3%
-            </span>
+            {winRateDelta !== null && (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 3,
+                  padding: "3px 8px",
+                  borderRadius: 5,
+                  background: winRateDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
+                  border: winRateDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
+                  color: winRateDelta >= 0 ? "#34D399" : "#EF5A6F",
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              >
+                {winRateDelta >= 0 ? (
+                  <TrendingUp size={11} strokeWidth={2.5} />
+                ) : (
+                  <TrendingDown size={11} strokeWidth={2.5} />
+                )}{" "}
+                {winRateDelta >= 0 ? "+" : ""}{winRateDelta}%
+              </span>
+            )}
           </div>
           <div style={{ fontSize: 11.5, color: "#5C6784" }}>trailing 90d</div>
         </div>
@@ -885,6 +941,44 @@ const ObsAttentionRow = ({
   overdueTasksCount: number;
 }) => {
   const redirect = useRedirect();
+  const { data: allDeals } = useGetList<Deal>("deals", {
+    pagination: { page: 1, perPage: 10000 },
+    filter: { "archived_at@is": null },
+  });
+
+  const now = new Date();
+  const d7 = new Date(now); d7.setDate(d7.getDate() - 7);
+  const d14 = new Date(now); d14.setDate(d14.getDate() - 14);
+
+  const staleDeal = (allDeals ?? [])
+    .filter((d) => d.stage === "proposal-sent")
+    .sort(
+      (a, b) =>
+        new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime(),
+    )[0];
+  const staleDays = staleDeal
+    ? Math.floor(
+        (now.getTime() - new Date(staleDeal.updated_at).getTime()) / 86400000,
+      )
+    : null;
+
+  const thisWeekLeads = (allDeals ?? []).filter((d) => {
+    const created = d.created_at ? new Date(d.created_at) : null;
+    return created !== null && created >= d7;
+  });
+  const priorWeekLeads = (allDeals ?? []).filter((d) => {
+    const created = d.created_at ? new Date(d.created_at) : null;
+    return created !== null && created >= d14 && created < d7;
+  });
+  const intakePct =
+    priorWeekLeads.length > 0
+      ? Math.round(
+          ((thisWeekLeads.length - priorWeekLeads.length) /
+            priorWeekLeads.length) *
+            100,
+        )
+      : null;
+
   return (
   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
     <div
@@ -950,7 +1044,7 @@ const ObsAttentionRow = ({
           </div>
         </div>
       </div>
-      <div style={{ fontSize: 11.5, color: "#9AA3BE" }}>-2 since yesterday</div>
+      <div style={{ fontSize: 11.5, color: "#9AA3BE" }}>{overdueTasksCount > 0 ? "Blocking active deals" : "All clear"}</div>
       <div
         style={{
           display: "inline-flex",
@@ -970,8 +1064,12 @@ const ObsAttentionRow = ({
       accent="#F5B84A"
       icon={Flame}
       eyebrow="Watch"
-      title="Mackenzie Roofing"
-      sub="Proposal sent · waiting 2 days"
+      title={staleDeal ? staleDeal.name : "No stale deals"}
+      sub={
+        staleDeal
+          ? `Proposal sent · waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
+          : "All proposal-sent deals are moving"
+      }
       cta="Follow up"
       onClick={() => redirect("/deals")}
     />
@@ -979,14 +1077,20 @@ const ObsAttentionRow = ({
       accent="#5EEAD4"
       icon={Zap}
       eyebrow="Trend"
-      title="Intake surge"
-      sub="5 new leads this week · +67%"
+      title={`${thisWeekLeads.length} new lead${thisWeekLeads.length === 1 ? "" : "s"} this week`}
+      sub={
+        intakePct !== null
+          ? `${intakePct >= 0 ? "+" : ""}${intakePct}% vs last week`
+          : "First week of data"
+      }
       cta="Review intake"
       onClick={() => redirect("/contacts")}
     />
   </div>
   );
 };
+
+const AVATAR_COLORS = ["#4DC8E8", "#A78BFA", "#F5B84A", "#34D399", "#EF5A6F"];
 
 const ObsHotDealsPanel = () => {
   const { currency } = useConfigurationContext();
@@ -995,6 +1099,11 @@ const ObsHotDealsPanel = () => {
     sort: { field: "amount", order: "DESC" },
     filter: { "archived_at@is": null },
   });
+  const { data: sales } = useGetList<{
+    id: number | string;
+    first_name: string;
+    last_name: string;
+  }>("sales", { pagination: { page: 1, perPage: 100 } });
   const redirect = useRedirect();
 
   const hotDeals = (deals ?? [])
@@ -1040,11 +1149,25 @@ const ObsHotDealsPanel = () => {
     warn: "#F5B84A",
     stale: "#EF5A6F",
   };
-  const MOCK_TEAM = [
-    { initial: "N", color: "#4DC8E8" },
-    { initial: "L", color: "#A78BFA" },
-    { initial: "S", color: "#F5B84A" },
-  ];
+
+  const salesNameById = new Map(
+    (sales ?? []).map((s) => [
+      String(s.id),
+      `${s.first_name} ${s.last_name}`.trim(),
+    ]),
+  );
+  const teamAvatars = Array.from(
+    new Set(
+      hotDeals
+        .map((d) => (d.sales_id != null ? String(d.sales_id) : null))
+        .filter((id): id is string => id !== null),
+    ),
+  )
+    .slice(0, 5)
+    .map((id, i) => {
+      const name = salesNameById.get(id) ?? "?";
+      return { initial: name.charAt(0).toUpperCase(), color: AVATAR_COLORS[i % AVATAR_COLORS.length] };
+    });
 
   if (!hotDeals.length) return null;
 
@@ -1099,9 +1222,9 @@ const ObsHotDealsPanel = () => {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ display: "flex" }}>
-            {MOCK_TEAM.map((member, i) => (
+            {teamAvatars.map((member, i) => (
               <div
-                key={member.initial}
+                key={`${member.initial}-${i}`}
                 style={{
                   width: 26,
                   height: 26,

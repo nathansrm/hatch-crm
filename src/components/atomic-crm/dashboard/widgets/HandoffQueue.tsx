@@ -22,55 +22,205 @@ const formatCurrency = (value: number, currency: string) =>
     maximumFractionDigits: 0,
   });
 
-const InitialsAvatar = ({
-  name,
-  size = 28,
-}: {
-  name: string;
-  size?: number;
-}) => {
-  const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-  const hue = name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: "50%",
-        background: `hsl(${hue}, 50%, 32%)`,
-        border: `1px solid hsl(${hue}, 50%, 44%)`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: Math.round(size * 0.38),
-        fontWeight: 700,
-        color: "#fff",
-        fontFamily: "JetBrains Mono, monospace",
-        flexShrink: 0,
-      }}
-    >
-      {initials || "?"}
-    </div>
-  );
+const safeFormatDate = (value: unknown): string => {
+  if (value == null || value === "") return "—";
+  const d = new Date(value as string | number | Date);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return format(d, "MMM d");
+  } catch {
+    return "—";
+  }
 };
 
-type MockHandoffRow = {
-  id: string;
+type HandoffCardProps = {
   companyName: string;
   dealName: string;
-  amount: string;
+  dealValue: string;
   wonDate: string;
-  ownerName: string;
+  salesName: string;
+  onStart?: () => void;
+  isUpdating?: boolean;
 };
 
-const MOCK_ROWS: MockHandoffRow[] = [
-  { id: "mock-1", companyName: "Reliable Renovations", dealName: "Full Package", amount: "$4,800", wonDate: "Apr 17", ownerName: "Nathan R" },
-  { id: "mock-2", companyName: "Copper Creek Electric", dealName: "CRM + Scheduling", amount: "$3,200", wonDate: "Apr 1", ownerName: "Nathan R" },
+const labelStyle: React.CSSProperties = {
+  fontSize: 10,
+  color: "var(--fg-3)",
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  fontWeight: 700,
+  marginBottom: 6,
+};
+
+const metricValueStyle: React.CSSProperties = {
+  fontFamily: "JetBrains Mono, monospace",
+  fontSize: 14,
+  fontWeight: 700,
+  color: "#ECEEF5",
+  letterSpacing: "-0.01em",
+};
+
+const HandoffCard = ({
+  companyName,
+  dealName,
+  dealValue,
+  wonDate,
+  salesName,
+  onStart,
+  isUpdating,
+}: HandoffCardProps) => (
+  <div
+    style={{
+      background: "#111A2E",
+      border: "1px solid var(--line)",
+      borderLeft: "3px solid #F5B84A",
+      borderRadius: 10,
+      padding: "18px 20px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 16,
+      minWidth: 0,
+    }}
+  >
+    {/* Top row: company + description, cta */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        gap: 14,
+      }}
+    >
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: 999,
+              background: "#34D399",
+              boxShadow: "0 0 8px rgba(52,211,153,0.7)",
+              flexShrink: 0,
+            }}
+          />
+          <h3
+            style={{
+              margin: 0,
+              fontFamily:
+                "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+              fontSize: 17,
+              fontWeight: 700,
+              color: "#ECEEF5",
+              letterSpacing: "-0.02em",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {companyName}
+          </h3>
+        </div>
+        <p
+          style={{
+            margin: "0 0 0 17px",
+            fontSize: 12.5,
+            color: "var(--fg-3)",
+            lineHeight: 1.45,
+          }}
+        >
+          {dealName}
+        </p>
+      </div>
+      <button
+        onClick={onStart}
+        disabled={isUpdating || !onStart}
+        style={{
+          padding: "9px 16px",
+          borderRadius: 8,
+          fontWeight: 700,
+          fontSize: 12.5,
+          background: "var(--hatch-cyan)",
+          color: "#061022",
+          border: "none",
+          boxShadow:
+            "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
+          cursor: isUpdating ? "not-allowed" : "pointer",
+          whiteSpace: "nowrap",
+          opacity: isUpdating ? 0.6 : 1,
+          flexShrink: 0,
+        }}
+      >
+        Start Onboarding →
+      </button>
+    </div>
+
+    {/* Metric stack */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gap: 10,
+      }}
+    >
+      <div
+        style={{
+          padding: "10px 12px",
+          borderRadius: 8,
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid var(--line)",
+        }}
+      >
+        <div style={labelStyle}>Deal Value</div>
+        <div style={metricValueStyle}>{dealValue}</div>
+      </div>
+      <div
+        style={{
+          padding: "10px 12px",
+          borderRadius: 8,
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid var(--line)",
+        }}
+      >
+        <div style={labelStyle}>Won Date</div>
+        <div style={metricValueStyle}>{wonDate}</div>
+      </div>
+      <div
+        style={{
+          padding: "10px 12px",
+          borderRadius: 8,
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid var(--line)",
+        }}
+      >
+        <div style={labelStyle}>Sales</div>
+        <div style={metricValueStyle}>{salesName}</div>
+      </div>
+    </div>
+  </div>
+);
+
+const MOCK_CARDS: Omit<HandoffCardProps, "onStart" | "isUpdating">[] = [
+  {
+    companyName: "Northshore Builders Inc.",
+    dealName: "Kitchen and basement renovation package",
+    dealValue: "$125,000",
+    wonDate: "Apr 17",
+    salesName: "Nathan",
+  },
+  {
+    companyName: "Oakville Custom Homes",
+    dealName: "Design-build upgrade package",
+    dealValue: "$87,000",
+    wonDate: "Apr 14",
+    salesName: "Nathan",
+  },
 ];
 
 export const HandoffQueue = () => {
@@ -130,7 +280,9 @@ export const HandoffQueue = () => {
           ...deal,
           project_started_at: new Date().toISOString(),
           project_status: "on_track",
-          ...(projectedHours !== undefined ? { projected_hours: projectedHours } : {}),
+          ...(projectedHours !== undefined
+            ? { projected_hours: projectedHours }
+            : {}),
         },
         previousData: deal,
       },
@@ -138,14 +290,8 @@ export const HandoffQueue = () => {
     );
   };
 
-  const labelStyle: React.CSSProperties = {
-    fontSize: 10,
-    color: "var(--fg-3)",
-    letterSpacing: "0.12em",
-    textTransform: "uppercase",
-    fontWeight: 700,
-    marginBottom: 3,
-  };
+  const showMocks = pendingHandoffDeals.length === 0;
+  const badgeCount = showMocks ? MOCK_CARDS.length : pendingHandoffDeals.length;
 
   return (
     <section
@@ -154,6 +300,7 @@ export const HandoffQueue = () => {
         background: "#0D1424",
         border: "1px solid var(--line)",
         overflow: "hidden",
+        flexShrink: 0,
       }}
     >
       {/* Header */}
@@ -205,252 +352,50 @@ export const HandoffQueue = () => {
             borderRadius: 5,
           }}
         >
-          {pendingHandoffDeals.length || MOCK_ROWS.length} pending
+          {badgeCount} pending
         </span>
       </div>
 
-      {/* Mock rows — shown when no real deals are queued */}
-      {pendingHandoffDeals.length === 0 &&
-        MOCK_ROWS.map((row, i) => (
-          <div
-            key={row.id}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
-              gap: 20,
-              padding: "18px 22px",
-              borderBottom:
-                i < MOCK_ROWS.length - 1 ? "1px solid var(--line)" : "none",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  marginBottom: 4,
-                }}
-              >
-                <div
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 999,
-                    background: "#34D399",
-                    boxShadow: "0 0 8px #34D399",
-                    flexShrink: 0,
-                  }}
+      {/* Card grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+          gap: 14,
+          padding: 18,
+        }}
+      >
+        {showMocks
+          ? MOCK_CARDS.map((row, i) => (
+              <HandoffCard key={`mock-${i}`} {...row} />
+            ))
+          : pendingHandoffDeals.map((deal) => {
+              const companyName =
+                (deal.company_id != null
+                  ? companyNameById.get(deal.company_id as number)
+                  : undefined) ?? "Unknown";
+              const salesName =
+                (deal.sales_id != null
+                  ? salesNameById.get(deal.sales_id as number | string)
+                  : undefined) ?? "Unassigned";
+              const amountValue =
+                typeof deal.amount === "number" && Number.isFinite(deal.amount)
+                  ? deal.amount
+                  : 0;
+              return (
+                <HandoffCard
+                  key={deal.id}
+                  companyName={companyName}
+                  dealName={deal.name ?? "Untitled deal"}
+                  dealValue={formatCurrency(amountValue, currency)}
+                  wonDate={safeFormatDate(deal.updated_at)}
+                  salesName={salesName}
+                  onStart={() => handleStartOnboarding(deal)}
+                  isUpdating={isUpdating}
                 />
-                <span
-                  style={{
-                    fontFamily:
-                      "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-                    fontSize: 15,
-                    fontWeight: 700,
-                    color: "#ECEEF5",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {row.companyName}
-                </span>
-              </div>
-              <div
-                style={{ fontSize: 12, color: "var(--fg-3)", marginLeft: 16 }}
-              >
-                {row.dealName}
-              </div>
-            </div>
-            <div>
-              <div style={labelStyle}>Deal value</div>
-              <div
-                style={{
-                  fontFamily: "JetBrains Mono, monospace",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "#ECEEF5",
-                }}
-              >
-                {row.amount}
-              </div>
-            </div>
-            <div>
-              <div style={labelStyle}>Won date</div>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "var(--fg-1)",
-                  fontWeight: 500,
-                }}
-              >
-                {row.wonDate}
-              </div>
-            </div>
-            <div>
-              <div style={labelStyle}>Owner</div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: 7 }}
-              >
-                <InitialsAvatar name={row.ownerName} size={22} />
-                <span
-                  style={{
-                    fontSize: 12.5,
-                    color: "var(--fg-1)",
-                    fontWeight: 500,
-                  }}
-                >
-                  {row.ownerName}
-                </span>
-              </div>
-            </div>
-            <button
-              style={{
-                padding: "9px 18px",
-                borderRadius: 8,
-                fontWeight: 700,
-                fontSize: 12.5,
-                background: "var(--hatch-cyan)",
-                color: "#061022",
-                border: "none",
-                boxShadow:
-                  "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Start Onboarding →
-            </button>
-          </div>
-        ))}
-
-      {/* Live rows */}
-      {pendingHandoffDeals.map((deal, i) => (
-        <div
-          key={deal.id}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
-            gap: 20,
-            padding: "18px 22px",
-            borderBottom:
-              i < pendingHandoffDeals.length - 1
-                ? "1px solid var(--line)"
-                : "none",
-            alignItems: "center",
-          }}
-        >
-          {/* Company + deal name */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginBottom: 4,
-              }}
-            >
-              <div
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 999,
-                  background: "#34D399",
-                  boxShadow: "0 0 8px #34D399",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontFamily:
-                    "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#ECEEF5",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                {companyNameById.get(deal.company_id as number) ?? "Unknown"}
-              </span>
-            </div>
-            <div style={{ fontSize: 12, color: "var(--fg-3)", marginLeft: 16 }}>
-              {deal.name}
-            </div>
-          </div>
-
-          {/* Deal value */}
-          <div>
-            <div style={labelStyle}>Deal value</div>
-            <div
-              style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 14,
-                fontWeight: 700,
-                color: "#ECEEF5",
-              }}
-            >
-              {formatCurrency(deal.amount ?? 0, currency)}
-            </div>
-          </div>
-
-          {/* Won date */}
-          <div>
-            <div style={labelStyle}>Won date</div>
-            <div
-              style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}
-            >
-              {format(new Date(deal.updated_at), "MMM d")}
-            </div>
-          </div>
-
-          {/* Owner */}
-          <div>
-            <div style={labelStyle}>Owner</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-              <InitialsAvatar
-                name={
-                  salesNameById.get(
-                    deal.sales_id as number | string,
-                  ) ?? ""
-                }
-                size={22}
-              />
-              <span
-                style={{
-                  fontSize: 12.5,
-                  color: "var(--fg-1)",
-                  fontWeight: 500,
-                }}
-              >
-                {salesNameById.get(deal.sales_id as number | string) ??
-                  "Unassigned"}
-              </span>
-            </div>
-          </div>
-
-          {/* Action */}
-          <button
-            onClick={() => handleStartOnboarding(deal)}
-            disabled={isUpdating}
-            style={{
-              padding: "9px 18px",
-              borderRadius: 8,
-              fontWeight: 700,
-              fontSize: 12.5,
-              background: "var(--hatch-cyan)",
-              color: "#061022",
-              border: "none",
-              boxShadow:
-                "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
-              cursor: isUpdating ? "not-allowed" : "pointer",
-              whiteSpace: "nowrap",
-              opacity: isUpdating ? 0.6 : 1,
-            }}
-          >
-            Start Onboarding →
-          </button>
-        </div>
-      ))}
+              );
+            })}
+      </div>
     </section>
   );
 };

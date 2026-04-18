@@ -1,7 +1,4 @@
-import { AlertTriangle } from "lucide-react";
 import { useGetList } from "ra-core";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
@@ -13,6 +10,7 @@ type CompanyRecord = {
 };
 
 const ACTIVE_PROJECT_STATUSES = ["on_track", "at_risk", "behind"] as const;
+type ActiveStatus = (typeof ACTIVE_PROJECT_STATUSES)[number];
 
 const formatCurrency = (value: number, currency: string) =>
   value.toLocaleString(undefined, {
@@ -21,18 +19,51 @@ const formatCurrency = (value: number, currency: string) =>
     maximumFractionDigits: 0,
   });
 
-const statusCopy: Record<(typeof ACTIVE_PROJECT_STATUSES)[number], string> = {
+const statusCopy: Record<ActiveStatus, string> = {
   at_risk: "At Risk",
   behind: "Behind",
   on_track: "On Track",
 };
 
-const statusClassName: Record<(typeof ACTIVE_PROJECT_STATUSES)[number], string> =
-  {
-    at_risk: "bg-amber-100 text-amber-700",
-    behind: "bg-red-100 text-red-700",
-    on_track: "bg-emerald-100 text-emerald-700",
-  };
+const statusPillStyle: Record<ActiveStatus, React.CSSProperties> = {
+  on_track: {
+    background: "rgba(52,211,153,0.12)",
+    color: "#34D399",
+  },
+  at_risk: {
+    background: "rgba(245,184,74,0.12)",
+    color: "#F5B84A",
+  },
+  behind: {
+    background: "rgba(239,68,68,0.12)",
+    color: "#F87171",
+  },
+};
+
+const headerCellStyle: React.CSSProperties = {
+  padding: "12px 16px",
+  textAlign: "left",
+  fontSize: 10,
+  fontWeight: 700,
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  color: "var(--fg-3)",
+  borderBottom: "1px solid var(--line)",
+};
+
+const cellStyle: React.CSSProperties = {
+  padding: "14px 16px",
+  fontSize: 13,
+  color: "#ECEEF5",
+  borderBottom: "1px solid rgba(255,255,255,0.05)",
+  verticalAlign: "middle",
+};
+
+const monoCellStyle: React.CSSProperties = {
+  ...cellStyle,
+  fontFamily: "JetBrains Mono, monospace",
+  fontWeight: 700,
+};
 
 export const CapacityPanel = () => {
   const { currency } = useConfigurationContext();
@@ -55,10 +86,10 @@ export const CapacityPanel = () => {
   const activeProjects =
     deals?.filter((deal) =>
       ACTIVE_PROJECT_STATUSES.includes(
-        (deal.project_status ?? "") as (typeof ACTIVE_PROJECT_STATUSES)[number],
+        (deal.project_status ?? "") as ActiveStatus,
       ),
     ) ?? [];
-  const weeklyCapacity = 40; // TODO: fetch from agency_settings table in live mode
+  const weeklyCapacity = 40;
   const utilization = calcUtilization(activeProjects, weeklyCapacity);
 
   if (utilization <= 85) {
@@ -72,116 +103,169 @@ export const CapacityPanel = () => {
   const sortedProjects = [...activeProjects].sort(
     (left, right) => (right.projected_hours ?? 0) - (left.projected_hours ?? 0),
   );
-  const summaryClassName =
-    totalHours > weeklyCapacity
-      ? "bg-red-50 text-red-700 font-semibold"
-      : "bg-emerald-50 text-emerald-700 font-semibold";
+  const overCapacity = totalHours > weeklyCapacity;
 
   return (
     <section
       style={{
-        position: "relative",
-        overflow: "hidden",
         borderRadius: 12,
-        padding: "20px 22px",
-        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
-        border: "1px solid rgba(255,255,255,0.07)",
-        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
-        display: "flex",
-        flexDirection: "column",
+        background: "#0D1424",
+        border: "1px solid var(--line)",
+        overflow: "hidden",
+        flexShrink: 0,
       }}
     >
+      {/* Header */}
       <div
         style={{
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "space-between",
-          paddingBottom: 12,
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-          marginBottom: 12,
+          padding: "16px 22px",
+          borderBottom: "1px solid var(--line)",
         }}
       >
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-500" />
-          <div className="space-y-1">
-            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-amber-400">
-              Capacity
-            </div>
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#ECEEF5",
-              }}
-            >
-              Capacity warning
-            </h2>
+        <div>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#F5B84A",
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Capacity Warning
           </div>
+          <h3
+            style={{
+              margin: 0,
+              fontFamily:
+                "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#ECEEF5",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Active project workload
+          </h3>
         </div>
+        <span
+          style={{
+            fontFamily: "JetBrains Mono, monospace",
+            fontSize: 11,
+            fontWeight: 700,
+            color: overCapacity ? "#F87171" : "#F5B84A",
+            background: overCapacity
+              ? "rgba(239,68,68,0.1)"
+              : "rgba(245,184,74,0.1)",
+            border: `1px solid ${
+              overCapacity ? "rgba(239,68,68,0.25)" : "rgba(245,184,74,0.25)"
+            }`,
+            padding: "4px 10px",
+            borderRadius: 5,
+          }}
+        >
+          {utilization}% utilized
+        </span>
       </div>
-      <Card className="overflow-hidden p-0">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+
+      {/* Table */}
+      <div style={{ overflowX: "auto" }}>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+          }}
+        >
+          <thead>
             <tr>
-              <th className="px-4 py-3 text-left font-semibold">Deal</th>
-              <th className="px-4 py-3 text-right font-semibold">Value</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 py-3 text-right font-semibold">
+              <th style={headerCellStyle}>Deal</th>
+              <th style={{ ...headerCellStyle, textAlign: "right" }}>Value</th>
+              <th style={headerCellStyle}>Status</th>
+              <th style={{ ...headerCellStyle, textAlign: "right" }}>
                 Projected Hours
               </th>
             </tr>
           </thead>
           <tbody>
             {sortedProjects.map((deal) => {
-              const status = deal.project_status as
-                | (typeof ACTIVE_PROJECT_STATUSES)[number]
-                | undefined;
+              const status = deal.project_status as ActiveStatus | undefined;
+              if (!status) return null;
 
-              if (!status) {
-                return null;
-              }
+              const rowTint =
+                status === "behind"
+                  ? "rgba(239,68,68,0.04)"
+                  : status === "at_risk"
+                    ? "rgba(245,184,74,0.04)"
+                    : "transparent";
 
               return (
-                <tr key={deal.id} className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="space-y-0.5">
-                      <p className="font-medium">
-                        {companyNameById.get(deal.company_id as number) ??
-                          "Unknown company"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {deal.name}
-                      </p>
+                <tr key={deal.id} style={{ background: rowTint }}>
+                  <td style={cellStyle}>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        color: "#ECEEF5",
+                        marginBottom: 2,
+                      }}
+                    >
+                      {companyNameById.get(deal.company_id as number) ??
+                        "Unknown company"}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: "var(--fg-3)" }}>
+                      {deal.name ?? "—"}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td style={{ ...monoCellStyle, textAlign: "right" }}>
                     {formatCurrency(deal.amount ?? 0, currency)}
                   </td>
-                  <td className="px-4 py-3">
-                    <Badge
-                      variant="outline"
-                      className={`rounded-full border-0 px-2 py-0.5 text-xs font-semibold ${statusClassName[status]}`}
+                  <td style={cellStyle}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        padding: "4px 10px",
+                        borderRadius: 999,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        ...statusPillStyle[status],
+                      }}
                     >
                       {statusCopy[status]}
-                    </Badge>
+                    </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td style={{ ...monoCellStyle, textAlign: "right" }}>
                     {deal.projected_hours ?? 0}h
                   </td>
                 </tr>
               );
             })}
-            <tr className="border-t-2">
-              <td colSpan={4} className={`px-4 py-3 ${summaryClassName}`}>
-                Total: {totalHours}h projected / {weeklyCapacity}h weekly
-                capacity
+            <tr>
+              <td
+                colSpan={4}
+                style={{
+                  padding: "14px 16px",
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  letterSpacing: "0.02em",
+                  background: overCapacity
+                    ? "rgba(239,68,68,0.08)"
+                    : "rgba(52,211,153,0.06)",
+                  color: overCapacity ? "#F87171" : "#34D399",
+                  borderTop: "1px solid var(--line)",
+                }}
+              >
+                {overCapacity
+                  ? `OVER CAPACITY — ${totalHours}h projected / ${weeklyCapacity}h weekly`
+                  : `${totalHours}h projected / ${weeklyCapacity}h weekly`}
               </td>
             </tr>
           </tbody>
         </table>
-      </Card>
+      </div>
     </section>
   );
 };

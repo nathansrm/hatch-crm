@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import type React from "react";
 import { RotateCcw, Save } from "lucide-react";
 import type { RaRecord } from "ra-core";
 import {
@@ -136,26 +137,37 @@ export const SettingsPage = () => {
   const notify = useNotify();
 
   return (
-    <EditBase
-      resource="configuration"
-      id={1}
-      mutationMode="pessimistic"
-      redirect={false}
-      transform={transformFormValues}
-      mutationOptions={{
-        onSuccess: (data: any) => {
-          updateConfiguration(data.config);
-          notify("crm.settings.saved");
-        },
-        onError: () => {
-          notify("crm.settings.save_error", {
-            type: "error",
-          });
-        },
-      }}
-    >
-      <SettingsForm />
-    </EditBase>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, background: "#060A16" }}>
+      {/* Page header */}
+      <div style={{ padding: "24px 28px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+          <span style={{ fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700 }}>Workspace</span>
+          <span style={{ height: 1, width: 24, background: "rgba(77,200,232,0.4)" }} />
+        </div>
+        <h1 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>Settings</h1>
+        <p style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}>Configure your CRM workspace, pipeline, and data fields</p>
+      </div>
+      <EditBase
+        resource="configuration"
+        id={1}
+        mutationMode="pessimistic"
+        redirect={false}
+        transform={transformFormValues}
+        mutationOptions={{
+          onSuccess: (data: any) => {
+            updateConfiguration(data.config);
+            notify("crm.settings.saved");
+          },
+          onError: () => {
+            notify("crm.settings.save_error", {
+              type: "error",
+            });
+          },
+        }}
+      >
+        <SettingsForm />
+      </EditBase>
+    </div>
   );
 };
 
@@ -245,267 +257,181 @@ const SettingsFormFields = () => {
   );
 
   return (
-    <div className="flex gap-8 mt-4 pb-20">
+    <div style={{ display: "flex", gap: 0, flex: 1, minHeight: 0 }}>
       {/* Left navigation */}
-      <nav className="hidden md:block w-48 shrink-0">
-        <div className="sticky top-4 space-y-1">
-          <h1 className="text-2xl font-semibold px-3 mb-2">
-            {translate("crm.settings.title")}
-          </h1>
+      <nav style={{ width: 220, flexShrink: 0, borderRight: "1px solid rgba(255,255,255,0.07)", padding: "28px 0" }}>
+        <div style={{ padding: "0 20px 16px", fontSize: 9.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3A4362", fontWeight: 700 }}>Configuration</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2, padding: "0 10px" }}>
           {SECTIONS.map((section) => (
             <button
               key={section.id}
               type="button"
-              onClick={() => {
-                document
-                  .getElementById(section.id)
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="block w-full text-left px-3 py-1 text-sm rounded-md hover:text-foreground hover:bg-muted transition-colors"
+              onClick={() => document.getElementById(section.id)?.scrollIntoView({ behavior: "smooth" })}
+              style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 7, color: "#9AA3BE", background: "transparent", border: "1px solid transparent", fontSize: 13, fontWeight: 500, textAlign: "left", cursor: "pointer", width: "100%" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.03)"; (e.currentTarget as HTMLButtonElement).style.color = "#ECEEF5"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#9AA3BE"; }}
             >
-              {translate(section.label, { smart_count: 2 })}
+              {translate(section.label, { smart_count: 2, _: section.fallback })}
             </button>
           ))}
         </div>
       </nav>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 max-w-2xl space-y-6">
+      <div style={{ flex: 1, overflowY: "auto", minHeight: 0, padding: "28px 40px 120px" }}>
         {/* Branding */}
-        <Card id="branding">
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold text-muted-foreground">
-              {translate("crm.settings.sections.branding")}
-            </h2>
-            <TextInput source="title" label="crm.settings.app_title" />
-            <div className="flex gap-8">
-              <div className="flex flex-col items-center gap-1">
-                <p className="text-sm text-muted-foreground">
-                  {translate("crm.settings.light_mode_logo")}
-                </p>
-                <ImageEditorField
-                  source="lightModeLogo"
-                  width={100}
-                  height={100}
-                  linkPosition="bottom"
-                  backgroundImageColor="#f5f5f5"
-                />
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <p className="text-sm text-muted-foreground">
-                  {translate("crm.settings.dark_mode_logo")}
-                </p>
-                <ImageEditorField
-                  source="darkModeLogo"
-                  width={100}
-                  height={100}
-                  linkPosition="bottom"
-                  backgroundImageColor="#1a1a1a"
-                />
-              </div>
+        <SettingsPanel id="branding" eyebrow="Appearance" title={translate("crm.settings.sections.branding")}>
+          <TextInput source="title" label="crm.settings.app_title" />
+          <div style={{ display: "flex", gap: 32, marginTop: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+              <p style={{ margin: 0, fontSize: 12, color: "#6B7494" }}>{translate("crm.settings.light_mode_logo")}</p>
+              <ImageEditorField source="lightModeLogo" width={100} height={100} linkPosition="bottom" backgroundImageColor="#f5f5f5" />
             </div>
-          </CardContent>
-        </Card>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+              <p style={{ margin: 0, fontSize: 12, color: "#6B7494" }}>{translate("crm.settings.dark_mode_logo")}</p>
+              <ImageEditorField source="darkModeLogo" width={100} height={100} linkPosition="bottom" backgroundImageColor="#1a1a1a" />
+            </div>
+          </div>
+        </SettingsPanel>
 
         {/* Companies */}
-        <Card id="companies">
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold text-muted-foreground">
-              {translate("resources.companies.name", {
-                smart_count: 2,
-              })}
-            </h2>
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.companies.sectors")}
-            </h3>
-            <ArrayInput
-              source="companySectors"
-              label={false}
-              helperText={false}
-            >
-              <SimpleFormIterator disableReordering disableClear>
-                <TextInput source="label" label={false} />
-              </SimpleFormIterator>
-            </ArrayInput>
-          </CardContent>
-        </Card>
+        <SettingsPanel id="companies" eyebrow="Data" title={translate("resources.companies.name", { smart_count: 2 })}>
+          <SettingsSubheading>{translate("crm.settings.companies.sectors")}</SettingsSubheading>
+          <ArrayInput source="companySectors" label={false} helperText={false}>
+            <SimpleFormIterator disableReordering disableClear>
+              <TextInput source="label" label={false} />
+            </SimpleFormIterator>
+          </ArrayInput>
+        </SettingsPanel>
 
         {/* Deals */}
-        <Card id="deals">
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold text-muted-foreground">
-              {translate("resources.deals.name", {
-                smart_count: 2,
-              })}
-            </h2>
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.deals.currency")}
-            </h3>
-            <AutocompleteInput
-              source="currency"
-              label={false}
-              choices={currencyChoices}
-              inputText={(choice) => choice?.id}
-              modal
-            />
+        <SettingsPanel id="deals" eyebrow="Pipeline" title={translate("resources.deals.name", { smart_count: 2 })}>
+          <SettingsSubheading>{translate("crm.settings.deals.currency")}</SettingsSubheading>
+          <AutocompleteInput source="currency" label={false} choices={currencyChoices} inputText={(choice) => choice?.id} modal />
 
-            <Separator />
+          <SettingsDivider />
 
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.deals.stages")}
-            </h3>
-            <ArrayInput
-              source="dealStages"
-              label={false}
-              helperText={false}
-              validate={validateDealStages}
-            >
-              <SimpleFormIterator disableClear>
-                <TextInput source="label" label={false} />
-              </SimpleFormIterator>
-            </ArrayInput>
+          <SettingsSubheading>{translate("crm.settings.deals.stages")}</SettingsSubheading>
+          <ArrayInput source="dealStages" label={false} helperText={false} validate={validateDealStages}>
+            <SimpleFormIterator disableClear>
+              <TextInput source="label" label={false} />
+            </SimpleFormIterator>
+          </ArrayInput>
 
-            <Separator />
+          <SettingsDivider />
 
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.deals.pipeline_statuses")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {translate("crm.settings.deals.pipeline_help")}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {dealStages?.map(
-                (stage: { value: string; label: string }, idx: number) => {
-                  const isSelected = dealPipelineStatuses.includes(stage.value);
-                  return (
-                    <Button
-                      key={idx}
-                      type="button"
-                      variant={isSelected ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => {
-                        if (isSelected) {
-                          setValue(
-                            "dealPipelineStatuses",
-                            dealPipelineStatuses.filter(
-                              (s) => s !== stage.value,
-                            ),
-                          );
-                        } else {
-                          setValue("dealPipelineStatuses", [
-                            ...dealPipelineStatuses,
-                            stage.value,
-                          ]);
-                        }
-                      }}
-                    >
-                      {stage.label || stage.value}
-                    </Button>
-                  );
-                },
-              )}
-            </div>
+          <SettingsSubheading>{translate("crm.settings.deals.pipeline_statuses")}</SettingsSubheading>
+          <p style={{ margin: "4px 0 12px", fontSize: 12, color: "#6B7494" }}>{translate("crm.settings.deals.pipeline_help")}</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {dealStages?.map((stage: { value: string; label: string }, idx: number) => {
+              const isSelected = dealPipelineStatuses.includes(stage.value);
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    if (isSelected) {
+                      setValue("dealPipelineStatuses", dealPipelineStatuses.filter((s) => s !== stage.value));
+                    } else {
+                      setValue("dealPipelineStatuses", [...dealPipelineStatuses, stage.value]);
+                    }
+                  }}
+                  style={{
+                    padding: "6px 14px", borderRadius: 7, fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+                    background: isSelected ? "#4DC8E8" : "rgba(255,255,255,0.04)",
+                    color: isSelected ? "#061022" : "#9AA3BE",
+                    border: isSelected ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  {stage.label || stage.value}
+                </button>
+              );
+            })}
+          </div>
 
-            <Separator />
+          <SettingsDivider />
 
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.deals.categories")}
-            </h3>
-            <ArrayInput
-              source="dealCategories"
-              label={false}
-              helperText={false}
-              validate={validateDealCategories}
-            >
-              <SimpleFormIterator disableReordering disableClear>
-                <TextInput source="label" label={false} />
-              </SimpleFormIterator>
-            </ArrayInput>
-          </CardContent>
-        </Card>
+          <SettingsSubheading>{translate("crm.settings.deals.categories")}</SettingsSubheading>
+          <ArrayInput source="dealCategories" label={false} helperText={false} validate={validateDealCategories}>
+            <SimpleFormIterator disableReordering disableClear>
+              <TextInput source="label" label={false} />
+            </SimpleFormIterator>
+          </ArrayInput>
+        </SettingsPanel>
 
         {/* Notes */}
-        <Card id="notes">
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold text-muted-foreground">
-              {translate("resources.notes.name", {
-                smart_count: 2,
-              })}
-            </h2>
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.notes.statuses")}
-            </h3>
-            <ArrayInput source="noteStatuses" label={false} helperText={false}>
-              <SimpleFormIterator inline disableReordering disableClear>
-                <TextInput source="label" label={false} className="flex-1" />
-                <ColorInput source="color" />
-              </SimpleFormIterator>
-            </ArrayInput>
-          </CardContent>
-        </Card>
+        <SettingsPanel id="notes" eyebrow="Notes" title={translate("resources.notes.name", { smart_count: 2 })}>
+          <SettingsSubheading>{translate("crm.settings.notes.statuses")}</SettingsSubheading>
+          <ArrayInput source="noteStatuses" label={false} helperText={false}>
+            <SimpleFormIterator inline disableReordering disableClear>
+              <TextInput source="label" label={false} className="flex-1" />
+              <ColorInput source="color" />
+            </SimpleFormIterator>
+          </ArrayInput>
+        </SettingsPanel>
 
         {/* Tasks */}
-        <Card id="tasks">
-          <CardContent className="space-y-4">
-            <h2 className="text-xl font-semibold text-muted-foreground">
-              {translate("resources.tasks.name", {
-                smart_count: 2,
-              })}
-            </h2>
-            <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.tasks.types")}
-            </h3>
-            <ArrayInput source="taskTypes" label={false} helperText={false}>
-              <SimpleFormIterator disableReordering disableClear>
-                <TextInput source="label" label={false} />
-              </SimpleFormIterator>
-            </ArrayInput>
-          </CardContent>
-        </Card>
+        <SettingsPanel id="tasks" eyebrow="Tasks" title={translate("resources.tasks.name", { smart_count: 2 })}>
+          <SettingsSubheading>{translate("crm.settings.tasks.types")}</SettingsSubheading>
+          <ArrayInput source="taskTypes" label={false} helperText={false}>
+            <SimpleFormIterator disableReordering disableClear>
+              <TextInput source="label" label={false} />
+            </SimpleFormIterator>
+          </ArrayInput>
+        </SettingsPanel>
       </div>
 
-      {/* Sticky save button */}
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
-        <div className="max-w-screen-xl mx-auto flex gap-8 px-4">
-          <div className="hidden md:block w-48 shrink-0" />
-          <div className="flex-1 min-w-0 max-w-2xl flex justify-between">
-            <Button
+      {/* Sticky save bar */}
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.07)", background: "#060A16", padding: "14px 40px 14px calc(220px + 40px)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", maxWidth: 680 }}>
+          <button
+            type="button"
+            onClick={() => reset({ ...defaultConfiguration, lightModeLogo: { src: defaultConfiguration.lightModeLogo }, darkModeLogo: { src: defaultConfiguration.darkModeLogo } })}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)", background: "transparent", color: "#6B7494", fontSize: 13, fontWeight: 500, cursor: "pointer" }}
+          >
+            <RotateCcw size={14} />
+            {translate("crm.settings.reset_defaults")}
+          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
               type="button"
-              variant="ghost"
-              onClick={() =>
-                reset({
-                  ...defaultConfiguration,
-                  lightModeLogo: {
-                    src: defaultConfiguration.lightModeLogo,
-                  },
-                  darkModeLogo: { src: defaultConfiguration.darkModeLogo },
-                })
-              }
+              onClick={() => window.history.back()}
+              style={{ padding: "9px 18px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "transparent", color: "#9AA3BE", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
             >
-              <RotateCcw className="h-4 w-4 mr-1" />
-              {translate("crm.settings.reset_defaults")}
-            </Button>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => window.history.back()}
-              >
-                {translate("ra.action.cancel")}
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                <Save className="h-4 w-4 mr-1" />
-                {isSubmitting
-                  ? translate("crm.settings.saving")
-                  : translate("ra.action.save")}
-              </Button>
-            </div>
+              {translate("ra.action.cancel")}
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 20px", borderRadius: 8, background: isSubmitting ? "rgba(77,200,232,0.5)" : "#4DC8E8", color: "#061022", fontSize: 13, fontWeight: 700, cursor: isSubmitting ? "not-allowed" : "pointer", border: "none" }}
+            >
+              <Save size={14} />
+              {isSubmitting ? translate("crm.settings.saving") : translate("ra.action.save")}
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const SettingsPanel = ({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: React.ReactNode }) => (
+  <div id={id} style={{ marginBottom: 32, maxWidth: 680, padding: "24px 28px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
+    <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700, marginBottom: 6 }}>{eyebrow}</div>
+      <h2 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em", color: "#ECEEF5" }}>{title}</h2>
+    </div>
+    {children}
+  </div>
+);
+
+const SettingsSubheading = ({ children }: { children: React.ReactNode }) => (
+  <h3 style={{ margin: "0 0 8px", fontSize: 13.5, fontWeight: 600, color: "#9AA3BE" }}>{children}</h3>
+);
+
+const SettingsDivider = () => (
+  <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "20px 0" }} />
+);
 
 /** A minimal color picker input compatible with ra-core's useInput. */
 const ColorInput = ({ source }: { source: string }) => {

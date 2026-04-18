@@ -117,6 +117,38 @@ const PIPELINE_STAGES: Array<{ key: string; label: string; color: string }> = [
 
 type HeroRange = "30d" | "qtd" | "ytd";
 
+const getRangeWindow = (range: HeroRange) => {
+  const now = new Date();
+  if (range === "30d") {
+    const start = new Date(now);
+    start.setDate(start.getDate() - 30);
+    const priorStart = new Date(now);
+    priorStart.setDate(priorStart.getDate() - 60);
+    return { start, end: now, priorStart, priorEnd: new Date(start) };
+  }
+  if (range === "qtd") {
+    const qStartMonth = Math.floor(now.getMonth() / 3) * 3;
+    const start = new Date(now.getFullYear(), qStartMonth, 1);
+    const priorStart = new Date(now.getFullYear(), qStartMonth - 3, 1);
+    return { start, end: now, priorStart, priorEnd: new Date(start) };
+  }
+  const start = new Date(now.getFullYear(), 0, 1);
+  return {
+    start,
+    end: now,
+    priorStart: new Date(now.getFullYear() - 1, 0, 1),
+    priorEnd: new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()),
+  };
+};
+
+const getHeroEyebrow = (range: HeroRange) => {
+  const now = new Date();
+  if (range === "30d") return "Pipeline Value · Last 30 Days";
+  if (range === "ytd") return `Pipeline Value · YTD ${now.getFullYear()}`;
+  const q = Math.floor(now.getMonth() / 3) + 1;
+  return `Pipeline Value · Q${q} ${now.getFullYear()}`;
+};
+
 const ObsHeroPipeline = () => {
   const { currency } = useConfigurationContext();
   const [range, setRange] = useState<HeroRange>("30d");
@@ -125,17 +157,33 @@ const ObsHeroPipeline = () => {
     filter: { "archived_at@is": null },
   });
 
-  const activeDeals = (deals ?? []).filter(
+  const { start, end, priorStart, priorEnd } = getRangeWindow(range);
+  const allActiveDeals = (deals ?? []).filter(
     (deal) => !["won", "lost"].includes(deal.stage),
   );
+  const activeDeals = allActiveDeals.filter((deal) => {
+    const created = deal.created_at ? new Date(deal.created_at) : null;
+    return created !== null && created >= start && created <= end;
+  });
+  const priorDeals = allActiveDeals.filter((deal) => {
+    const created = deal.created_at ? new Date(deal.created_at) : null;
+    return created !== null && created >= priorStart && created < priorEnd;
+  });
   const pipelineValue = activeDeals.reduce(
     (sum, deal) => sum + (deal.amount ?? 0),
     0,
   );
+  const priorValue = priorDeals.reduce(
+    (sum, deal) => sum + (deal.amount ?? 0),
+    0,
+  );
+  const growthPct =
+    priorValue > 0
+      ? Math.round(((pipelineValue - priorValue) / priorValue) * 100)
+      : null;
   const totalCount = activeDeals.length;
-  const allDeals = deals ?? [];
   const stageStrip = PIPELINE_STAGES.map((stage) => {
-    const matches = allDeals.filter((deal) => deal.stage === stage.key);
+    const matches = allActiveDeals.filter((deal) => deal.stage === stage.key);
     const value = matches.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
     return { ...stage, count: matches.length, value };
   });
@@ -209,7 +257,7 @@ const ObsHeroPipeline = () => {
               fontWeight: 700,
             }}
           >
-            Pipeline Value · Q2
+            {getHeroEyebrow(range)}
           </span>
           <span
             style={{
@@ -285,22 +333,45 @@ const ObsHeroPipeline = () => {
                 marginTop: 10,
               }}
             >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 5,
-                  padding: "4px 10px",
-                  borderRadius: 6,
-                  background: "rgba(52,211,153,0.15)",
-                  border: "1px solid rgba(52,211,153,0.35)",
-                  color: "#34D399",
-                  fontSize: 12,
-                  fontWeight: 700,
-                }}
-              >
-                <TrendingUp size={13} strokeWidth={2.5} /> +12.4% vs last quarter
-              </span>
+              {growthPct !== null ? (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    padding: "4px 10px",
+                    borderRadius: 6,
+                    background: growthPct >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
+                    border: growthPct >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
+                    color: growthPct >= 0 ? "#34D399" : "#EF5A6F",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {growthPct >= 0 ? (
+                    <TrendingUp size={13} strokeWidth={2.5} />
+                  ) : (
+                    <TrendingDown size={13} strokeWidth={2.5} />
+                  )}
+                  {growthPct >= 0 ? "+" : ""}{growthPct}% vs prior period
+                </span>
+              ) : (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "4px 10px",
+                    borderRadius: 6,
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    color: "#5C6784",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  No prior period data
+                </span>
+              )}
               <span style={{ fontSize: 12, color: "#9AA3BE" }}>
                 <span
                   style={{
@@ -719,6 +790,7 @@ const ObsInsightCard = ({
   title,
   sub,
   cta,
+  onClick,
 }: {
   accent: string;
   icon: typeof Flame;
@@ -726,8 +798,13 @@ const ObsInsightCard = ({
   title: string;
   sub: string;
   cta: string;
+  onClick?: () => void;
 }) => (
   <div
+    role={onClick ? "button" : undefined}
+    tabIndex={onClick ? 0 : undefined}
+    onClick={onClick}
+    onKeyDown={onClick ? (e) => e.key === "Enter" && onClick() : undefined}
     style={{
       padding: "16px 18px",
       borderRadius: 10,
@@ -736,6 +813,8 @@ const ObsInsightCard = ({
       gap: 10,
       background: `linear-gradient(180deg, ${accent}0F 0%, ${accent}03 100%)`,
       border: `1px solid ${accent}2A`,
+      cursor: onClick ? "pointer" : "default",
+      outline: "none",
     }}
   >
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -804,9 +883,15 @@ const ObsAttentionRow = ({
   overdueTasksCount,
 }: {
   overdueTasksCount: number;
-}) => (
+}) => {
+  const redirect = useRedirect();
+  return (
   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
     <div
+      role="button"
+      tabIndex={0}
+      onClick={() => redirect("/tasks")}
+      onKeyDown={(e) => e.key === "Enter" && redirect("/tasks")}
       style={{
         padding: "16px 18px",
         borderRadius: 10,
@@ -816,6 +901,8 @@ const ObsAttentionRow = ({
         background:
           "linear-gradient(180deg, rgba(239,90,111,0.10) 0%, rgba(239,90,111,0.02) 100%)",
         border: "1px solid rgba(239,90,111,0.25)",
+        cursor: "pointer",
+        outline: "none",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -886,6 +973,7 @@ const ObsAttentionRow = ({
       title="Mackenzie Roofing"
       sub="Proposal sent · waiting 2 days"
       cta="Follow up"
+      onClick={() => redirect("/deals")}
     />
     <ObsInsightCard
       accent="#5EEAD4"
@@ -894,9 +982,11 @@ const ObsAttentionRow = ({
       title="Intake surge"
       sub="5 new leads this week · +67%"
       cta="Review intake"
+      onClick={() => redirect("/contacts")}
     />
   </div>
-);
+  );
+};
 
 const ObsHotDealsPanel = () => {
   const { currency } = useConfigurationContext();

@@ -13,23 +13,9 @@ import { ReferenceInput } from "@/components/admin/reference-input";
 import { SelectInput } from "@/components/admin/select-input";
 import { TextField } from "@/components/admin/text-field";
 import { TextInput } from "@/components/admin/text-input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 import type { IntakeLead } from "../types";
 import { IntakeExpandedRow } from "./IntakeExpandedRow";
-import { IntakeMobileList } from "./IntakeMobileList";
 import { IntakePromoteButton } from "./IntakePromoteButton";
 import { IntakeStatusBadge } from "./IntakeStatusBadge";
 
@@ -43,6 +29,25 @@ const ACTIVE_PIPELINE_STATUSES = [
 
 const ACTIVE_PIPELINE_FILTER = `(${ACTIVE_PIPELINE_STATUSES.join(",")})`;
 const OUTREACH_STEPS_TOTAL = 7;
+const TABLE_GRID_TEMPLATE_COLUMNS =
+  "2fr 1fr 1fr 1fr 1fr 180px 180px 48px";
+const INTAKE_PROMOTE_BUTTON_STYLES = `
+  [data-intake-promote-button] button {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #34D399;
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+    cursor: pointer;
+  }
+
+  [data-intake-promote-button] button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
 
 const intakeFilters = [
   <ReferenceInput
@@ -88,7 +93,6 @@ export const IntakeList = () => {
 };
 
 const IntakeListLayout = () => {
-  const isMobile = useIsMobile();
   const translate = useTranslate();
   const { data, isPending, error, filterValues } = useListContext<IntakeLead>();
   const hasFilters = Boolean(
@@ -108,38 +112,201 @@ const IntakeListLayout = () => {
 
   if (error) {
     return (
-      <Card className="p-6">
-        <div className="space-y-2 text-center">
-          <h3 className="text-lg font-semibold">
+      <div
+        style={{
+          margin: "0 28px 28px",
+          padding: "32px 20px",
+          textAlign: "center",
+          background: "#0D1424",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12,
+        }}
+      >
+        <div style={{ display: "grid", gap: 8 }}>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 18,
+              fontWeight: 700,
+              color: "#ECEEF5",
+            }}
+          >
             {translate("resources.intake_leads.error.title", {
               _: "Error loading intake leads",
             })}
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p style={{ margin: 0, fontSize: 13, color: "#9AA3BE" }}>
             {translate("resources.intake_leads.error.description", {
               _: "Something went wrong. Please try again.",
             })}
           </p>
         </div>
-      </Card>
+      </div>
     );
   }
 
-  if (isMobile) {
-    return <IntakeMobileList data={data} />;
-  }
-
   return (
-    <>
+    <div style={{ background: "#060A16", minHeight: "100%", paddingBottom: 28 }}>
+      <style>{INTAKE_PROMOTE_BUTTON_STYLES}</style>
+      <div
+        style={{
+          padding: "24px 28px 20px",
+          background: "#060A16",
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 10.5,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#4DC8E8",
+              fontWeight: 700,
+            }}
+          >
+            Lead Triage
+          </span>
+          <span
+            style={{
+              height: 1,
+              width: 24,
+              background: "rgba(77,200,232,0.4)",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontFamily: '"Manrope Variable", ui-sans-serif',
+                fontSize: 26,
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                color: "#ECEEF5",
+              }}
+            >
+              Intake Queue
+            </h1>
+            <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
+              <span
+                style={{
+                  fontFamily: '"JetBrains Mono", ui-monospace',
+                  fontWeight: 700,
+                  color: "#F5B84A",
+                }}
+              >
+                {data?.filter((lead: IntakeLead) => lead.status === "uncontacted")
+                  .length ?? 0}
+              </span>
+              {" leads awaiting first touch"}
+            </p>
+          </div>
+        </div>
+      </div>
       <StatusTabBar />
+      <div
+        style={{
+          padding: "0 28px 20px",
+          display: "flex",
+          gap: 12,
+          flexShrink: 0,
+        }}
+      >
+        {([
+          {
+            key: "uncontacted",
+            label: "Uncontacted",
+            color: "#4DC8E8",
+            bg: "rgba(77,200,232,0.08)",
+          },
+          {
+            key: "in-sequence",
+            label: "In Sequence",
+            color: "#A78BFA",
+            bg: "rgba(167,139,250,0.08)",
+          },
+          {
+            key: "engaged",
+            label: "Engaged",
+            color: "#34D399",
+            bg: "rgba(52,211,153,0.08)",
+          },
+          {
+            key: "not-interested",
+            label: "Not Interested",
+            color: "#EF5A6F",
+            bg: "rgba(239,90,111,0.08)",
+          },
+        ] as const).map((tile) => (
+          <div
+            key={tile.key}
+            style={{
+              flex: 1,
+              padding: "14px 18px",
+              borderRadius: 10,
+              background: tile.bg,
+              border: `1px solid ${tile.color}33`,
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 9.5,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: tile.color,
+                fontWeight: 700,
+              }}
+            >
+              {tile.label}
+            </span>
+            <span
+              style={{
+                fontFamily: '"Manrope Variable", ui-sans-serif',
+                fontSize: 24,
+                fontWeight: 700,
+                color: "#ECEEF5",
+              }}
+            >
+              {data?.filter((lead: IntakeLead) => lead.status === tile.key).length ??
+                0}
+            </span>
+          </div>
+        ))}
+      </div>
       {!data?.length ? (
         <IntakeEmpty hasFilters={hasFilters} />
       ) : (
-        <Card className="gap-0 overflow-hidden py-0">
+        <div
+          style={{
+            margin: "0 28px",
+            background: "#0D1424",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 12,
+            overflow: "hidden",
+          }}
+        >
           <DesktopIntakeTable />
-        </Card>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -175,7 +342,11 @@ const StatusTabBar = () => {
     { id: "uncontacted", label: "Uncontacted", count: counts["uncontacted"] || 0 },
     { id: "in-sequence", label: "In Sequence", count: counts["in-sequence"] || 0 },
     { id: "engaged", label: "Engaged", count: counts["engaged"] || 0 },
-    { id: "not-interested", label: "Not Interested", count: counts["not-interested"] || 0 },
+    {
+      id: "not-interested",
+      label: "Not Interested",
+      count: counts["not-interested"] || 0,
+    },
     { id: "unresponsive", label: "Unresponsive", count: counts["unresponsive"] || 0 },
   ] as const;
 
@@ -197,7 +368,7 @@ const StatusTabBar = () => {
   };
 
   return (
-    <div className="mb-5 flex flex-wrap gap-3">
+    <div style={{ padding: "0 28px 16px", display: "flex", flexWrap: "wrap", gap: 6 }}>
       {tabs.map((tab) => {
         const isActive = activeTabId === tab.id;
 
@@ -205,22 +376,36 @@ const StatusTabBar = () => {
           <button
             key={tab.id}
             type="button"
-            className={cn(
-              "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors",
-              isActive
-                ? "border border-primary/35 bg-primary/12 text-primary"
-                : "border border-border bg-white text-muted-foreground",
-            )}
             onClick={() => handleTabClick(tab.id)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "7px 14px",
+              borderRadius: 8,
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: isActive ? "#ECEEF5" : "#9AA3BE",
+              background: isActive ? "rgba(77,200,232,0.09)" : "transparent",
+              border: isActive
+                ? "1px solid rgba(77,200,232,0.22)"
+                : "1px solid rgba(255,255,255,0.07)",
+              cursor: "pointer",
+              transition: "all 0.15s",
+            }}
           >
             <span>{tab.label}</span>
             <span
-              className={cn(
-                "rounded-full px-2 py-0.5 text-xs",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "bg-muted text-muted-foreground",
-              )}
+              style={{
+                fontFamily: '"JetBrains Mono", ui-monospace',
+                fontSize: 10.5,
+                padding: "1px 6px",
+                borderRadius: 4,
+                background: isActive
+                  ? "rgba(77,200,232,0.08)"
+                  : "rgba(255,255,255,0.04)",
+                color: isActive ? "#4DC8E8" : "#5C6784",
+              }}
             >
               {tab.count}
             </span>
@@ -235,9 +420,20 @@ const IntakeEmpty = ({ hasFilters }: { hasFilters: boolean }) => {
   const translate = useTranslate();
 
   return (
-    <Card className="p-6">
-      <div className="space-y-2 text-center">
-        <h3 className="text-lg font-semibold">
+    <div
+      style={{
+        margin: "0 28px 28px",
+        padding: "40px 20px",
+        textAlign: "center",
+        color: "#5C6784",
+        fontSize: 13,
+        background: "#0D1424",
+        border: "1px solid rgba(255,255,255,0.07)",
+        borderRadius: 12,
+      }}
+    >
+      <div style={{ display: "grid", gap: 8 }}>
+        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#ECEEF5" }}>
           {hasFilters
             ? translate("resources.intake_leads.empty.no_match_title", {
                 _: "No intake leads match these filters",
@@ -246,7 +442,7 @@ const IntakeEmpty = ({ hasFilters }: { hasFilters: boolean }) => {
                 _: "No intake leads yet",
               })}
         </h3>
-        <p className="text-sm text-muted-foreground">
+        <p style={{ margin: 0, fontSize: 13, color: "#5C6784" }}>
           {hasFilters
             ? translate("resources.intake_leads.empty.no_match_description", {
                 _: "Adjust your filters to widen the search.",
@@ -256,7 +452,7 @@ const IntakeEmpty = ({ hasFilters }: { hasFilters: boolean }) => {
               })}
         </p>
       </div>
-    </Card>
+    </div>
   );
 };
 
@@ -264,6 +460,7 @@ const DesktopIntakeTable = () => {
   const { data = [] } = useListContext<IntakeLead>();
   const translate = useTranslate();
   const [expandedIds, setExpandedIds] = useState<Identifier[]>([]);
+  const [hoveredId, setHoveredId] = useState<Identifier | null>(null);
 
   const toggleExpanded = (id: Identifier) => {
     setExpandedIds((current) =>
@@ -274,95 +471,154 @@ const DesktopIntakeTable = () => {
   };
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            {translate("resources.intake_leads.fields.business_name", {
-              _: "Business Name",
-            })}
-          </TableHead>
-          <TableHead>
-            {translate("resources.intake_leads.fields.trade_type_id", {
-              _: "Trade Type",
-            })}
-          </TableHead>
-          <TableHead>
-            {translate("resources.intake_leads.fields.city", { _: "City" })}
-          </TableHead>
-          <TableHead>
-            {translate("resources.intake_leads.fields.source", { _: "Source" })}
-          </TableHead>
-          <TableHead>
-            {translate("resources.intake_leads.fields.status", { _: "Status" })}
-          </TableHead>
-          <TableHead>Outreach Progress</TableHead>
-          <TableHead>
-            {translate("ra.action.actions", { _: "Actions" })}
-          </TableHead>
-          <TableHead className="w-12" />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((record) => {
+    <div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: TABLE_GRID_TEMPLATE_COLUMNS,
+          gap: 16,
+          padding: "10px 20px",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          fontSize: 9.5,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#5C6784",
+          fontWeight: 700,
+          alignItems: "center",
+        }}
+      >
+        <div>
+          {translate("resources.intake_leads.fields.business_name", {
+            _: "Business Name",
+          })}
+        </div>
+        <div>
+          {translate("resources.intake_leads.fields.trade_type_id", {
+            _: "Trade Type",
+          })}
+        </div>
+        <div>{translate("resources.intake_leads.fields.city", { _: "City" })}</div>
+        <div>{translate("resources.intake_leads.fields.source", { _: "Source" })}</div>
+        <div>{translate("resources.intake_leads.fields.status", { _: "Status" })}</div>
+        <div>Outreach Progress</div>
+        <div>{translate("ra.action.actions", { _: "Actions" })}</div>
+        <div />
+      </div>
+      <div>
+        {data.map((record, index) => {
           const expanded = expandedIds.includes(record.id);
+          const rowBackground = expanded
+            ? "rgba(77,200,232,0.04)"
+            : hoveredId === record.id
+              ? "rgba(255,255,255,0.02)"
+              : "transparent";
+          const borderBottom =
+            index < data.length - 1 ? "1px solid rgba(255,255,255,0.07)" : "none";
 
           return (
             <RecordContextProvider key={record.id} value={record}>
-              <TableRow
-                className="cursor-pointer hover:bg-primary/5"
+              <div
                 onClick={() => toggleExpanded(record.id)}
+                onMouseEnter={() => setHoveredId(record.id)}
+                onMouseLeave={() =>
+                  setHoveredId((current) =>
+                    current === record.id ? null : current,
+                  )
+                }
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: TABLE_GRID_TEMPLATE_COLUMNS,
+                  gap: 16,
+                  padding: "13px 20px",
+                  borderBottom,
+                  alignItems: "center",
+                  cursor: "pointer",
+                  transition: "background 0.15s",
+                  background: rowBackground,
+                }}
               >
-                <TableCell className="font-medium">{record.business_name}</TableCell>
-                <TableCell>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: "#ECEEF5",
+                    fontFamily: '"Manrope Variable", ui-sans-serif',
+                  }}
+                >
+                  {record.business_name}
+                </div>
+                <div style={{ fontSize: 12.5, color: "#9AA3BE" }}>
                   <ReferenceField
                     source="trade_type_id"
                     reference="trade_types"
                     link={false}
-                    empty={<span className="text-muted-foreground">-</span>}
+                    empty={<span style={{ color: "#5C6784" }}>-</span>}
                   >
-                    <Badge variant="secondary" className="rounded-full">
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        padding: "4px 10px",
+                        borderRadius: 999,
+                        border: "1px solid rgba(255,255,255,0.07)",
+                        background: "rgba(255,255,255,0.04)",
+                        color: "#9AA3BE",
+                        fontSize: 12,
+                      }}
+                    >
                       <TextField source="name" />
-                    </Badge>
+                    </span>
                   </ReferenceField>
-                </TableCell>
-                <TableCell>{record.city || "-"}</TableCell>
-                <TableCell>{record.source || "-"}</TableCell>
-                <TableCell>
+                </div>
+                <div style={{ fontSize: 12.5, color: "#9AA3BE" }}>
+                  {record.city || "-"}
+                </div>
+                <div style={{ fontSize: 12.5, color: "#9AA3BE" }}>
+                  {record.source || "-"}
+                </div>
+                <div style={{ fontSize: 12.5, color: "#9AA3BE" }}>
                   <IntakeStatusBadge status={record.status} />
-                </TableCell>
-                <TableCell>
+                </div>
+                <div style={{ fontSize: 12.5, color: "#9AA3BE" }}>
                   <OutreachProgress record={record} />
-                </TableCell>
-                <TableCell onClick={(event) => event.stopPropagation()}>
-                  <div className="flex gap-2">
-                    <IntakeActionButton
-                      record={record}
-                      onToggleExpanded={toggleExpanded}
-                    />
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <ChevronDown
-                    className={cn(
-                      "ml-auto size-4 text-muted-foreground transition-transform",
-                      expanded && "rotate-180",
-                    )}
+                </div>
+                <div
+                  onClick={(event) => event.stopPropagation()}
+                  style={{ display: "flex", gap: 8 }}
+                >
+                  <IntakeActionButton
+                    record={record}
+                    onToggleExpanded={toggleExpanded}
                   />
-                </TableCell>
-              </TableRow>
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <ChevronDown
+                    style={{
+                      color: "#5C6784",
+                      width: 16,
+                      height: 16,
+                      transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.15s",
+                    }}
+                  />
+                </div>
+              </div>
               {expanded ? (
-                <TableRow className="bg-muted/20 hover:bg-muted/20">
-                  <TableCell colSpan={8} className="p-4">
-                    <IntakeExpandedRow record={record} />
-                  </TableCell>
-                </TableRow>
+                <div
+                  style={{
+                    padding: "0 20px",
+                    borderBottom,
+                    background: "rgba(255,255,255,0.01)",
+                  }}
+                >
+                  <IntakeExpandedRow record={record} />
+                </div>
               ) : null}
             </RecordContextProvider>
           );
         })}
-      </TableBody>
-    </Table>
+      </div>
+    </div>
   );
 };
 
@@ -374,37 +630,57 @@ const OutreachProgress = ({ record }: { record: IntakeLead }) => {
   )}%`;
 
   if (record.status === "uncontacted") {
-    return <div className="text-sm text-muted-foreground">Ready for first touch</div>;
+    return <div style={{ fontSize: 11.5, color: "#5C6784" }}>Ready for first touch</div>;
   }
 
   if (record.status === "in-sequence") {
     return (
-      <div className="space-y-2">
-        <div className="text-sm font-semibold">
+      <div style={{ display: "grid", gap: 6 }}>
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#ECEEF5",
+            fontFamily: '"JetBrains Mono", ui-monospace',
+          }}
+        >
           Touch {record.outreach_sequence_step}/{OUTREACH_STEPS_TOTAL}
         </div>
-        <div className="h-2 w-40 rounded-full bg-muted">
+        <div
+          style={{
+            height: 4,
+            width: 140,
+            borderRadius: 999,
+            background: "rgba(255,255,255,0.06)",
+          }}
+        >
           <div
-            className="h-2 rounded-full bg-primary"
-            style={{ width: progressWidth }}
+            style={{
+              height: 4,
+              borderRadius: 999,
+              background: "#4DC8E8",
+              width: progressWidth,
+            }}
           />
         </div>
-        <div className="text-xs text-muted-foreground">Next: {nextDate}</div>
+        <div style={{ fontSize: 11, color: "#5C6784", marginTop: 2 }}>
+          Next: {nextDate}
+        </div>
       </div>
     );
   }
 
   if (record.status === "engaged") {
-    return <div className="text-sm text-muted-foreground">Reply received</div>;
+    return <div style={{ fontSize: 11.5, color: "#5C6784" }}>Reply received</div>;
   }
 
   if (record.status === "not-interested") {
-    return <div className="text-sm text-muted-foreground">Declined</div>;
+    return <div style={{ fontSize: 11.5, color: "#5C6784" }}>Declined</div>;
   }
 
   if (record.status === "unresponsive") {
     return (
-      <div className="text-sm text-muted-foreground">
+      <div style={{ fontSize: 11.5, color: "#5C6784" }}>
         Touch {record.outreach_sequence_step}/{OUTREACH_STEPS_TOTAL} &middot; Next:{" "}
         {nextDate}
       </div>
@@ -412,14 +688,14 @@ const OutreachProgress = ({ record }: { record: IntakeLead }) => {
   }
 
   if (record.status === "qualified") {
-    return <div className="text-sm text-muted-foreground">Promoted</div>;
+    return <div style={{ fontSize: 11.5, color: "#5C6784" }}>Promoted</div>;
   }
 
   if (record.status === "rejected") {
-    return <div className="text-sm text-muted-foreground">Rejected</div>;
+    return <div style={{ fontSize: 11.5, color: "#5C6784" }}>Rejected</div>;
   }
 
-  return <div className="text-sm text-muted-foreground">-</div>;
+  return <div style={{ fontSize: 11.5, color: "#5C6784" }}>-</div>;
 };
 
 const IntakeActionButton = ({
@@ -430,10 +706,35 @@ const IntakeActionButton = ({
   onToggleExpanded: (id: Identifier) => void;
 }) => {
   const handleExpand = () => onToggleExpanded(record.id);
+  const primaryButtonStyle = {
+    padding: "6px 14px",
+    borderRadius: 7,
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#34D399",
+    background: "rgba(52,211,153,0.1)",
+    border: "1px solid rgba(52,211,153,0.25)",
+    cursor: "pointer",
+  } as const;
+  const secondaryButtonStyle = {
+    padding: "6px 14px",
+    borderRadius: 7,
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#9AA3BE",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.07)",
+    cursor: "pointer",
+  } as const;
+  const disabledButtonStyle = {
+    ...secondaryButtonStyle,
+    opacity: 0.5,
+    cursor: "not-allowed",
+  } as const;
 
   if (record.status === "engaged") {
     return (
-      <div className="[&_button]:border-green-500 [&_button]:bg-green-500 [&_button]:text-white">
+      <div data-intake-promote-button>
         <IntakePromoteButton record={record} />
       </div>
     );
@@ -441,52 +742,41 @@ const IntakeActionButton = ({
 
   if (record.status === "qualified") {
     return (
-      <Button type="button" size="sm" disabled>
+      <button type="button" disabled style={disabledButtonStyle}>
         Promoted
-      </Button>
+      </button>
     );
   }
 
   if (record.status === "rejected") {
     return (
-      <Button type="button" size="sm" disabled>
+      <button type="button" disabled style={disabledButtonStyle}>
         Rejected
-      </Button>
+      </button>
     );
   }
 
   if (record.status === "not-interested") {
     return (
-      <Button type="button" size="sm" variant="outline" onClick={handleExpand}>
+      <button type="button" onClick={handleExpand} style={secondaryButtonStyle}>
         Review Notes
-      </Button>
+      </button>
     );
   }
 
   if (record.status === "uncontacted") {
     return (
-      <Button
-        type="button"
-        size="sm"
-        className="bg-primary text-primary-foreground hover:bg-primary/90"
-        onClick={handleExpand}
-      >
+      <button type="button" onClick={handleExpand} style={primaryButtonStyle}>
         Send Outreach
-      </Button>
+      </button>
     );
   }
 
   if (record.status === "in-sequence" || record.status === "unresponsive") {
     return (
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        className="border-primary/35 bg-primary/12 text-primary hover:bg-primary/20 hover:text-primary"
-        onClick={handleExpand}
-      >
+      <button type="button" onClick={handleExpand} style={secondaryButtonStyle}>
         View Sequence
-      </Button>
+      </button>
     );
   }
 

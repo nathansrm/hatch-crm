@@ -15,7 +15,6 @@ import { DashboardStepper } from "./DashboardStepper";
 import { KPICards } from "./KPICards";
 import { TasksList } from "./TasksList";
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
-import { CapacityPanel } from "./widgets/CapacityPanel";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
 
@@ -234,7 +233,6 @@ const DeliveryView = () => (
     </div>
     <DeliveryKPIs />
     <HandoffQueue />
-    <CapacityPanel />
     <ActiveProjectsGrid />
     <TasksList variant="sales" />
   </div>

@@ -1,5 +1,4 @@
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
-import { CapacityPanel } from "./widgets/CapacityPanel";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
 
@@ -19,7 +18,6 @@ export const DeliveryDashboard = () => {
     >
       <DeliveryKPIs />
       <HandoffQueue />
-      <CapacityPanel />
       <ActiveProjectsGrid />
     </main>
   );

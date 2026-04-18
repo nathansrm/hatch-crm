@@ -3,6 +3,9 @@ import { useGetList, useRedirect, useRefresh, useUpdate } from "ra-core";
 import { useState } from "react";
 
 import type { Deal, DealNote } from "../../types";
+import { calcUtilization } from "./DeliveryKPIs";
+
+const WEEKLY_CAPACITY_HOURS = 40;
 
 type CompanyRecord = {
   id: number;
@@ -156,6 +159,24 @@ export const ActiveProjectsGrid = () => {
       ),
     ) ?? [];
 
+  const totalProjectedHours = activeProjects.reduce(
+    (sum, deal) => sum + (deal.projected_hours ?? 0),
+    0,
+  );
+  const utilization = calcUtilization(activeProjects, WEEKLY_CAPACITY_HOURS);
+  const overCapacity = totalProjectedHours > WEEKLY_CAPACITY_HOURS;
+  const nearCapacity = !overCapacity && utilization >= 85;
+  const capacityColor = overCapacity
+    ? "#F87171"
+    : nearCapacity
+      ? "#F5B84A"
+      : "#34D399";
+  const capacityLabel = overCapacity
+    ? "Over capacity"
+    : nearCapacity
+      ? "Near capacity"
+      : "On track";
+
   const handleToggle = (id: string | number) => {
     setExpandedId(expandedId === id ? null : id);
     setEditMode(null);
@@ -298,6 +319,124 @@ export const ActiveProjectsGrid = () => {
           + New project
         </button>
       </div>
+
+      {/* Capacity meter */}
+      {activeProjects.length > 0 && (
+        <div
+          style={{
+            borderRadius: 12,
+            background: "#0D1424",
+            border: `1px solid ${overCapacity ? "rgba(248,113,113,0.25)" : "var(--line)"}`,
+            padding: "14px 18px",
+            marginBottom: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: 18,
+          }}
+        >
+          <div style={{ flexShrink: 0 }}>
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--fg-3)",
+                fontWeight: 700,
+                marginBottom: 4,
+              }}
+            >
+              Capacity
+            </div>
+            <div
+              style={{
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 15,
+                fontWeight: 700,
+                color: "#ECEEF5",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {totalProjectedHours}h
+              <span style={{ color: "var(--fg-3)", fontWeight: 500 }}>
+                {" "}
+                / {WEEKLY_CAPACITY_HOURS}h weekly
+              </span>
+            </div>
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                height: 6,
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: 3,
+                overflow: "hidden",
+                position: "relative",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: `${Math.min(100, utilization)}%`,
+                  background: `linear-gradient(90deg, ${capacityColor}aa, ${capacityColor})`,
+                  borderRadius: 3,
+                  transition: "width 0.5s",
+                }}
+              />
+              {overCapacity && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    left: "100%",
+                    transform: "translateX(-2px)",
+                    width: 2,
+                    background: "#ECEEF5",
+                    opacity: 0.5,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              flexShrink: 0,
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 13,
+                fontWeight: 700,
+                color: capacityColor,
+              }}
+            >
+              {utilization}%
+            </span>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                color: capacityColor,
+                background: `${capacityColor}14`,
+                border: `1px solid ${capacityColor}33`,
+                padding: "4px 10px",
+                borderRadius: 5,
+              }}
+            >
+              {capacityLabel}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Empty state */}
       {activeProjects.length === 0 && (

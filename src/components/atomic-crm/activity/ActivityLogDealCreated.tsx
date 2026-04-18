@@ -27,7 +27,7 @@ export function ActivityLogDealCreated({
   return (
     <div className="p-0">
       <div className="flex flex-row gap-2 items-start w-full">
-        <div className="w-[20px] h-[20px] bg-gray-300 rounded-full shrink-0" />
+        <div style={{ width: 20, height: 20, borderRadius: 999, flexShrink: 0, background: "rgba(77,200,232,0.15)", border: "1px solid rgba(77,200,232,0.3)" }} />
         <span className="text-muted-foreground text-sm flex-grow">
           {translate(
             isCurrentUser

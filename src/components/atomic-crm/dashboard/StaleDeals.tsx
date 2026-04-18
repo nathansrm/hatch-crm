@@ -1,10 +1,6 @@
-import { AlertTriangle } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 
 import { getDealDecayLevel } from "../deals/dealUtils";
-import { stageColorMap } from "../deals/stageColors";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 
@@ -30,6 +26,13 @@ export const StaleDeals = () => {
 
   if (isPending || staleDeals.length === 0) return null;
 
+  const fmt = (value: number) =>
+    (value ?? 0).toLocaleString(undefined, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    });
+
   return (
     <section
       style={{
@@ -54,38 +57,31 @@ export const StaleDeals = () => {
           marginBottom: 12,
         }}
       >
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-          <AlertTriangle
-            className="mt-0.5"
-            size={16}
-            style={{ color: "#F5B84A", flexShrink: 0 }}
-          />
-          <div>
-            <div
-              style={{
-                fontSize: 10,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#F5B84A",
-                fontWeight: 700,
-                marginBottom: 4,
-              }}
-            >
-              Attention
-            </div>
-            <h3
-              style={{
-                margin: 0,
-                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-                fontSize: 16,
-                fontWeight: 700,
-                letterSpacing: "-0.01em",
-                color: "#ECEEF5",
-              }}
-            >
-              Stale deals
-            </h3>
+        <div>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#F5B84A",
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Attention
           </div>
+          <h3
+            style={{
+              margin: 0,
+              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+              fontSize: 16,
+              fontWeight: 700,
+              letterSpacing: "-0.01em",
+              color: "#ECEEF5",
+            }}
+          >
+            Stale deals
+          </h3>
         </div>
         <span
           style={{
@@ -101,89 +97,92 @@ export const StaleDeals = () => {
           {staleDeals.length} stuck
         </span>
       </div>
-      <Card className="overflow-hidden p-0">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
-            <tr>
-              <th className="px-3 py-2.5 text-left font-medium">Name</th>
-              <th className="px-3 py-2.5 text-left font-medium">Stage</th>
-              <th className="px-3 py-2.5 text-left font-medium">
-                Last Activity
-              </th>
-              <th className="px-3 py-2.5 text-right font-medium">Value</th>
-              <th className="px-3 py-2.5 text-right font-medium">
-                Days Stale
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {staleDeals.map((deal) => {
-              const decay = getDealDecayLevel(deal);
-              const days = Math.floor(
-                (Date.now() - new Date(deal.updated_at).getTime()) / 86400000,
-              );
-              const stage = dealStages.find((item) => item.value === deal.stage);
-              const colors = stageColorMap[deal.stage];
 
-              return (
-                <tr
-                  key={deal.id}
-                  className="cursor-pointer border-b transition-colors hover:bg-muted/50 last:border-b-0"
-                  onClick={() =>
-                    redirect(
-                      `/deals/${deal.id}/show`,
-                      undefined,
-                      undefined,
-                      undefined,
-                      {
-                        _scrollToTop: false,
-                      },
-                    )
-                  }
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {staleDeals.slice(0, 6).map((deal) => {
+          const days = Math.floor(
+            (Date.now() - new Date(deal.updated_at).getTime()) / 86400000,
+          );
+          const decay = getDealDecayLevel(deal);
+          const accentColor = decay === "red" ? "#EF5A6F" : "#F5B84A";
+          const stageMeta = dealStages.find((s) => s.value === deal.stage);
+
+          return (
+            <div
+              key={deal.id}
+              onClick={() => redirect(`/deals/${deal.id}/show`)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px",
+                background: `${accentColor}07`,
+                border: `1px solid ${accentColor}25`,
+                borderRadius: 8,
+                cursor: "pointer",
+                transition: "background 0.15s",
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 9,
+                  flexShrink: 0,
+                  background: `linear-gradient(135deg, ${accentColor}2e 0%, ${accentColor}07 100%)`,
+                  border: `1px solid ${accentColor}44`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  color: accentColor,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{days}</span>
+                <span
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 600,
+                    letterSpacing: "0.12em",
+                    marginTop: 2,
+                  }}
                 >
-                  <td className="px-3 py-2.5">
-                    <span className="font-medium">{deal.name}</span>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <Badge
-                      style={{
-                        backgroundColor: colors?.bg ?? "#F5F5F4",
-                        color: colors?.text ?? "#1A1A2E",
-                        border: `1px solid ${colors?.border ?? "#E5E5E3"}`,
-                      }}
-                    >
-                      {stage?.label ?? deal.stage}
-                    </Badge>
-                  </td>
-                  <td className="px-3 py-2.5 text-muted-foreground">
-                    {days}d ago
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <span className="font-medium">
-                      {(deal.amount ?? 0).toLocaleString("en-US", {
-                        notation: "compact",
-                        style: "currency",
-                        currency,
-                        currencyDisplay: "narrowSymbol",
-                        minimumSignificantDigits: 3,
-                      })}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <span
-                      className={`font-semibold ${
-                        decay === "red" ? "text-red-600" : "text-amber-600"
-                      }`}
-                    >
-                      {days}d
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </Card>
+                  DAYS
+                </span>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#ECEEF5",
+                    marginBottom: 3,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {deal.name}
+                </div>
+                <div style={{ fontSize: 11, color: "#5C6784" }}>
+                  {stageMeta?.label ?? deal.stage}
+                  {" · "}
+                  <span
+                    style={{
+                      fontFamily: '"JetBrains Mono", ui-monospace',
+                      color: "#9AA3BE",
+                    }}
+                  >
+                    {fmt(deal.amount ?? 0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 };

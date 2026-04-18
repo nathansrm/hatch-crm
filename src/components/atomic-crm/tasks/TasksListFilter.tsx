@@ -28,14 +28,60 @@ export const TaskListFilter = ({
   });
 
   const { total } = listContext;
+  const titleLower = title.toLowerCase();
+  const groupTone = titleLower.includes("overdue")
+    ? "#EF5A6F"
+    : titleLower.includes("today")
+      ? "#F5B84A"
+      : titleLower.includes("tomorrow") ||
+          titleLower.includes("week") ||
+            titleLower.includes("upcoming") ||
+              titleLower.includes("later")
+        ? "#4DC8E8"
+        : "#5C6784";
 
   if (!tasks?.length || !total) return null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2">
-        {title}
-      </p>
+    <div style={{ marginBottom: 24 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginBottom: 12,
+        }}
+      >
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 999,
+            background: groupTone,
+          }}
+        />
+        <span
+          style={{
+            fontSize: 10.5,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: groupTone,
+            fontWeight: 700,
+          }}
+        >
+          {title}
+        </span>
+        <span
+          style={{
+            fontFamily: '"JetBrains Mono", ui-monospace',
+            fontSize: 10.5,
+            color: "#5C6784",
+            fontWeight: 600,
+          }}
+        >
+          {total}
+        </span>
+      </div>
       <ResourceContextProvider value="tasks">
         <ListContextProvider value={listContext}>
           <TasksIterator showContact={showContact} />
@@ -49,7 +95,12 @@ export const TaskListFilter = ({
               listContext.setPerPage(listContext.perPage + 10);
               e.preventDefault();
             }}
-            className="text-sm underline hover:no-underline"
+            style={{
+              fontSize: 12,
+              color: "#4DC8E8",
+              cursor: "pointer",
+              textDecoration: "none",
+            }}
           >
             {translate("crm.common.load_more")}
           </a>

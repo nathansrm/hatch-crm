@@ -1,11 +1,10 @@
+import type { CSSProperties } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useRedirect, RecordContextProvider } from "ra-core";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { NumberField } from "@/components/admin/number-field";
 import { SelectField } from "@/components/admin/select-field";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import { useConfigurationContext } from "../root/ConfigurationContext";
@@ -15,10 +14,10 @@ import { getDealDecayLevel, type DecayLevel } from "./dealUtils";
 import { stackInfo } from "./stackInfo";
 import { stageColorMap } from "./stageColors";
 
-const decayStyles: Record<DecayLevel, string> = {
-  none: "",
-  amber: "ring-2 ring-amber-400/60",
-  red: "ring-2 ring-red-500/70",
+const decayStyles: Record<DecayLevel, CSSProperties> = {
+  none: {},
+  amber: { outline: "2px solid rgba(245,184,74,0.5)", outlineOffset: "-2px" },
+  red: { outline: "2px solid rgba(239,90,111,0.6)", outlineOffset: "-2px" },
 };
 
 export const DealCard = ({ deal, index }: { deal: Deal; index: number }) => {
@@ -68,24 +67,45 @@ export const DealCardContent = ({
 
   return (
     <div
-      className="cursor-pointer"
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
       ref={provided?.innerRef}
       onClick={handleClick}
     >
       <RecordContextProvider value={deal}>
-        <Card
-          className={`py-3 transition-all duration-200 ${
-            snapshot?.isDragging
-              ? "opacity-90 transform rotate-1 shadow-lg"
-              : "shadow-sm hover:shadow-md"
-          } ${decayStyles[decay]}`}
-          style={{ borderLeft: `3px solid ${colors?.border ?? "#E5E5E3"}` }}
+        <div
+          style={{
+            background: snapshot?.isDragging ? "#161F36" : "#0D1424",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderLeft: `3px solid ${colors?.border ?? "#4DC8E8"}`,
+            borderRadius: 10,
+            padding: "12px 14px",
+            cursor: "pointer",
+            transition: "all 0.15s",
+            ...decayStyles[decay],
+          }}
         >
-          <CardContent className="px-3 flex flex-col">
-            <div className="flex-1 flex">
-              <p className="flex-1 text-sm font-medium mb-2">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: 4 }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#ECEEF5",
+                  flex: 1,
+                  lineHeight: 1.35,
+                  margin: 0,
+                }}
+              >
                 <ReferenceField
                   source="company_id"
                   reference="companies"
@@ -102,7 +122,14 @@ export const DealCardContent = ({
                 <CompanyAvatar width={20} height={20} />
               </ReferenceField>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p
+              style={{
+                fontSize: 12,
+                color: "#9AA3BE",
+                fontFamily: '"JetBrains Mono", ui-monospace',
+                margin: 0,
+              }}
+            >
               <NumberField
                 source="amount"
                 options={{
@@ -123,9 +150,13 @@ export const DealCardContent = ({
             </p>
             {decay !== "none" && (
               <p
-                className={`text-[11px] mt-1 font-medium ${
-                  decay === "red" ? "text-red-600" : "text-amber-600"
-                }`}
+                style={{
+                  fontSize: 11,
+                  color: decay === "red" ? "#EF5A6F" : "#F5B84A",
+                  fontWeight: 600,
+                  marginTop: 2,
+                  marginBottom: 0,
+                }}
               >
                 {Math.floor(
                   (Date.now() - new Date(deal.updated_at).getTime()) /
@@ -135,50 +166,92 @@ export const DealCardContent = ({
               </p>
             )}
             {hasEnrichment && (
-              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <div
+                style={{
+                  marginTop: 6,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
                 {deal.primary_bottleneck && (
-                  <Badge
-                    variant="outline"
-                    className="max-w-[120px] truncate px-1.5 py-0 text-[10px]"
+                  <span
+                    style={{
+                      fontSize: 10,
+                      padding: "2px 7px",
+                      borderRadius: 4,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      color: "#5C6784",
+                      maxWidth: 120,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                     title={deal.primary_bottleneck}
                   >
                     {getBottleneckLabel(deal.primary_bottleneck)}
-                  </Badge>
+                  </span>
                 )}
                 {visibleStackSlugs.map((slug) => (
-                  <Badge
+                  <span
                     key={slug}
-                    variant="outline"
-                    className="max-w-[110px] truncate px-1.5 py-0 text-[10px]"
+                    style={{
+                      fontSize: 10,
+                      padding: "2px 7px",
+                      borderRadius: 4,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      color: "#5C6784",
+                      maxWidth: 110,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                     title={stackInfo[slug]?.name ?? slug}
                   >
                     {stackInfo[slug]?.name ?? slug}
-                  </Badge>
+                  </span>
                 ))}
                 {remainingStackCount > 0 && (
-                  <span className="text-[10px] text-muted-foreground">
+                  <span style={{ fontSize: 10, color: "#5C6784" }}>
                     +{remainingStackCount} more
                   </span>
                 )}
                 {hasOwnerSignal && (
-                  <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      color: "#9AA3BE",
+                      fontSize: 11,
+                    }}
+                  >
                     {deal.dm_present ? (
-                      <CheckCircle2 size={12} className="text-emerald-500" />
+                      <CheckCircle2
+                        size={12}
+                        style={{ color: "#34D399", flexShrink: 0 }}
+                      />
                     ) : (
-                      <XCircle size={12} className="text-muted-foreground" />
+                      <XCircle
+                        size={12}
+                        style={{ color: "#9AA3BE", flexShrink: 0 }}
+                      />
                     )}
                     {deal.dm_present ? "Owner" : "No Owner"}
                   </span>
                 )}
                 {hasHoursWasted && (
-                  <span className="text-[11px] text-muted-foreground">
+                  <span style={{ color: "#9AA3BE", fontSize: 11 }}>
                     {deal.hours_wasted_per_week}h/wk
                   </span>
                 )}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </RecordContextProvider>
     </div>
   );

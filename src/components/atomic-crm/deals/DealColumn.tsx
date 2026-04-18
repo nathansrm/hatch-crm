@@ -16,44 +16,121 @@ export const DealColumn = ({
   const totalAmount = deals.reduce((sum, deal) => sum + deal.amount, 0);
   const { dealStages, currency } = useConfigurationContext();
   const colors = stageColorMap[stage] ?? {
-    border: "#E5E5E3",
-    bg: "#F5F5F4",
-    text: "#6B6B80",
+    border: "#4DC8E8",
+    bg: "rgba(77,200,232,0.08)",
+    text: "#4DC8E8",
   };
 
   return (
-    <div className="flex-1 pb-8">
+    <div style={{ flex: 1, paddingBottom: 32 }}>
       <div
-        className="flex flex-col items-center"
         style={{
-          borderTop: `3px solid ${colors.border}`,
-          backgroundColor: colors.bg,
-          borderRadius: "8px 8px 0 0",
-          padding: "8px",
+          background: "#0D1424",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12,
+          padding: 14,
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
         }}
       >
-        <h3 className="text-base font-medium" style={{ color: colors.text }}>
-          {findDealLabel(dealStages, stage)}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {totalAmount.toLocaleString("en-US", {
-            notation: "compact",
-            style: "currency",
-            currency,
-            currencyDisplay: "narrowSymbol",
-            minimumSignificantDigits: 3,
-          })}
-        </p>
+        <div style={{ marginBottom: 4 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 6,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+              <span
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: colors.border,
+                  boxShadow: `0 0 8px ${colors.border}`,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: "#ECEEF5",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {findDealLabel(dealStages, stage)}
+              </span>
+            </div>
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", ui-monospace',
+                fontSize: 12,
+                fontWeight: 700,
+                color: colors.border,
+              }}
+            >
+              {deals.length}
+            </span>
+          </div>
+          <div
+            style={{
+              fontSize: 11,
+              color: "#5C6784",
+              fontFamily: '"JetBrains Mono", ui-monospace',
+            }}
+          >
+            {totalAmount.toLocaleString("en-US", {
+              notation: "compact",
+              style: "currency",
+              currency,
+              currencyDisplay: "narrowSymbol",
+              minimumSignificantDigits: 3,
+            })}
+          </div>
+          <div
+            style={{
+              height: 2,
+              background: `linear-gradient(90deg, ${colors.border} 0%, ${colors.border}33 100%)`,
+              borderRadius: 2,
+              marginTop: 8,
+            }}
+          />
+        </div>
       </div>
       <Droppable droppableId={stage}>
         {(droppableProvided, snapshot) => (
           <div
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
-            className={`flex flex-col rounded-2xl mt-2 gap-2 ${
-              snapshot.isDraggingOver ? "bg-muted" : ""
-            }`}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              marginTop: 10,
+              background: snapshot.isDraggingOver
+                ? "rgba(255,255,255,0.02)"
+                : "transparent",
+            }}
           >
+            {deals.length === 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 80,
+                  color: "#3A4362",
+                  fontSize: 12,
+                  border: `1px dashed ${colors.border}22`,
+                  borderRadius: 8,
+                }}
+              >
+                Drop here
+              </div>
+            )}
             {deals.map((deal, index) => (
               <DealCard key={deal.id} deal={deal} index={index} />
             ))}

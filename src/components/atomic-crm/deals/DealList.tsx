@@ -1,18 +1,15 @@
 import type { ReactNode } from "react";
+import { Plus } from "lucide-react";
 import type { InputProps } from "ra-core";
 import { useGetIdentity, useListContext, useTranslate } from "ra-core";
-import { matchPath, useLocation } from "react-router";
+import { Link, matchPath, useLocation } from "react-router";
 import { AutocompleteInput } from "@/components/admin/autocomplete-input";
-import { CreateButton } from "@/components/admin/create-button";
-import { ExportButton } from "@/components/admin/export-button";
 import { List } from "@/components/admin/list";
 import { ReferenceInput } from "@/components/admin/reference-input";
-import { FilterButton } from "@/components/admin/filter-form";
 import { SearchInput } from "@/components/admin/search-input";
 import { SelectInput } from "@/components/admin/select-input";
 
 import { useConfigurationContext } from "../root/ConfigurationContext";
-import { TopToolbar } from "../layout/TopToolbar";
 import { DealArchivedList } from "./DealArchivedList";
 import { DealCreate } from "./DealCreate";
 import { DealEdit } from "./DealEdit";
@@ -56,7 +53,7 @@ const DealList = () => {
       title={false}
       sort={{ field: "index", order: "DESC" }}
       filters={dealFilters}
-      actions={<DealActions />}
+      actions={false}
       pagination={null}
     >
       <DealLayout />
@@ -70,8 +67,9 @@ const DealLayout = () => {
   const matchShow = matchPath("/deals/:id/show", location.pathname);
   const matchEdit = matchPath("/deals/:id", location.pathname);
 
-  const { data, isPending, filterValues } = useListContext();
+  const { data, total, isPending, filterValues } = useListContext();
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
+  const activeDealCount = total ?? data?.length ?? 0;
 
   if (isPending) return null;
   if (!data?.length && !hasFilters)
@@ -85,7 +83,106 @@ const DealLayout = () => {
     );
 
   return (
-    <div className="w-full">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        background: "#060A16",
+        flex: 1,
+        minHeight: 0,
+      }}
+    >
+      <div
+        style={{
+          padding: "24px 28px 20px",
+          background: "#060A16",
+          flexShrink: 0,
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 10.5,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#4DC8E8",
+              fontWeight: 700,
+            }}
+          >
+            Pipeline
+          </span>
+          <span
+            style={{
+              height: 1,
+              width: 24,
+              background: "rgba(77,200,232,0.4)",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontFamily: '"Manrope Variable", ui-sans-serif',
+                fontSize: 26,
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                color: "#ECEEF5",
+              }}
+            >
+              Deals
+            </h1>
+            <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
+              <span
+                style={{
+                  fontFamily: '"JetBrains Mono", ui-monospace',
+                  color: "#ECEEF5",
+                  fontWeight: 600,
+                }}
+              >
+                {activeDealCount}
+              </span>
+              {" active deals"}
+            </p>
+          </div>
+          <Link
+            to="/deals/create"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "7px 14px",
+              background: "#4DC8E8",
+              color: "#061022",
+              borderRadius: 7,
+              fontFamily: '"Manrope Variable", ui-sans-serif',
+              fontWeight: 700,
+              fontSize: 12.5,
+              textDecoration: "none",
+              boxShadow: "0 2px 0 rgba(0,0,0,0.3)",
+            }}
+          >
+            <Plus size={14} strokeWidth={2.5} />
+            Add deal
+          </Link>
+        </div>
+      </div>
       <DealListContent />
       <DealArchivedList />
       <DealCreate open={!!matchCreate} />
@@ -94,14 +191,6 @@ const DealLayout = () => {
     </div>
   );
 };
-
-const DealActions = () => (
-  <TopToolbar>
-    <FilterButton />
-    <ExportButton />
-    <CreateButton label="resources.deals.action.new" />
-  </TopToolbar>
-);
 
 /**
  *

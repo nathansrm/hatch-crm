@@ -1,18 +1,15 @@
-import { AlertTriangle, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
 import { useGetIdentity, useGetList, useTimeout } from "ra-core";
 import { Link } from "react-router";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { getDealDecayLevel } from "../deals/dealUtils";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Contact, ContactNote, Deal, Task } from "../types";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
-import { KPICards } from "./KPICards";
+import { ObsKPIWon, ObsKPIWinRate, ObsAttentionRow } from "./Dashboard";
 import { TasksList } from "./TasksList";
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
@@ -22,7 +19,6 @@ type MobileView = "dashboard" | "delivery";
 
 const TERMINAL_WON_STAGE = "won";
 const TERMINAL_LOST_STAGE = "lost";
-const TERMINAL_STAGES = [TERMINAL_WON_STAGE, TERMINAL_LOST_STAGE];
 
 const getTodayDateKey = () => {
   const date = new Date();
@@ -33,6 +29,16 @@ const getTodayDateKey = () => {
 };
 
 const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
+
+const DARK_BG: React.CSSProperties = { background: "#060A16" };
+
+const GLASS_CARD: React.CSSProperties = {
+  background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+  border: "1px solid rgba(255,255,255,0.07)",
+  boxShadow:
+    "0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 24px rgba(0,0,0,0.35)",
+  borderRadius: 12,
+};
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const { darkModeLogo, lightModeLogo, title } = useConfigurationContext();
@@ -55,7 +61,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
           <h1 className="sr-only">{title}</h1>
         </div>
       </MobileHeader>
-      <MobileContent>{children}</MobileContent>
+      <MobileContent style={DARK_BG}>{children}</MobileContent>
     </>
   );
 };
@@ -79,7 +85,7 @@ const DealSummaryRow = () => {
     return (
       <div className="grid grid-cols-3 gap-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <Card key={index} className="h-24 animate-pulse bg-muted p-4" />
+          <div key={index} style={{ ...GLASS_CARD, height: 96, padding: 16 }} className="animate-pulse" />
         ))}
       </div>
     );
@@ -95,66 +101,61 @@ const DealSummaryRow = () => {
         deal.stage !== TERMINAL_WON_STAGE && deal.stage !== TERMINAL_LOST_STAGE,
     ).length ?? 0;
 
+  const items = [
+    { label: "Won", value: wonCount, color: "#34D399" },
+    { label: "Pending", value: pendingCount, color: "#4DC8E8" },
+    { label: "Lost", value: lostCount, color: "#EF5A6F" },
+  ] as const;
+
   return (
     <div className="grid grid-cols-3 gap-3">
-      <Link to="/deals">
-        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Won
-          </p>
-          <p className="text-2xl font-bold tabular-nums">{wonCount}</p>
-        </Card>
-      </Link>
-      <Link to="/deals">
-        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Pending
-          </p>
-          <p className="text-2xl font-bold tabular-nums">{pendingCount}</p>
-        </Card>
-      </Link>
-      <Link to="/deals">
-        <Card className="gap-2 p-4 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 active:shadow-sm active:translate-y-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Lost
-          </p>
-          <p className="text-2xl font-bold tabular-nums">{lostCount}</p>
-        </Card>
-      </Link>
+      {items.map(({ label, value, color }) => (
+        <Link to="/deals" key={label}>
+          <div
+            style={{
+              ...GLASS_CARD,
+              padding: "14px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+              transition: "transform 0.15s, box-shadow 0.15s",
+            }}
+          >
+            <p
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#5C6784",
+                margin: 0,
+              }}
+            >
+              {label}
+            </p>
+            <p
+              style={{
+                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                fontSize: 26,
+                fontWeight: 700,
+                letterSpacing: "-0.03em",
+                color,
+                margin: 0,
+                lineHeight: 1,
+              }}
+            >
+              {value}
+            </p>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 };
 
-const UrgencyMetricCard = ({
-  borderClassName,
-  icon: Icon,
-  label,
-  value,
-}: {
-  borderClassName: string;
-  icon: typeof Calendar;
-  label: string;
-  value: number;
-}) => (
-  <Card className={`gap-0 border-l-4 p-4 ${borderClassName}`}>
-    <div className="flex items-center gap-3">
-      <Icon className="h-5 w-5 text-muted-foreground" />
-      <div className="space-y-1">
-        <p className="text-2xl font-bold tabular-nums">{value}</p>
-        <p className="text-sm text-muted-foreground">{label}</p>
-      </div>
-    </div>
-  </Card>
-);
-
 const DashboardView = () => {
   const { identity } = useGetIdentity();
   const todayKey = getTodayDateKey();
-
-  const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 500 },
-    filter: { "archived_at@is": null },
-  });
 
   const { data: tasks } = useGetList<Task>(
     "tasks",
@@ -166,54 +167,27 @@ const DashboardView = () => {
     { enabled: identity?.id != null },
   );
 
-  const staleDealsCount =
-    deals
-      ?.filter((deal) => !TERMINAL_STAGES.includes(deal.stage))
-      .filter((deal) => getDealDecayLevel(deal) !== "none").length ?? 0;
   const overdueTasksCount =
     tasks?.filter((task) => {
       const dueDateKey = getDateKey(task.due_date);
       return dueDateKey != null && dueDateKey < todayKey;
     }).length ?? 0;
-  const followUpsDueCount =
-    tasks?.filter((task) => getDateKey(task.due_date) === todayKey).length ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="sr-only">Dashboard</h1>
-      <KPICards variant="overview" columns={2} />
-      <div className="flex flex-col gap-4">
-        <UrgencyMetricCard
-          borderClassName={
-            staleDealsCount > 0
-              ? "border-l-destructive"
-              : "border-l-emerald-500"
-          }
-          icon={AlertTriangle}
-          label="Stale Deals"
-          value={staleDealsCount}
-        />
-        <UrgencyMetricCard
-          borderClassName={
-            overdueTasksCount > 0
-              ? "border-l-destructive"
-              : "border-l-emerald-500"
-          }
-          icon={Clock}
-          label="Overdue Tasks"
-          value={overdueTasksCount}
-        />
-        <UrgencyMetricCard
-          borderClassName={
-            followUpsDueCount > 0
-              ? "border-l-amber-500"
-              : "border-l-emerald-500"
-          }
-          icon={Calendar}
-          label="Follow-ups Due"
-          value={followUpsDueCount}
-        />
+
+      {/* KPI widgets */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <ObsKPIWon />
+        <ObsKPIWinRate />
       </div>
+
+      {/* Attention row — scrollable on narrow viewports */}
+      <div style={{ overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>
+        <ObsAttentionRow overdueTasksCount={overdueTasksCount} />
+      </div>
+
       <DealSummaryRow />
       <DashboardActivityLog />
       <TasksList />
@@ -224,10 +198,10 @@ const DashboardView = () => {
 const DeliveryView = () => (
   <div className="flex flex-col gap-6">
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight">
+      <h1 className="text-2xl font-bold tracking-tight" style={{ color: "#ECEEF5" }}>
         Delivery Dashboard
       </h1>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm" style={{ color: "#5C6784" }}>
         Handoff queue, active project load, and capacity.
       </p>
     </div>
@@ -250,22 +224,44 @@ const ViewSwitcher = ({
   activeView: MobileView;
   onChange: (view: MobileView) => void;
 }) => (
-  <div className="flex gap-2">
-    {(["dashboard", "delivery"] as const).map((view) => (
-      <button
-        key={view}
-        type="button"
-        onClick={() => onChange(view)}
-        className={`flex-1 rounded-full py-1.5 text-sm font-medium transition-colors ${
-          activeView === view
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground hover:text-foreground"
-        }`}
-        aria-current={activeView === view ? "page" : undefined}
-      >
-        {VIEW_LABELS[view]}
-      </button>
-    ))}
+  <div
+    style={{
+      display: "inline-flex",
+      padding: 3,
+      borderRadius: 10,
+      background: "rgba(0,0,0,0.35)",
+      border: "1px solid rgba(255,255,255,0.08)",
+      gap: 2,
+      width: "100%",
+    }}
+  >
+    {(["dashboard", "delivery"] as const).map((view) => {
+      const active = activeView === view;
+      return (
+        <button
+          key={view}
+          type="button"
+          onClick={() => onChange(view)}
+          aria-current={active ? "page" : undefined}
+          style={{
+            flex: 1,
+            padding: "7px 12px",
+            borderRadius: 7,
+            fontSize: 13,
+            fontWeight: 700,
+            color: active ? "#ECEEF5" : "#5C6784",
+            background: active
+              ? "linear-gradient(180deg, rgba(77,200,232,0.22) 0%, rgba(77,200,232,0.05) 100%)"
+              : "transparent",
+            border: active ? "1px solid rgba(77,200,232,0.3)" : "1px solid transparent",
+            cursor: "pointer",
+            transition: "all 0.15s",
+          }}
+        >
+          {VIEW_LABELS[view]}
+        </button>
+      );
+    })}
   </div>
 );
 

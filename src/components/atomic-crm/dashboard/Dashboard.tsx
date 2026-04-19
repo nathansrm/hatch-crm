@@ -504,7 +504,7 @@ const ObsHeroPipeline = () => {
   );
 };
 
-const ObsKPIWon = () => {
+export const ObsKPIWon = () => {
   const { won_goal: WON_GOAL } = useAgencySettings();
   const { data: deals } = useGetList<Deal>(
     "deals",
@@ -663,7 +663,7 @@ const ObsKPIWon = () => {
   );
 };
 
-const ObsKPIWinRate = () => {
+export const ObsKPIWinRate = () => {
   const { data: deals } = useGetList<Deal>(
     "deals",
     UNARCHIVED_DEALS_LIST_PARAMS,
@@ -948,7 +948,7 @@ const ObsInsightCard = ({
   </div>
 );
 
-const ObsAttentionRow = ({
+export const ObsAttentionRow = ({
   overdueTasksCount,
 }: {
   overdueTasksCount: number;

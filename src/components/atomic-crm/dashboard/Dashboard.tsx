@@ -16,6 +16,7 @@ import { useSearchParams } from "react-router";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Contact, ContactNote, Deal, Task } from "../types";
+import { useAgencySettings } from "@/hooks/useAgencySettings";
 import { DeliveryDashboard } from "./DeliveryDashboard";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
@@ -503,9 +504,8 @@ const ObsHeroPipeline = () => {
   );
 };
 
-const WON_GOAL = 10;
-
 const ObsKPIWon = () => {
+  const { won_goal: WON_GOAL } = useAgencySettings();
   const { data: deals } = useGetList<Deal>(
     "deals",
     UNARCHIVED_DEALS_LIST_PARAMS,
@@ -517,13 +517,11 @@ const ObsKPIWon = () => {
 
   const wonDeals = (deals ?? []).filter((d) => d.stage === "won");
   const qtdWon = wonDeals.filter((d) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= qtdStart;
   });
   const priorQWon = wonDeals.filter((d) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= priorQStart && ts < qtdStart;
   });
   const wonCount = qtdWon.length;
@@ -584,7 +582,7 @@ const ObsKPIWon = () => {
         <div
           style={{
             fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-            fontSize: 46,
+            fontSize: 32,
             fontWeight: 700,
             letterSpacing: "-0.03em",
             lineHeight: 1,
@@ -598,69 +596,25 @@ const ObsKPIWon = () => {
             display: "inline-flex",
             alignItems: "center",
             gap: 3,
-            padding: "3px 8px",
+            padding: "5px 12px",
             borderRadius: 5,
             background: wonDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
             border: wonDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
             color: wonDelta >= 0 ? "#34D399" : "#EF5A6F",
-            fontSize: 11,
+            fontSize: 18,
             fontWeight: 700,
           }}
         >
           {wonDelta >= 0 ? (
-            <TrendingUp size={11} strokeWidth={2.5} />
+            <TrendingUp size={15} strokeWidth={2.5} />
           ) : (
-            <TrendingDown size={11} strokeWidth={2.5} />
+            <TrendingDown size={15} strokeWidth={2.5} />
           )}{" "}
           {wonDelta >= 0 ? "+" : ""}{wonDelta}
         </span>
       </div>
       <div style={{ fontSize: 11.5, color: "#5C6784", marginBottom: 16 }}>this quarter</div>
 
-      <div style={{ marginTop: "auto" }}>
-        <div
-          style={{
-            display: "flex",
-            gap: 3,
-            marginBottom: 8,
-          }}
-        >
-          {Array.from({ length: WON_GOAL }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                height: 6,
-                borderRadius: 2,
-                background:
-                  i < filled
-                    ? "linear-gradient(90deg, #4DC8E8 0%, #34D399 100%)"
-                    : "rgba(255,255,255,0.06)",
-                boxShadow: i < filled ? "0 0 6px rgba(77,200,232,0.4)" : "none",
-              }}
-            />
-          ))}
-        </div>
-        <div
-          style={{
-            fontSize: 10.5,
-            color: "#5C6784",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: '"JetBrains Mono", ui-monospace',
-              color: "#ECEEF5",
-            }}
-          >
-            {filled}
-          </span>{" "}
-          of {WON_GOAL} goal
-        </div>
-      </div>
     </section>
   );
 };
@@ -676,8 +630,7 @@ const ObsKPIWinRate = () => {
 
   const isClosed = (d: Deal) => ["won", "lost"].includes(d.stage);
   const inWindow = (d: Deal, from: Date, to: Date) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= from && ts < to;
   };
 
@@ -763,7 +716,7 @@ const ObsKPIWinRate = () => {
             <div
               style={{
                 fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
-                fontSize: 46,
+                fontSize: 32,
                 fontWeight: 700,
                 letterSpacing: "-0.03em",
                 lineHeight: 1,
@@ -778,19 +731,19 @@ const ObsKPIWinRate = () => {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 3,
-                  padding: "3px 8px",
+                  padding: "5px 12px",
                   borderRadius: 5,
                   background: winRateDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
                   border: winRateDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
                   color: winRateDelta >= 0 ? "#34D399" : "#EF5A6F",
-                  fontSize: 11,
+                  fontSize: 18,
                   fontWeight: 700,
                 }}
               >
                 {winRateDelta >= 0 ? (
-                  <TrendingUp size={11} strokeWidth={2.5} />
+                  <TrendingUp size={15} strokeWidth={2.5} />
                 ) : (
-                  <TrendingDown size={11} strokeWidth={2.5} />
+                  <TrendingDown size={15} strokeWidth={2.5} />
                 )}{" "}
                 {winRateDelta >= 0 ? "+" : ""}{winRateDelta}%
               </span>
@@ -831,26 +784,7 @@ const ObsKPIWinRate = () => {
         </div>
       </div>
 
-      <div style={{ marginTop: "auto", paddingTop: 16 }}>
-        <div
-          style={{
-            fontSize: 10.5,
-            color: "#5C6784",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-            marginBottom: 3,
-          }}
-        >
-          Industry avg{" "}
-          <span style={{ fontFamily: '"JetBrains Mono", ui-monospace', color: "#9AA3BE" }}>
-            32%
-          </span>
-        </div>
-        <div style={{ fontSize: 12, color: "#34D399", fontWeight: 600 }}>
-          +{Math.max(0, winRate - 32)} pts above
-        </div>
-      </div>
+      <div style={{ fontSize: 12, color: "#5C6784", marginTop: "auto" }}>{closedDeals.length} deal{closedDeals.length === 1 ? "" : "s"} closed this period</div>
     </section>
   );
 };
@@ -872,7 +806,7 @@ const ObsInsightCard = ({
   cta: string;
   onClick?: () => void;
 }) => (
-  <div
+  <div className="obs-action-btn"
     role={onClick ? "button" : undefined}
     tabIndex={onClick ? 0 : undefined}
     onClick={onClick}
@@ -886,7 +820,6 @@ const ObsInsightCard = ({
       background: `linear-gradient(180deg, ${accent}0F 0%, ${accent}03 100%)`,
       border: `1px solid ${accent}2A`,
       cursor: onClick ? "pointer" : "default",
-      outline: "none",
     }}
   >
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -966,27 +899,6 @@ const ObsAttentionRow = ({
   const d7 = new Date(now); d7.setDate(d7.getDate() - 7);
   const d14 = new Date(now); d14.setDate(d14.getDate() - 14);
 
-  const oldestProposalDeal = (allDeals ?? [])
-    .filter((deal) => deal.stage === "proposal-sent")
-    .map((deal) => ({
-      deal,
-      updatedAt: getValidDate(deal.updated_at),
-    }))
-    .filter(
-      (candidate): candidate is { deal: Deal; updatedAt: Date } =>
-        candidate.updatedAt !== null,
-    )
-    .sort((left, right) => left.updatedAt.getTime() - right.updatedAt.getTime())[0];
-  const staleDaysRaw = oldestProposalDeal
-    ? Math.floor(
-        (now.getTime() - oldestProposalDeal.updatedAt.getTime()) / 86400000,
-      )
-    : null;
-  const staleDeal =
-    oldestProposalDeal !== undefined && staleDaysRaw !== null && staleDaysRaw >= 1
-      ? oldestProposalDeal.deal
-      : null;
-  const staleDays =
     staleDeal !== null && staleDaysRaw !== null ? staleDaysRaw : null;
 
   const thisWeekDeals = (allDeals ?? []).filter((d) => {
@@ -1007,8 +919,8 @@ const ObsAttentionRow = ({
       : null;
 
   return (
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
-    <div
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+    <div className="obs-interactive-row"
       role="button"
       tabIndex={0}
       onClick={() => redirect("/tasks")}
@@ -1023,7 +935,6 @@ const ObsAttentionRow = ({
           "linear-gradient(180deg, rgba(239,90,111,0.10) 0%, rgba(239,90,111,0.02) 100%)",
         border: "1px solid rgba(239,90,111,0.25)",
         cursor: "pointer",
-        outline: "none",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1087,21 +998,6 @@ const ObsAttentionRow = ({
       </div>
     </div>
 
-    <ObsInsightCard
-      accent="#F5B84A"
-      icon={Flame}
-      eyebrow="Watch"
-      title={staleDeal ? staleDeal.name : "No stale deals"}
-      sub={
-        staleDeal && staleDays !== null
-          ? `Proposal sent · waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
-          : "All proposal-sent deals are moving"
-      }
-      cta={staleDeal ? "Follow up" : "Review pipeline"}
-      onClick={() =>
-        redirect(staleDeal ? `/deals/${staleDeal.id}/show` : "/deals")
-      }
-    />
     <ObsInsightCard
       accent="#5EEAD4"
       icon={Zap}
@@ -1307,7 +1203,7 @@ const ObsHotDealsPanel = () => {
               onClick={() => redirect(`/deals/${deal.id}/show`)}
               style={{
                 display: "grid",
-                gridTemplateColumns: "40px 2fr 1.2fr 1fr 1fr 40px",
+                gridTemplateColumns: "40px 2fr 1.2fr 1fr 40px",
                 gap: 16,
                 padding: "16px 0",
                 borderBottom:
@@ -1426,9 +1322,6 @@ const ObsHotDealsPanel = () => {
                 >
                   CAD
                 </div>
-              </div>
-              <div style={{ fontSize: 12, color: "#9AA3BE" }}>
-                {fmtRel(deal.updated_at)}
               </div>
               <div
                 style={{
@@ -1552,6 +1445,9 @@ export const Dashboard = () => {
           gap: 2,
           borderBottom: "1px solid rgba(255,255,255,0.07)",
           background: "#060A16",
+          position: "sticky" as const,
+          top: 0,
+          zIndex: 10,
           flexShrink: 0,
         }}
       >

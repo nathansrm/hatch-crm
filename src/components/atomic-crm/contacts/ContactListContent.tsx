@@ -165,6 +165,7 @@ const ContactItemContent = ({
           style={{ cursor: "pointer", flexShrink: 0 }}
         >
           <div
+            data-slot="checkbox"
             style={{
               width: 16,
               height: 16,

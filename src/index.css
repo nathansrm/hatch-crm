@@ -218,3 +218,30 @@ h1, h2, h3, h4, h5, h6,
 .font-heading {
   font-family: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Interactive row / button affordances */
+.obs-interactive-row {
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.obs-interactive-row:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+.obs-interactive-row:focus-visible {
+  outline: 2px solid #4DC8E8;
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.obs-action-btn {
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.obs-action-btn:hover {
+  background: rgba(77, 200, 232, 0.12) !important;
+  border-color: rgba(77, 200, 232, 0.4) !important;
+}
+.obs-action-btn:focus-visible {
+  outline: 2px solid #4DC8E8;
+  outline-offset: 2px;
+}

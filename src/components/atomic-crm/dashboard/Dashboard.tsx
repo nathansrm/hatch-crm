@@ -48,6 +48,20 @@ const getTodayDateKey = () => {
 
 const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
 
+const getValidDate = (value?: string | null) => {
+  if (!value) return null;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+// Keep these params identical across the dashboard KPI cards so react-admin can
+// dedupe the shared "deals" fetch instead of issuing parallel equivalent queries.
+const UNARCHIVED_DEALS_LIST_PARAMS = {
+  pagination: { page: 1, perPage: 10000 },
+  filter: { "archived_at@is": null },
+} as const;
+
 const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => {
   void totalDeal;
 
@@ -112,7 +126,6 @@ const PIPELINE_STAGES: Array<{ key: string; label: string; color: string }> = [
   { key: "qualified", label: "Qualified", color: "#A78BFA" },
   { key: "audit-scheduled", label: "Audit Scheduled", color: "#5EEAD4" },
   { key: "proposal-sent", label: "Proposal Sent", color: "#F5B84A" },
-  { key: "won", label: "Won", color: "#34D399" },
 ];
 
 type HeroRange = "30d" | "qtd" | "ytd";
@@ -143,30 +156,30 @@ const getRangeWindow = (range: HeroRange) => {
 
 const getHeroEyebrow = (range: HeroRange) => {
   const now = new Date();
-  if (range === "30d") return "Pipeline Value · Last 30 Days";
-  if (range === "ytd") return `Pipeline Value · YTD ${now.getFullYear()}`;
+  if (range === "30d") return "Pipeline Value · Created in Last 30 Days";
+  if (range === "ytd") return `Pipeline Value · Created YTD ${now.getFullYear()}`;
   const q = Math.floor(now.getMonth() / 3) + 1;
-  return `Pipeline Value · Q${q} ${now.getFullYear()}`;
+  return `Pipeline Value · Created in Q${q} ${now.getFullYear()}`;
 };
 
 const ObsHeroPipeline = () => {
   const { currency } = useConfigurationContext();
   const [range, setRange] = useState<HeroRange>("30d");
-  const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
-    filter: { "archived_at@is": null },
-  });
+  const { data: deals } = useGetList<Deal>(
+    "deals",
+    UNARCHIVED_DEALS_LIST_PARAMS,
+  );
 
   const { start, end, priorStart, priorEnd } = getRangeWindow(range);
   const allActiveDeals = (deals ?? []).filter(
     (deal) => !["won", "lost"].includes(deal.stage),
   );
   const activeDeals = allActiveDeals.filter((deal) => {
-    const created = deal.created_at ? new Date(deal.created_at) : null;
+    const created = getValidDate(deal.created_at);
     return created !== null && created >= start && created <= end;
   });
   const priorDeals = allActiveDeals.filter((deal) => {
-    const created = deal.created_at ? new Date(deal.created_at) : null;
+    const created = getValidDate(deal.created_at);
     return created !== null && created >= priorStart && created < priorEnd;
   });
   const pipelineValue = activeDeals.reduce(
@@ -183,7 +196,7 @@ const ObsHeroPipeline = () => {
       : null;
   const totalCount = activeDeals.length;
   const stageStrip = PIPELINE_STAGES.map((stage) => {
-    const matches = allActiveDeals.filter((deal) => deal.stage === stage.key);
+    const matches = activeDeals.filter((deal) => deal.stage === stage.key);
     const value = matches.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
     return { ...stage, count: matches.length, value };
   });
@@ -382,7 +395,7 @@ const ObsHeroPipeline = () => {
                 >
                   {totalCount}
                 </span>{" "}
-                active deals across{" "}
+                open deals created in this period across{" "}
                 <span
                   style={{
                     fontFamily: '"JetBrains Mono", ui-monospace',
@@ -493,10 +506,10 @@ const ObsHeroPipeline = () => {
 const WON_GOAL = 10;
 
 const ObsKPIWon = () => {
-  const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
-    filter: { "archived_at@is": null },
-  });
+  const { data: deals } = useGetList<Deal>(
+    "deals",
+    UNARCHIVED_DEALS_LIST_PARAMS,
+  );
   const now = new Date();
   const qStartMonth = Math.floor(now.getMonth() / 3) * 3;
   const qtdStart = new Date(now.getFullYear(), qStartMonth, 1);
@@ -504,11 +517,13 @@ const ObsKPIWon = () => {
 
   const wonDeals = (deals ?? []).filter((d) => d.stage === "won");
   const qtdWon = wonDeals.filter((d) => {
-    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
+    const ts = getValidDate(d.updated_at);
     return ts !== null && ts >= qtdStart;
   });
   const priorQWon = wonDeals.filter((d) => {
-    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
+    const ts = getValidDate(d.updated_at);
     return ts !== null && ts >= priorQStart && ts < qtdStart;
   });
   const wonCount = qtdWon.length;
@@ -651,17 +666,18 @@ const ObsKPIWon = () => {
 };
 
 const ObsKPIWinRate = () => {
-  const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
-    filter: { "archived_at@is": null },
-  });
+  const { data: deals } = useGetList<Deal>(
+    "deals",
+    UNARCHIVED_DEALS_LIST_PARAMS,
+  );
   const now = new Date();
   const t90 = new Date(now); t90.setDate(t90.getDate() - 90);
   const t180 = new Date(now); t180.setDate(t180.getDate() - 180);
 
   const isClosed = (d: Deal) => ["won", "lost"].includes(d.stage);
   const inWindow = (d: Deal, from: Date, to: Date) => {
-    const ts = d.updated_at ? new Date(d.updated_at) : null;
+    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
+    const ts = getValidDate(d.updated_at);
     return ts !== null && ts >= from && ts < to;
   };
 
@@ -941,40 +957,51 @@ const ObsAttentionRow = ({
   overdueTasksCount: number;
 }) => {
   const redirect = useRedirect();
-  const { data: allDeals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
-    filter: { "archived_at@is": null },
-  });
+  const { data: allDeals } = useGetList<Deal>(
+    "deals",
+    UNARCHIVED_DEALS_LIST_PARAMS,
+  );
 
   const now = new Date();
   const d7 = new Date(now); d7.setDate(d7.getDate() - 7);
   const d14 = new Date(now); d14.setDate(d14.getDate() - 14);
 
-  const staleDeal = (allDeals ?? [])
-    .filter((d) => d.stage === "proposal-sent")
-    .sort(
-      (a, b) =>
-        new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime(),
-    )[0];
-  const staleDays = staleDeal
+  const oldestProposalDeal = (allDeals ?? [])
+    .filter((deal) => deal.stage === "proposal-sent")
+    .map((deal) => ({
+      deal,
+      updatedAt: getValidDate(deal.updated_at),
+    }))
+    .filter(
+      (candidate): candidate is { deal: Deal; updatedAt: Date } =>
+        candidate.updatedAt !== null,
+    )
+    .sort((left, right) => left.updatedAt.getTime() - right.updatedAt.getTime())[0];
+  const staleDaysRaw = oldestProposalDeal
     ? Math.floor(
-        (now.getTime() - new Date(staleDeal.updated_at).getTime()) / 86400000,
+        (now.getTime() - oldestProposalDeal.updatedAt.getTime()) / 86400000,
       )
     : null;
+  const staleDeal =
+    oldestProposalDeal !== undefined && staleDaysRaw !== null && staleDaysRaw >= 1
+      ? oldestProposalDeal.deal
+      : null;
+  const staleDays =
+    staleDeal !== null && staleDaysRaw !== null ? staleDaysRaw : null;
 
-  const thisWeekLeads = (allDeals ?? []).filter((d) => {
-    const created = d.created_at ? new Date(d.created_at) : null;
+  const thisWeekDeals = (allDeals ?? []).filter((d) => {
+    const created = getValidDate(d.created_at);
     return created !== null && created >= d7;
   });
-  const priorWeekLeads = (allDeals ?? []).filter((d) => {
-    const created = d.created_at ? new Date(d.created_at) : null;
+  const priorWeekDeals = (allDeals ?? []).filter((d) => {
+    const created = getValidDate(d.created_at);
     return created !== null && created >= d14 && created < d7;
   });
-  const intakePct =
-    priorWeekLeads.length > 0
+  const newDealsPct =
+    priorWeekDeals.length > 0
       ? Math.round(
-          ((thisWeekLeads.length - priorWeekLeads.length) /
-            priorWeekLeads.length) *
+          ((thisWeekDeals.length - priorWeekDeals.length) /
+            priorWeekDeals.length) *
             100,
         )
       : null;
@@ -1066,25 +1093,27 @@ const ObsAttentionRow = ({
       eyebrow="Watch"
       title={staleDeal ? staleDeal.name : "No stale deals"}
       sub={
-        staleDeal
+        staleDeal && staleDays !== null
           ? `Proposal sent · waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
           : "All proposal-sent deals are moving"
       }
-      cta="Follow up"
-      onClick={() => redirect("/deals")}
+      cta={staleDeal ? "Follow up" : "Review pipeline"}
+      onClick={() =>
+        redirect(staleDeal ? `/deals/${staleDeal.id}/show` : "/deals")
+      }
     />
     <ObsInsightCard
       accent="#5EEAD4"
       icon={Zap}
       eyebrow="Trend"
-      title={`${thisWeekLeads.length} new lead${thisWeekLeads.length === 1 ? "" : "s"} this week`}
+      title={`${thisWeekDeals.length} new deal${thisWeekDeals.length === 1 ? "" : "s"} this week`}
       sub={
-        intakePct !== null
-          ? `${intakePct >= 0 ? "+" : ""}${intakePct}% vs last week`
+        newDealsPct !== null
+          ? `${newDealsPct >= 0 ? "+" : ""}${newDealsPct}% vs last week`
           : "First week of data"
       }
-      cta="Review intake"
-      onClick={() => redirect("/contacts")}
+      cta="Review deals"
+      onClick={() => redirect("/deals")}
     />
   </div>
   );

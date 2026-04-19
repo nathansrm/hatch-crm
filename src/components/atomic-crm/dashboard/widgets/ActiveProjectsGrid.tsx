@@ -302,6 +302,7 @@ export const ActiveProjectsGrid = () => {
           </h3>
         </div>
         <button
+          type="button"
           onClick={() => redirect("/deals/create")}
           style={{
             display: "inline-flex",

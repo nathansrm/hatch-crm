@@ -14,19 +14,23 @@ const DEFAULTS: AgencySettings = {
 let _cache: AgencySettings | null = null;
 let _promise: Promise<AgencySettings> | null = null;
 
-function fetchAgencySettings(): Promise<AgencySettings> {
-  if (_promise) return _promise;
-  _promise = getSupabaseClient()
-    .from("agency_settings")
-    .select("weekly_capacity_hours, won_goal")
-    .eq("id", 1)
-    .single()
-    .then(({ data }) => {
-      const result = data ? (data as AgencySettings) : DEFAULTS;
-      _cache = result;
-      return result;
-    })
-    .catch(() => DEFAULTS);
+async function fetchAgencySettings(): Promise<AgencySettings> {
+  try {
+    const { data } = await getSupabaseClient()
+      .from("agency_settings")
+      .select("weekly_capacity_hours, won_goal")
+      .eq("id", 1)
+      .single();
+    const result = data ? (data as AgencySettings) : DEFAULTS;
+    _cache = result;
+    return result;
+  } catch {
+    return DEFAULTS;
+  }
+}
+
+function getAgencySettings(): Promise<AgencySettings> {
+  if (!_promise) _promise = fetchAgencySettings();
   return _promise;
 }
 
@@ -35,7 +39,7 @@ export const useAgencySettings = (): AgencySettings => {
 
   useEffect(() => {
     if (_cache) return;
-    fetchAgencySettings().then((result) => setSettings(result));
+    getAgencySettings().then((result) => setSettings(result));
   }, []);
 
   return settings;

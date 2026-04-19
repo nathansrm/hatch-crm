@@ -6,6 +6,7 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
+    "ignoreDeprecations": "5.0",
     // Shadcn
     "baseUrl": ".",
     "paths": {

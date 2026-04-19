@@ -104,21 +104,21 @@ export const DealsChart = memo(() => {
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#22C55E" }}
+              style={{ background: "var(--chart-2)" }}
             />
             {wonLabel}
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#4AC1E0" }}
+              style={{ background: "var(--color-chart-pending)" }}
             />
             Pending
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#EF4444" }}
+              style={{ background: "var(--destructive)" }}
             />
             {lostLabel}
           </span>
@@ -129,7 +129,11 @@ export const DealsChart = memo(() => {
           data={months}
           indexBy="date"
           keys={["won", "pending", "lost"]}
-          colors={["#22C55E", "#4AC1E0", "#EF4444"]}
+          colors={[
+            "var(--chart-2)",
+            "var(--color-chart-pending)",
+            "var(--destructive)",
+          ]}
           margin={{ top: 10, right: 10, bottom: 30, left: 55 }}
           padding={0.3}
           valueScale={{

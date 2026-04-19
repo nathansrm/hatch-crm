@@ -37,6 +37,25 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+      "max-lines": [
+        "warn",
+        { max: 400, skipBlankLines: true, skipComments: true },
+      ],
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "JSXAttribute[name.name='style'] Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+          message:
+            "Raw hex colors are not allowed in JSX style props. Use a CSS variable via var(--token-name). See src/index.css for available tokens.",
+        },
+        {
+          selector:
+            "JSXAttribute[name.name='style'] TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}/]",
+          message:
+            "Raw hex colors are not allowed in JSX style props. Use a CSS variable via var(--token-name). See src/index.css for available tokens.",
+        },
+      ],
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

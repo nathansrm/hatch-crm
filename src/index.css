@@ -90,6 +90,38 @@
   --avatar-7: oklch(0.88 0.09 10);
   --avatar-8: oklch(0.92 0.08 80);
   --avatar-9: oklch(0.86 0.09 270);
+  /* Dashboard pending-series cyan for deals chart */
+  --color-chart-pending: #4AC1E0;
+  /* Dashboard deep card surface */
+  --color-surface-deep: #0D1424;
+  /* Dashboard deeper card surface stop */
+  --color-surface-deeper: #080C1A;
+  /* Dashboard hero gradient top surface */
+  --color-surface-hero-top: #0F2554;
+  /* Dashboard hero gradient middle surface */
+  --color-surface-hero-mid: #0A1B3D;
+  /* Dashboard hero gradient base surface */
+  --color-surface-hero-base: #060D22;
+  /* Dashboard high-contrast cyan text on dark chips */
+  --color-text-contrast-dark: #061022;
+  /* Pipeline summary fallback text on light surfaces */
+  --color-text-emphasis: #1F2937;
+  /* Dashboard primary text on dark surfaces */
+  --color-text-primary-dark: #ECEEF5;
+  /* Dashboard muted text on dark surfaces */
+  --color-text-muted-dark: #5C6784;
+  /* Dashboard subtle secondary text on dark surfaces */
+  --color-text-subtle-dark: #9AA3BE;
+  /* Dashboard warning state color */
+  --color-state-warning-dark: #F5B84A;
+  /* Dashboard success state color */
+  --color-state-success-dark: #34D399;
+  /* Dashboard danger state color */
+  --color-state-danger-dark: #EF5A6F;
+  /* Dashboard violet accent color */
+  --color-accent-violet-dark: #A78BFA;
+  /* Dashboard teal accent color */
+  --color-accent-teal-dark: #5EEAD4;
 }
 
 .dark {

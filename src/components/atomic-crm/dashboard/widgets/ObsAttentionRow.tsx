@@ -66,7 +66,7 @@ export const ObsAttentionRow = ({
             placeItems: "center",
             background: "rgba(239,90,111,0.18)",
             border: "1px solid rgba(239,90,111,0.35)",
-            color: "#EF5A6F",
+            color: "var(--color-state-danger-dark)",
             flexShrink: 0,
           }}
         >
@@ -78,7 +78,7 @@ export const ObsAttentionRow = ({
               fontSize: 10,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#EF5A6F",
+              color: "var(--color-state-danger-dark)",
               fontWeight: 700,
               marginBottom: 2,
             }}
@@ -90,7 +90,7 @@ export const ObsAttentionRow = ({
               fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 14.5,
               fontWeight: 700,
-              color: "#ECEEF5",
+              color: "var(--color-text-primary-dark)",
               letterSpacing: "-0.01em",
             }}
           >
@@ -101,14 +101,21 @@ export const ObsAttentionRow = ({
           </div>
         </div>
       </div>
-      <div style={{ fontSize: 11.5, color: "#9AA3BE" }}>{overdueTasksCount > 0 ? "Blocking active deals" : "All clear"}</div>
+      <div
+        style={{
+          fontSize: 11.5,
+          color: "var(--color-text-subtle-dark)",
+        }}
+      >
+        {overdueTasksCount > 0 ? "Blocking active deals" : "All clear"}
+      </div>
       <div
         style={{
           display: "inline-flex",
           alignItems: "center",
           gap: 4,
           fontSize: 11.5,
-          color: "#EF5A6F",
+          color: "var(--color-state-danger-dark)",
           fontWeight: 700,
           marginTop: "auto",
         }}
@@ -118,7 +125,7 @@ export const ObsAttentionRow = ({
     </div>
 
     <ObsInsightCard
-      accent="#5EEAD4"
+      accent="var(--color-accent-teal-dark)"
       icon={Zap}
       eyebrow="Trend"
       title={`${thisWeekDeals.length} new deal${thisWeekDeals.length === 1 ? "" : "s"} this week`}

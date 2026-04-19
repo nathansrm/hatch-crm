@@ -12,9 +12,6 @@ import {
 } from "ra-core";
 import { useCallback, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { toSlug } from "@/lib/toSlug";
 import { ArrayInput } from "@/components/admin/array-input";
 import { AutocompleteInput } from "@/components/admin/autocomplete-input";

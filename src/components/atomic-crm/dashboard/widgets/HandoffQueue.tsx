@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { useState } from "react";
 import { useGetList, useRefresh, useUpdate } from "ra-core";
 
 import { useConfigurationContext } from "../../root/ConfigurationContext";
@@ -206,27 +207,16 @@ const HandoffCard = ({
   </div>
 );
 
-const MOCK_CARDS: Omit<HandoffCardProps, "onStart" | "isUpdating">[] = [
-  {
-    companyName: "Northshore Builders Inc.",
-    dealName: "Kitchen and basement renovation package",
-    dealValue: "$125,000",
-    wonDate: "Apr 17",
-    salesName: "Nathan",
-  },
-  {
-    companyName: "Oakville Custom Homes",
-    dealName: "Design-build upgrade package",
-    dealValue: "$87,000",
-    wonDate: "Apr 14",
-    salesName: "Nathan",
-  },
-];
-
 export const HandoffQueue = () => {
   const { currency } = useConfigurationContext();
   const refresh = useRefresh();
   const [update, { isPending: isUpdating }] = useUpdate<Deal>();
+  const [expandedCard, setExpandedCard] = useState<string | number | null>(
+    null,
+  );
+  const [projectedHoursInputs, setProjectedHoursInputs] = useState<
+    Record<string | number, string>
+  >({});
 
   const { data: deals, isPending: dealsPending } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
@@ -260,15 +250,13 @@ export const HandoffQueue = () => {
       (deal) => deal.stage === "won" && deal.project_status == null,
     ) ?? [];
 
-  const handleStartOnboarding = (deal: Deal) => {
-    const projectedHoursInput = window.prompt(
-      "How many projected hours for this project?",
-    );
-    const trimmedInput = projectedHoursInput?.trim() ?? "";
+  const handleConfirmOnboarding = (deal: Deal) => {
+    const rawInput = projectedHoursInputs[deal.id] ?? "";
+    const trimmed = rawInput.trim();
     const projectedHours =
-      trimmedInput === "" ? undefined : Number.parseFloat(trimmedInput);
+      trimmed === "" ? undefined : Number.parseFloat(trimmed);
 
-    if (trimmedInput !== "" && Number.isNaN(projectedHours)) {
+    if (trimmed !== "" && Number.isNaN(projectedHours)) {
       return;
     }
 
@@ -286,12 +274,19 @@ export const HandoffQueue = () => {
         },
         previousData: deal,
       },
-      { onSuccess: () => refresh() },
+      {
+        onSuccess: () => {
+          setExpandedCard(null);
+          setProjectedHoursInputs((prev) => {
+            const next = { ...prev };
+            delete next[deal.id];
+            return next;
+          });
+          refresh();
+        },
+      },
     );
   };
-
-  const showMocks = pendingHandoffDeals.length === 0;
-  const badgeCount = showMocks ? MOCK_CARDS.length : pendingHandoffDeals.length;
 
   return (
     <section
@@ -352,50 +347,145 @@ export const HandoffQueue = () => {
             borderRadius: 5,
           }}
         >
-          {badgeCount} pending
+          {pendingHandoffDeals.length} pending
         </span>
       </div>
 
-      {/* Card grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-          gap: 14,
-          padding: 18,
-        }}
-      >
-        {showMocks
-          ? MOCK_CARDS.map((row, i) => (
-              <HandoffCard key={`mock-${i}`} {...row} />
-            ))
-          : pendingHandoffDeals.map((deal) => {
-              const companyName =
-                (deal.company_id != null
-                  ? companyNameById.get(deal.company_id as number)
-                  : undefined) ?? "Unknown";
-              const salesName =
-                (deal.sales_id != null
-                  ? salesNameById.get(deal.sales_id as number | string)
-                  : undefined) ?? "Unassigned";
-              const amountValue =
-                typeof deal.amount === "number" && Number.isFinite(deal.amount)
-                  ? deal.amount
-                  : 0;
-              return (
+      {/* Card grid or empty state */}
+      {pendingHandoffDeals.length === 0 ? (
+        <div
+          style={{
+            fontSize: 13,
+            color: "#5C6784",
+            padding: 24,
+            textAlign: "center",
+          }}
+        >
+          No deals pending handoff. Win a deal in the pipeline to start a
+          project here.
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gap: 14,
+            padding: 18,
+          }}
+        >
+          {pendingHandoffDeals.map((deal) => {
+            const companyName =
+              (deal.company_id != null
+                ? companyNameById.get(deal.company_id as number)
+                : undefined) ?? "Unknown";
+            const salesName =
+              (deal.sales_id != null
+                ? salesNameById.get(deal.sales_id as number | string)
+                : undefined) ?? "Unassigned";
+            const amountValue =
+              typeof deal.amount === "number" && Number.isFinite(deal.amount)
+                ? deal.amount
+                : 0;
+            const isExpanded = expandedCard === deal.id;
+            return (
+              <div key={deal.id} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <HandoffCard
-                  key={deal.id}
                   companyName={companyName}
                   dealName={deal.name ?? "Untitled deal"}
                   dealValue={formatCurrency(amountValue, currency)}
                   wonDate={safeFormatDate(deal.updated_at)}
                   salesName={salesName}
-                  onStart={() => handleStartOnboarding(deal)}
+                  onStart={
+                    isExpanded
+                      ? undefined
+                      : () => setExpandedCard(deal.id)
+                  }
                   isUpdating={isUpdating}
                 />
-              );
-            })}
-      </div>
+                {isExpanded && (
+                  <div
+                    style={{
+                      background: "#0D1424",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      padding: "14px 16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#5C6784",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      Projected hours (optional)
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      value={projectedHoursInputs[deal.id] ?? ""}
+                      onChange={(e) =>
+                        setProjectedHoursInputs((prev) => ({
+                          ...prev,
+                          [deal.id]: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. 120"
+                      style={{
+                        background: "#111A2E",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 6,
+                        padding: "8px 12px",
+                        fontSize: 14,
+                        color: "#ECEEF5",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <button
+                        onClick={() => handleConfirmOnboarding(deal)}
+                        disabled={isUpdating}
+                        style={{
+                          padding: "8px 18px",
+                          borderRadius: 7,
+                          fontWeight: 700,
+                          fontSize: 12.5,
+                          background: "var(--hatch-cyan)",
+                          color: "#061022",
+                          border: "none",
+                          cursor: isUpdating ? "not-allowed" : "pointer",
+                          opacity: isUpdating ? 0.6 : 1,
+                        }}
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => setExpandedCard(null)}
+                        style={{
+                          padding: "8px 14px",
+                          borderRadius: 7,
+                          fontSize: 12.5,
+                          background: "transparent",
+                          color: "#5C6784",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

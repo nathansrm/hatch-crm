@@ -493,7 +493,7 @@ export const ActiveProjectsGrid = () => {
               }}
             >
               {/* Row header — clickable */}
-              <div
+              <div className="obs-interactive-row"
                 role="button"
                 tabIndex={0}
                 onClick={() => handleToggle(deal.id)}
@@ -515,7 +515,6 @@ export const ActiveProjectsGrid = () => {
                   padding: "16px 22px",
                   alignItems: "center",
                   cursor: "pointer",
-                  outline: "none",
                 }}
               >
                 {/* Company + deal */}
@@ -705,7 +704,7 @@ export const ActiveProjectsGrid = () => {
                             gap: 8,
                           }}
                         >
-                          <textarea
+                          <textarea className="obs-action-btn"
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             rows={4}
@@ -720,7 +719,6 @@ export const ActiveProjectsGrid = () => {
                               lineHeight: 1.5,
                               padding: "8px 10px",
                               resize: "vertical",
-                              outline: "none",
                               fontFamily: "inherit",
                             }}
                           />
@@ -871,7 +869,7 @@ export const ActiveProjectsGrid = () => {
                         gap: 8,
                       }}
                     >
-                      <input
+                      <input className="obs-action-btn"
                         type="number"
                         min={0}
                         max={100}
@@ -887,7 +885,6 @@ export const ActiveProjectsGrid = () => {
                           fontSize: 14,
                           fontFamily: "JetBrains Mono, monospace",
                           padding: "6px 10px",
-                          outline: "none",
                         }}
                       />
                       <span

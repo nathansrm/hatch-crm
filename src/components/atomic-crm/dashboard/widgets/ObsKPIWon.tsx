@@ -85,7 +85,7 @@ export const ObsKPIWon = () => {
             fontWeight: 700,
             letterSpacing: "-0.03em",
             lineHeight: 1,
-            color: "var(--card)",
+            color: "var(--color-text-pure-white)",
           }}
         >
           {wonCount}

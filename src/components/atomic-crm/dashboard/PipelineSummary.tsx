@@ -90,9 +90,9 @@ export const PipelineSummary = memo(
                       style={{
                         width: `${(count / totalDeals) * 100}%`,
                         backgroundColor:
-                          stageColorMap[value]?.bg ?? "var(--secondary)",
+                          stageColorMap[value]?.bg ?? "var(--color-pipeline-fallback-bg)",
                         borderColor:
-                          stageColorMap[value]?.border ?? "var(--border)",
+                          stageColorMap[value]?.border ?? "var(--color-pipeline-fallback-border)",
                       }}
                     />
                   </div>
@@ -118,8 +118,8 @@ export const PipelineSummary = memo(
                   className="flex cursor-pointer flex-col items-center rounded-md p-2"
                   style={{
                     backgroundColor:
-                      stageColorMap[value]?.bg ?? "var(--secondary)",
-                    borderLeft: `3px solid ${stageColorMap[value]?.border ?? "var(--border)"}`,
+                      stageColorMap[value]?.bg ?? "var(--color-pipeline-fallback-bg)",
+                    borderLeft: `3px solid ${stageColorMap[value]?.border ?? "var(--color-pipeline-fallback-border)"}`,
                   }}
                 >
                   <span

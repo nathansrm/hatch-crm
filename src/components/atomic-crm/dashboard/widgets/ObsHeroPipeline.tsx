@@ -204,7 +204,7 @@ export const ObsHeroPipeline = () => {
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
                 lineHeight: 0.95,
-                color: "var(--card)",
+                color: "var(--color-text-pure-white)",
                 textShadow:
                   "0 2px 20px color-mix(in srgb, var(--chart-1) 20%, transparent)",
               }}

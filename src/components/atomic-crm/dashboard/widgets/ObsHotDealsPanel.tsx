@@ -126,7 +126,7 @@ export const ObsHotDealsPanel = () => {
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: "-0.02em",
-              color: "var(--card)",
+              color: "var(--color-text-pure-white)",
             }}
           >
             Top 5 opportunities{" "}
@@ -301,7 +301,7 @@ export const ObsHotDealsPanel = () => {
                       "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                     fontSize: 18,
                     fontWeight: 700,
-                    color: "var(--card)",
+                    color: "var(--color-text-pure-white)",
                     letterSpacing: "-0.01em",
                     lineHeight: 1.1,
                   }}

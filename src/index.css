@@ -122,6 +122,14 @@
   --color-accent-violet-dark: #A78BFA;
   /* Dashboard teal accent color */
   --color-accent-teal-dark: #5EEAD4;
+  /* Pure white text on dark dashboard surfaces (do not use --card — flips in dark) */
+  --color-text-pure-white: #FFFFFF;
+  /* Deals chart lost series red (distinct from --destructive which shifts in dark) */
+  --color-chart-lost: #EF4444;
+  /* Pipeline summary light-surface fallback backgrounds */
+  --color-pipeline-fallback-bg: #F5F5F4;
+  /* Pipeline summary light-surface fallback borders */
+  --color-pipeline-fallback-border: #E5E5E3;
 }
 
 .dark {

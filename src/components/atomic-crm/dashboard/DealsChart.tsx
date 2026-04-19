@@ -118,7 +118,7 @@ export const DealsChart = memo(() => {
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "var(--destructive)" }}
+              style={{ background: "var(--color-chart-lost)" }}
             />
             {lostLabel}
           </span>
@@ -132,7 +132,7 @@ export const DealsChart = memo(() => {
           colors={[
             "var(--chart-2)",
             "var(--color-chart-pending)",
-            "var(--destructive)",
+            "var(--color-chart-lost)",
           ]}
           margin={{ top: 10, right: 10, bottom: 30, left: 55 }}
           padding={0.3}

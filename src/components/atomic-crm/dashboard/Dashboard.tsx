@@ -16,6 +16,7 @@ import { useSearchParams } from "react-router";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Contact, ContactNote, Deal, Task } from "../types";
+import { useAgencySettings } from "@/hooks/useAgencySettings";
 import { DeliveryDashboard } from "./DeliveryDashboard";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
@@ -503,9 +504,8 @@ const ObsHeroPipeline = () => {
   );
 };
 
-const WON_GOAL = 10;
-
 const ObsKPIWon = () => {
+  const { won_goal: WON_GOAL } = useAgencySettings();
   const { data: deals } = useGetList<Deal>(
     "deals",
     UNARCHIVED_DEALS_LIST_PARAMS,
@@ -517,13 +517,11 @@ const ObsKPIWon = () => {
 
   const wonDeals = (deals ?? []).filter((d) => d.stage === "won");
   const qtdWon = wonDeals.filter((d) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= qtdStart;
   });
   const priorQWon = wonDeals.filter((d) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= priorQStart && ts < qtdStart;
   });
   const wonCount = qtdWon.length;
@@ -676,8 +674,7 @@ const ObsKPIWinRate = () => {
 
   const isClosed = (d: Deal) => ["won", "lost"].includes(d.stage);
   const inWindow = (d: Deal, from: Date, to: Date) => {
-    // TODO: Replace this updated_at proxy with a real deals.closed_at column.
-    const ts = getValidDate(d.updated_at);
+    const ts = getValidDate(d.closed_at ?? d.updated_at);
     return ts !== null && ts >= from && ts < to;
   };
 

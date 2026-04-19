@@ -144,6 +144,7 @@ export type Deal = {
   project_progress_pct?: number;
   project_started_at?: string;
   follow_up_date?: string;
+  closed_at?: string;
 } & Pick<RaRecord, "id">;
 
 export type DealNote = {

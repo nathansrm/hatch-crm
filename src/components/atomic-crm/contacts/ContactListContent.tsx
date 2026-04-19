@@ -12,7 +12,6 @@ import { type MouseEvent, useCallback, useRef } from "react";
 import { Link } from "react-router";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
@@ -21,7 +20,6 @@ import { Status } from "../misc/Status";
 import { formatRelativeDate } from "../misc/RelativeDate";
 import type { Contact } from "../types";
 import { Avatar } from "./Avatar";
-import { TagsList } from "./TagsList";
 
 export const ContactListContent = () => {
   const translate = useTranslate();
@@ -68,7 +66,7 @@ export const ContactListContent = () => {
   );
 
   if (isPending) {
-    return <Skeleton className="w-full h-9" />;
+    return null;
   }
 
   if (error) {
@@ -76,7 +74,26 @@ export const ContactListContent = () => {
   }
 
   return (
-    <div className="md:divide-y">
+    <div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2.5fr 1.5fr 1fr 1fr",
+          gap: 16,
+          padding: "10px 20px",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          fontSize: 9.5,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#5C6784",
+          fontWeight: 700,
+        }}
+      >
+        <div>Name</div>
+        <div>Company</div>
+        <div>Role</div>
+        <div>Last Activity</div>
+      </div>
       {contacts.map((contact) => (
         <RecordContextProvider key={contact.id} value={contact}>
           <ContactItemContent
@@ -87,10 +104,15 @@ export const ContactListContent = () => {
       ))}
 
       {contacts.length === 0 && (
-        <div className="p-4">
-          <div className="text-muted-foreground">
-            {translate("resources.contacts.empty.title", {})}
-          </div>
+        <div
+          style={{
+            padding: "40px 20px",
+            textAlign: "center",
+            color: "#5C6784",
+            fontSize: 13,
+          }}
+        >
+          {translate("resources.contacts.empty.title", {})}
         </div>
       )}
     </div>
@@ -104,80 +126,166 @@ const ContactItemContent = ({
   contact: Contact;
   handleToggleItem: (id: Identifier, event: MouseEvent) => void;
 }) => {
-  const translate = useTranslate();
   const [locale = "en"] = useLocaleState();
   const { selectedIds } = useListContext<Contact>();
-  const lastActivity = contact.last_seen
-    ? formatRelativeDate(contact.last_seen, locale)
-    : null;
+  const isSelected = selectedIds.includes(contact.id);
+  const primaryEmail =
+    contact.email_jsonb?.find((email) => email.type === "Work")?.email ??
+    contact.email_jsonb?.[0]?.email;
 
   return (
-    <div className="flex flex-row items-center pl-2 pr-4 py-2 hover:bg-muted transition-colors first:rounded-t-xl last:rounded-b-xl">
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "2.5fr 1.5fr 1fr 1fr",
+        gap: 16,
+        padding: "13px 20px",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        alignItems: "center",
+        cursor: "pointer",
+        transition: "background 0.15s",
+        background: isSelected ? "rgba(77,200,232,0.04)" : "transparent",
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.background = "transparent";
+        }
+      }}
+    >
       <div
-        className="px-4 py-3 flex items-center cursor-pointer"
-        onClick={(e) => handleToggleItem(contact.id, e)}
+        style={{ display: "flex", alignItems: "center", gap: 12 }}
       >
-        <Checkbox
-          className="cursor-pointer"
-          checked={selectedIds.includes(contact.id)}
-        />
+        <div
+          onClick={(e) => handleToggleItem(contact.id, e)}
+          style={{ cursor: "pointer", flexShrink: 0 }}
+        >
+          <div
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 4,
+              background: isSelected ? "#4DC8E8" : "transparent",
+              border: isSelected
+                ? "1.5px solid #4DC8E8"
+                : "1.5px solid rgba(255,255,255,0.2)",
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            {isSelected && (
+              <span
+                style={{
+                  color: "#061022",
+                  fontSize: 10,
+                  fontWeight: 900,
+                  lineHeight: 1,
+                }}
+              >
+                {"\u2713"}
+              </span>
+            )}
+          </div>
+        </div>
+        <Link
+          to={`/contacts/${contact.id}/show`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            textDecoration: "none",
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          <Avatar />
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 13.5,
+                fontWeight: 600,
+                color: "#ECEEF5",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {`${contact.first_name} ${contact.last_name ?? ""}`}
+            </div>
+            <div
+              style={{
+                marginTop: 2,
+                fontSize: 12,
+                color: primaryEmail ? "#9AA3BE" : "#5C6784",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {primaryEmail || "\u2014"}
+            </div>
+          </div>
+        </Link>
       </div>
       <Link
         to={`/contacts/${contact.id}/show`}
-        className="flex-1 flex flex-row gap-4 items-center"
+        style={{ textDecoration: "none", minWidth: 0 }}
       >
-        <Avatar />
-        <div className="flex-1 min-w-0">
-          <div className="font-medium">
-            {`${contact.first_name} ${contact.last_name ?? ""}`}
-          </div>
-          {contact.title || contact.company_id != null || contact.nb_tasks ? (
-            <div className="text-sm text-muted-foreground">
-              {contact.title && contact.company_id != null
-                ? `${translate("resources.contacts.position_at", {
-                    title: contact.title,
-                  })} `
-                : contact.title}
-              {contact.company_id != null && (
-                <ReferenceField
-                  source="company_id"
-                  reference="companies"
-                  link={false}
-                >
-                  <TextField source="name" />
-                </ReferenceField>
-              )}
-              {contact.nb_tasks
-                ? ` - ${translate("crm.common.task_count", {
-                    smart_count: contact.nb_tasks,
-                  })}`
-                : ""}
-              &nbsp;&nbsp;
-              <TagsList />
-            </div>
-          ) : null}
-          {contact.lead_source_id != null && (
-            <div className="text-sm text-muted-foreground">
-              <span>Lead Source: </span>
-              <ReferenceField
-                source="lead_source_id"
-                reference="lead_sources"
-                link={false}
-              >
-                <TextField source="name" />
-              </ReferenceField>
-            </div>
-          )}
-        </div>
-        {contact.last_seen && (
-          <div className="flex flex-col items-end gap-1 ml-4">
-            <div className="text-sm text-muted-foreground" title={contact.last_seen}>
-              {translate("crm.common.last_activity_with_date", {
-                date: lastActivity,
-              })}
-            </div>
-            <Status status={contact.status} showLabel />
-          </div>
+        {contact.company_id != null ? (
+          <span style={{ fontSize: 12.5, color: "#9AA3BE" }}>
+            <ReferenceField
+              source="company_id"
+              reference="companies"
+              link={false}
+            >
+              <TextField source="name" />
+            </ReferenceField>
+          </span>
+        ) : (
+          <span style={{ color: "#5C6784", fontSize: 12 }}>{"\u2014"}</span>
+        )}
+      </Link>
+      <Link
+        to={`/contacts/${contact.id}/show`}
+        style={{ textDecoration: "none", minWidth: 0 }}
+      >
+        <span
+          style={{
+            fontSize: 12,
+            color: contact.title ? "#9AA3BE" : "#5C6784",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "block",
+          }}
+        >
+          {contact.title || "\u2014"}
+        </span>
+      </Link>
+      <Link
+        to={`/contacts/${contact.id}/show`}
+        style={{ textDecoration: "none", minWidth: 0 }}
+      >
+        {contact.last_seen ? (
+          <span
+            style={{
+              fontSize: 11.5,
+              color: "#5C6784",
+              fontFamily: '"JetBrains Mono", ui-monospace',
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "block",
+            }}
+          >
+            {formatRelativeDate(contact.last_seen, locale)}
+          </span>
+        ) : (
+          <span style={{ color: "#5C6784", fontSize: 11.5 }}>{"\u2014"}</span>
         )}
       </Link>
     </div>

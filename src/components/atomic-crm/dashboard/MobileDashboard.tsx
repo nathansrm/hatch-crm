@@ -15,7 +15,6 @@ import { DashboardStepper } from "./DashboardStepper";
 import { KPICards } from "./KPICards";
 import { TasksList } from "./TasksList";
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
-import { CapacityPanel } from "./widgets/CapacityPanel";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
 
@@ -53,7 +52,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
             alt=""
             aria-hidden="true"
           />
-          <h1 className="text-xl font-semibold">{title}</h1>
+          <h1 className="sr-only">{title}</h1>
         </div>
       </MobileHeader>
       <MobileContent>{children}</MobileContent>
@@ -234,7 +233,6 @@ const DeliveryView = () => (
     </div>
     <DeliveryKPIs />
     <HandoffQueue />
-    <CapacityPanel />
     <ActiveProjectsGrid />
     <TasksList variant="sales" />
   </div>

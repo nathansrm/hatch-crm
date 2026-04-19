@@ -51,6 +51,8 @@ import sales from "../sales";
 import { SettingsPageMobile } from "../settings/SettingsPageMobile";
 import { ProfilePage } from "../settings/ProfilePage";
 import { SettingsPage } from "../settings/SettingsPage";
+import { ReportsPage } from "../reports/ReportsPage";
+import { ResourcesPage } from "../resources/ResourcesPage";
 import {
   CONFIGURATION_STORE_KEY,
   type ConfigurationContextValue,
@@ -267,6 +269,8 @@ const DesktopAdmin = (
         <Route path={ProfilePage.path} element={<ProfilePage />} />
         <Route path={SettingsPage.path} element={<SettingsPage />} />
         <Route path={ImportPage.path} element={<ImportPage />} />
+        <Route path={ReportsPage.path} element={<ReportsPage />} />
+        <Route path={ResourcesPage.path} element={<ResourcesPage />} />
       </CustomRoutes>
       <Resource name="deals" {...deals} />
       <Resource name="contacts" {...contacts} />

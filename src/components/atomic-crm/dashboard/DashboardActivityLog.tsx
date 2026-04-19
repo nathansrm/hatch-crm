@@ -1,32 +1,58 @@
-import { Clock } from "lucide-react";
-import { useTranslate } from "ra-core";
-import { Card } from "@/components/ui/card";
-import { useIsMobile } from "@/hooks/use-mobile";
-
 import { ActivityLog } from "../activity/ActivityLog";
 
 export function DashboardActivityLog() {
-  const isMobile = useIsMobile();
-  const translate = useTranslate();
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center mb-4 md:mb-2">
-        <div className="mr-3 flex">
-          <Clock className="text-muted-foreground w-6 h-6" />
+    <section
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 12,
+        padding: "20px 22px",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          paddingBottom: 12,
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          marginBottom: 12,
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#5C6784",
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Live
+          </div>
+          <h3
+            style={{
+              margin: 0,
+              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+              fontSize: 16,
+              fontWeight: 700,
+              letterSpacing: "-0.01em",
+              color: "#ECEEF5",
+            }}
+          >
+            Team activity
+          </h3>
         </div>
-        <h2 className="text-xl font-semibold text-muted-foreground">
-          {translate("crm.dashboard.latest_activity", {
-            _: "Latest Activity",
-          })}
-        </h2>
       </div>
-      {isMobile ? (
-        <ActivityLog pageSize={10} />
-      ) : (
-        <Card className="mb-2 p-6">
-          <ActivityLog pageSize={10} />
-        </Card>
-      )}
-    </div>
+      <ActivityLog pageSize={8} />
+    </section>
   );
 }

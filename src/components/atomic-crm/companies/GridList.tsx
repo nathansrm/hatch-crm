@@ -10,8 +10,9 @@ const LoadingGridList = () => (
   <div className="flex flex-wrap w-full gap-1">
     {times(15, (key) => (
       <div
-        className="h-[200px] w-[230px] flex flex-col bg-gray-200"
+        className="h-[200px] w-[230px] flex flex-col"
         key={key}
+        style={{ background: "#1E2842" }}
       />
     ))}
   </div>
@@ -25,9 +26,11 @@ const LoadedGridList = () => {
 
   return (
     <div
-      className="w-full gap-2 grid"
       style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        width: "100%",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+        gap: 14,
       }}
     >
       {data.map((record) => (
@@ -37,7 +40,14 @@ const LoadedGridList = () => {
       ))}
 
       {data.length === 0 && (
-        <div className="p-2">
+        <div
+          style={{
+            padding: "40px 20px",
+            textAlign: "center",
+            color: "#5C6784",
+            fontSize: 13,
+          }}
+        >
           {translate("resources.companies.empty.title", {
             _: "No companies found",
           })}

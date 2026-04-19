@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { MoreVertical } from "lucide-react";
 import {
+  useRecordContext,
   useDeleteWithUndoController,
   useGetRecordRepresentation,
   useNotify,
@@ -9,9 +10,6 @@ import {
 } from "ra-core";
 import { useEffect, useState } from "react";
 import { ReferenceField } from "@/components/admin/reference-field";
-import { DateField } from "@/components/admin/date-field";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,12 +24,13 @@ import { TaskEditSheet } from "./TaskEditSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Task = ({
-  task,
+  task: taskProp,
   showContact,
 }: {
   task: TData;
   showContact?: boolean;
 }) => {
+  const task = useRecordContext<TData>() ?? taskProp;
   const isMobile = useIsMobile();
   const { taskTypes } = useConfigurationContext();
   const notify = useNotify();
@@ -40,6 +39,7 @@ export const Task = ({
   const getContactRepresentation = useGetRecordRepresentation("contacts");
 
   const [openEdit, setOpenEdit] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
@@ -86,61 +86,145 @@ export const Task = ({
     queryClient.invalidateQueries({ queryKey: ["tasks", "getList"] });
   }, [queryClient, isUpdatePending, isSuccess, variables]);
 
+  const checkboxId = `checkbox-list-${task.id}`;
   const labelId = `checkbox-list-label-${task.id}`;
+  const taskTypeLabel =
+    task.type && task.type !== "none"
+      ? (taskTypes.find((taskType) => taskType.value === task.type)?.label ??
+        task.type)
+      : null;
+  const taskText = task.text;
+  const isDone = !!task.done_date;
+  const formattedDueDate = task.due_date
+    ? new Date(task.due_date).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      })
+    : null;
 
   return (
     <>
-      <div className="flex items-start justify-between">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 14,
+          padding: "14px 16px",
+          borderRadius: 10,
+          transition: "all 0.15s",
+          background: isHovered ? "#111A2E" : "#0D1424",
+          border: "1px solid rgba(255,255,255,0.07)",
+          opacity: isDone ? 0.5 : 1,
+          marginBottom: 8,
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div
-          className="flex items-start gap-2 flex-1"
+          style={{ display: "flex", alignItems: "flex-start", gap: 14, flex: 1 }}
           onClick={isMobile ? handleCheck() : undefined}
         >
-          <Checkbox
-            id={labelId}
-            checked={!!task.done_date}
-            onCheckedChange={handleCheck()}
+          <button
+            type="button"
+            id={checkboxId}
+            aria-labelledby={labelId}
+            aria-pressed={isDone}
             disabled={isUpdatePending}
-            className="mt-1"
-          />
-          <div className={`flex-grow ${task.done_date ? "line-through" : ""}`}>
-            <div className="text-sm">
-              {task.type && task.type !== "none" && (
-                <>
-                  <span className="font-semibold text-sm">
-                    {(() => {
-                      const matchedTaskType = taskTypes.find(
-                        (taskType) => taskType.value === task.type,
-                      );
-                      return matchedTaskType
-                        ? matchedTaskType.label
-                        : task.type;
-                    })()}
-                  </span>
-                  &nbsp;
-                </>
-              )}
-              {task.text}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleCheck()();
+            }}
+            style={{
+              width: 20,
+              height: 20,
+              flexShrink: 0,
+              borderRadius: 6,
+              marginTop: 2,
+              background: isDone ? "#34D399" : "rgba(255,255,255,0.03)",
+              border: isDone
+                ? "1.5px solid #34D399"
+                : "1.5px solid rgba(255,255,255,0.2)",
+              display: "grid",
+              placeItems: "center",
+              cursor: isUpdatePending ? "default" : "pointer",
+              transition: "all 0.15s",
+              color: "white",
+              fontSize: 11,
+            }}
+          >
+            {isDone ? "\u2713" : null}
+          </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              id={labelId}
+              style={{
+                fontSize: 13.5,
+                fontWeight: 500,
+                color: isDone ? "#5C6784" : "#ECEEF5",
+                textDecoration: isDone ? "line-through" : "none",
+                marginBottom: 4,
+                lineHeight: 1.35,
+              }}
+            >
+              {taskText}
             </div>
-            <div className="text-sm text-muted-foreground">
-              {translate("resources.tasks.fields.due_short")}
-              &nbsp;
-              <DateField source="due_date" record={task} showDate showTime />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                fontSize: 11.5,
+                flexWrap: "wrap",
+              }}
+            >
+              {formattedDueDate ? (
+                <span
+                  style={{
+                    color: "#9AA3BE",
+                    fontFamily: '"JetBrains Mono", ui-monospace',
+                    fontWeight: 600,
+                  }}
+                >
+                  {formattedDueDate}
+                </span>
+              ) : null}
+              {taskTypeLabel ? (
+                <span
+                  style={{
+                    fontSize: 10,
+                    padding: "2px 7px",
+                    borderRadius: 4,
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    color: "#5C6784",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  {taskTypeLabel}
+                </span>
+              ) : null}
               {showContact && (
                 <ReferenceField<TData, Contact>
                   source="contact_id"
                   reference="contacts"
                   record={task}
                   link="show"
-                  className="inline text-sm text-muted-foreground"
+                  className="inline"
                   render={({ referenceRecord }) => {
                     if (!referenceRecord) return null;
                     return (
-                      <>
-                        {" "}
+                      <span
+                        style={{
+                          color: "#9AA3BE",
+                          fontSize: 11.5,
+                        }}
+                      >
                         {translate("resources.tasks.regarding_contact", {
                           name: getContactRepresentation(referenceRecord),
                         })}
-                      </>
+                      </span>
                     );
                   }}
                 />
@@ -151,18 +235,36 @@ export const Task = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-5 pr-0! size-8 cursor-pointer"
+            <button
+              type="button"
               aria-label={translate("resources.tasks.actions.title")}
+              style={{
+                width: 32,
+                height: 32,
+                display: "grid",
+                placeItems: "center",
+                borderRadius: 8,
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(255,255,255,0.02)",
+                color: "#9AA3BE",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               <MoreVertical className="size-5 md:size-4" />
-            </Button>
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent
+            align="end"
+            style={{
+              background: "#0D1424",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#ECEEF5",
+            }}
+          >
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
+              style={{ color: "#ECEEF5" }}
               onClick={() => {
                 update("tasks", {
                   id: task.id,
@@ -179,6 +281,7 @@ export const Task = ({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
+              style={{ color: "#ECEEF5" }}
               onClick={() => {
                 update("tasks", {
                   id: task.id,
@@ -195,12 +298,14 @@ export const Task = ({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
+              style={{ color: "#ECEEF5" }}
               onClick={handleEdit}
             >
               {translate("ra.action.edit")}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
+              style={{ color: "#ECEEF5" }}
               onClick={handleDelete}
             >
               {translate("ra.action.delete")}

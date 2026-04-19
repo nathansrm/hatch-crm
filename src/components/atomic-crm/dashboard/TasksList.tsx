@@ -1,6 +1,4 @@
-import { CheckSquare } from "lucide-react";
-import { useGetIdentity, useGetList, useTranslate } from "ra-core";
-import { Card } from "@/components/ui/card";
+import { useGetIdentity, useGetList } from "ra-core";
 
 import type { Task } from "../types";
 import { AddTask } from "../tasks/AddTask";
@@ -35,7 +33,6 @@ type TasksListProps = {
 };
 
 export const TasksList = ({ variant = "default" }: TasksListProps) => {
-  const translate = useTranslate();
   const { identity, isPending: identityPending } = useGetIdentity();
   const { data: tasks, isPending: tasksPending } = useGetList<Task>(
     "tasks",
@@ -58,37 +55,71 @@ export const TasksList = ({ variant = "default" }: TasksListProps) => {
 
   if (variant === "default") {
     return (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center">
-          <div className="mr-3 flex">
-            <CheckSquare className="h-6 w-6 text-muted-foreground" />
+      <section
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          borderRadius: 12,
+          padding: "20px 22px",
+          background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            paddingBottom: 12,
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+            marginBottom: 12,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "#5C6784",
+                fontWeight: 700,
+                marginBottom: 4,
+              }}
+            >
+              Today
+            </div>
+            <h3
+              style={{
+                margin: 0,
+                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
+                fontSize: 16,
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+                color: "#ECEEF5",
+              }}
+            >
+              Up next
+            </h3>
           </div>
-          <h2 className="flex-1 text-xl font-semibold text-muted-foreground">
-            {translate("crm.dashboard.upcoming_tasks", {
-              _: "Upcoming Tasks",
-            })}
-          </h2>
           <AddTask display="icon" selectContact />
         </div>
-        <Card className="mb-2 p-4">
-          <TasksListContent />
-        </Card>
-      </div>
+        <TasksListContent />
+      </section>
     );
   }
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
-        <div className="mr-3 flex">
-          <CheckSquare className="h-6 w-6 text-muted-foreground" />
-        </div>
         <h2 className="flex-1 text-xl font-semibold text-muted-foreground">
           Tasks
         </h2>
         <AddTask display="icon" selectContact />
       </div>
-      <Card className="mb-2 p-4">
+      <div className="mb-2 rounded-xl border bg-card p-4 text-card-foreground shadow-sm">
         {identityPending || tasksPending ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -160,7 +191,7 @@ export const TasksList = ({ variant = "default" }: TasksListProps) => {
             </div>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

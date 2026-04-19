@@ -27,19 +27,75 @@ export const CompanyList = () => {
 };
 
 const CompanyListLayout = () => {
-  const { data, isPending, filterValues } = useListContext();
+  const { data, isPending, filterValues, total } = useListContext();
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
 
   if (isPending) return null;
   if (!data?.length && !hasFilters) return <CompanyEmpty />;
 
   return (
-    <div className="w-full flex flex-row gap-8">
-      <CompanyListFilter />
-      <div className="flex flex-col flex-1 gap-4">
-        <ImageList />
+    <>
+      <div style={{ padding: "0 0 20px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 10.5,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#4DC8E8",
+              fontWeight: 700,
+            }}
+          >
+            Accounts
+          </span>
+          <span
+            style={{
+              height: 1,
+              width: 24,
+              background: "rgba(77,200,232,0.4)",
+            }}
+          />
+        </div>
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: '"Manrope Variable", ui-sans-serif',
+            fontSize: 26,
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "#ECEEF5",
+            marginBottom: 4,
+          }}
+        >
+          Companies
+        </h1>
+        <p style={{ margin: 0, color: "#9AA3BE", fontSize: 13 }}>
+          <span
+            style={{
+              fontFamily: '"JetBrains Mono", ui-monospace',
+              fontWeight: 600,
+              color: "#ECEEF5",
+            }}
+          >
+            {total ?? 0}
+          </span>
+          {" accounts tracked"}
+        </p>
       </div>
-    </div>
+      <div className="w-full flex flex-row gap-8">
+        <CompanyListFilter />
+        <div className="flex flex-col flex-1 gap-4">
+          <ImageList />
+        </div>
+      </div>
+    </>
   );
 };
 

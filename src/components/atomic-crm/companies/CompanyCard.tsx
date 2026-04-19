@@ -1,4 +1,3 @@
-import { Handshake } from "lucide-react";
 import { Link } from "react-router";
 import {
   useCreatePath,
@@ -8,12 +7,10 @@ import {
   useTranslate,
 } from "ra-core";
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
-import { Card } from "@/components/ui/card";
 
 import { Avatar as ContactAvatar } from "../contacts/Avatar";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Company } from "../types";
-import { CompanyAvatar } from "./CompanyAvatar";
 
 export const CompanyCard = (props: { record?: Company }) => {
   const createPath = useCreatePath();
@@ -40,38 +37,166 @@ export const CompanyCard = (props: { record?: Company }) => {
         id: record.id,
         type: "show",
       })}
-      className="no-underline"
+      style={{ textDecoration: "none" }}
     >
-      <Card className="h-[200px] flex flex-col justify-between p-4 hover:bg-muted border-l-3 border-l-primary">
-        <div className="flex flex-col items-center gap-1">
-          <CompanyAvatar />
-          <div className="text-center mt-1">
-            <h6 className="text-sm font-medium">{record.name}</h6>
-            <p className="text-xs text-muted-foreground">{subtitle}</p>
+      <div
+        style={{
+          borderRadius: 12,
+          padding: "18px 20px",
+          background: "#0D1424",
+          border: "1px solid rgba(255,255,255,0.07)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+          transition: "all 0.15s",
+          cursor: "pointer",
+          textDecoration: "none",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#111A2E";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "#0D1424";
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            marginBottom: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: "rgba(77,200,232,0.12)",
+              border: "1px solid rgba(77,200,232,0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: '"Manrope Variable", ui-sans-serif',
+              fontWeight: 800,
+              fontSize: 14,
+              color: "#4DC8E8",
+            }}
+          >
+            {record.name
+              .split(" ")
+              .map((w: string) => w[0])
+              .slice(0, 2)
+              .join("")}
           </div>
+          {record.nb_deals != null && record.nb_deals > 0 && (
+            <span
+              style={{
+                fontSize: 9.5,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#34D399",
+                background: "rgba(52,211,153,0.1)",
+                border: "1px solid rgba(52,211,153,0.25)",
+                padding: "3px 8px",
+                borderRadius: 4,
+              }}
+            >
+              Active
+            </span>
+          )}
         </div>
-        <div className="flex flex-row w-full justify-between gap-2">
-          <div className="flex items-center">
-            {record.nb_contacts ? (
-              <ReferenceManyField reference="contacts" target="company_id">
-                <AvatarGroupIterator />
-              </ReferenceManyField>
-            ) : null}
-          </div>
-          {record.nb_deals ? (
-            <div className="flex items-center ml-2 gap-0.5 bg-muted px-2 py-0.5 rounded-full">
-              <Handshake className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{record.nb_deals}</span>
-              <span className="text-xs text-muted-foreground">
-                {translate("resources.deals.name", {
-                  smart_count: record.nb_deals ?? 0,
-                  _: "Deal |||| Deals",
+        <div
+          style={{
+            fontFamily: '"Manrope Variable", ui-sans-serif',
+            fontSize: 15,
+            fontWeight: 700,
+            color: "#ECEEF5",
+            marginBottom: 3,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {record.name}
+        </div>
+        <div style={{ fontSize: 12, color: "#5C6784", marginBottom: 12 }}>
+          {subtitle}
+        </div>
+        <div
+          style={{
+            height: 1,
+            background: "rgba(255,255,255,0.07)",
+            marginBottom: 12,
+          }}
+        />
+        <div style={{ display: "flex", gap: 20 }}>
+          {record.nb_deals != null && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span
+                aria-label={translate("resources.deals.name", {
+                  smart_count: record.nb_deals,
+                  _: "Deals",
                 })}
+                style={{
+                  fontSize: 9.5,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "#5C6784",
+                  fontWeight: 700,
+                }}
+              >
+                Deals
+              </span>
+              <span
+                style={{
+                  fontFamily: '"Manrope Variable", ui-sans-serif',
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#ECEEF5",
+                }}
+              >
+                {record.nb_deals}
               </span>
             </div>
-          ) : null}
+          )}
+          {record.nb_contacts != null && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span
+                aria-label={translate("resources.contacts.name", {
+                  smart_count: record.nb_contacts,
+                  _: "Contacts",
+                })}
+                style={{
+                  fontSize: 9.5,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "#5C6784",
+                  fontWeight: 700,
+                }}
+              >
+                Contacts
+              </span>
+              <span
+                style={{
+                  fontFamily: '"Manrope Variable", ui-sans-serif',
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#ECEEF5",
+                }}
+              >
+                {record.nb_contacts}
+              </span>
+            </div>
+          )}
         </div>
-      </Card>
+        {record.nb_contacts ? (
+          <div style={{ marginTop: 12 }}>
+            <ReferenceManyField reference="contacts" target="company_id">
+              <AvatarGroupIterator />
+            </ReferenceManyField>
+          </div>
+        ) : null}
+      </div>
     </Link>
   );
 };

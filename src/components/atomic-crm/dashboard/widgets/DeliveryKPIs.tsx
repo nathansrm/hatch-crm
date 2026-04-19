@@ -1,6 +1,7 @@
 import { useGetList } from "ra-core";
 
 import type { Deal } from "../../types";
+import { useAgencySettings } from "@/hooks/useAgencySettings";
 
 const ACTIVE_PROJECT_STATUSES = ["on_track", "at_risk", "behind"] as const;
 
@@ -27,6 +28,7 @@ const obsCardStyle = {
 };
 
 export const DeliveryKPIs = () => {
+  const { weekly_capacity_hours: weeklyCapacityFromSettings } = useAgencySettings();
   const { data: deals, isPending } = useGetList<Deal>("deals", {
     pagination: { page: 1, perPage: 10000 },
   });
@@ -57,7 +59,7 @@ export const DeliveryKPIs = () => {
         (deal.project_status ?? "") as (typeof ACTIVE_PROJECT_STATUSES)[number],
       ),
     ) ?? [];
-  const weeklyCapacity = 40; // TODO: fetch from agency_settings table in live mode
+  const weeklyCapacity = weeklyCapacityFromSettings;
   const capacityUtilization = calcUtilization(activeProjects, weeklyCapacity);
   const capacityColor =
     capacityUtilization < 85

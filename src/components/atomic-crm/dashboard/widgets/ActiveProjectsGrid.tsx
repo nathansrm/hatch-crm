@@ -4,8 +4,7 @@ import { useState } from "react";
 
 import type { Deal, DealNote } from "../../types";
 import { calcUtilization } from "./DeliveryKPIs";
-
-const WEEKLY_CAPACITY_HOURS = 40;
+import { useAgencySettings } from "@/hooks/useAgencySettings";
 
 type CompanyRecord = {
   id: number;
@@ -121,6 +120,7 @@ type EditMode =
   | null;
 
 export const ActiveProjectsGrid = () => {
+  const { weekly_capacity_hours: WEEKLY_CAPACITY_HOURS } = useAgencySettings();
   const redirect = useRedirect();
   const refresh = useRefresh();
   const [update, { isPending: isUpdating }] = useUpdate<Deal>();

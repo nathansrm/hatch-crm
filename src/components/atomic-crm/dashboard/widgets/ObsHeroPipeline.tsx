@@ -13,22 +13,10 @@ import {
 } from "./dashboardUtils";
 
 const PIPELINE_STAGES: Array<{ key: string; label: string; color: string }> = [
-  { key: "lead", label: "Lead", color: "var(--chart-1)" },
-  {
-    key: "qualified",
-    label: "Qualified",
-    color: "var(--color-accent-violet-dark)",
-  },
-  {
-    key: "audit-scheduled",
-    label: "Audit Scheduled",
-    color: "var(--color-accent-teal-dark)",
-  },
-  {
-    key: "proposal-sent",
-    label: "Proposal Sent",
-    color: "var(--color-state-warning-dark)",
-  },
+  { key: "lead", label: "Lead", color: "#4DC8E8" },
+  { key: "qualified", label: "Qualified", color: "#A78BFA" },
+  { key: "audit-scheduled", label: "Audit Scheduled", color: "#5EEAD4" },
+  { key: "proposal-sent", label: "Proposal Sent", color: "#F5B84A" },
 ];
 
 export const ObsHeroPipeline = () => {
@@ -86,9 +74,8 @@ export const ObsHeroPipeline = () => {
         borderRadius: 14,
         padding: "26px 28px",
         background:
-          "radial-gradient(ellipse at top right, color-mix(in srgb, var(--chart-1) 18%, transparent) 0%, transparent 55%), linear-gradient(180deg, var(--color-surface-hero-top) 0%, var(--color-surface-hero-mid) 55%, var(--color-surface-hero-base) 100%)",
-        border:
-          "1px solid color-mix(in srgb, var(--chart-1) 22%, transparent)",
+          "radial-gradient(ellipse at top right, rgba(77,200,232,0.18) 0%, transparent 55%), linear-gradient(180deg, #0F2554 0%, #0A1B3D 55%, #060D22 100%)",
+        border: "1px solid rgba(77,200,232,0.22)",
         boxShadow:
           "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 40px rgba(0,0,0,0.4)",
         minHeight: 220,
@@ -127,8 +114,8 @@ export const ObsHeroPipeline = () => {
               width: 6,
               height: 6,
               borderRadius: 999,
-              background: "var(--chart-1)",
-              boxShadow: "0 0 12px var(--chart-1)",
+              background: "#4DC8E8",
+              boxShadow: "0 0 12px #4DC8E8",
             }}
           />
           <span
@@ -136,7 +123,7 @@ export const ObsHeroPipeline = () => {
               fontSize: 10.5,
               letterSpacing: "0.24em",
               textTransform: "uppercase",
-              color: "var(--chart-1)",
+              color: "#4DC8E8",
               fontWeight: 700,
             }}
           >
@@ -147,7 +134,7 @@ export const ObsHeroPipeline = () => {
               flex: 1,
               height: 1,
               background:
-                "linear-gradient(90deg, color-mix(in srgb, var(--chart-1) 30%, transparent), transparent)",
+                "linear-gradient(90deg, rgba(77,200,232,0.3), transparent)",
             }}
           />
           <div
@@ -174,14 +161,12 @@ export const ObsHeroPipeline = () => {
                     fontWeight: 700,
                     letterSpacing: "0.04em",
                     textTransform: "uppercase",
-                    color: active
-                      ? "var(--color-text-primary-dark)"
-                      : "var(--color-text-muted-dark)",
+                    color: active ? "#ECEEF5" : "#5C6784",
                     background: active
-                      ? "linear-gradient(180deg, color-mix(in srgb, var(--chart-1) 25%, transparent) 0%, color-mix(in srgb, var(--chart-1) 5%, transparent) 100%)"
+                      ? "linear-gradient(180deg, rgba(77,200,232,0.25) 0%, rgba(77,200,232,0.05) 100%)"
                       : "transparent",
                     border: active
-                      ? "1px solid color-mix(in srgb, var(--chart-1) 35%, transparent)"
+                      ? "1px solid rgba(77,200,232,0.35)"
                       : "1px solid transparent",
                     cursor: "pointer",
                   }}
@@ -204,9 +189,8 @@ export const ObsHeroPipeline = () => {
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
                 lineHeight: 0.95,
-                color: "var(--color-text-pure-white)",
-                textShadow:
-                  "0 2px 20px color-mix(in srgb, var(--chart-1) 20%, transparent)",
+                color: "#FFFFFF",
+                textShadow: "0 2px 20px rgba(77,200,232,0.2)",
               }}
             >
               {fmt(pipelineValue)}
@@ -229,9 +213,7 @@ export const ObsHeroPipeline = () => {
                     borderRadius: 6,
                     background: growthPct >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
                     border: growthPct >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
-                    color: growthPct >= 0
-                      ? "var(--color-state-success-dark)"
-                      : "var(--color-state-danger-dark)",
+                    color: growthPct >= 0 ? "#34D399" : "#EF5A6F",
                     fontSize: 12,
                     fontWeight: 700,
                   }}
@@ -252,7 +234,7 @@ export const ObsHeroPipeline = () => {
                     borderRadius: 6,
                     background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(255,255,255,0.1)",
-                    color: "var(--color-text-muted-dark)",
+                    color: "#5C6784",
                     fontSize: 12,
                     fontWeight: 700,
                   }}
@@ -260,13 +242,11 @@ export const ObsHeroPipeline = () => {
                   No prior period data
                 </span>
               )}
-              <span
-                style={{ fontSize: 12, color: "var(--color-text-subtle-dark)" }}
-              >
+              <span style={{ fontSize: 12, color: "#9AA3BE" }}>
                 <span
                   style={{
                     fontFamily: '"JetBrains Mono", ui-monospace',
-                    color: "var(--color-text-primary-dark)",
+                    color: "#ECEEF5",
                     fontWeight: 600,
                   }}
                 >
@@ -276,7 +256,7 @@ export const ObsHeroPipeline = () => {
                 <span
                   style={{
                     fontFamily: '"JetBrains Mono", ui-monospace',
-                    color: "var(--color-text-primary-dark)",
+                    color: "#ECEEF5",
                     fontWeight: 600,
                   }}
                 >
@@ -307,8 +287,8 @@ export const ObsHeroPipeline = () => {
               title={`${stage.label} â€” ${stage.count}`}
               style={{
                 flex: stage.value || stage.count || 1,
-                background: `linear-gradient(180deg, ${stage.color} 0%, color-mix(in srgb, ${stage.color} 66.7%, transparent) 100%)`,
-                boxShadow: `0 0 20px color-mix(in srgb, ${stage.color} 40%, transparent)`,
+                background: `linear-gradient(180deg, ${stage.color} 0%, ${stage.color}aa 100%)`,
+                boxShadow: `0 0 20px ${stage.color}66`,
                 borderRight: "1px solid rgba(0,0,0,0.4)",
               }}
             />
@@ -351,7 +331,7 @@ export const ObsHeroPipeline = () => {
                     fontSize: 10,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
-                    color: "var(--color-text-muted-dark)",
+                    color: "#5C6784",
                     fontWeight: 600,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -367,7 +347,7 @@ export const ObsHeroPipeline = () => {
                     "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                   fontSize: 13,
                   fontWeight: 700,
-                  color: "var(--color-text-primary-dark)",
+                  color: "#ECEEF5",
                 }}
               >
                 {stage.count}

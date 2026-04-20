@@ -40,8 +40,7 @@ export const StaleDeals = () => {
         overflow: "hidden",
         borderRadius: 12,
         padding: "20px 22px",
-        background:
-          "linear-gradient(180deg, var(--color-surface-deep) 0%, var(--color-surface-deeper) 100%)",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         display: "flex",
@@ -64,7 +63,7 @@ export const StaleDeals = () => {
               fontSize: 10,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "var(--color-state-warning-dark)",
+              color: "#F5B84A",
               fontWeight: 700,
               marginBottom: 4,
             }}
@@ -78,7 +77,7 @@ export const StaleDeals = () => {
               fontSize: 16,
               fontWeight: 700,
               letterSpacing: "-0.01em",
-              color: "var(--color-text-primary-dark)",
+              color: "#ECEEF5",
             }}
           >
             Stale deals
@@ -88,7 +87,7 @@ export const StaleDeals = () => {
           style={{
             fontSize: 11,
             fontWeight: 700,
-            color: "var(--color-state-warning-dark)",
+            color: "#F5B84A",
             background: "rgba(245,184,74,0.08)",
             border: "1px solid rgba(245,184,74,0.25)",
             padding: "3px 9px",
@@ -105,10 +104,7 @@ export const StaleDeals = () => {
             (Date.now() - new Date(deal.updated_at).getTime()) / 86400000,
           );
           const decay = getDealDecayLevel(deal);
-          const accentColor =
-            decay === "red"
-              ? "var(--color-state-danger-dark)"
-              : "var(--color-state-warning-dark)";
+          const accentColor = decay === "red" ? "#EF5A6F" : "#F5B84A";
           const stageMeta = dealStages.find((s) => s.value === deal.stage);
 
           return (
@@ -120,8 +116,8 @@ export const StaleDeals = () => {
                 alignItems: "center",
                 gap: 12,
                 padding: "12px",
-                background: `color-mix(in srgb, ${accentColor} 2.7%, transparent)`,
-                border: `1px solid color-mix(in srgb, ${accentColor} 14.5%, transparent)`,
+                background: `${accentColor}07`,
+                border: `1px solid ${accentColor}25`,
                 borderRadius: 8,
                 cursor: "pointer",
                 transition: "background 0.15s",
@@ -133,8 +129,8 @@ export const StaleDeals = () => {
                   height: 44,
                   borderRadius: 9,
                   flexShrink: 0,
-                  background: `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 18%, transparent) 0%, color-mix(in srgb, ${accentColor} 2.7%, transparent) 100%)`,
-                  border: `1px solid color-mix(in srgb, ${accentColor} 26.7%, transparent)`,
+                  background: `linear-gradient(135deg, ${accentColor}2e 0%, ${accentColor}07 100%)`,
+                  border: `1px solid ${accentColor}44`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -161,7 +157,7 @@ export const StaleDeals = () => {
                   style={{
                     fontSize: 13,
                     fontWeight: 600,
-                    color: "var(--color-text-primary-dark)",
+                    color: "#ECEEF5",
                     marginBottom: 3,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -170,18 +166,13 @@ export const StaleDeals = () => {
                 >
                   {deal.name}
                 </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "var(--color-text-muted-dark)",
-                  }}
-                >
+                <div style={{ fontSize: 11, color: "#5C6784" }}>
                   {stageMeta?.label ?? deal.stage}
                   {" · "}
                   <span
                     style={{
                       fontFamily: '"JetBrains Mono", ui-monospace',
-                      color: "var(--color-text-subtle-dark)",
+                      color: "#9AA3BE",
                     }}
                   >
                     {fmt(deal.amount ?? 0)}

@@ -76,11 +76,7 @@ export const PipelineSummary = memo(
                 <div className="grid grid-cols-[minmax(0,120px)_minmax(0,1fr)_48px_88px] items-center gap-3 rounded-lg border border-transparent px-2 py-1.5 hover:bg-muted/40">
                   <span
                     className="text-sm font-medium"
-                    style={{
-                      color:
-                        stageColorMap[value]?.text ??
-                        "var(--color-text-emphasis)",
-                    }}
+                    style={{ color: stageColorMap[value]?.text ?? "#1F2937" }}
                   >
                     {label}
                   </span>
@@ -89,10 +85,8 @@ export const PipelineSummary = memo(
                       className="h-2 rounded-full border"
                       style={{
                         width: `${(count / totalDeals) * 100}%`,
-                        backgroundColor:
-                          stageColorMap[value]?.bg ?? "var(--color-pipeline-fallback-bg)",
-                        borderColor:
-                          stageColorMap[value]?.border ?? "var(--color-pipeline-fallback-border)",
+                        backgroundColor: stageColorMap[value]?.bg ?? "#F5F5F4",
+                        borderColor: stageColorMap[value]?.border ?? "#E5E5E3",
                       }}
                     />
                   </div>
@@ -117,9 +111,8 @@ export const PipelineSummary = memo(
                 <div
                   className="flex cursor-pointer flex-col items-center rounded-md p-2"
                   style={{
-                    backgroundColor:
-                      stageColorMap[value]?.bg ?? "var(--color-pipeline-fallback-bg)",
-                    borderLeft: `3px solid ${stageColorMap[value]?.border ?? "var(--color-pipeline-fallback-border)"}`,
+                    backgroundColor: stageColorMap[value]?.bg ?? "#F5F5F4",
+                    borderLeft: `3px solid ${stageColorMap[value]?.border ?? "#E5E5E3"}`,
                   }}
                 >
                   <span

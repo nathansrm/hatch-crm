@@ -30,8 +30,8 @@ export const ObsInsightCard = ({
       display: "flex",
       flexDirection: "column",
       gap: 10,
-      background: `linear-gradient(180deg, color-mix(in srgb, ${accent} 5.9%, transparent) 0%, color-mix(in srgb, ${accent} 1.2%, transparent) 100%)`,
-      border: `1px solid color-mix(in srgb, ${accent} 16.5%, transparent)`,
+      background: `linear-gradient(180deg, ${accent}0F 0%, ${accent}03 100%)`,
+      border: `1px solid ${accent}2A`,
       cursor: onClick ? "pointer" : "default",
     }}
   >
@@ -43,8 +43,8 @@ export const ObsInsightCard = ({
           borderRadius: 8,
           display: "grid",
           placeItems: "center",
-          background: `color-mix(in srgb, ${accent} 12.2%, transparent)`,
-          border: `1px solid color-mix(in srgb, ${accent} 25.1%, transparent)`,
+          background: `${accent}1F`,
+          border: `1px solid ${accent}40`,
           color: accent,
           flexShrink: 0,
         }}
@@ -69,7 +69,7 @@ export const ObsInsightCard = ({
             fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
             fontSize: 14.5,
             fontWeight: 700,
-            color: "var(--color-text-primary-dark)",
+            color: "#ECEEF5",
             letterSpacing: "-0.01em",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -80,9 +80,7 @@ export const ObsInsightCard = ({
         </div>
       </div>
     </div>
-    <div style={{ fontSize: 11.5, color: "var(--color-text-subtle-dark)" }}>
-      {sub}
-    </div>
+    <div style={{ fontSize: 11.5, color: "#9AA3BE" }}>{sub}</div>
     <div
       style={{
         display: "inline-flex",

@@ -52,8 +52,7 @@ export const ObsKPIWinRate = () => {
         overflow: "hidden",
         borderRadius: 14,
         padding: "22px 24px",
-        background:
-          "linear-gradient(180deg, var(--color-surface-deep) 0%, var(--color-surface-deeper) 100%)",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow:
           "0 1px 0 rgba(255,255,255,0.04) inset, 0 20px 40px rgba(0,0,0,0.35)",
@@ -75,7 +74,7 @@ export const ObsKPIWinRate = () => {
             fontSize: 10.5,
             letterSpacing: "0.24em",
             textTransform: "uppercase",
-            color: "var(--color-text-muted-dark)",
+            color: "#5C6784",
             fontWeight: 700,
           }}
         >
@@ -90,7 +89,7 @@ export const ObsKPIWinRate = () => {
             placeItems: "center",
             background: "rgba(167,139,250,0.08)",
             border: "1px solid rgba(167,139,250,0.2)",
-            color: "var(--color-accent-violet-dark)",
+            color: "#A78BFA",
           }}
         >
           <Percent size={13} strokeWidth={2.2} />
@@ -106,7 +105,7 @@ export const ObsKPIWinRate = () => {
                 fontWeight: 700,
                 letterSpacing: "-0.03em",
                 lineHeight: 1,
-                color: "var(--color-text-pure-white)",
+                color: "#FFFFFF",
               }}
             >
               {closedDeals.length > 0 ? `${winRate}%` : "â€”"}
@@ -121,9 +120,7 @@ export const ObsKPIWinRate = () => {
                   borderRadius: 5,
                   background: winRateDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
                   border: winRateDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
-                  color: winRateDelta >= 0
-                    ? "var(--color-state-success-dark)"
-                    : "var(--color-state-danger-dark)",
+                  color: winRateDelta >= 0 ? "#34D399" : "#EF5A6F",
                   fontSize: 18,
                   fontWeight: 700,
                 }}
@@ -137,22 +134,15 @@ export const ObsKPIWinRate = () => {
               </span>
             )}
           </div>
-          <div
-            style={{ fontSize: 11.5, color: "var(--color-text-muted-dark)" }}
-          >
-            trailing 90d
-          </div>
+          <div style={{ fontSize: 11.5, color: "#5C6784" }}>trailing 90d</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
           <svg width={56} height={56} viewBox="0 0 56 56">
             <defs>
               <linearGradient id="winRateRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop
-                  offset="0%"
-                  stopColor="var(--color-accent-violet-dark)"
-                />
-                <stop offset="100%" stopColor="var(--chart-1)" />
+                <stop offset="0%" stopColor="#A78BFA" />
+                <stop offset="100%" stopColor="#4DC8E8" />
               </linearGradient>
             </defs>
             <circle
@@ -179,16 +169,7 @@ export const ObsKPIWinRate = () => {
         </div>
       </div>
 
-      <div
-        style={{
-          fontSize: 12,
-          color: "var(--color-text-muted-dark)",
-          marginTop: "auto",
-        }}
-      >
-        {closedDeals.length} deal{closedDeals.length === 1 ? "" : "s"} closed
-        this period
-      </div>
+      <div style={{ fontSize: 12, color: "#5C6784", marginTop: "auto" }}>{closedDeals.length} deal{closedDeals.length === 1 ? "" : "s"} closed this period</div>
     </section>
   );
 };

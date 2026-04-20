@@ -108,7 +108,7 @@ export const ObsKPIWinRate = () => {
                 color: "#FFFFFF",
               }}
             >
-              {closedDeals.length > 0 ? `${winRate}%` : "—"}
+              {closedDeals.length > 0 ? `${winRate}%` : "--"}
             </div>
             {winRateDelta !== null && (
               <span

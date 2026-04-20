@@ -65,7 +65,7 @@ export default (): Db => {
     {
       id: "r3",
       user_id: "demo",
-      title: "Proposal Template — Roofing",
+      title: "Proposal Template - Roofing",
       description: "Scope of work template pre-filled for roofing contractors. Swap in client name and figures.",
       category: "templates",
       storage_path: null,

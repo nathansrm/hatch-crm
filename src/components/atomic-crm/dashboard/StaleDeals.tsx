@@ -168,7 +168,7 @@ export const StaleDeals = () => {
                 </div>
                 <div style={{ fontSize: 11, color: "#5C6784" }}>
                   {stageMeta?.label ?? deal.stage}
-                  {" · "}
+                  {" - "}
                   <span
                     style={{
                       fontFamily: '"JetBrains Mono", ui-monospace',

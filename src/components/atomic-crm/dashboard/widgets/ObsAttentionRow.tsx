@@ -138,7 +138,7 @@ export const ObsAttentionRow = ({
       title={staleDeal ? staleDeal.name : "No stale deals"}
       sub={
         staleDeal && staleDays !== null
-          ? `Proposal sent · waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
+          ? `Proposal sent - waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
           : "All proposal-sent deals are moving"
       }
       cta={staleDeal ? "Follow up" : "Review pipeline"}

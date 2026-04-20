@@ -169,6 +169,7 @@ const getFunctionErrorMessage = async (error: any) => {
 };
 
 export const ResourcesPage = () => {
+  const isDemo = import.meta.env.VITE_IS_DEMO === "true";
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -216,6 +217,7 @@ export const ResourcesPage = () => {
 
   const starred = filtered.filter((resource) => resource.starred);
   const rest = filtered.filter((resource) => !resource.starred);
+  const actionUnavailableTitle = isDemo ? "Not available in demo" : undefined;
 
   const handleSelect = (resource: ResourceRecord) => {
     setSelectedId(resource.id);
@@ -224,10 +226,16 @@ export const ResourcesPage = () => {
   };
 
   const handleUploadClick = () => {
+    if (isDemo) return;
     fileInputRef.current?.click();
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (isDemo) {
+      event.target.value = "";
+      return;
+    }
+
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -311,7 +319,7 @@ export const ResourcesPage = () => {
   };
 
   const handleOpenSend = () => {
-    if (!selected) return;
+    if (isDemo || !selected) return;
     setSendOpen(true);
     setSendLoading(false);
     setSendError("");
@@ -323,7 +331,7 @@ export const ResourcesPage = () => {
   };
 
   const handleSend = async () => {
-    if (!selected) return;
+    if (isDemo || !selected) return;
 
     setSendLoading(true);
     setSendError("");
@@ -356,7 +364,7 @@ export const ResourcesPage = () => {
   };
 
   const handleCopy = async () => {
-    if (!selected?.storage_path) return;
+    if (isDemo || !selected?.storage_path) return;
 
     try {
       const { data } = await getSupabaseClient()
@@ -504,7 +512,8 @@ export const ResourcesPage = () => {
                 </div>
                 <button
                   onClick={handleUploadClick}
-                  disabled={uploading}
+                  disabled={uploading || isDemo}
+                  title={actionUnavailableTitle}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -516,8 +525,8 @@ export const ResourcesPage = () => {
                     fontWeight: 700,
                     fontSize: 12.5,
                     border: "none",
-                    cursor: uploading ? "not-allowed" : "pointer",
-                    opacity: uploading ? 0.75 : 1,
+                    cursor: uploading || isDemo ? "not-allowed" : "pointer",
+                    opacity: uploading || isDemo ? 0.75 : 1,
                   }}
                 >
                   <Plus size={14} strokeWidth={2.5} />{" "}
@@ -886,6 +895,8 @@ export const ResourcesPage = () => {
             >
               <button
                 onClick={handleOpenSend}
+                disabled={isDemo}
+                title={actionUnavailableTitle}
                 style={{
                   flex: 1,
                   display: "flex",
@@ -899,20 +910,24 @@ export const ResourcesPage = () => {
                   fontWeight: 700,
                   fontSize: 12.5,
                   border: "none",
-                  cursor: "pointer",
+                  cursor: isDemo ? "not-allowed" : "pointer",
+                  opacity: isDemo ? 0.6 : 1,
                 }}
               >
                 <Send size={13} strokeWidth={2.5} /> Send to client
               </button>
               <button
                 onClick={handleCopy}
+                disabled={isDemo}
+                title={actionUnavailableTitle}
                 style={{
                   padding: "9px 12px",
                   borderRadius: 8,
                   border: "1px solid rgba(255,255,255,0.06)",
                   background: "rgba(255,255,255,0.03)",
                   color: "#6B7494",
-                  cursor: "pointer",
+                  cursor: isDemo ? "not-allowed" : "pointer",
+                  opacity: isDemo ? 0.6 : 1,
                 }}
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -965,7 +980,9 @@ export const ResourcesPage = () => {
                 </pre>
               ) : selected.storage_path ? (
                 <div style={{ color: "#4A5270", fontSize: 12 }}>
-                  No preview available. Use Copy to get a download link.
+                  {isDemo
+                    ? "No preview available. Download links are not available in demo."
+                    : "No preview available. Use Copy to get a download link."}
                 </div>
               ) : (
                 <pre
@@ -1191,7 +1208,8 @@ export const ResourcesPage = () => {
               </button>
               <button
                 onClick={handleSend}
-                disabled={sendLoading}
+                disabled={sendLoading || isDemo}
+                title={actionUnavailableTitle}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -1204,8 +1222,8 @@ export const ResourcesPage = () => {
                   fontWeight: 700,
                   fontSize: 12.5,
                   border: "none",
-                  cursor: sendLoading ? "not-allowed" : "pointer",
-                  opacity: sendLoading ? 0.75 : 1,
+                  cursor: sendLoading || isDemo ? "not-allowed" : "pointer",
+                  opacity: sendLoading || isDemo ? 0.75 : 1,
                 }}
               >
                 {sendLoading ? "Sending..." : "Send"}
@@ -1219,6 +1237,7 @@ export const ResourcesPage = () => {
         ref={fileInputRef}
         type="file"
         accept={ALLOWED_RESOURCE_FILE_TYPES}
+        disabled={isDemo}
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
@@ -1375,7 +1394,7 @@ const ResourceCard = ({
               fontFamily: '"JetBrains Mono", ui-monospace',
             }}
           >
-            {resource.size} · {fmtRel(resource.updated)}
+            {resource.size} - {fmtRel(resource.updated)}
           </span>
         </div>
       </div>

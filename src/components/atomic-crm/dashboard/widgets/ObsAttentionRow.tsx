@@ -1,9 +1,14 @@
 import { AlertCircle, ArrowRight, Flame, Zap } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
 
+import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
 import { ObsInsightCard } from "./ObsInsightCard";
-import { getValidDate, UNARCHIVED_DEALS_LIST_PARAMS } from "./dashboardUtils";
+import {
+  getValidDate,
+  getWatchStageValue,
+  UNARCHIVED_DEALS_LIST_PARAMS,
+} from "./dashboardUtils";
 
 export const ObsAttentionRow = ({
   overdueTasksCount,
@@ -11,17 +16,21 @@ export const ObsAttentionRow = ({
   overdueTasksCount: number;
 }) => {
   const redirect = useRedirect();
+  const { dealStages } = useConfigurationContext();
   const { data: allDeals } = useGetList<Deal>(
     "deals",
     UNARCHIVED_DEALS_LIST_PARAMS,
   );
+  const watchStageValue = getWatchStageValue(dealStages);
+  const watchStageLabel =
+    dealStages.find((stage) => stage.value === watchStageValue)?.label ?? "Pipeline";
 
   const now = new Date();
   const d7 = new Date(now); d7.setDate(d7.getDate() - 7);
   const d14 = new Date(now); d14.setDate(d14.getDate() - 14);
 
   const oldestProposalDeal = (allDeals ?? [])
-    .filter((deal) => deal.stage === "proposal-sent")
+    .filter((deal) => watchStageValue !== null && deal.stage === watchStageValue)
     .map((deal) => ({ deal, updatedAt: getValidDate(deal.updated_at) }))
     .filter((c): c is { deal: Deal; updatedAt: Date } => c.updatedAt !== null)
     .sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime())[0];
@@ -138,8 +147,8 @@ export const ObsAttentionRow = ({
       title={staleDeal ? staleDeal.name : "No stale deals"}
       sub={
         staleDeal && staleDays !== null
-          ? `Proposal sent - waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
-          : "All proposal-sent deals are moving"
+          ? `${watchStageLabel} - waiting ${staleDays} day${staleDays === 1 ? "" : "s"}`
+          : `All ${watchStageLabel.toLowerCase()} deals are moving`
       }
       cta={staleDeal ? "Follow up" : "Review pipeline"}
       onClick={() => redirect(staleDeal ? `/deals/${staleDeal.id}/show` : "/deals")}

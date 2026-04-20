@@ -7,20 +7,15 @@ import type { Deal } from "../../types";
 import {
   getHeroEyebrow,
   getRangeWindow,
+  getStagePalette,
   getValidDate,
+  isTerminalDealStage,
   type HeroRange,
   UNARCHIVED_DEALS_LIST_PARAMS,
 } from "./dashboardUtils";
 
-const PIPELINE_STAGES: Array<{ key: string; label: string; color: string }> = [
-  { key: "lead", label: "Lead", color: "#4DC8E8" },
-  { key: "qualified", label: "Qualified", color: "#A78BFA" },
-  { key: "audit-scheduled", label: "Audit Scheduled", color: "#5EEAD4" },
-  { key: "proposal-sent", label: "Proposal Sent", color: "#F5B84A" },
-];
-
 export const ObsHeroPipeline = () => {
-  const { currency } = useConfigurationContext();
+  const { currency, dealStages } = useConfigurationContext();
   const [range, setRange] = useState<HeroRange>("30d");
   const { data: deals } = useGetList<Deal>(
     "deals",
@@ -28,8 +23,9 @@ export const ObsHeroPipeline = () => {
   );
 
   const { start, end, priorStart, priorEnd } = getRangeWindow(range);
+  const pipelineStages = getStagePalette(dealStages);
   const allActiveDeals = (deals ?? []).filter(
-    (deal) => !["won", "lost"].includes(deal.stage),
+    (deal) => !isTerminalDealStage(deal.stage),
   );
   const activeDeals = allActiveDeals.filter((deal) => {
     const created = getValidDate(deal.created_at);
@@ -52,10 +48,16 @@ export const ObsHeroPipeline = () => {
       ? Math.round(((pipelineValue - priorValue) / priorValue) * 100)
       : null;
   const totalCount = activeDeals.length;
-  const stageStrip = PIPELINE_STAGES.map((stage) => {
-    const matches = activeDeals.filter((deal) => deal.stage === stage.key);
+  const stageStrip = pipelineStages.map((stage) => {
+    const matches = activeDeals.filter((deal) => deal.stage === stage.value);
     const value = matches.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
-    return { ...stage, count: matches.length, value };
+    return {
+      key: stage.value,
+      label: stage.label,
+      color: stage.color,
+      count: matches.length,
+      value,
+    };
   });
   const populatedStages = stageStrip.filter((stage) => stage.count > 0).length;
 
@@ -256,11 +258,11 @@ export const ObsHeroPipeline = () => {
                 <span
                   style={{
                     fontFamily: '"JetBrains Mono", ui-monospace',
-                    color: "#ECEEF5",
-                    fontWeight: 600,
-                  }}
-                >
-                  {populatedStages || PIPELINE_STAGES.length}
+                  color: "#ECEEF5",
+                  fontWeight: 600,
+                }}
+              >
+                  {populatedStages || stageStrip.length}
                 </span>{" "}
                 stages
               </span>

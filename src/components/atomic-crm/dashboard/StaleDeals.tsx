@@ -3,21 +3,23 @@ import { useGetList, useRedirect } from "ra-core";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
-
-const TERMINAL_STAGES = ["won", "lost"];
+import {
+  DASHBOARD_COLLECTION_PAGINATION,
+  isTerminalDealStage,
+} from "./widgets/dashboardUtils";
 
 export const StaleDeals = () => {
   const { dealStages, currency } = useConfigurationContext();
   const redirect = useRedirect();
 
   const { data: deals, isPending } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 100 },
+    pagination: DASHBOARD_COLLECTION_PAGINATION,
     sort: { field: "updated_at", order: "ASC" },
     filter: { "archived_at@is": null },
   });
 
   const staleDeals = (deals ?? [])
-    .filter((deal) => !TERMINAL_STAGES.includes(deal.stage))
+    .filter((deal) => !isTerminalDealStage(deal.stage))
     .filter((deal) => getDealDecayLevel(deal) !== "none")
     .sort(
       (a, b) =>

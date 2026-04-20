@@ -1,15 +1,78 @@
 import { Bell, Import, Plus, Search, Settings, User, Users } from "lucide-react";
-import { CanAccess, useGetIdentity, useTranslate, useUserMenu } from "ra-core";
+import { CanAccess, useGetIdentity, useGetList, useTranslate, useUserMenu } from "ra-core";
+import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext";
+import type { Deal } from "@/components/atomic-crm/types";
 import { ImportPage } from "../misc/ImportPage";
+import {
+  DASHBOARD_COLLECTION_PAGINATION,
+  formatCompactCurrency,
+  getNonTerminalDealStageValues,
+  getValidDate,
+} from "../dashboard/widgets/dashboardUtils";
 
 const Header = () => {
   const { data: identity } = useGetIdentity();
-  const { darkModeLogo, title } = useConfigurationContext();
+  const { currency, darkModeLogo, title, dealStages } = useConfigurationContext();
   const initial = identity?.fullName?.charAt(0) ?? "U";
+  const pipelineStages = useMemo(
+    () => getNonTerminalDealStageValues(dealStages),
+    [dealStages],
+  );
+  const { data: pipelineDeals, isPending: isPipelinePending } = useGetList<Deal>(
+    "deals",
+    {
+      pagination: DASHBOARD_COLLECTION_PAGINATION,
+      filter: {
+        "archived_at@is": null,
+        "stage@in": pipelineStages,
+      },
+    },
+    { enabled: pipelineStages.length > 0 },
+  );
+
+  const pipelineLive = useMemo(() => {
+    const deals = pipelineDeals ?? [];
+    const value = deals.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
+    const currentMonthStart = new Date();
+    currentMonthStart.setDate(1);
+    currentMonthStart.setHours(0, 0, 0, 0);
+
+    const priorMonthStart = new Date(currentMonthStart);
+    priorMonthStart.setMonth(priorMonthStart.getMonth() - 1);
+
+    const datedDeals = deals
+      .map((deal) => ({
+        amount: deal.amount ?? 0,
+        createdAt: getValidDate(deal.created_at),
+      }))
+      .filter(
+        (deal): deal is { amount: number; createdAt: Date } => deal.createdAt !== null,
+      );
+
+    if (datedDeals.length === 0) {
+      return { value, delta: null };
+    }
+
+    const currentValue = datedDeals
+      .filter((deal) => deal.createdAt >= currentMonthStart)
+      .reduce((sum, deal) => sum + deal.amount, 0);
+    const priorValue = datedDeals
+      .filter(
+        (deal) => deal.createdAt >= priorMonthStart && deal.createdAt < currentMonthStart,
+      )
+      .reduce((sum, deal) => sum + deal.amount, 0);
+
+    const delta =
+      priorValue > 0
+        ? Math.round(((currentValue - priorValue) / priorValue) * 100)
+        : null;
+
+    return { value, delta };
+  }, [pipelineDeals]);
 
   return (
     <header
@@ -47,6 +110,12 @@ const Header = () => {
 
           .obsidian-user-menu:focus-within .obsidian-user-menu-visual {
             box-shadow: 0 0 0 2px rgba(77, 200, 232, 0.45);
+          }
+
+          @keyframes obsidian-pulse {
+            0% { opacity: 0.55; }
+            50% { opacity: 1; }
+            100% { opacity: 0.55; }
           }
         `}
       </style>
@@ -199,17 +268,60 @@ const Header = () => {
           >
             Pipeline Live
           </span>
-          <span
-            style={{
-              fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: 13,
-              fontWeight: 600,
-              color: "#ECEEF5",
-              marginTop: 2,
-            }}
-          >
-            $847.3K <span style={{ color: "#34D399" }}>+12.4%</span>
-          </span>
+          {isPipelinePending ? (
+            <span
+              aria-hidden="true"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 4,
+              }}
+            >
+              <span
+                style={{
+                  width: 74,
+                  height: 13,
+                  borderRadius: 999,
+                  background: "rgba(255,255,255,0.12)",
+                  animation: "obsidian-pulse 1.2s ease-in-out infinite",
+                }}
+              />
+              <span
+                style={{
+                  width: 48,
+                  height: 13,
+                  borderRadius: 999,
+                  background: "rgba(52,211,153,0.15)",
+                  animation: "obsidian-pulse 1.2s ease-in-out infinite",
+                }}
+              />
+            </span>
+          ) : (
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#ECEEF5",
+                marginTop: 2,
+              }}
+            >
+              {pipelineLive.value > 0
+                ? formatCompactCurrency(pipelineLive.value, currency)
+                : "/usr/bin/bash"}{" "}
+              {pipelineLive.value > 0 && pipelineLive.delta !== null ? (
+                <span
+                  style={{
+                    color: pipelineLive.delta >= 0 ? "#34D399" : "#EF5A6F",
+                  }}
+                >
+                  {pipelineLive.delta >= 0 ? "+" : ""}
+                  {pipelineLive.delta}%
+                </span>
+              ) : null}
+            </span>
+          )}
         </div>
       </div>
       <Link

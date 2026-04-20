@@ -7,6 +7,7 @@ import { memo, useMemo } from "react";
 import { findDealLabel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
+import { DASHBOARD_COLLECTION_PAGINATION } from "./widgets/dashboardUtils";
 
 const multiplier: Record<string, number> = {
   lead: 0.1,
@@ -31,7 +32,7 @@ export const DealsChart = memo(() => {
   const lostLabel = findDealLabel(dealStages, "lost") ?? "Lost";
 
   const { data, isPending } = useGetList<Deal>("deals", {
-    pagination: { perPage: 100, page: 1 },
+    pagination: DASHBOARD_COLLECTION_PAGINATION,
     sort: {
       field: "created_at",
       order: "ASC",

@@ -9,7 +9,11 @@ import { ObsHeroPipeline } from "./ObsHeroPipeline";
 import { ObsHotDealsPanel } from "./ObsHotDealsPanel";
 import { ObsKPIWinRate } from "./ObsKPIWinRate";
 import { ObsKPIWon } from "./ObsKPIWon";
-import { getDateKey, getTodayDateKey } from "./dashboardUtils";
+import {
+  DASHBOARD_COLLECTION_PAGINATION,
+  getDateKey,
+  getTodayDateKey,
+} from "./dashboardUtils";
 
 export const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => {
   void totalDeal;
@@ -20,7 +24,7 @@ export const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => {
   const { data: tasks } = useGetList<Task>(
     "tasks",
     {
-      pagination: { page: 1, perPage: 500 },
+      pagination: DASHBOARD_COLLECTION_PAGINATION,
       sort: { field: "due_date", order: "ASC" },
       filter: { "done_date@is": null, sales_id: identity?.id },
     },

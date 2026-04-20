@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { stageColorMap } from "../deals/stageColors";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
+import { DASHBOARD_COLLECTION_PAGINATION } from "./widgets/dashboardUtils";
 
 type PipelineSummaryProps = {
   variant?: "grid" | "bars";
@@ -15,7 +16,7 @@ export const PipelineSummary = memo(
     const { currency, dealStages } = useConfigurationContext();
 
     const { data: deals, isPending } = useGetList<Deal>("deals", {
-      pagination: { page: 1, perPage: 500 },
+      pagination: DASHBOARD_COLLECTION_PAGINATION,
     });
 
     const summary = useMemo(() => {

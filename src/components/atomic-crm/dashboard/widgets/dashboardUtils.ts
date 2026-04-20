@@ -15,12 +15,84 @@ export const getValidDate = (value?: string | null) => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+type DealStageLike = {
+  label: string;
+  value: string;
+};
+
+const TERMINAL_DEAL_STAGE_VALUES = new Set(["won", "lost"]);
+const PIPELINE_STAGE_COLORS = ["#4DC8E8", "#A78BFA", "#5EEAD4", "#F5B84A", "#EF5A6F"];
+
+// TODO: Replace the large per-page fetches with server-side dashboard aggregates.
+export const DASHBOARD_COLLECTION_PAGINATION = {
+  page: 1,
+  perPage: 10000,
+} as const;
+
 // Keep these params identical across the dashboard KPI cards so react-admin can
 // dedupe the shared "deals" fetch instead of issuing parallel equivalent queries.
 export const UNARCHIVED_DEALS_LIST_PARAMS = {
-  pagination: { page: 1, perPage: 10000 },
+  pagination: DASHBOARD_COLLECTION_PAGINATION,
   filter: { "archived_at@is": null },
 } as const;
+
+export const isTerminalDealStage = (stageValue?: string | null) =>
+  stageValue != null && TERMINAL_DEAL_STAGE_VALUES.has(stageValue);
+
+export const getNonTerminalDealStages = <T extends DealStageLike>(dealStages: T[]) =>
+  dealStages.filter((stage) => !isTerminalDealStage(stage.value));
+
+export const getNonTerminalDealStageValues = (dealStages: DealStageLike[]) =>
+  getNonTerminalDealStages(dealStages).map((stage) => stage.value);
+
+export const getStagePalette = (dealStages: DealStageLike[]) =>
+  getNonTerminalDealStages(dealStages).map((stage, index) => ({
+    ...stage,
+    color: PIPELINE_STAGE_COLORS[index % PIPELINE_STAGE_COLORS.length],
+  }));
+
+export const getWatchStageValue = (dealStages: DealStageLike[]) => {
+  const stagePalette = getNonTerminalDealStages(dealStages);
+
+  return (
+    stagePalette.find((stage) => stage.value === "proposal-sent")?.value ??
+    stagePalette.at(-1)?.value ??
+    null
+  );
+};
+
+export const formatCompactCurrency = (value: number, currency: string) => {
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+
+  if (absValue < 1000) {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    });
+  }
+
+  const divisor = absValue >= 1_000_000 ? 1_000_000 : 1000;
+  const suffix = divisor === 1_000_000 ? "M" : "K";
+  const compactValue = absValue / divisor;
+  const displayValue = compactValue.toLocaleString(undefined, {
+    minimumFractionDigits: compactValue < 10 ? 1 : 0,
+    maximumFractionDigits: 1,
+  });
+  const currencySymbol =
+    new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+      .formatToParts(0)
+      .find((part) => part.type === "currency")?.value ?? `${currency} `;
+
+  return `${sign}${currencySymbol}${displayValue}${suffix}`;
+};
 
 export type HeroRange = "30d" | "qtd" | "ytd";
 

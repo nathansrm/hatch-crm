@@ -167,6 +167,8 @@ export const ResourcesPage = () => {
   const [sendLoading, setSendLoading] = useState(false);
   const [sendError, setSendError] = useState("");
   const [toEmail, setToEmail] = useState("");
+  const [selectedContact, setSelectedContact] = useState<{ id: string | number; first_name: string; last_name: string; email: string } | null>(null);
+  const [contactQuery, setContactQuery] = useState("");
   const [sendSubject, setSendSubject] = useState("");
   const [sendMessage, setSendMessage] = useState("");
   const [copied, setCopied] = useState(false);
@@ -183,6 +185,11 @@ export const ResourcesPage = () => {
   });
   const [create] = useCreate();
   const [update] = useUpdate();
+  const { data: contactSuggestions } = useGetList("contacts", {
+    pagination: { page: 1, perPage: 8 },
+    sort: { field: "last_name", order: "ASC" },
+    filter: contactQuery.length >= 2 ? { q: contactQuery } : {},
+  });
 
   const resources = (rawResources ?? []).map(mapResource);
   const selected =
@@ -292,6 +299,8 @@ export const ResourcesPage = () => {
     setSendLoading(false);
     setSendError("");
     setToEmail("");
+    setSelectedContact(null);
+    setContactQuery("");
     setSendSubject(selected.title);
     setSendMessage("");
   };
@@ -1009,7 +1018,7 @@ export const ResourcesPage = () => {
                 marginTop: 18,
               }}
             >
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <span
                   style={{
                     fontSize: 11,
@@ -1021,14 +1030,82 @@ export const ResourcesPage = () => {
                 >
                   To
                 </span>
-                <input
-                  type="email"
-                  required
-                  value={toEmail}
-                  onChange={(e) => setToEmail(e.target.value)}
-                  style={DETAIL_INPUT_STYLE}
-                />
-              </label>
+                {selectedContact ? (
+                  <div
+                    style={{
+                      ...DETAIL_INPUT_STYLE,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 8,
+                    }}
+                  >
+                    <span style={{ color: "#ECEEF5", fontSize: 13 }}>
+                      {selectedContact.first_name} {selectedContact.last_name}
+                      <span style={{ color: "#4A5270", marginLeft: 8 }}>{selectedContact.email}</span>
+                    </span>
+                    <button
+                      onClick={() => { setSelectedContact(null); setToEmail(""); setContactQuery(""); }}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "#4A5270", padding: 0, display: "flex" }}
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ position: "relative" }}>
+                    <input
+                      autoFocus
+                      placeholder="Search contacts..."
+                      value={contactQuery}
+                      onChange={(e) => setContactQuery(e.target.value)}
+                      style={DETAIL_INPUT_STYLE}
+                    />
+                    {contactQuery.length >= 2 && Array.isArray(contactSuggestions) && contactSuggestions.length > 0 && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "calc(100% + 4px)",
+                          left: 0,
+                          right: 0,
+                          background: "#0F1627",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          borderRadius: 8,
+                          overflow: "hidden",
+                          zIndex: 10,
+                        }}
+                      >
+                        {contactSuggestions.map((c: any) => (
+                          <button
+                            key={c.id}
+                            onClick={() => {
+                              setSelectedContact({ id: c.id, first_name: c.first_name, last_name: c.last_name, email: c.email });
+                              setToEmail(c.email);
+                              setContactQuery("");
+                            }}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              width: "100%",
+                              padding: "10px 14px",
+                              background: "none",
+                              border: "none",
+                              borderBottom: "1px solid rgba(255,255,255,0.05)",
+                              cursor: "pointer",
+                              textAlign: "left",
+                            }}
+                          >
+                            <span style={{ color: "#ECEEF5", fontSize: 13 }}>
+                              {c.first_name} {c.last_name}
+                            </span>
+                            <span style={{ color: "#4A5270", fontSize: 12 }}>{c.email}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <span

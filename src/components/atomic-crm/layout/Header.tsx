@@ -71,7 +71,7 @@ const Header = () => {
         ? Math.round(((currentValue - priorValue) / priorValue) * 100)
         : null;
 
-    return { value, delta };
+    return { value, delta, count: deals.length };
   }, [pipelineDeals]);
 
   return (
@@ -309,7 +309,9 @@ const Header = () => {
             >
               {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0
                 ? formatCompactCurrency(pipelineLive.value, currency)
-                : "—"}{" "}
+                : pipelineLive.count > 0
+                ? `${pipelineLive.count} open`
+                : "No open deals"}{" "}
               {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0 && pipelineLive.delta !== null ? (
                 <span
                   style={{

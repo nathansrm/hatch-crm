@@ -707,7 +707,9 @@ export const ResourcesPage = () => {
                       fontSize: 14,
                     }}
                   >
-                    No resources match your search.
+                    {search.trim() !== "" || category !== "all"
+                      ? "No resources match your search."
+                      : "No resources yet. Upload your first file."}
                   </div>
                 )}
 

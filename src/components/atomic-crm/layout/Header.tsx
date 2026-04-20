@@ -309,7 +309,7 @@ const Header = () => {
             >
               {pipelineLive.value > 0
                 ? formatCompactCurrency(pipelineLive.value, currency)
-                : "/usr/bin/bash"}{" "}
+                : "—"}{" "}
               {pipelineLive.value > 0 && pipelineLive.delta !== null ? (
                 <span
                   style={{

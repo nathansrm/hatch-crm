@@ -68,7 +68,8 @@ const DealLayout = () => {
   const matchShow = matchPath("/deals/:id/show", location.pathname);
   const matchEdit = matchPath("/deals/:id", location.pathname);
 
-  const { data, total, isPending, filterValues } = useListContext<Deal>();
+  const { data, total, isPending, filterValues, setFilters } =
+    useListContext<Deal>();
   const dealData = Array.isArray(data) ? data : [];
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
   const activeDealCount = total ?? dealData.length;
@@ -185,7 +186,11 @@ const DealLayout = () => {
           </Link>
         </div>
       </div>
-      <DealListContent />
+      {dealData.length === 0 ? (
+        <DealsFilteredEmptyState onClear={() => setFilters({}, [])} />
+      ) : (
+        <DealListContent />
+      )}
       <DealArchivedList />
       <DealCreate open={!!matchCreate} />
       <DealEdit open={!!matchEdit && !matchCreate} id={matchEdit?.params.id} />
@@ -193,6 +198,43 @@ const DealLayout = () => {
     </div>
   );
 };
+
+const DealsFilteredEmptyState = ({ onClear }: { onClear: () => void }) => (
+  <div
+    style={{
+      flex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 8,
+      }}
+    >
+      <span style={{ color: "#9AA3BE", fontSize: 14 }}>
+        No deals match your filters.
+      </span>
+      <button
+        onClick={onClear}
+        style={{
+          color: "#4DC8E8",
+          fontSize: 13,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        Clear filters
+      </button>
+    </div>
+  </div>
+);
 
 /**
  *

@@ -75,6 +75,8 @@ const DETAIL_INPUT_STYLE = {
   outline: "none",
 };
 
+const RESOURCES_PER_PAGE = 24;
+
 const fmtRel = (iso: string) => {
   const d = new Date(iso);
   const diff = Date.now() - d.getTime();
@@ -172,6 +174,7 @@ export const ResourcesPage = () => {
   const isDemo = import.meta.env.VITE_IS_DEMO === "true";
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
+  const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [sendOpen, setSendOpen] = useState(false);
@@ -189,9 +192,27 @@ export const ResourcesPage = () => {
   const [editCategory, setEditCategory] =
     useState<ResourceValueCategory>("internal");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { data: rawResources, isPending } = useGetList("resources", {
-    pagination: { page: 1, perPage: 200 },
+  const searchQuery = search.trim();
+  const resourceFilter = {
+    ...(category !== "all" ? { "category@eq": category } : {}),
+    ...(searchQuery
+      ? {
+          "@or": {
+            "title@ilike": searchQuery,
+            "description@ilike": searchQuery,
+            "file_name@ilike": searchQuery,
+          },
+        }
+      : {}),
+  };
+  const {
+    data: rawResources,
+    isPending,
+    total: totalResources = 0,
+  } = useGetList("resources", {
+    pagination: { page, perPage: RESOURCES_PER_PAGE },
     sort: { field: "created_at", order: "DESC" },
+    filter: resourceFilter,
   });
   const [create] = useCreate();
   const [update] = useUpdate();
@@ -204,19 +225,9 @@ export const ResourcesPage = () => {
   const resources = (rawResources ?? []).map(mapResource);
   const selected =
     resources.find((resource) => resource.id === selectedId) ?? null;
-
-  const filtered = resources.filter((resource) => {
-    const matchCat = category === "all" || resource.category === category;
-    const q = search.toLowerCase();
-    const matchSearch = !q
-      || resource.title.toLowerCase().includes(q)
-      || resource.desc.toLowerCase().includes(q)
-      || resource.tags.some((tag) => tag.toLowerCase().includes(q));
-    return matchCat && matchSearch;
-  });
-
-  const starred = filtered.filter((resource) => resource.starred);
-  const rest = filtered.filter((resource) => !resource.starred);
+  const totalPages = Math.max(1, Math.ceil(totalResources / RESOURCES_PER_PAGE));
+  const starred = resources.filter((resource) => resource.starred);
+  const rest = resources.filter((resource) => !resource.starred);
   const actionUnavailableTitle = isDemo ? "Not available in demo" : undefined;
 
   const handleSelect = (resource: ResourceRecord) => {
@@ -498,7 +509,10 @@ export const ResourcesPage = () => {
                   <Search size={14} color="#4A5270" />
                   <input
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setPage(1);
+                    }}
                     placeholder="Search resources..."
                     style={{
                       background: "transparent",
@@ -539,7 +553,10 @@ export const ResourcesPage = () => {
               {CATEGORIES.map((c) => (
                 <button
                   key={c.key}
-                  onClick={() => setCategory(c.key)}
+                  onClick={() => {
+                    setCategory(c.key);
+                    setPage(1);
+                  }}
                   style={{
                     padding: "6px 14px",
                     borderRadius: 7,
@@ -677,7 +694,7 @@ export const ResourcesPage = () => {
                   </div>
                 )}
 
-                {filtered.length === 0 && (
+                {totalResources === 0 && (
                   <div
                     style={{
                       padding: "60px 0",
@@ -687,6 +704,58 @@ export const ResourcesPage = () => {
                     }}
                   >
                     No resources match your search.
+                  </div>
+                )}
+
+                {totalResources > 0 && totalPages > 1 && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 12,
+                      marginTop: 4,
+                    }}
+                  >
+                    <button
+                      onClick={() => setPage((currentPage) => currentPage - 1)}
+                      disabled={page === 1}
+                      style={{
+                        padding: "9px 12px",
+                        borderRadius: 8,
+                        border: "1px solid rgba(255,255,255,0.06)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#6B7494",
+                        cursor: page === 1 ? "not-allowed" : "pointer",
+                        opacity: page === 1 ? 0.6 : 1,
+                      }}
+                    >
+                      Previous
+                    </button>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#6B7494",
+                        fontFamily: '"JetBrains Mono", ui-monospace',
+                      }}
+                    >
+                      Page {page} of {totalPages}
+                    </div>
+                    <button
+                      onClick={() => setPage((currentPage) => currentPage + 1)}
+                      disabled={page === totalPages}
+                      style={{
+                        padding: "9px 12px",
+                        borderRadius: 8,
+                        border: "1px solid rgba(255,255,255,0.06)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#6B7494",
+                        cursor: page === totalPages ? "not-allowed" : "pointer",
+                        opacity: page === totalPages ? 0.6 : 1,
+                      }}
+                    >
+                      Next
+                    </button>
                   </div>
                 )}
               </>

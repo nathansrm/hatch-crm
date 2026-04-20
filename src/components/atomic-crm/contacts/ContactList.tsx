@@ -55,7 +55,7 @@ const ContactListLayoutDesktop = () => {
 
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
 
-  if (isPending) return null;
+  if (isPending) return <ContactListSkeleton />;
 
   if (!data?.length && !hasFilters) return <ContactEmpty />;
 
@@ -264,3 +264,23 @@ const exporter: Exporter<Contact> = async (records, fetchRelatedRecords) => {
     downloadCSV(csv, "contacts");
   });
 };
+
+const ContactListSkeleton = () => (
+  <>
+    <style>{"@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }"}</style>
+    <div style={{ padding: "0 0 20px" }}>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            height: 56,
+            margin: "4px 0",
+            borderRadius: 8,
+            background: "rgba(255,255,255,0.04)",
+            animation: "pulse 1.5s ease-in-out infinite",
+          }}
+        />
+      ))}
+    </div>
+  </>
+);

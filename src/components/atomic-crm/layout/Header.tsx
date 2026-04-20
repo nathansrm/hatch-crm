@@ -36,7 +36,7 @@ const Header = () => {
 
   const pipelineLive = useMemo(() => {
     const deals = pipelineDeals ?? [];
-    const value = deals.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
+    const value = deals.reduce((sum, deal) => sum + (typeof deal.amount === 'number' ? deal.amount : 0), 0);
     const currentMonthStart = new Date();
     currentMonthStart.setDate(1);
     currentMonthStart.setHours(0, 0, 0, 0);
@@ -307,10 +307,10 @@ const Header = () => {
                 marginTop: 2,
               }}
             >
-              {pipelineLive.value > 0
+              {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0
                 ? formatCompactCurrency(pipelineLive.value, currency)
                 : "—"}{" "}
-              {pipelineLive.value > 0 && pipelineLive.delta !== null ? (
+              {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0 && pipelineLive.delta !== null ? (
                 <span
                   style={{
                     color: pipelineLive.delta >= 0 ? "#34D399" : "#EF5A6F",

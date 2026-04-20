@@ -281,6 +281,7 @@ const DesktopAdmin = (
       <Resource name="sales" {...sales} />
       <Resource name="intake_leads" {...intake} />
       <Resource name="outreach_steps" />
+      <Resource name="resources" />
       <Resource name="tags" />
       <Resource name="trade_types" />
       <Resource name="lead_sources" />

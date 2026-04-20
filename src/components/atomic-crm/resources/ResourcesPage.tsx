@@ -1,94 +1,43 @@
-import { useState } from "react";
-import { FileText, Copy, Search, Plus, Send, Edit, X, Star } from "lucide-react";
+import { useCreate, useGetIdentity, useGetList, useUpdate } from "ra-core";
+import type { ChangeEvent, MouseEvent } from "react";
+import { useRef, useState } from "react";
+import {
+  Check,
+  Copy,
+  Edit,
+  FileText,
+  Plus,
+  Search,
+  Send,
+  Star,
+  X,
+} from "lucide-react";
+import { getSupabaseClient } from "@/components/atomic-crm/providers/supabase/supabase";
 
 type ResourceCategory = "all" | "sales" | "onboarding" | "templates" | "internal";
+type ResourceValueCategory = Exclude<ResourceCategory, "all">;
 
-type Resource = {
-  id: number;
-  category: Exclude<ResourceCategory, "all">;
+type ResourceRecord = {
+  id: string;
+  user_id?: string | null;
   title: string;
+  description: string;
   desc: string;
-  type: "document" | "template";
+  category: ResourceValueCategory;
+  storage_path: string | null;
+  file_name: string | null;
+  file_size: number | null;
+  file_type: string | null;
   ext: string;
   size: string;
   updated: string;
   tags: string[];
   starred: boolean;
   preview: string;
+  created_at: string;
+  updated_at: string;
+  type: "document" | "template";
 };
-
-const RESOURCES: Resource[] = [
-  {
-    id: 1, category: "sales", title: "Discovery Call Script",
-    desc: "Opening questions, pain-point discovery, and objection handling for initial sales calls.",
-    type: "document", ext: "md", size: "8 KB", updated: "2026-04-10T09:00:00Z",
-    tags: ["sales", "scripts"], starred: true,
-    preview: "## Discovery Call Script\n\n### Opening\n\"Thanks for taking the time, [Name]. Before I jump in, I want to make sure this is actually valuable for you — can you tell me a bit about what's not working in your ops right now?\"\n\n### Pain Discovery\n- How many hours per week does your team spend on scheduling/dispatch?\n- What happens when a lead comes in after hours?\n- What does your quoting process look like today?",
-  },
-  {
-    id: 2, category: "sales", title: "Proposal Template — Standard",
-    desc: "Hatch Theory standard proposal for workflow automation engagements.",
-    type: "document", ext: "docx", size: "42 KB", updated: "2026-04-12T14:00:00Z",
-    tags: ["sales", "proposals"], starred: true,
-    preview: "Standard proposal structure:\n1. Executive Summary\n2. Current State & Pain Points\n3. Proposed Solution\n4. Scope of Work\n5. Investment\n6. Timeline\n7. Terms",
-  },
-  {
-    id: 3, category: "sales", title: "Pricing Tiers — 2026",
-    desc: "Current pricing tiers for all Hatch Theory service packages.",
-    type: "document", ext: "md", size: "5 KB", updated: "2026-04-01T10:00:00Z",
-    tags: ["sales", "pricing"], starred: false,
-    preview: "## Starter — $4,500\nCRM setup + basic lead intake automation\n\n## Growth — $8,500\nFull CRM + dispatch automation + reporting\n\n## Pro — $15,000+\nFull digital transformation, custom workflows, ongoing support",
-  },
-  {
-    id: 4, category: "onboarding", title: "Client Onboarding Checklist",
-    desc: "Step-by-step onboarding process for new clients post-close.",
-    type: "document", ext: "md", size: "12 KB", updated: "2026-04-14T11:00:00Z",
-    tags: ["onboarding", "process"], starred: true,
-    preview: "## Week 1: Kickoff\n- [ ] Kickoff call scheduled\n- [ ] Credentials collected\n- [ ] Existing tools documented\n- [ ] SOW reviewed and signed\n\n## Week 2–3: Build\n- [ ] Workflows mapped\n- [ ] CRM configured\n- [ ] Test data loaded\n\n## Week 4: Training\n- [ ] Team training session\n- [ ] Recorded walkthrough delivered\n- [ ] Go-live sign-off",
-  },
-  {
-    id: 5, category: "onboarding", title: "Welcome Package — Client Facing",
-    desc: "Branded welcome email + what to expect during onboarding.",
-    type: "document", ext: "md", size: "6 KB", updated: "2026-04-08T10:00:00Z",
-    tags: ["onboarding", "email"], starred: false,
-    preview: "Subject: Welcome to Hatch Theory — here's what happens next\n\nHey [Name],\n\nWelcome aboard! Here's what the next 4 weeks look like...",
-  },
-  {
-    id: 6, category: "onboarding", title: "Tech Stack Intake Form",
-    desc: "Questions to fill in before kickoff — tools, logins, current processes.",
-    type: "document", ext: "md", size: "4 KB", updated: "2026-04-05T09:00:00Z",
-    tags: ["onboarding", "intake"], starred: false,
-    preview: "1. What CRM/job management tool do you currently use?\n2. How do you handle inbound leads today?\n3. What scheduling software do you use?\n4. Who on your team will be the primary contact?",
-  },
-  {
-    id: 7, category: "templates", title: "Follow-Up Email — Post Demo",
-    desc: "Email to send 24h after a demo call.",
-    type: "template", ext: "md", size: "3 KB", updated: "2026-04-11T14:00:00Z",
-    tags: ["email", "follow-up"], starred: true,
-    preview: "Subject: Great talking today, [Name]\n\nHey [Name],\n\nReally enjoyed our conversation — sounds like there's a strong fit for what you're trying to build at [Company].\n\nAs promised, attaching the proposal. A few things I'd highlight...",
-  },
-  {
-    id: 8, category: "templates", title: "Proposal Cover Email",
-    desc: "Email template to send alongside the proposal PDF.",
-    type: "template", ext: "md", size: "2 KB", updated: "2026-04-09T10:00:00Z",
-    tags: ["email", "proposals"], starred: false,
-    preview: "Subject: Hatch Theory Proposal — [Company Name]\n\nHey [Name],\n\nHere's the proposal we put together based on our conversation...",
-  },
-  {
-    id: 9, category: "internal", title: "Audit Framework — AI Audit",
-    desc: "Internal framework for conducting AI readiness audits with trades clients.",
-    type: "document", ext: "md", size: "18 KB", updated: "2026-04-15T16:00:00Z",
-    tags: ["internal", "audit"], starred: false,
-    preview: "## Phase 1: Tech Stack Inventory\n- Current tools\n- Integration points\n- Manual processes\n\n## Phase 2: Pain Point Mapping\n- Scheduling gaps\n- Lead handling\n- Communication\n\n## Phase 3: ROI Estimate\n- Hours saved/week\n- Revenue captured vs lost",
-  },
-  {
-    id: 10, category: "internal", title: "SOW Template — Workflow Automation",
-    desc: "Statement of work template for workflow automation projects.",
-    type: "document", ext: "docx", size: "28 KB", updated: "2026-04-13T11:00:00Z",
-    tags: ["internal", "legal"], starred: false,
-    preview: "This Statement of Work is entered into between Hatch Theory Solutions Inc. and [Client Name]...",
-  },
-];
 
 const CATEGORIES: { key: ResourceCategory; label: string }[] = [
   { key: "all", label: "All" },
@@ -105,6 +54,17 @@ const EXT_COLORS: Record<string, string> = {
   xlsx: "#34D399",
 };
 
+const DETAIL_INPUT_STYLE = {
+  background: "rgba(255,255,255,0.04)",
+  border: "1px solid rgba(255,255,255,0.06)",
+  borderRadius: 7,
+  padding: "9px 12px",
+  color: "#ECEEF5",
+  fontSize: 13,
+  width: "100%",
+  outline: "none",
+};
+
 const fmtRel = (iso: string) => {
   const d = new Date(iso);
   const diff = Date.now() - d.getTime();
@@ -116,195 +76,1213 @@ const fmtRel = (iso: string) => {
   return d.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
 };
 
+const formatSize = (bytes: number | null | undefined) => {
+  if (!bytes || Number.isNaN(bytes)) return "0 B";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 102.4) / 10} KB`;
+  return `${Math.round(bytes / 104857.6) / 10} MB`;
+};
+
+const normalizeCategory = (
+  category: string | null | undefined,
+): ResourceValueCategory => {
+  if (
+    category === "sales"
+    || category === "onboarding"
+    || category === "templates"
+  ) {
+    return category;
+  }
+  return "internal";
+};
+
+const mapResource = (raw: any): ResourceRecord => {
+  const category = normalizeCategory(raw?.category);
+  const updatedAt =
+    raw?.updated_at || raw?.created_at || new Date().toISOString();
+  const description =
+    typeof raw?.description === "string" ? raw.description : "";
+  const fileSize =
+    typeof raw?.file_size === "number"
+      ? raw.file_size
+      : typeof raw?.file_size === "string"
+        ? Number(raw.file_size)
+        : null;
+  const ext =
+    typeof raw?.ext === "string" && raw.ext.length > 0
+      ? raw.ext
+      : typeof raw?.file_name === "string" && raw.file_name.includes(".")
+        ? raw.file_name.split(".").pop() || ""
+        : "";
+
+  return {
+    id: String(raw?.id ?? ""),
+    user_id: raw?.user_id ?? null,
+    title:
+      typeof raw?.title === "string" && raw.title.length > 0
+        ? raw.title
+        : "Untitled resource",
+    description,
+    desc: description,
+    category,
+    storage_path: raw?.storage_path ?? null,
+    file_name: raw?.file_name ?? null,
+    file_size: fileSize,
+    file_type: raw?.file_type ?? null,
+    ext,
+    size: formatSize(fileSize),
+    updated: updatedAt,
+    tags: Array.isArray(raw?.tags)
+      ? raw.tags.filter((tag: unknown): tag is string => typeof tag === "string")
+      : [],
+    starred: Boolean(raw?.starred),
+    preview: typeof raw?.preview === "string" ? raw.preview : "",
+    created_at: raw?.created_at ?? updatedAt,
+    updated_at: updatedAt,
+    type: category === "templates" ? "template" : "document",
+  };
+};
+
+const getFunctionErrorMessage = async (error: any) => {
+  try {
+    const data = await error?.context?.json();
+    if (typeof data?.error === "string" && data.error.length > 0) {
+      return data.error;
+    }
+  } catch {
+    // Ignore context parsing failures
+  }
+
+  return typeof error?.message === "string" && error.message.length > 0
+    ? error.message
+    : "Something went wrong.";
+};
+
 export const ResourcesPage = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
-  const [selected, setSelected] = useState<Resource | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [sendOpen, setSendOpen] = useState(false);
+  const [sendLoading, setSendLoading] = useState(false);
+  const [sendError, setSendError] = useState("");
+  const [toEmail, setToEmail] = useState("");
+  const [sendSubject, setSendSubject] = useState("");
+  const [sendMessage, setSendMessage] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editCategory, setEditCategory] =
+    useState<ResourceValueCategory>("internal");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { identity } = useGetIdentity();
+  const { data: rawResources, isPending } = useGetList("resources", {
+    pagination: { page: 1, perPage: 200 },
+    sort: { field: "created_at", order: "DESC" },
+  });
+  const [create] = useCreate();
+  const [update] = useUpdate();
 
-  const filtered = RESOURCES.filter((r) => {
-    const matchCat = category === "all" || r.category === category;
+  const resources = (rawResources ?? []).map(mapResource);
+  const selected =
+    resources.find((resource) => resource.id === selectedId) ?? null;
+
+  const filtered = resources.filter((resource) => {
+    const matchCat = category === "all" || resource.category === category;
     const q = search.toLowerCase();
-    const matchSearch = !q || r.title.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.tags.some((t) => t.includes(q));
+    const matchSearch = !q
+      || resource.title.toLowerCase().includes(q)
+      || resource.desc.toLowerCase().includes(q)
+      || resource.tags.some((tag) => tag.toLowerCase().includes(q));
     return matchCat && matchSearch;
   });
 
-  const starred = filtered.filter((r) => r.starred);
-  const rest = filtered.filter((r) => !r.starred);
+  const starred = filtered.filter((resource) => resource.starred);
+  const rest = filtered.filter((resource) => !resource.starred);
+
+  const handleSelect = (resource: ResourceRecord) => {
+    setSelectedId(resource.id);
+    setEditing(false);
+    setCopied(false);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const userId = identity?.id;
+
+    if (!file || !userId) {
+      event.target.value = "";
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const storagePath = `${userId}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await getSupabaseClient()
+        .storage.from("resources")
+        .upload(storagePath, file);
+
+      if (uploadError) {
+        console.error("resources.upload.error", uploadError);
+        return;
+      }
+
+      const createdResource = await create(
+        "resources",
+        {
+          data: {
+            user_id: userId,
+            title: file.name,
+            category: "internal",
+            storage_path: storagePath,
+            file_name: file.name,
+            file_size: file.size,
+            file_type: file.type,
+            ext: file.name.split(".").pop() || "",
+            tags: [],
+            starred: false,
+          },
+        },
+        { returnPromise: true },
+      );
+
+      if (createdResource?.id) {
+        setSelectedId(String(createdResource.id));
+      }
+    } catch (error) {
+      console.error("resources.create.error", error);
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  };
+
+  const handleToggleStar = async (
+    event: MouseEvent<HTMLButtonElement>,
+    resource: ResourceRecord,
+  ) => {
+    event.stopPropagation();
+
+    try {
+      await update(
+        "resources",
+        {
+          id: resource.id,
+          data: {
+            starred: !resource.starred,
+            updated_at: new Date().toISOString(),
+          },
+          previousData: resource,
+        },
+        { returnPromise: true },
+      );
+    } catch (error) {
+      console.error("resources.star.error", error);
+    }
+  };
+
+  const handleOpenSend = () => {
+    if (!selected) return;
+    setSendOpen(true);
+    setSendLoading(false);
+    setSendError("");
+    setToEmail("");
+    setSendSubject(selected.title);
+    setSendMessage("");
+  };
+
+  const handleSend = async () => {
+    if (!selected) return;
+
+    setSendLoading(true);
+    setSendError("");
+
+    try {
+      const { error } = await getSupabaseClient().functions.invoke(
+        "send-resource",
+        {
+          body: {
+            resource_id: selected.id,
+            to_email: toEmail,
+            subject: sendSubject,
+            message: sendMessage,
+          },
+        },
+      );
+
+      if (error) {
+        setSendError(await getFunctionErrorMessage(error));
+        setSendLoading(false);
+        return;
+      }
+
+      setSendOpen(false);
+      setSendLoading(false);
+    } catch (error) {
+      setSendError(await getFunctionErrorMessage(error));
+      setSendLoading(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!selected?.storage_path) return;
+
+    try {
+      const { data } = await getSupabaseClient()
+        .storage.from("resources")
+        .createSignedUrl(selected.storage_path, 3600);
+
+      if (data?.signedUrl) {
+        await navigator.clipboard.writeText(data.signedUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error("resources.copy.error", error);
+    }
+  };
+
+  const handleEditStart = () => {
+    if (!selected) return;
+    setEditing(true);
+    setEditTitle(selected.title);
+    setEditDesc(selected.description);
+    setEditCategory(selected.category);
+  };
+
+  const handleEditCancel = () => {
+    setEditing(false);
+    if (!selected) return;
+    setEditTitle(selected.title);
+    setEditDesc(selected.description);
+    setEditCategory(selected.category);
+  };
+
+  const handleEditSave = async () => {
+    if (!selected) return;
+
+    try {
+      await update(
+        "resources",
+        {
+          id: selected.id,
+          data: {
+            title: editTitle,
+            description: editDesc,
+            category: editCategory,
+            updated_at: new Date().toISOString(),
+          },
+          previousData: selected,
+        },
+        { returnPromise: true },
+      );
+      setEditing(false);
+    } catch (error) {
+      console.error("resources.edit.error", error);
+    }
+  };
 
   return (
-    <div style={{ display: "flex", flex: 1, minHeight: 0, background: "#060A16" }}>
-      {/* Main content */}
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
-        {/* Page header */}
-        <div style={{ padding: "24px 28px 20px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <span style={{ fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700 }}>Library</span>
-            <span style={{ height: 1, width: 24, background: "rgba(77,200,232,0.4)" }} />
-          </div>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-            <div>
-              <h1 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>Resources</h1>
-              <p style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}>Sales scripts, onboarding packages, templates, and client materials</p>
+    <>
+      <div
+        style={{ display: "flex", flex: 1, minHeight: 0, background: "#060A16" }}
+      >
+        <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+          <div style={{ padding: "24px 28px 20px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 6,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 10.5,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "#4DC8E8",
+                  fontWeight: 700,
+                }}
+              >
+                Library
+              </span>
+              <span
+                style={{
+                  height: 1,
+                  width: 24,
+                  background: "rgba(77,200,232,0.4)",
+                }}
+              />
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "8px 12px", width: 220 }}>
-                <Search size={14} color="#4A5270" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search resources…"
-                  style={{ background: "transparent", border: "none", outline: "none", color: "#ECEEF5", fontSize: 13, width: "100%" }}
-                />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h1
+                  style={{
+                    margin: 0,
+                    fontFamily: '"Manrope Variable", ui-sans-serif',
+                    fontSize: 26,
+                    fontWeight: 700,
+                    letterSpacing: "-0.02em",
+                    color: "#ECEEF5",
+                  }}
+                >
+                  Resources
+                </h1>
+                <p
+                  style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}
+                >
+                  Sales scripts, onboarding packages, templates, and client
+                  materials
+                </p>
               </div>
-              <button style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", background: "#4DC8E8", color: "#061022", borderRadius: 7, fontWeight: 700, fontSize: 12.5, border: "none", cursor: "pointer" }}>
-                <Plus size={14} strokeWidth={2.5} /> Upload
-              </button>
+              <div style={{ display: "flex", gap: 10 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderRadius: 8,
+                    padding: "8px 12px",
+                    width: 220,
+                  }}
+                >
+                  <Search size={14} color="#4A5270" />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search resources..."
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: "#ECEEF5",
+                      fontSize: 13,
+                      width: "100%",
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={handleUploadClick}
+                  disabled={uploading}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "8px 14px",
+                    background: "#4DC8E8",
+                    color: "#061022",
+                    borderRadius: 7,
+                    fontWeight: 700,
+                    fontSize: 12.5,
+                    border: "none",
+                    cursor: uploading ? "not-allowed" : "pointer",
+                    opacity: uploading ? 0.75 : 1,
+                  }}
+                >
+                  <Plus size={14} strokeWidth={2.5} />{" "}
+                  {uploading ? "Uploading..." : "Upload"}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 6, marginTop: 20 }}>
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.key}
+                  onClick={() => setCategory(c.key)}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 7,
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    color: category === c.key ? "#ECEEF5" : "#6B7494",
+                    background:
+                      category === c.key
+                        ? "rgba(255,255,255,0.06)"
+                        : "transparent",
+                    border:
+                      category === c.key
+                        ? "1px solid rgba(255,255,255,0.1)"
+                        : "1px solid transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  {c.label}{" "}
+                  <span
+                    style={{
+                      fontFamily: '"JetBrains Mono", ui-monospace',
+                      fontSize: 10.5,
+                      color: category === c.key ? "#4DC8E8" : "#4A5270",
+                    }}
+                  >
+                    {
+                      resources.filter(
+                        (resource) =>
+                          c.key === "all" || resource.category === c.key,
+                      ).length
+                    }
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Category tabs */}
-          <div style={{ display: "flex", gap: 6, marginTop: 20 }}>
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key}
-                onClick={() => setCategory(c.key)}
+          <div
+            style={{
+              padding: "0 28px 40px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
+            }}
+          >
+            {isPending ? (
+              <div
                 style={{
-                  padding: "6px 14px", borderRadius: 7, fontSize: 12.5, fontWeight: 600,
-                  color: category === c.key ? "#ECEEF5" : "#6B7494",
-                  background: category === c.key ? "rgba(255,255,255,0.06)" : "transparent",
-                  border: category === c.key ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                  padding: "60px 0",
+                  textAlign: "center",
+                  color: "#4A5270",
+                  fontSize: 14,
+                }}
+              >
+                Loading resources...
+              </div>
+            ) : (
+              <>
+                {starred.length > 0 && (
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginBottom: 12,
+                      }}
+                    >
+                      <Star size={12} color="#F5B84A" fill="#F5B84A" />
+                      <span
+                        style={{
+                          fontSize: 10.5,
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "#4A5270",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Pinned
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                      }}
+                    >
+                      {starred.map((resource) => (
+                        <ResourceCard
+                          key={resource.id}
+                          resource={resource}
+                          selectedId={selectedId}
+                          onSelect={handleSelect}
+                          onToggleStar={handleToggleStar}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {rest.length > 0 && (
+                  <div>
+                    {starred.length > 0 && (
+                      <div
+                        style={{
+                          fontSize: 10.5,
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "#4A5270",
+                          fontWeight: 700,
+                          marginBottom: 12,
+                        }}
+                      >
+                        All resources
+                      </div>
+                    )}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                      }}
+                    >
+                      {rest.map((resource) => (
+                        <ResourceCard
+                          key={resource.id}
+                          resource={resource}
+                          selectedId={selectedId}
+                          onSelect={handleSelect}
+                          onToggleStar={handleToggleStar}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {filtered.length === 0 && (
+                  <div
+                    style={{
+                      padding: "60px 0",
+                      textAlign: "center",
+                      color: "#4A5270",
+                      fontSize: 14,
+                    }}
+                  >
+                    No resources match your search.
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {selected && (
+          <div
+            style={{
+              width: 380,
+              flexShrink: 0,
+              background: "#0A0F1A",
+              borderLeft: "1px solid rgba(255,255,255,0.06)",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                padding: "20px 22px",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ flex: 1, marginRight: 12 }}>
+                {editing ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <select
+                      value={editCategory}
+                      onChange={(e) =>
+                        setEditCategory(normalizeCategory(e.target.value))}
+                      style={DETAIL_INPUT_STYLE}
+                    >
+                      {CATEGORIES.filter((option) => option.key !== "all").map(
+                        (option) => (
+                          <option
+                            key={option.key}
+                            value={option.key}
+                            style={{ color: "#061022" }}
+                          >
+                            {option.label}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                    <input
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      style={{
+                        ...DETAIL_INPUT_STYLE,
+                        fontFamily: '"Manrope Variable", ui-sans-serif',
+                        fontSize: 17,
+                        fontWeight: 700,
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                      }}
+                    />
+                    <textarea
+                      rows={3}
+                      value={editDesc}
+                      onChange={(e) => setEditDesc(e.target.value)}
+                      style={{ ...DETAIL_INPUT_STYLE, resize: "vertical" }}
+                    />
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        onClick={handleEditSave}
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 6,
+                          padding: "9px 0",
+                          borderRadius: 8,
+                          background: "#4DC8E8",
+                          color: "#061022",
+                          fontWeight: 700,
+                          fontSize: 12.5,
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleEditCancel}
+                        style={{
+                          padding: "9px 12px",
+                          borderRadius: 8,
+                          border: "1px solid rgba(255,255,255,0.06)",
+                          background: "rgba(255,255,255,0.03)",
+                          color: "#6B7494",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        fontSize: 9.5,
+                        letterSpacing: "0.18em",
+                        textTransform: "uppercase",
+                        color: "#4DC8E8",
+                        fontWeight: 700,
+                        marginBottom: 6,
+                      }}
+                    >
+                      {selected.category}
+                    </div>
+                    <h2
+                      style={{
+                        margin: 0,
+                        fontFamily: '"Manrope Variable", ui-sans-serif',
+                        fontSize: 17,
+                        fontWeight: 700,
+                        color: "#ECEEF5",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {selected.title}
+                    </h2>
+                    <div
+                      style={{ fontSize: 12, color: "#6B7494", marginTop: 4 }}
+                    >
+                      {selected.desc}
+                    </div>
+                  </>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedId(null);
+                  setEditing(false);
+                }}
+                style={{
+                  color: "#6B7494",
+                  padding: 4,
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                padding: "16px 22px",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                display: "flex",
+                gap: 20,
+                flexShrink: 0,
+              }}
+            >
+              {[
+                ["Type", selected.ext ? selected.ext.toUpperCase() : "FILE"],
+                ["Size", selected.size],
+                ["Updated", fmtRel(selected.updated)],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <div
+                    style={{
+                      fontSize: 9.5,
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "#4A5270",
+                      fontWeight: 700,
+                      marginBottom: 3,
+                    }}
+                  >
+                    {k}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12.5,
+                      color: "#ECEEF5",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {v}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                padding: "14px 22px",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                display: "flex",
+                gap: 8,
+                flexShrink: 0,
+              }}
+            >
+              <button
+                onClick={handleOpenSend}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  padding: "9px 0",
+                  borderRadius: 8,
+                  background: "#4DC8E8",
+                  color: "#061022",
+                  fontWeight: 700,
+                  fontSize: 12.5,
+                  border: "none",
                   cursor: "pointer",
                 }}
               >
-                {c.label}{" "}
-                <span style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 10.5, color: category === c.key ? "#4DC8E8" : "#4A5270" }}>
-                  {RESOURCES.filter((r) => c.key === "all" || r.category === c.key).length}
-                </span>
+                <Send size={13} strokeWidth={2.5} /> Send to client
               </button>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ padding: "0 28px 40px", display: "flex", flexDirection: "column", gap: 20 }}>
-          {starred.length > 0 && (
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                <Star size={12} color="#F5B84A" fill="#F5B84A" />
-                <span style={{ fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700 }}>Pinned</span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {starred.map((r) => <ResourceCard key={r.id} r={r} selected={selected} setSelected={setSelected} />)}
-              </div>
+              <button
+                onClick={handleCopy}
+                style={{
+                  padding: "9px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: "#6B7494",
+                  cursor: "pointer",
+                }}
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </button>
+              <button
+                onClick={handleEditStart}
+                style={{
+                  padding: "9px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: "#6B7494",
+                  cursor: "pointer",
+                }}
+              >
+                <Edit size={14} />
+              </button>
             </div>
-          )}
 
-          {rest.length > 0 && (
-            <div>
-              {starred.length > 0 && (
-                <div style={{ fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 12 }}>All resources</div>
+            <div style={{ padding: "16px 22px", flex: 1, overflowY: "auto" }}>
+              <div
+                style={{
+                  fontSize: 9.5,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#4A5270",
+                  fontWeight: 700,
+                  marginBottom: 12,
+                }}
+              >
+                Preview
+              </div>
+              {selected.preview ? (
+                <pre
+                  style={{
+                    margin: 0,
+                    fontFamily: '"JetBrains Mono", ui-monospace',
+                    fontSize: 11.5,
+                    color: "#6B7494",
+                    lineHeight: 1.7,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    borderRadius: 8,
+                    padding: "14px 16px",
+                  }}
+                >
+                  {selected.preview}
+                </pre>
+              ) : selected.storage_path ? (
+                <div style={{ color: "#4A5270", fontSize: 12 }}>
+                  No preview available. Use Copy to get a download link.
+                </div>
+              ) : (
+                <pre
+                  style={{
+                    margin: 0,
+                    fontFamily: '"JetBrains Mono", ui-monospace',
+                    fontSize: 11.5,
+                    color: "#6B7494",
+                    lineHeight: 1.7,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    borderRadius: 8,
+                    padding: "14px 16px",
+                  }}
+                >
+                  {selected.preview}
+                </pre>
               )}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {rest.map((r) => <ResourceCard key={r.id} r={r} selected={selected} setSelected={setSelected} />)}
-              </div>
             </div>
-          )}
-
-          {filtered.length === 0 && (
-            <div style={{ padding: "60px 0", textAlign: "center", color: "#4A5270", fontSize: 14 }}>No resources match your search.</div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Detail panel */}
-      {selected && (
-        <div style={{ width: 380, flexShrink: 0, background: "#0A0F1A", borderLeft: "1px solid rgba(255,255,255,0.06)", overflowY: "auto", display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "20px 22px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexShrink: 0 }}>
-            <div style={{ flex: 1, marginRight: 12 }}>
-              <div style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700, marginBottom: 6 }}>{selected.category}</div>
-              <h2 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 17, fontWeight: 700, color: "#ECEEF5", letterSpacing: "-0.01em", lineHeight: 1.3 }}>{selected.title}</h2>
-              <div style={{ fontSize: 12, color: "#6B7494", marginTop: 4 }}>{selected.desc}</div>
+      {sendOpen && selected && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 24,
+          }}
+        >
+          <div
+            style={{
+              width: 420,
+              background: "#0A0F1A",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 12,
+              padding: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: '"Manrope Variable", ui-sans-serif',
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#ECEEF5",
+              }}
+            >
+              Send to Client
             </div>
-            <button onClick={() => setSelected(null)} style={{ color: "#6B7494", padding: 4, background: "transparent", border: "none", cursor: "pointer", flexShrink: 0 }}>
-              <X size={16} />
-            </button>
-          </div>
+            <div style={{ fontSize: 12, color: "#6B7494", marginTop: 4 }}>
+              {selected.title}
+            </div>
 
-          <div style={{ padding: "16px 22px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", gap: 20, flexShrink: 0 }}>
-            {[["Type", selected.ext.toUpperCase()], ["Size", selected.size], ["Updated", fmtRel(selected.updated)]].map(([k, v]) => (
-              <div key={k}>
-                <div style={{ fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 3 }}>{k}</div>
-                <div style={{ fontSize: 12.5, color: "#ECEEF5", fontWeight: 500 }}>{v}</div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+                marginTop: 18,
+              }}
+            >
+              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "#4A5270",
+                    fontWeight: 700,
+                  }}
+                >
+                  To
+                </span>
+                <input
+                  type="email"
+                  required
+                  value={toEmail}
+                  onChange={(e) => setToEmail(e.target.value)}
+                  style={DETAIL_INPUT_STYLE}
+                />
+              </label>
+
+              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "#4A5270",
+                    fontWeight: 700,
+                  }}
+                >
+                  Subject
+                </span>
+                <input
+                  value={sendSubject}
+                  onChange={(e) => setSendSubject(e.target.value)}
+                  style={DETAIL_INPUT_STYLE}
+                />
+              </label>
+
+              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "#4A5270",
+                    fontWeight: 700,
+                  }}
+                >
+                  Message
+                </span>
+                <textarea
+                  rows={4}
+                  value={sendMessage}
+                  onChange={(e) => setSendMessage(e.target.value)}
+                  style={{ ...DETAIL_INPUT_STYLE, resize: "vertical" }}
+                />
+              </label>
+            </div>
+
+            {sendError ? (
+              <div style={{ marginTop: 14, fontSize: 12, color: "#F87171" }}>
+                {sendError}
               </div>
-            ))}
-          </div>
+            ) : null}
 
-          <div style={{ padding: "14px 22px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", gap: 8, flexShrink: 0 }}>
-            <button style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "9px 0", borderRadius: 8, background: "#4DC8E8", color: "#061022", fontWeight: 700, fontSize: 12.5, border: "none", cursor: "pointer" }}>
-              <Send size={13} strokeWidth={2.5} /> Send to client
-            </button>
-            <button style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)", color: "#6B7494", cursor: "pointer" }}>
-              <Copy size={14} />
-            </button>
-            <button style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)", color: "#6B7494", cursor: "pointer" }}>
-              <Edit size={14} />
-            </button>
-          </div>
-
-          <div style={{ padding: "16px 22px", flex: 1, overflowY: "auto" }}>
-            <div style={{ fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 12 }}>Preview</div>
-            <pre style={{ margin: 0, fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 11.5, color: "#6B7494", lineHeight: 1.7, whiteSpace: "pre-wrap", wordBreak: "break-word", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 8, padding: "14px 16px" }}>
-              {selected.preview}
-            </pre>
+            <div
+              style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}
+            >
+              <button
+                onClick={() => {
+                  setSendOpen(false);
+                  setSendError("");
+                }}
+                style={{
+                  padding: "9px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: "#6B7494",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSend}
+                disabled={sendLoading}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  padding: "9px 14px",
+                  background: "#4DC8E8",
+                  color: "#061022",
+                  borderRadius: 7,
+                  fontWeight: 700,
+                  fontSize: 12.5,
+                  border: "none",
+                  cursor: sendLoading ? "not-allowed" : "pointer",
+                  opacity: sendLoading ? 0.75 : 1,
+                }}
+              >
+                {sendLoading ? "Sending..." : "Send"}
+              </button>
+            </div>
           </div>
         </div>
       )}
-    </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="*/*"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+    </>
   );
 };
 
 const ResourceCard = ({
-  r,
-  selected,
-  setSelected,
+  resource,
+  selectedId,
+  onSelect,
+  onToggleStar,
 }: {
-  r: Resource;
-  selected: Resource | null;
-  setSelected: (r: Resource) => void;
+  resource: ResourceRecord;
+  selectedId: string | null;
+  onSelect: (resource: ResourceRecord) => void;
+  onToggleStar: (
+    event: MouseEvent<HTMLButtonElement>,
+    resource: ResourceRecord,
+  ) => void;
 }) => {
-  const color = EXT_COLORS[r.ext] ?? "#9AA3BE";
-  const isActive = selected?.id === r.id;
+  const color = EXT_COLORS[resource.ext] ?? "#9AA3BE";
+  const isActive = selectedId === resource.id;
 
   return (
     <div
-      onClick={() => setSelected(r)}
+      onClick={() => onSelect(resource)}
       style={{
-        display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 16px",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 14,
+        padding: "14px 16px",
         borderRadius: 10,
         background: isActive ? "#131B2E" : "#0D1424",
-        border: isActive ? "1px solid rgba(77,200,232,0.3)" : "1px solid rgba(255,255,255,0.05)",
+        border: isActive
+          ? "1px solid rgba(77,200,232,0.3)"
+          : "1px solid rgba(255,255,255,0.05)",
         cursor: "pointer",
       }}
     >
-      <div style={{
-        width: 42, height: 42, borderRadius: 9, flexShrink: 0,
-        background: `${color}12`, border: `1px solid ${color}33`,
-        display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 2,
-      }}>
-        {r.type === "template" ? <Copy size={16} color={color} strokeWidth={1.8} /> : <FileText size={16} color={color} strokeWidth={1.8} />}
-        <span style={{ fontSize: 8.5, fontWeight: 700, color, letterSpacing: "0.06em", textTransform: "uppercase" }}>.{r.ext}</span>
+      <div
+        style={{
+          width: 42,
+          height: 42,
+          borderRadius: 9,
+          flexShrink: 0,
+          background: `${color}12`,
+          border: `1px solid ${color}33`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {resource.type === "template" ? (
+          <Copy size={16} color={color} strokeWidth={1.8} />
+        ) : (
+          <FileText size={16} color={color} strokeWidth={1.8} />
+        )}
+        <span
+          style={{
+            fontSize: 8.5,
+            fontWeight: 700,
+            color,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+          }}
+        >
+          .{resource.ext || "file"}
+        </span>
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-          <span style={{ fontSize: 13.5, fontWeight: 600, color: "#ECEEF5", fontFamily: '"Manrope Variable", ui-sans-serif' }}>{r.title}</span>
-          {r.starred && <Star size={12} color="#F5B84A" fill="#F5B84A" />}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 3,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 13.5,
+              fontWeight: 600,
+              color: "#ECEEF5",
+              fontFamily: '"Manrope Variable", ui-sans-serif',
+            }}
+          >
+            {resource.title}
+          </span>
+          <button
+            onClick={(event) => onToggleStar(event, resource)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 0,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: resource.starred ? "#F5B84A" : "#4A5270",
+            }}
+          >
+            <Star
+              size={12}
+              color={resource.starred ? "#F5B84A" : "#4A5270"}
+              fill={resource.starred ? "#F5B84A" : "none"}
+            />
+          </button>
         </div>
-        <div style={{ fontSize: 12, color: "#6B7494", marginBottom: 6, lineHeight: 1.4 }}>{r.desc}</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          {r.tags.map((t) => (
-            <span key={t} style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#4A5270", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.05)", padding: "2px 7px", borderRadius: 3 }}>{t}</span>
+        <div
+          style={{
+            fontSize: 12,
+            color: "#6B7494",
+            marginBottom: 6,
+            lineHeight: 1.4,
+          }}
+        >
+          {resource.desc}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            flexWrap: "wrap",
+          }}
+        >
+          {resource.tags.map((tag) => (
+            <span
+              key={tag}
+              style={{
+                fontSize: 9.5,
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#4A5270",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                padding: "2px 7px",
+                borderRadius: 3,
+              }}
+            >
+              {tag}
+            </span>
           ))}
-          <span style={{ fontSize: 11, color: "#4A5270", marginLeft: "auto", fontFamily: '"JetBrains Mono", ui-monospace' }}>{r.size} · {fmtRel(r.updated)}</span>
+          <span
+            style={{
+              fontSize: 11,
+              color: "#4A5270",
+              marginLeft: "auto",
+              fontFamily: '"JetBrains Mono", ui-monospace',
+            }}
+          >
+            {resource.size} · {fmtRel(resource.updated)}
+          </span>
         </div>
       </div>
     </div>

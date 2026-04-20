@@ -116,6 +116,40 @@ export const ObsKPIWon = () => {
       </div>
       <div style={{ fontSize: 11.5, color: "#5C6784", marginBottom: 16 }}>this quarter</div>
 
+      <div style={{ marginTop: "auto" }}>
+        <div style={{ display: "flex", gap: 3, marginBottom: 8 }}>
+          {Array.from({ length: WON_GOAL }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: 6,
+                borderRadius: 2,
+                background:
+                  i < filled
+                    ? "linear-gradient(90deg, #4DC8E8 0%, #34D399 100%)"
+                    : "rgba(255,255,255,0.06)",
+                boxShadow: i < filled ? "0 0 6px rgba(77,200,232,0.4)" : "none",
+              }}
+            />
+          ))}
+        </div>
+        <div
+          style={{
+            fontSize: 10.5,
+            color: "#5C6784",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+          }}
+        >
+          <span style={{ fontFamily: '"JetBrains Mono", ui-monospace', color: "#ECEEF5" }}>
+            {filled}
+          </span>{" "}
+          of {WON_GOAL} goal
+        </div>
+      </div>
+
     </section>
   );
 };

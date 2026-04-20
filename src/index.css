@@ -49,6 +49,7 @@
 
 :root {
   --radius: 0.5rem;
+  --hatch-cyan: #4DC8E8;
   --background: #FAFAF9;
   --foreground: #1A1A2E;
   --card: #FFFFFF;

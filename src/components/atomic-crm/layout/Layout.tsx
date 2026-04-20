@@ -1,4 +1,4 @@
-import { Suspense, type ReactNode } from "react";
+import { Suspense, useState, type ErrorInfo, type ReactNode } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { AppSidebar } from "@/components/admin/app-sidebar";
 import { Notification } from "@/components/admin/notification";
@@ -9,6 +9,10 @@ import Header from "./Header";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   useConfigurationLoader();
+  const [errorInfo, setErrorInfo] = useState<ErrorInfo | undefined>(undefined);
+  const handleError = (_: unknown, info: ErrorInfo) => {
+    setErrorInfo(info);
+  };
   return (
     <div
       style={{
@@ -29,7 +33,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         }}
       >
         <Header />
-        <ErrorBoundary FallbackComponent={Error}>
+        <ErrorBoundary
+          onError={handleError}
+          fallbackRender={({ error, resetErrorBoundary }) => (
+            <Error
+              error={error}
+              errorInfo={errorInfo}
+              resetErrorBoundary={resetErrorBoundary}
+            />
+          )}
+        >
           <Suspense fallback={<Loading />}>
             <div
               style={{

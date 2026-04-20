@@ -166,7 +166,7 @@ const Header = () => {
           {"\u2318K"}
         </span>
       </div>
-      <div style={{ flex: 1 }} />
+      <div id="breadcrumb" style={{ flex: 1, display: "flex", alignItems: "center" }} />
       <div
         style={{
           zIndex: 1,

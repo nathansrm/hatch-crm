@@ -17,6 +17,10 @@ interface ResourceRow {
   file_type: string | null;
 }
 
+interface JwtPayload {
+  sub?: string;
+}
+
 const jsonResponse = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -35,11 +39,41 @@ const toBase64 = (buffer: ArrayBuffer) => {
   return btoa(binary);
 };
 
+const decodeJwtPayload = (token: string): JwtPayload | null => {
+  const [, payload] = token.split(".");
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const normalizedPayload = payload
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+      .padEnd(Math.ceil(payload.length / 4) * 4, "=");
+
+    return JSON.parse(atob(normalizedPayload)) as JwtPayload;
+  } catch {
+    return null;
+  }
+};
+
 Deno.serve((req) =>
   OptionsMiddleware(req, async (request) => {
     try {
       if (request.method !== "POST") {
         return jsonResponse({ error: "Method Not Allowed" }, 405);
+      }
+
+      const authorization = request.headers.get("Authorization");
+      if (!authorization?.startsWith("Bearer ")) {
+        return jsonResponse({ error: "Unauthorized" }, 401);
+      }
+
+      const token = authorization.slice("Bearer ".length).trim();
+      const callerUuid = decodeJwtPayload(token)?.sub?.trim();
+
+      if (!callerUuid) {
+        return jsonResponse({ error: "Unauthorized" }, 401);
       }
 
       let body: SendResourcePayload;
@@ -63,14 +97,15 @@ Deno.serve((req) =>
         .from("resources")
         .select("*")
         .eq("id", resourceId)
+        .eq("user_id", callerUuid)
         .single();
 
       if (resourceError) {
-        const status = resourceError.code === "PGRST116" ? 404 : 500;
+        const status = resourceError.code === "PGRST116" ? 403 : 500;
         return jsonResponse(
           {
             error:
-              status === 404 ? "Resource not found" : resourceError.message,
+              status === 403 ? "Forbidden" : resourceError.message,
           },
           status,
         );

@@ -1,4 +1,4 @@
-import { useCreate, useGetIdentity, useGetList, useUpdate } from "ra-core";
+import { useCreate, useGetList, useUpdate } from "ra-core";
 import type { ChangeEvent, MouseEvent } from "react";
 import { useRef, useState } from "react";
 import {
@@ -178,7 +178,6 @@ export const ResourcesPage = () => {
   const [editCategory, setEditCategory] =
     useState<ResourceValueCategory>("internal");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { identity } = useGetIdentity();
   const { data: rawResources, isPending } = useGetList("resources", {
     pagination: { page: 1, perPage: 200 },
     sort: { field: "created_at", order: "DESC" },
@@ -220,17 +219,25 @@ export const ResourcesPage = () => {
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    const userId = identity?.id;
 
-    if (!file || !userId) {
+    if (!file) {
       event.target.value = "";
       return;
     }
 
     setUploading(true);
     try {
+      const supabase = getSupabaseClient();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+
+      if (userError || !userId) {
+        console.error("resources.auth.error", userError);
+        return;
+      }
+
       const storagePath = `${userId}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await getSupabaseClient()
+      const { error: uploadError } = await supabase
         .storage.from("resources")
         .upload(storagePath, file);
 

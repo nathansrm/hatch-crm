@@ -1,23 +1,42 @@
-import { useRecordContext, useTranslate } from "ra-core";
+import { useGetList, useRecordContext, useTranslate } from "ra-core";
+import { Link } from "react-router";
 import { EditButton } from "@/components/admin/edit-button";
 import { DeleteButton } from "@/components/admin";
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
 import { ShowButton } from "@/components/admin/show-button";
+import { Badge } from "@/components/ui/badge";
 
+import { formatCompactCurrency } from "../dashboard/widgets/dashboardUtils";
+import { findDealLabel } from "../deals/dealUtils";
+import { stageColorMap } from "../deals/stageColors";
 import { AddTask } from "../tasks/AddTask";
 import { TasksIterator } from "../tasks/TasksIterator";
+import { useConfigurationContext } from "../root/ConfigurationContext";
 import { TagsListEdit } from "./TagsListEdit";
 import { ContactStatusSelector } from "./ContactInputs";
 import { ContactPersonalInfo } from "./ContactPersonalInfo";
 import { ContactBackgroundInfo } from "./ContactBackgroundInfo";
 import { AsideSection } from "../misc/AsideSection";
-import type { Contact } from "../types";
+import type { Contact, Deal } from "../types";
 import { ContactMergeButton } from "./ContactMergeButton";
 import { ExportVCardButton } from "./ExportVCardButton";
 
 export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
   const record = useRecordContext<Contact>();
   const translate = useTranslate();
+  const { currency, dealStages } = useConfigurationContext();
+  const { data: deals, isPending } = useGetList<Deal>(
+    "deals",
+    {
+      pagination: { page: 1, perPage: 10 },
+      sort: { field: "updated_at", order: "DESC" },
+      filter: {
+        "contact_ids@cs": `{${record?.id}}`,
+        "archived_at@is": null,
+      },
+    },
+    { enabled: !!record?.id },
+  );
 
   if (!record) return null;
 
@@ -66,6 +85,42 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
         </ReferenceManyField>
         <AddTask />
       </AsideSection>
+
+      {!isPending && !!deals?.length && (
+        <AsideSection title={translate("resources.deals.name", { smart_count: 2 })}>
+          <div className="flex flex-col gap-1">
+            {deals.map((deal) => (
+              <Link
+                key={deal.id}
+                to={`/deals/${deal.id}/show`}
+                className="hover:bg-muted/40 rounded-md -mx-2 px-2 py-1.5 block"
+              >
+                <div className="flex flex-col gap-1">
+                  <div className="text-sm truncate" title={deal.name}>
+                    {deal.name}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Badge
+                      style={{
+                        backgroundColor: stageColorMap[deal.stage]?.bg,
+                        color: stageColorMap[deal.stage]?.text,
+                        border: stageColorMap[deal.stage]?.border
+                          ? `1px solid ${stageColorMap[deal.stage].border}`
+                          : undefined,
+                      }}
+                    >
+                      {findDealLabel(dealStages, deal.stage)}
+                    </Badge>
+                    {deal.amount > 0 ? (
+                      <span>{formatCompactCurrency(deal.amount, currency)}</span>
+                    ) : null}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </AsideSection>
+      )}
 
       {link !== "edit" && (
         <>

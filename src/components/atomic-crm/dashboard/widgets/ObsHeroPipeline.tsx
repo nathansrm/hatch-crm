@@ -284,7 +284,7 @@ export const ObsHeroPipeline = () => {
           {stageStrip.map((stage) => (
             <div
               key={stage.key}
-              title={`${stage.label} â€” ${stage.count}`}
+              title={`${stage.label} — ${stage.count}`}
               style={{
                 flex: stage.value || stage.count || 1,
                 background: `linear-gradient(180deg, ${stage.color} 0%, ${stage.color}aa 100%)`,

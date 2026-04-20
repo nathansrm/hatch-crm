@@ -50,10 +50,10 @@ export const getRangeWindow = (range: HeroRange) => {
 
 export const getHeroEyebrow = (range: HeroRange) => {
   const now = new Date();
-  if (range === "30d") return "Pipeline Value Â· Created in Last 30 Days";
-  if (range === "ytd") return `Pipeline Value Â· Created YTD ${now.getFullYear()}`;
+  if (range === "30d") return "Pipeline Value · Created in Last 30 Days";
+  if (range === "ytd") return `Pipeline Value · Created YTD ${now.getFullYear()}`;
   const q = Math.floor(now.getMonth() / 3) + 1;
-  return `Pipeline Value Â· Created in Q${q} ${now.getFullYear()}`;
+  return `Pipeline Value · Created in Q${q} ${now.getFullYear()}`;
 };
 
 export const AVATAR_COLORS = ["#4DC8E8", "#A78BFA", "#F5B84A", "#34D399", "#EF5A6F"];

@@ -265,7 +265,7 @@ export const ObsHotDealsPanel = () => {
                     marginLeft: 15,
                   }}
                 >
-                  {String(index + 1).padStart(2, "0")} Â· {fmtRel(deal.updated_at)}
+                  {String(index + 1).padStart(2, "0")} · {fmtRel(deal.updated_at)}
                 </div>
               </div>
               <div

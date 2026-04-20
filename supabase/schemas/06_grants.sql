@@ -92,6 +92,9 @@ grant all on table public.configuration to service_role;
 grant all on table public.favicons_excluded_domains to authenticated;
 grant all on table public.favicons_excluded_domains to service_role;
 
+grant all on table public.resources to authenticated;
+grant all on table public.resources to service_role;
+
 -- Construction lookup tables
 grant all on table public.trade_types to authenticated;
 grant all on table public.trade_types to service_role;

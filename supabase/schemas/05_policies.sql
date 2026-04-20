@@ -15,6 +15,7 @@ alter table public.tags enable row level security;
 alter table public.tasks enable row level security;
 alter table public.configuration enable row level security;
 alter table public.favicons_excluded_domains enable row level security;
+alter table public.resources enable row level security;
 
 -- Companies
 create policy "authenticated_select_companies" on public.companies for select to authenticated using (auth.uid() is not null);
@@ -68,6 +69,10 @@ create policy "Enable update for admins" on public.configuration for update to a
 
 -- Favicons excluded domains
 create policy "authenticated_all_favicons_excluded_domains" on public.favicons_excluded_domains for all to authenticated using (auth.uid() is not null) with check (auth.uid() is not null);
+
+-- Resources
+create policy "users_own_resources" on public.resources
+    for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- Trade Types (read = authenticated, write = admin)
 alter table public.trade_types enable row level security;

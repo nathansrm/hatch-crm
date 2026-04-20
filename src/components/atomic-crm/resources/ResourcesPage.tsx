@@ -14,6 +14,16 @@ import {
 } from "lucide-react";
 import { getSupabaseClient } from "@/components/atomic-crm/providers/supabase/supabase";
 
+const ALLOWED_RESOURCE_FILE_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+].join(",");
+
 type ResourceCategory = "all" | "sales" | "onboarding" | "templates" | "internal";
 type ResourceValueCategory = Exclude<ResourceCategory, "all">;
 
@@ -1208,7 +1218,7 @@ export const ResourcesPage = () => {
       <input
         ref={fileInputRef}
         type="file"
-        accept="*/*"
+        accept={ALLOWED_RESOURCE_FILE_TYPES}
         style={{ display: "none" }}
         onChange={handleFileChange}
       />

@@ -14,12 +14,25 @@ interface ResourceRow {
   title: string;
   storage_path: string | null;
   file_name: string | null;
+  file_size: number | string | null;
   file_type: string | null;
 }
 
 interface JwtPayload {
   sub?: string;
 }
+
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+
+const ALLOWED_FILE_TYPES = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+]);
 
 const jsonResponse = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -117,6 +130,25 @@ Deno.serve((req) =>
         | undefined;
 
       if (resource.storage_path) {
+        if (!resource.file_type || !ALLOWED_FILE_TYPES.has(resource.file_type)) {
+          return jsonResponse({ error: "Unsupported file type" }, 400);
+        }
+
+        const storedFileSize =
+          typeof resource.file_size === "number"
+            ? resource.file_size
+            : typeof resource.file_size === "string"
+              ? Number(resource.file_size)
+              : null;
+
+        if (
+          typeof storedFileSize === "number"
+          && Number.isFinite(storedFileSize)
+          && storedFileSize > MAX_ATTACHMENT_BYTES
+        ) {
+          return jsonResponse({ error: "Attachment too large" }, 400);
+        }
+
         const { data: fileData, error: downloadError } = await supabaseAdmin
           .storage.from("resources")
           .download(resource.storage_path);
@@ -130,12 +162,16 @@ Deno.serve((req) =>
           );
         }
 
+        if (fileData.size > MAX_ATTACHMENT_BYTES) {
+          return jsonResponse({ error: "Attachment too large" }, 400);
+        }
+
         const fileBuffer = await fileData.arrayBuffer();
         attachments = [
           {
             Name: resource.file_name || resource.title,
             Content: toBase64(fileBuffer),
-            ContentType: resource.file_type || "application/octet-stream",
+            ContentType: resource.file_type,
           },
         ];
       }
@@ -153,7 +189,6 @@ Deno.serve((req) =>
           To: toEmail,
           Subject: body.subject ?? resource.title,
           TextBody: body.message ?? "",
-          HtmlBody: `<p>${(body.message ?? "").replace(/\n/g, "<br>")}</p>`,
           MessageStream:
             Deno.env.get("POSTMARK_OUTREACH_STREAM") ?? "outbound",
           ...(attachments ? { Attachments: attachments } : {}),

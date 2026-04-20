@@ -147,6 +147,24 @@ create table public.favicons_excluded_domains (
     domain text not null
 );
 
+create table public.resources (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id) on delete cascade not null,
+    title text not null,
+    description text,
+    category text not null default 'internal',
+    storage_path text,
+    file_name text,
+    file_size bigint,
+    file_type text,
+    ext text,
+    tags text[] default '{}',
+    starred boolean not null default false,
+    preview text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+
 --
 -- Foreign keys
 --

@@ -112,7 +112,6 @@ export const StoryWrapper = ({
         i18nProvider={testI18nProvider}
         dashboard={() => <>{children}</>}
         store={store}
-        disableTelemetry
         layout={({ children }) => (
           <>
             {children}

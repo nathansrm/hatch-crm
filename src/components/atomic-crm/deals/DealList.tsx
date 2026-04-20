@@ -17,6 +17,7 @@ import { DealEmpty } from "./DealEmpty";
 import { DealListContent } from "./DealListContent";
 import { DealShow } from "./DealShow";
 import { OnlyMineInput } from "./OnlyMineInput";
+import type { Deal } from "../types";
 
 const DealList = () => {
   const { identity } = useGetIdentity();
@@ -67,12 +68,13 @@ const DealLayout = () => {
   const matchShow = matchPath("/deals/:id/show", location.pathname);
   const matchEdit = matchPath("/deals/:id", location.pathname);
 
-  const { data, total, isPending, filterValues } = useListContext();
+  const { data, total, isPending, filterValues } = useListContext<Deal>();
+  const dealData = Array.isArray(data) ? data : [];
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
-  const activeDealCount = total ?? data?.length ?? 0;
+  const activeDealCount = total ?? dealData.length;
 
   if (isPending) return null;
-  if (!data?.length && !hasFilters)
+  if (dealData.length === 0 && !hasFilters)
     return (
       <>
         <DealEmpty>

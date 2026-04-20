@@ -156,9 +156,10 @@ export function AppSidebar() {
           gap: 2,
         }}
       >
-        {NAV_ITEMS.map((item) => (
-          <NavItem key={item.key} {...item} />
-        ))}
+        {NAV_ITEMS.map((item) => {
+          const { key, ...rest } = item;
+          return <NavItem key={key} {...rest} />;
+        })}
       </nav>
       <div style={{ flex: 1 }} />
       <div

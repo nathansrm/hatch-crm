@@ -1,4 +1,4 @@
-import { useCreate, useGetList, useUpdate } from "ra-core";
+import { useCreate, useGetList, useNotify, useUpdate } from "ra-core";
 import type { ChangeEvent, MouseEvent } from "react";
 import { useRef, useState } from "react";
 import {
@@ -171,6 +171,7 @@ const getFunctionErrorMessage = async (error: any) => {
 };
 
 export const ResourcesPage = () => {
+  const notify = useNotify();
   const isDemo = import.meta.env.VITE_IS_DEMO === "true";
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
@@ -262,6 +263,7 @@ export const ResourcesPage = () => {
 
       if (userError || !userId) {
         console.error("resources.auth.error", userError);
+        notify("Upload failed: not authenticated", { type: "error" });
         return;
       }
 
@@ -272,6 +274,7 @@ export const ResourcesPage = () => {
 
       if (uploadError) {
         console.error("resources.upload.error", uploadError);
+        notify(`Upload failed: ${uploadError.message}`, { type: "error" });
         return;
       }
 
@@ -299,6 +302,7 @@ export const ResourcesPage = () => {
       }
     } catch (error) {
       console.error("resources.create.error", error);
+      notify(`Upload failed: ${error instanceof Error ? error.message : "unknown error"}`, { type: "error" });
     } finally {
       setUploading(false);
       event.target.value = "";

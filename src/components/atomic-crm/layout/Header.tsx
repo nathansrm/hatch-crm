@@ -6,11 +6,11 @@ import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext";
 import type { Deal } from "@/components/atomic-crm/types";
+import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
 import { ImportPage } from "../misc/ImportPage";
 import {
   formatCompactCurrency,
   getValidDate,
-  UNARCHIVED_DEALS_LIST_PARAMS,
 } from "../dashboard/widgets/dashboardUtils";
 
 const Header = () => {
@@ -19,7 +19,7 @@ const Header = () => {
   const initial = identity?.fullName?.charAt(0) ?? "U";
   const { data: pipelineDeals, isPending: isPipelinePending } = useGetList<Deal>(
     "deals",
-    UNARCHIVED_DEALS_LIST_PARAMS,
+    OPEN_DEALS_LIST_PARAMS,
   );
 
   const pipelineLive = useMemo(() => {

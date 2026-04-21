@@ -2,6 +2,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useGetList } from "ra-core";
 
+import { OPEN_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
 import {
@@ -9,9 +10,7 @@ import {
   getRangeWindow,
   getStagePalette,
   getValidDate,
-  isTerminalDealStage,
   type HeroRange,
-  UNARCHIVED_DEALS_LIST_PARAMS,
 } from "./dashboardUtils";
 
 export const ObsHeroPipeline = () => {
@@ -19,14 +18,12 @@ export const ObsHeroPipeline = () => {
   const [range, setRange] = useState<HeroRange>("30d");
   const { data: deals } = useGetList<Deal>(
     "deals",
-    UNARCHIVED_DEALS_LIST_PARAMS,
+    OPEN_DEALS_LIST_PARAMS,
   );
 
   const { start, end, priorStart, priorEnd } = getRangeWindow(range);
   const pipelineStages = getStagePalette(dealStages);
-  const allActiveDeals = (deals ?? []).filter(
-    (deal) => !isTerminalDealStage(deal.stage),
-  );
+  const allActiveDeals = deals ?? [];
   const activeDeals = allActiveDeals.filter((deal) => {
     const created = getValidDate(deal.created_at);
     return created !== null && created >= start && created <= end;
@@ -254,7 +251,7 @@ export const ObsHeroPipeline = () => {
                 >
                   {totalCount}
                 </span>{" "}
-                open deals created in this period across{" "}
+                open deals created in {range.toUpperCase()} across{" "}
                 <span
                   style={{
                     fontFamily: '"JetBrains Mono", ui-monospace',

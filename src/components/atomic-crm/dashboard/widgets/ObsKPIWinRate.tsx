@@ -1,8 +1,9 @@
 import { Percent, TrendingDown, TrendingUp } from "lucide-react";
 import { useGetList } from "ra-core";
 
+import { UNARCHIVED_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
 import type { Deal } from "../../types";
-import { getValidDate, UNARCHIVED_DEALS_LIST_PARAMS } from "./dashboardUtils";
+import { getValidDate } from "./dashboardUtils";
 
 export const ObsKPIWinRate = () => {
   const { data: deals } = useGetList<Deal>(

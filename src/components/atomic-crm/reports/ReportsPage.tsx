@@ -1,5 +1,10 @@
 import { useGetList } from "ra-core";
+import { OPEN_DEALS_FILTER } from "../deals/dealFilters";
 import type { Deal, Sale } from "../types";
+
+const REPORTS_DEALS_FILTER = {
+  "archived_at@is": OPEN_DEALS_FILTER["archived_at@is"],
+} as const;
 
 const fmt = (n: number, compact = false) => {
   if (!compact) return `$${n.toLocaleString("en-CA")}`;
@@ -14,6 +19,7 @@ const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "S
 
 export const ReportsPage = () => {
   const { data: deals = [] } = useGetList<Deal>("deals", {
+    filter: REPORTS_DEALS_FILTER,
     pagination: { page: 1, perPage: 2000 },
   });
   const { data: sales = [] } = useGetList<Sale>("sales", {

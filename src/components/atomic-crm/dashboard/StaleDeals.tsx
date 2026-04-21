@@ -3,9 +3,9 @@ import { useGetList, useRedirect } from "ra-core";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
+import { isTerminalDealStage } from "../deals/dealFilters";
 import {
   DASHBOARD_COLLECTION_PAGINATION,
-  isTerminalDealStage,
 } from "./widgets/dashboardUtils";
 
 export const StaleDeals = () => {

@@ -14,6 +14,7 @@ import { DealArchivedList } from "./DealArchivedList";
 import { DealCreate } from "./DealCreate";
 import { DealEdit } from "./DealEdit";
 import { DealEmpty } from "./DealEmpty";
+import { OPEN_DEALS_FILTER } from "./dealFilters";
 import { DealListContent } from "./DealListContent";
 import { DealShow } from "./DealShow";
 import { OnlyMineInput } from "./OnlyMineInput";
@@ -50,7 +51,7 @@ const DealList = () => {
   return (
     <List
       perPage={100}
-      filter={{ "archived_at@is": null }}
+      filter={OPEN_DEALS_FILTER}
       title={false}
       sort={{ field: "index", order: "DESC" }}
       filters={dealFilters}

@@ -1,9 +1,10 @@
 import { TrendingDown, TrendingUp, Trophy } from "lucide-react";
 import { useGetList } from "ra-core";
 
+import { UNARCHIVED_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
 import type { Deal } from "../../types";
 import { useAgencySettings } from "@/hooks/useAgencySettings";
-import { getValidDate, UNARCHIVED_DEALS_LIST_PARAMS } from "./dashboardUtils";
+import { getValidDate } from "./dashboardUtils";
 
 export const ObsKPIWon = () => {
   const { won_goal: WON_GOAL } = useAgencySettings();

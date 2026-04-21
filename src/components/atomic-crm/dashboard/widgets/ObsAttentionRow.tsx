@@ -1,13 +1,13 @@
 import { AlertCircle, ArrowRight, Flame, Zap } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
 
+import { OPEN_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
 import { ObsInsightCard } from "./ObsInsightCard";
 import {
   getValidDate,
   getWatchStageValue,
-  UNARCHIVED_DEALS_LIST_PARAMS,
 } from "./dashboardUtils";
 
 export const ObsAttentionRow = ({
@@ -19,7 +19,7 @@ export const ObsAttentionRow = ({
   const { dealStages } = useConfigurationContext();
   const { data: allDeals } = useGetList<Deal>(
     "deals",
-    UNARCHIVED_DEALS_LIST_PARAMS,
+    OPEN_DEALS_LIST_PARAMS,
   );
   const watchStageValue = getWatchStageValue(dealStages);
   const watchStageLabel =

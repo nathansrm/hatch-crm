@@ -5,6 +5,10 @@ import { Link } from "react-router";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import {
+  OPEN_DEALS_LIST_PARAMS,
+  UNARCHIVED_DEALS_LIST_PARAMS,
+} from "../deals/dealFilters";
 import { getDealDecayLevel } from "../deals/dealUtils";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
@@ -71,9 +75,10 @@ const Loading = () => (
 );
 
 const DealSummaryRow = () => {
-  const { data: deals, isPending } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
-  });
+  const { data: deals, isPending } = useGetList<Deal>(
+    "deals",
+    UNARCHIVED_DEALS_LIST_PARAMS,
+  );
 
   if (isPending) {
     return (
@@ -151,10 +156,7 @@ const DashboardView = () => {
   const { identity } = useGetIdentity();
   const todayKey = getTodayDateKey();
 
-  const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 500 },
-    filter: { "archived_at@is": null },
-  });
+  const { data: deals } = useGetList<Deal>("deals", OPEN_DEALS_LIST_PARAMS);
 
   const { data: tasks } = useGetList<Task>(
     "tasks",

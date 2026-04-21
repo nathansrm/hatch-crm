@@ -1,6 +1,7 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
 
+import { OPEN_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
 import { getDealDecayLevel } from "../../deals/dealUtils";
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
@@ -9,9 +10,8 @@ import { AVATAR_COLORS } from "./dashboardUtils";
 export const ObsHotDealsPanel = () => {
   const { currency } = useConfigurationContext();
   const { data: deals } = useGetList<Deal>("deals", {
-    pagination: { page: 1, perPage: 10000 },
+    ...OPEN_DEALS_LIST_PARAMS,
     sort: { field: "amount", order: "DESC" },
-    filter: { "archived_at@is": null },
   });
   const { data: sales } = useGetList<{
     id: number | string;

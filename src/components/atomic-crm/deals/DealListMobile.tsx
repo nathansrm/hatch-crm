@@ -20,7 +20,7 @@ export const DealListMobile = () => {
     <InfiniteListBase
       perPage={25}
       sort={{ field: "updated_at", order: "DESC" }}
-      filter={{ archived_at: undefined }}
+      filter={{ "archived_at@is": null }}
       queryOptions={{
         onError: () => {
           /* Disable error notification as DealListLayoutMobile handles it */

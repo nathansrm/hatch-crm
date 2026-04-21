@@ -339,7 +339,7 @@ export const englishCrmMessages = {
         edit_for: "Edit task for %{name}",
       },
       empty: "No tasks yet",
-      empty_list_hint: "Tasks added to your contacts will appear here.",
+      empty_list_hint: "No tasks yet. Add a task from any contact or deal to get started.",
       filters: {
         later: "Later",
         overdue: "Overdue",

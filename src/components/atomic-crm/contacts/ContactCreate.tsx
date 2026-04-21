@@ -1,8 +1,9 @@
 import { CreateBase, Form, useGetIdentity, type MutationMode } from "ra-core";
+import { SaveButton } from "@/components/admin/form";
+import { FormToolbar as Toolbar } from "@/components/admin/simple-form";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { ContactInputs } from "./ContactInputs";
-import { FormToolbar } from "../layout/FormToolbar";
 import {
   cleanupContactForCreate,
   defaultEmailJsonb,
@@ -24,6 +25,17 @@ export const ContactCreate = ({
     >
       <div className="mt-2 flex lg:mr-72">
         <div className="flex-1">
+          <h1
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#ECEEF5",
+              marginBottom: 24,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            New Contact
+          </h1>
           <Form
             defaultValues={{
               sales_id: identity?.id,
@@ -34,7 +46,9 @@ export const ContactCreate = ({
             <Card>
               <CardContent>
                 <ContactInputs />
-                <FormToolbar />
+                <Toolbar className="flex flex-row justify-end gap-2">
+                  <SaveButton label="Create Contact" />
+                </Toolbar>
               </CardContent>
             </Card>
           </Form>

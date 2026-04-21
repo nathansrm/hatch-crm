@@ -76,6 +76,17 @@ export const DealCreate = ({ open }: { open: boolean }) => {
     <Dialog open={open} onOpenChange={() => handleClose()}>
       <DialogContent className="lg:max-w-4xl overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
         <Create resource="deals" mutationOptions={{ onSuccess }}>
+          <h1
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#ECEEF5",
+              marginBottom: 24,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            New Deal
+          </h1>
           <Form
             defaultValues={{
               sales_id: identity?.id,
@@ -85,7 +96,7 @@ export const DealCreate = ({ open }: { open: boolean }) => {
           >
             <DealInputs />
             <FormToolbar>
-              <SaveButton />
+              <SaveButton label="Create Deal" />
             </FormToolbar>
           </Form>
         </Create>

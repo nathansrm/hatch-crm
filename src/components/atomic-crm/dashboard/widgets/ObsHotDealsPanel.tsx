@@ -2,6 +2,7 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { useGetList, useRedirect } from "ra-core";
 
 import { OPEN_DEALS_LIST_PARAMS } from "../../deals/dealFilters";
+import { formatStage } from "../../deals/dealFormatters";
 import { getDealDecayLevel } from "../../deals/dealUtils";
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
@@ -46,17 +47,6 @@ export const ObsHotDealsPanel = () => {
     negotiation: "#F5B84A",
     won: "#34D399",
     lost: "#EF5A6F",
-  };
-  const stageLabel: Record<string, string> = {
-    lead: "Lead",
-    qualified: "Qualified",
-    "audit-scheduled": "Audit Scheduled",
-    audit: "Audit",
-    "proposal-sent": "Proposal Sent",
-    proposal: "Proposal",
-    negotiation: "Negotiation",
-    won: "Won",
-    lost: "Lost",
   };
   const decayColor: Record<string, string> = {
     none: "#34D399",
@@ -182,7 +172,7 @@ export const ObsHotDealsPanel = () => {
       <div style={{ display: "flex", flexDirection: "column" }}>
         {hotDeals.map((deal, index) => {
           const color = stageColor[deal.stage] ?? "#9AA3BE";
-          const label = stageLabel[deal.stage] ?? deal.stage;
+          const label = formatStage(deal.stage);
           const decay = getDealDecayLevel(deal);
           const dot = decayColor[decay] ?? "#9AA3BE";
           const initial = (deal.name ?? "?").trim().charAt(0).toUpperCase();

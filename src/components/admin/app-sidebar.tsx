@@ -10,8 +10,10 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { useGetIdentity } from "ra-core";
+import { useGetIdentity, useGetList } from "ra-core";
 import { Link, useMatch } from "react-router";
+import { isDone } from "../atomic-crm/tasks/tasksPredicate";
+
 type NavItemConfig = {
   key: string;
   label: string;
@@ -21,17 +23,6 @@ type NavItemConfig = {
   badge?: string;
   end?: boolean;
 };
-
-const NAV_ITEMS: NavItemConfig[] = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/", end: true },
-  { key: "deals", label: "Deals", icon: Briefcase, to: "/deals", count: 24 },
-  { key: "intake", label: "Intake", icon: Inbox, to: "/intake_leads", count: 7, badge: "new" },
-  { key: "contacts", label: "Contacts", icon: Users, to: "/contacts" },
-  { key: "companies", label: "Companies", icon: Building2, to: "/companies" },
-  { key: "tasks", label: "Tasks", icon: CheckSquare, to: "/tasks", count: 12 },
-  { key: "reports", label: "Reports", icon: BarChart3, to: "/reports" },
-  { key: "resources", label: "Resources", icon: Layers, to: "/resources" },
-];
 
 const TRADE_FILTERS = [
   { label: "All trades", dot: "#4DC8E8" },
@@ -120,8 +111,41 @@ const NavItem = ({
 
 export function AppSidebar() {
   const { data: identity } = useGetIdentity();
+  const { data: taskData } = useGetList(
+    "tasks",
+    {
+      pagination: { page: 1, perPage: 1000 },
+      sort: { field: "due_date", order: "ASC" },
+      filter: { sales_id: identity?.id },
+    },
+    { enabled: !!identity },
+  );
+  const taskCount = taskData?.filter((t) => !isDone(t)).length || undefined;
+  const { total: intakeTotal } = useGetList("intake_leads", {
+    pagination: { page: 1, perPage: 1 },
+    sort: { field: "id", order: "ASC" },
+    filter: { status: "uncontacted" },
+  });
+  const intakeCount = intakeTotal || undefined;
   const settingsMatch = useMatch({ path: "/settings", end: false });
   const settingsActive = Boolean(settingsMatch);
+  const NAV_ITEMS: NavItemConfig[] = [
+    { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/", end: true },
+    { key: "deals", label: "Deals", icon: Briefcase, to: "/deals" },
+    {
+      key: "intake",
+      label: "Intake",
+      icon: Inbox,
+      to: "/intake_leads",
+      count: intakeCount,
+      badge: "new",
+    },
+    { key: "contacts", label: "Contacts", icon: Users, to: "/contacts" },
+    { key: "companies", label: "Companies", icon: Building2, to: "/companies" },
+    { key: "tasks", label: "Tasks", icon: CheckSquare, to: "/tasks", count: taskCount },
+    { key: "reports", label: "Reports", icon: BarChart3, to: "/reports" },
+    { key: "resources", label: "Resources", icon: Layers, to: "/resources" },
+  ];
 
   return (
     <aside

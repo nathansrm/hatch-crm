@@ -1,5 +1,6 @@
 import { useGetList } from "ra-core";
 import { OPEN_DEALS_FILTER } from "../deals/dealFilters";
+import { formatCategory } from "../deals/dealFormatters";
 import type { Deal, Sale } from "../types";
 
 const REPORTS_DEALS_FILTER = {
@@ -222,7 +223,7 @@ export const ReportsPage = () => {
                 const color = barColors[i % barColors.length];
                 return (
                   <div key={t.cat} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 90, fontSize: 12, color: "#9AA3BE", fontWeight: 500, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{t.cat}</div>
+                    <div style={{ width: 90, fontSize: 12, color: "#9AA3BE", fontWeight: 500, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{formatCategory(t.cat ?? "")}</div>
                     <div style={{ flex: 1, height: 7, background: "rgba(255,255,255,0.03)", borderRadius: 4, overflow: "hidden" }}>
                       <div style={{ height: "100%", width: `${(t.value / maxCat) * 100}%`, background: `linear-gradient(90deg, ${color}aa, ${color})`, borderRadius: 4, boxShadow: `0 0 12px ${color}44` }} />
                     </div>

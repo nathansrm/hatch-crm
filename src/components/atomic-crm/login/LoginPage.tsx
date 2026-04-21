@@ -107,7 +107,6 @@ export const LoginPage = (props: { redirectTo?: string }) => {
           <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A2E] to-[#0F3460]" />
           <div className="relative z-20 flex items-center text-lg font-medium">
             <img className="h-6 mr-2" src={darkModeLogo} alt={title} />
-            {title}
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">

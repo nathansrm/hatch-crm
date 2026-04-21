@@ -1,4 +1,4 @@
-import { Bell, Import, Plus, Search, Settings, User, Users } from "lucide-react";
+import { Import, Plus, Settings, User, Users } from "lucide-react";
 import { CanAccess, useGetIdentity, useGetList, useTranslate, useUserMenu } from "ra-core";
 import { useMemo } from "react";
 import { Link } from "react-router";
@@ -8,30 +8,18 @@ import { useConfigurationContext } from "@/components/atomic-crm/root/Configurat
 import type { Deal } from "@/components/atomic-crm/types";
 import { ImportPage } from "../misc/ImportPage";
 import {
-  DASHBOARD_COLLECTION_PAGINATION,
   formatCompactCurrency,
-  getNonTerminalDealStageValues,
   getValidDate,
+  UNARCHIVED_DEALS_LIST_PARAMS,
 } from "../dashboard/widgets/dashboardUtils";
 
 const Header = () => {
   const { data: identity } = useGetIdentity();
-  const { currency, darkModeLogo, title, dealStages } = useConfigurationContext();
+  const { currency, darkModeLogo, title } = useConfigurationContext();
   const initial = identity?.fullName?.charAt(0) ?? "U";
-  const pipelineStages = useMemo(
-    () => getNonTerminalDealStageValues(dealStages),
-    [dealStages],
-  );
   const { data: pipelineDeals, isPending: isPipelinePending } = useGetList<Deal>(
     "deals",
-    {
-      pagination: DASHBOARD_COLLECTION_PAGINATION,
-      filter: {
-        "archived_at@is": null,
-        "stage@in": pipelineStages,
-      },
-    },
-    { enabled: pipelineStages.length > 0 },
+    UNARCHIVED_DEALS_LIST_PARAMS,
   );
 
   const pipelineLive = useMemo(() => {
@@ -54,7 +42,7 @@ const Header = () => {
       );
 
     if (datedDeals.length === 0) {
-      return { value, delta: null };
+      return { value, delta: null, count: deals.length };
     }
 
     const currentValue = datedDeals
@@ -203,38 +191,6 @@ const Header = () => {
           background: "rgba(255,255,255,0.12)",
         }}
       />
-      <div
-        style={{
-          flex: 1,
-          maxWidth: "400px",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          zIndex: 1,
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          borderRadius: 8,
-          padding: "8px 12px",
-          color: "#5C6784",
-        }}
-      >
-        <Search size={14} />
-        <span style={{ fontSize: 12.5 }}>Search...</span>
-        <span
-          style={{
-            marginLeft: "auto",
-            fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 10,
-            padding: "2px 5px",
-            background: "#0D1424",
-            border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: 4,
-            color: "#9AA3BE",
-          }}
-        >
-          {"\u2318K"}
-        </span>
-      </div>
       <div id="breadcrumb" style={{ flex: 1, display: "flex", alignItems: "center" }} />
       <div
         style={{
@@ -347,35 +303,6 @@ const Header = () => {
         <Plus size={15} strokeWidth={2.5} />
         New Deal
       </Link>
-      <button
-        type="button"
-        style={{
-          zIndex: 1,
-          width: 36,
-          height: 36,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: 8,
-          border: "1px solid rgba(255,255,255,0.07)",
-          background: "rgba(255,255,255,0.03)",
-          color: "#9AA3BE",
-          position: "relative",
-        }}
-      >
-        <Bell size={15} />
-        <span
-          style={{
-            position: "absolute",
-            top: 7,
-            right: 7,
-            width: 7,
-            height: 7,
-            borderRadius: 999,
-            background: "#F5B84A",
-            boxShadow: "0 0 0 2px #060A16",
-          }}
-        />
-      </button>
       <div
         className="obsidian-user-menu"
         style={{ position: "relative", zIndex: 1, width: 32, height: 32 }}

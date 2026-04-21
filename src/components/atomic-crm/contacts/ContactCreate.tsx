@@ -27,8 +27,10 @@ export const ContactCreate = ({
         <div className="flex-1">
           <h1
             style={{
-              fontSize: 22,
+              fontSize: 26,
               fontWeight: 700,
+              fontFamily:
+                '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
               color: "#ECEEF5",
               marginBottom: 24,
               letterSpacing: "-0.02em",

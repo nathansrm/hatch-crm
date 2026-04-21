@@ -98,7 +98,13 @@ export const DealsChart = memo(() => {
         <div className="mr-3 flex">
           <TrendingUp className="text-muted-foreground w-6 h-6" />
         </div>
-        <h2 className="text-xl font-semibold text-muted-foreground">
+        <h2
+          className="text-xl font-semibold text-muted-foreground"
+          style={{
+            fontFamily:
+              '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
+          }}
+        >
           {translate("crm.dashboard.deals_chart")}
         </h2>
         <div className="ml-auto flex items-center gap-4">

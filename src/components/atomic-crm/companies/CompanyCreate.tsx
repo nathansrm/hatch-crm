@@ -21,6 +21,17 @@ export const CompanyCreate = () => {
     >
       <div className="mt-2 flex lg:mr-72">
         <div className="flex-1">
+          <h1
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#ECEEF5",
+              marginBottom: 24,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            New Company
+          </h1>
           <Form defaultValues={{ sales_id: identity?.id }}>
             <Card>
               <CardContent>

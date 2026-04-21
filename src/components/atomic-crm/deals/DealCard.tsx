@@ -96,24 +96,41 @@ export const DealCardContent = ({
                 gap: 8,
               }}
             >
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#ECEEF5",
-                  flex: 1,
-                  lineHeight: 1.35,
-                  margin: 0,
-                }}
-              >
-                <ReferenceField
-                  source="company_id"
-                  reference="companies"
-                  link={false}
-                />
-                {" - "}
-                {deal.name}
-              </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#ECEEF5",
+                    lineHeight: 1.35,
+                    margin: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <ReferenceField
+                    source="company_id"
+                    reference="companies"
+                    link={false}
+                  />
+                </p>
+                <p
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 400,
+                    color: "#9AA3BE",
+                    lineHeight: 1.35,
+                    margin: 0,
+                    marginTop: 2,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {deal.name}
+                </p>
+              </div>
               <ReferenceField
                 source="company_id"
                 reference="companies"

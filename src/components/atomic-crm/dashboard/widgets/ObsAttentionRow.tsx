@@ -52,7 +52,7 @@ export const ObsAttentionRow = ({
     return created !== null && created >= d14 && created < d7;
   });
   const newDealsPct =
-    priorWeekDeals.length > 0
+    priorWeekDeals.length > 2
       ? Math.round(
           ((thisWeekDeals.length - priorWeekDeals.length) /
             priorWeekDeals.length) *

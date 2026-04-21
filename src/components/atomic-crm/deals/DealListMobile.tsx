@@ -9,6 +9,7 @@ import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { InfinitePagination } from "../misc/InfinitePagination";
 import type { Deal } from "../types";
+import { OPEN_DEALS_FILTER } from "./dealFilters";
 import { DealCardContent } from "./DealCard";
 import { DealShow } from "./DealShow";
 
@@ -20,7 +21,7 @@ export const DealListMobile = () => {
     <InfiniteListBase
       perPage={25}
       sort={{ field: "updated_at", order: "DESC" }}
-      filter={{ "archived_at@is": null }}
+      filter={OPEN_DEALS_FILTER}
       queryOptions={{
         onError: () => {
           /* Disable error notification as DealListLayoutMobile handles it */

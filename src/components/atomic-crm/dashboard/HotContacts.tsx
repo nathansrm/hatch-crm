@@ -59,7 +59,9 @@ export const HotContacts = () => {
         <div className="mr-3 flex">
           <Users className="h-6 w-6 text-muted-foreground" />
         </div>
-        <h2 className="text-xl font-semibold text-muted-foreground">
+        <h2
+          className="text-xl font-semibold text-muted-foreground font-heading"
+        >
           {translate("resources.contacts.hot.title")}
         </h2>
         {contactTotal ? (

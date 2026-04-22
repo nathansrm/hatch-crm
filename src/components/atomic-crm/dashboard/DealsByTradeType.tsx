@@ -67,7 +67,9 @@ export const DealsByTradeType = memo(() => {
         <div className="mr-3 flex">
           <Briefcase className="text-muted-foreground w-5 h-5" />
         </div>
-        <h2 className="text-lg font-semibold text-muted-foreground">
+        <h2
+          className="text-lg font-semibold text-muted-foreground font-heading"
+        >
           Deals by Trade Type
         </h2>
       </div>

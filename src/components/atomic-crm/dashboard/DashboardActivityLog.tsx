@@ -39,9 +39,9 @@ export function DashboardActivityLog() {
             Live
           </div>
           <h3
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 16,
               fontWeight: 700,
               letterSpacing: "-0.01em",

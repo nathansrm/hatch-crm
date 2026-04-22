@@ -100,8 +100,8 @@ export const ObsKPIWinRate = () => {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
             <div
+              className="font-heading"
               style={{
-                fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                 fontSize: 32,
                 fontWeight: 700,
                 letterSpacing: "-0.03em",

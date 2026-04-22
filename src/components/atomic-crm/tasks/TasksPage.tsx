@@ -50,9 +50,9 @@ export const TasksPage = () => {
           }}
         >
           <h1
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily: '"Manrope Variable", ui-sans-serif',
               fontSize: 26,
               fontWeight: 700,
               letterSpacing: "-0.02em",

@@ -65,8 +65,8 @@ export const ObsInsightCard = ({
           {eyebrow}
         </div>
         <div
+          className="font-heading"
           style={{
-            fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
             fontSize: 14.5,
             fontWeight: 700,
             color: "#ECEEF5",

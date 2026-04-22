@@ -73,9 +73,9 @@ export const StaleDeals = () => {
             Attention
           </div>
           <h3
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 16,
               fontWeight: 700,
               letterSpacing: "-0.01em",
@@ -172,8 +172,8 @@ export const StaleDeals = () => {
                   {stageMeta?.label ?? deal.stage}
                   {" - "}
                   <span
+                    className="font-mono"
                     style={{
-                      fontFamily: '"JetBrains Mono", ui-monospace',
                       color: "#9AA3BE",
                     }}
                   >

@@ -109,9 +109,9 @@ export const ObsHotDealsPanel = () => {
             Hot Deals
           </div>
           <h2
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: "-0.02em",
@@ -129,6 +129,7 @@ export const ObsHotDealsPanel = () => {
             {teamAvatars.map((member, i) => (
               <div
                 key={`${member.initial}-${i}`}
+                className="font-heading"
                 style={{
                   width: 26,
                   height: 26,
@@ -141,7 +142,6 @@ export const ObsHotDealsPanel = () => {
                   fontSize: 10.5,
                   fontWeight: 700,
                   color: "#061022",
-                  fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                 }}
               >
                 {member.initial}
@@ -194,6 +194,7 @@ export const ObsHotDealsPanel = () => {
               }}
             >
               <div
+                className="font-heading"
                 style={{
                   width: 28,
                   height: 28,
@@ -202,8 +203,6 @@ export const ObsHotDealsPanel = () => {
                   placeItems: "center",
                   background: `linear-gradient(135deg, ${color} 0%, ${color}88 100%)`,
                   boxShadow: `0 0 12px ${color}40`,
-                  fontFamily:
-                    "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                   fontSize: 12,
                   fontWeight: 700,
                   color: "#061022",
@@ -232,9 +231,8 @@ export const ObsHotDealsPanel = () => {
                     }}
                   />
                   <div
+                    className="font-heading"
                     style={{
-                      fontFamily:
-                        "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                       fontSize: 15,
                       fontWeight: 700,
                       color: "#ECEEF5",
@@ -248,8 +246,8 @@ export const ObsHotDealsPanel = () => {
                   </div>
                 </div>
                 <div
+                  className="font-mono"
                   style={{
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                     fontSize: 11,
                     color: "#5C6784",
                     marginLeft: 15,
@@ -279,9 +277,8 @@ export const ObsHotDealsPanel = () => {
               </div>
               <div>
                 <div
+                  className="font-heading"
                   style={{
-                    fontFamily:
-                      "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                     fontSize: 18,
                     fontWeight: 700,
                     color: "#FFFFFF",

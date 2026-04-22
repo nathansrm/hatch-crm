@@ -64,9 +64,9 @@ const CompanyListLayout = () => {
           />
         </div>
         <h1
+          className="font-heading"
           style={{
             margin: 0,
-            fontFamily: '"Manrope Variable", ui-sans-serif',
             fontSize: 26,
             fontWeight: 700,
             letterSpacing: "-0.02em",
@@ -78,8 +78,8 @@ const CompanyListLayout = () => {
         </h1>
         <p style={{ margin: 0, color: "#9AA3BE", fontSize: 13 }}>
           <span
+            className="font-mono"
             style={{
-              fontFamily: '"JetBrains Mono", ui-monospace',
               fontWeight: 600,
               color: "#ECEEF5",
             }}

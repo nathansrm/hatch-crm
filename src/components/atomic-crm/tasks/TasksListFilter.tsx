@@ -72,8 +72,8 @@ export const TaskListFilter = ({
           {title}
         </span>
         <span
+          className="font-mono"
           style={{
-            fontFamily: '"JetBrains Mono", ui-monospace',
             fontSize: 10.5,
             color: "#5C6784",
             fontWeight: 600,

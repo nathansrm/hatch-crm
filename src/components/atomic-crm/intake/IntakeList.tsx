@@ -191,9 +191,9 @@ const IntakeListLayout = () => {
         >
           <div>
             <h1
+              className="font-heading"
               style={{
                 margin: 0,
-                fontFamily: '"Manrope Variable", ui-sans-serif',
                 fontSize: 26,
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
@@ -204,8 +204,8 @@ const IntakeListLayout = () => {
             </h1>
             <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
               <span
+                className="font-mono"
                 style={{
-                  fontFamily: '"JetBrains Mono", ui-monospace',
                   fontWeight: 700,
                   color: "#F5B84A",
                 }}
@@ -278,8 +278,8 @@ const IntakeListLayout = () => {
               {tile.label}
             </span>
             <span
+              className="font-heading"
               style={{
-                fontFamily: '"Manrope Variable", ui-sans-serif',
                 fontSize: 24,
                 fontWeight: 700,
                 color: "#ECEEF5",
@@ -396,8 +396,8 @@ const StatusTabBar = () => {
           >
             <span>{tab.label}</span>
             <span
+              className="font-mono"
               style={{
-                fontFamily: '"JetBrains Mono", ui-monospace',
                 fontSize: 10.5,
                 padding: "1px 6px",
                 borderRadius: 4,
@@ -538,11 +538,11 @@ const DesktopIntakeTable = () => {
                 }}
               >
                 <div
+                  className="font-heading"
                   style={{
                     fontSize: 14,
                     fontWeight: 700,
                     color: "#ECEEF5",
-                    fontFamily: '"Manrope Variable", ui-sans-serif',
                   }}
                 >
                   {record.business_name}
@@ -637,11 +637,11 @@ const OutreachProgress = ({ record }: { record: IntakeLead }) => {
     return (
       <div style={{ display: "grid", gap: 6 }}>
         <div
+          className="font-mono"
           style={{
             fontSize: 12,
             fontWeight: 600,
             color: "#ECEEF5",
-            fontFamily: '"JetBrains Mono", ui-monospace',
           }}
         >
           Touch {record.outreach_sequence_step}/{OUTREACH_STEPS_TOTAL}

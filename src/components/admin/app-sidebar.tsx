@@ -77,8 +77,8 @@ const NavItem = ({
       <span style={{ flex: 1 }}>{label}</span>
       {typeof count === "number" ? (
         <span
+          className="font-mono"
           style={{
-            fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 10.5,
             padding: "1px 6px",
             borderRadius: 4,
@@ -284,6 +284,7 @@ export function AppSidebar() {
           }}
         >
           <div
+            className="font-heading"
             style={{
               width: 30,
               height: 30,
@@ -292,7 +293,6 @@ export function AppSidebar() {
               color: "#FFFFFF",
               display: "grid",
               placeItems: "center",
-              fontFamily: '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
               fontWeight: 700,
               fontSize: 11,
               flexShrink: 0,

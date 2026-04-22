@@ -181,9 +181,8 @@ export const ObsHeroPipeline = () => {
         <div style={{ display: "flex", alignItems: "flex-end", gap: 24 }}>
           <div>
             <div
+              className="font-heading"
               style={{
-                fontFamily:
-                  "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                 fontSize: 62,
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
@@ -243,8 +242,8 @@ export const ObsHeroPipeline = () => {
               )}
               <span style={{ fontSize: 12, color: "#9AA3BE" }}>
                 <span
+                  className="font-mono"
                   style={{
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                     color: "#ECEEF5",
                     fontWeight: 600,
                   }}
@@ -253,8 +252,8 @@ export const ObsHeroPipeline = () => {
                 </span>{" "}
                 open deals created in {range.toUpperCase()} across{" "}
                 <span
+                  className="font-mono"
                   style={{
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                   color: "#ECEEF5",
                   fontWeight: 600,
                 }}
@@ -341,9 +340,8 @@ export const ObsHeroPipeline = () => {
                 </span>
               </div>
               <div
+                className="font-heading"
                 style={{
-                  fontFamily:
-                    "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                   fontSize: 13,
                   fontWeight: 700,
                   color: "#ECEEF5",

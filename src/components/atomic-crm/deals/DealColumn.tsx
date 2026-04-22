@@ -65,8 +65,8 @@ export const DealColumn = ({
               </span>
             </div>
             <span
+              className="font-mono"
               style={{
-                fontFamily: '"JetBrains Mono", ui-monospace',
                 fontSize: 12,
                 fontWeight: 700,
                 color: colors.border,
@@ -76,10 +76,10 @@ export const DealColumn = ({
             </span>
           </div>
           <div
+            className="font-mono"
             style={{
               fontSize: 11,
               color: "#5C6784",
-              fontFamily: '"JetBrains Mono", ui-monospace',
             }}
           >
             {totalAmount.toLocaleString("en-US", {

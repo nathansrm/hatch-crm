@@ -26,11 +26,10 @@ export const ContactCreate = ({
       <div className="mt-2 flex lg:mr-72">
         <div className="flex-1">
           <h1
+            className="font-heading"
             style={{
               fontSize: 26,
               fontWeight: 700,
-              fontFamily:
-                '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
               color: "#ECEEF5",
               marginBottom: 24,
               letterSpacing: "-0.02em",

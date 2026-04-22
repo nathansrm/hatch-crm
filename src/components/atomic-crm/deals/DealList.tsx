@@ -141,9 +141,9 @@ const DealLayout = () => {
         >
           <div>
             <h1
+              className="font-heading"
               style={{
                 margin: 0,
-                fontFamily: '"Manrope Variable", ui-sans-serif',
                 fontSize: 26,
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
@@ -154,8 +154,8 @@ const DealLayout = () => {
             </h1>
             <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
               <span
+                className="font-mono"
                 style={{
-                  fontFamily: '"JetBrains Mono", ui-monospace',
                   color: "#ECEEF5",
                   fontWeight: 600,
                 }}
@@ -167,6 +167,7 @@ const DealLayout = () => {
           </div>
           <Link
             to="/deals/create"
+            className="font-heading"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -175,7 +176,6 @@ const DealLayout = () => {
               background: "#4DC8E8",
               color: "#061022",
               borderRadius: 7,
-              fontFamily: '"Manrope Variable", ui-sans-serif',
               fontWeight: 700,
               fontSize: 12.5,
               textDecoration: "none",

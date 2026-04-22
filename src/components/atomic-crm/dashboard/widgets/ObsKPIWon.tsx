@@ -82,8 +82,8 @@ export const ObsKPIWon = () => {
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
         <div
+          className="font-heading"
           style={{
-            fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
             fontSize: 32,
             fontWeight: 700,
             letterSpacing: "-0.03em",
@@ -144,7 +144,7 @@ export const ObsKPIWon = () => {
             fontWeight: 600,
           }}
         >
-          <span style={{ fontFamily: '"JetBrains Mono", ui-monospace', color: "#ECEEF5" }}>
+          <span className="font-mono" style={{ color: "#ECEEF5" }}>
             {filled}
           </span>{" "}
           of {WON_GOAL} goal

@@ -87,11 +87,7 @@ export const KPICards = ({
           <DollarSign className="h-5 w-5 text-emerald-500" />
           <div className="space-y-1">
             <p
-              className="text-sm font-medium text-muted-foreground"
-              style={{
-                fontFamily:
-                  '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-              }}
+              className="text-sm font-medium text-muted-foreground font-heading"
             >
               Pipeline Value
             </p>
@@ -113,11 +109,7 @@ export const KPICards = ({
           <Trophy className="h-5 w-5 text-cyan-500" />
           <div className="space-y-1">
             <p
-              className="text-sm font-medium text-muted-foreground"
-              style={{
-                fontFamily:
-                  '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-              }}
+              className="text-sm font-medium text-muted-foreground font-heading"
             >
               Deals Won
             </p>
@@ -133,11 +125,7 @@ export const KPICards = ({
           <Percent className="h-5 w-5 text-violet-500" />
           <div className="space-y-1">
             <p
-              className="text-sm font-medium text-muted-foreground"
-              style={{
-                fontFamily:
-                  '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-              }}
+              className="text-sm font-medium text-muted-foreground font-heading"
             >
               Win Rate
             </p>
@@ -159,11 +147,7 @@ export const KPICards = ({
           <AlertCircle className="h-5 w-5 text-amber-500" />
           <div className="space-y-1">
             <p
-              className="text-sm font-medium text-muted-foreground"
-              style={{
-                fontFamily:
-                  '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-              }}
+              className="text-sm font-medium text-muted-foreground font-heading"
             >
               Overdue Tasks
             </p>

@@ -68,6 +68,7 @@ export const CompanyCard = (props: { record?: Company }) => {
           }}
         >
           <div
+            className="font-heading"
             style={{
               width: 40,
               height: 40,
@@ -77,7 +78,6 @@ export const CompanyCard = (props: { record?: Company }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontFamily: '"Manrope Variable", ui-sans-serif',
               fontWeight: 800,
               fontSize: 14,
               color: "#4DC8E8",
@@ -108,8 +108,8 @@ export const CompanyCard = (props: { record?: Company }) => {
           )}
         </div>
         <div
+          className="font-heading"
           style={{
-            fontFamily: '"Manrope Variable", ui-sans-serif',
             fontSize: 15,
             fontWeight: 700,
             color: "#ECEEF5",
@@ -148,8 +148,8 @@ export const CompanyCard = (props: { record?: Company }) => {
                 Deals
               </span>
               <span
+                className="font-heading"
                 style={{
-                  fontFamily: '"Manrope Variable", ui-sans-serif',
                   fontSize: 18,
                   fontWeight: 700,
                   color: "#ECEEF5",
@@ -177,8 +177,8 @@ export const CompanyCard = (props: { record?: Company }) => {
                 Contacts
               </span>
               <span
+                className="font-heading"
                 style={{
-                  fontFamily: '"Manrope Variable", ui-sans-serif',
                   fontSize: 18,
                   fontWeight: 700,
                   color: "#ECEEF5",

@@ -68,11 +68,7 @@ export const DealsByTradeType = memo(() => {
           <Briefcase className="text-muted-foreground w-5 h-5" />
         </div>
         <h2
-          className="text-lg font-semibold text-muted-foreground"
-          style={{
-            fontFamily:
-              '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-          }}
+          className="text-lg font-semibold text-muted-foreground font-heading"
         >
           Deals by Trade Type
         </h2>

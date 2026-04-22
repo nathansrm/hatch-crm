@@ -140,10 +140,10 @@ export const DealCardContent = ({
               </ReferenceField>
             </div>
             <p
+              className="font-mono"
               style={{
                 fontSize: 12,
                 color: "#9AA3BE",
-                fontFamily: '"JetBrains Mono", ui-monospace',
                 margin: 0,
               }}
             >

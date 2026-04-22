@@ -60,11 +60,7 @@ export const HotContacts = () => {
           <Users className="h-6 w-6 text-muted-foreground" />
         </div>
         <h2
-          className="text-xl font-semibold text-muted-foreground"
-          style={{
-            fontFamily:
-              '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-          }}
+          className="text-xl font-semibold text-muted-foreground font-heading"
         >
           {translate("resources.contacts.hot.title")}
         </h2>

@@ -479,9 +479,9 @@ export const ResourcesPage = () => {
             >
               <div>
                 <h1
+                  className="font-heading"
                   style={{
                     margin: 0,
-                    fontFamily: '"Manrope Variable", ui-sans-serif',
                     fontSize: 26,
                     fontWeight: 700,
                     letterSpacing: "-0.02em",
@@ -580,8 +580,8 @@ export const ResourcesPage = () => {
                 >
                   {c.label}{" "}
                   <span
+                    className="font-mono"
                     style={{
-                      fontFamily: '"JetBrains Mono", ui-monospace',
                       fontSize: 10.5,
                       color: category === c.key ? "#4DC8E8" : "#4A5270",
                     }}
@@ -739,10 +739,10 @@ export const ResourcesPage = () => {
                       Previous
                     </button>
                     <div
+                      className="font-mono"
                       style={{
                         fontSize: 12,
                         color: "#6B7494",
-                        fontFamily: '"JetBrains Mono", ui-monospace',
                       }}
                     >
                       Page {page} of {totalPages}
@@ -815,9 +815,9 @@ export const ResourcesPage = () => {
                     <input
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
+                      className="font-heading"
                       style={{
                         ...DETAIL_INPUT_STYLE,
-                        fontFamily: '"Manrope Variable", ui-sans-serif',
                         fontSize: 17,
                         fontWeight: 700,
                         letterSpacing: "-0.01em",
@@ -881,9 +881,9 @@ export const ResourcesPage = () => {
                       {selected.category}
                     </div>
                     <h2
+                      className="font-heading"
                       style={{
                         margin: 0,
-                        fontFamily: '"Manrope Variable", ui-sans-serif',
                         fontSize: 17,
                         fontWeight: 700,
                         color: "#ECEEF5",
@@ -1037,9 +1037,9 @@ export const ResourcesPage = () => {
               </div>
               {selected.preview ? (
                 <pre
+                  className="font-mono"
                   style={{
                     margin: 0,
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                     fontSize: 11.5,
                     color: "#6B7494",
                     lineHeight: 1.7,
@@ -1061,9 +1061,9 @@ export const ResourcesPage = () => {
                 </div>
               ) : (
                 <pre
+                  className="font-mono"
                   style={{
                     margin: 0,
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                     fontSize: 11.5,
                     color: "#6B7494",
                     lineHeight: 1.7,
@@ -1106,8 +1106,8 @@ export const ResourcesPage = () => {
             }}
           >
             <div
+              className="font-heading"
               style={{
-                fontFamily: '"Manrope Variable", ui-sans-serif',
                 fontSize: 16,
                 fontWeight: 700,
                 color: "#ECEEF5",
@@ -1396,11 +1396,11 @@ const ResourceCard = ({
           }}
         >
           <span
+            className="font-heading"
             style={{
               fontSize: 13.5,
               fontWeight: 600,
               color: "#ECEEF5",
-              fontFamily: '"Manrope Variable", ui-sans-serif',
             }}
           >
             {resource.title}
@@ -1462,11 +1462,11 @@ const ResourceCard = ({
             </span>
           ))}
           <span
+            className="font-mono"
             style={{
               fontSize: 11,
               color: "#4A5270",
               marginLeft: "auto",
-              fontFamily: '"JetBrains Mono", ui-monospace',
             }}
           >
             {resource.size} - {fmtRel(resource.updated)}

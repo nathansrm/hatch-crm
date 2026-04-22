@@ -141,7 +141,7 @@ export const SettingsPage = () => {
           <span style={{ fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700 }}>Workspace</span>
           <span style={{ height: 1, width: 24, background: "rgba(77,200,232,0.4)" }} />
         </div>
-        <h1 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>Settings</h1>
+        <h1 className="font-heading" style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>Settings</h1>
         <p style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}>Configure your CRM workspace, pipeline, and data fields</p>
       </div>
       <EditBase
@@ -416,7 +416,7 @@ const SettingsPanel = ({ id, eyebrow, title, children }: { id: string; eyebrow: 
   <div id={id} style={{ marginBottom: 32, maxWidth: 680, padding: "24px 28px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
     <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
       <div style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#4DC8E8", fontWeight: 700, marginBottom: 6 }}>{eyebrow}</div>
-      <h2 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em", color: "#ECEEF5" }}>{title}</h2>
+      <h2 className="font-heading" style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em", color: "#ECEEF5" }}>{title}</h2>
     </div>
     {children}
   </div>

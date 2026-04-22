@@ -108,7 +108,7 @@ export const ReportsPage = () => {
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <div>
-            <h1 style={{ margin: 0, fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>
+            <h1 className="font-heading" style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "#ECEEF5" }}>
               Reports
             </h1>
             <p style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}>Pipeline metrics and revenue breakdown</p>
@@ -122,7 +122,7 @@ export const ReportsPage = () => {
           <div key={k.label} style={{ padding: "16px 20px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${k.color} 0%, ${k.color}44 50%, transparent 100%)` }} />
             <div style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 10 }}>{k.label}</div>
-            <div style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 26, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em", marginBottom: 4 }}>{k.value}</div>
+            <div className="font-heading" style={{ fontSize: 26, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em", marginBottom: 4 }}>{k.value}</div>
             <div style={{ fontSize: 11, color: "#4A5270" }}>{k.sub}</div>
           </div>
         ))}
@@ -132,14 +132,14 @@ export const ReportsPage = () => {
         {/* Revenue bar chart */}
         <div style={{ padding: "20px 24px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 4 }}>Revenue trend</div>
-          <div style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Monthly closed won</div>
+          <div className="font-heading" style={{ fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Monthly closed won</div>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 140, padding: "0 4px" }}>
             {monthlyData.map((d, i) => {
               const h = maxBar > 0 ? Math.max((d.value / maxBar) * 120, d.value > 0 ? 6 : 0) : 0;
               const isLast = i === monthlyData.length - 1;
               return (
                 <div key={d.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 9.5, color: isLast ? "#4DC8E8" : "#4A5270", marginBottom: 4, fontWeight: 600 }}>
+                  <div className="font-mono" style={{ fontSize: 9.5, color: isLast ? "#4DC8E8" : "#4A5270", marginBottom: 4, fontWeight: 600 }}>
                     {d.value > 0 ? fmt(d.value, true) : ""}
                   </div>
                   <div style={{
@@ -158,7 +158,7 @@ export const ReportsPage = () => {
         {/* Won vs Lost */}
         <div style={{ padding: "20px 24px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 4 }}>Outcomes</div>
-          <div style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 20 }}>Won vs Lost</div>
+          <div className="font-heading" style={{ fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 20 }}>Won vs Lost</div>
           <div>
             <div style={{ display: "flex", height: 20, borderRadius: 6, overflow: "hidden", gap: 2 }}>
               <div style={{ width: `${closedTotal > 0 ? (won.length / closedTotal) * 100 : 50}%`, background: "linear-gradient(90deg, #22C55E, #34D399)", transition: "width .6s", minWidth: closedTotal > 0 && won.length > 0 ? 4 : 0 }} />
@@ -173,7 +173,7 @@ export const ReportsPage = () => {
             {[{ label: "Won", color: "#34D399", val: won.length }, { label: "Lost", color: "#EF5A6F", val: lost.length }, { label: "Active", color: "#4DC8E8", val: active.length }].map((item) => (
               <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                 <span style={{ width: 8, height: 8, borderRadius: 999, background: item.color }} />
-                <span style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>{item.val}</span>
+                <span className="font-heading" style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>{item.val}</span>
                 <span style={{ fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700 }}>{item.label}</span>
               </div>
             ))}
@@ -185,7 +185,7 @@ export const ReportsPage = () => {
         {/* By rep */}
         <div style={{ padding: "20px 24px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 4 }}>Team</div>
-          <div style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Performance by rep</div>
+          <div className="font-heading" style={{ fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Performance by rep</div>
           {repStats.length === 0 ? (
             <div style={{ color: "#4A5270", fontSize: 13, padding: "20px 0" }}>No rep data yet.</div>
           ) : (
@@ -196,14 +196,14 @@ export const ReportsPage = () => {
               {repStats.map((r) => (
                 <div key={r.name} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", gap: 12, padding: "10px 4px", borderBottom: "1px solid rgba(255,255,255,0.04)", alignItems: "center" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: "50%", background: "oklch(0.55 0.13 220)", display: "grid", placeItems: "center", fontFamily: '"Manrope Variable", ui-sans-serif', fontWeight: 700, fontSize: 10, color: "#FFFFFF", flexShrink: 0 }}>{r.initials}</div>
+                    <div className="font-heading" style={{ width: 28, height: 28, borderRadius: "50%", background: "oklch(0.55 0.13 220)", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 10, color: "#FFFFFF", flexShrink: 0 }}>{r.initials}</div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#ECEEF5" }}>{r.name}</span>
                   </div>
-                  <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 12, color: "#ECEEF5", textAlign: "right" }}>{r.pipeline}</div>
-                  <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 12, color: "#34D399", textAlign: "right" }}>{r.won}</div>
-                  <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 12, color: "#ECEEF5", textAlign: "right" }}>{fmt(r.revenue, true)}</div>
+                  <div className="font-mono" style={{ fontSize: 12, color: "#ECEEF5", textAlign: "right" }}>{r.pipeline}</div>
+                  <div className="font-mono" style={{ fontSize: 12, color: "#34D399", textAlign: "right" }}>{r.won}</div>
+                  <div className="font-mono" style={{ fontSize: 12, color: "#ECEEF5", textAlign: "right" }}>{fmt(r.revenue, true)}</div>
                   <div style={{ textAlign: "right" }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: r.rate >= 50 ? "#34D399" : r.rate >= 30 ? "#F5B84A" : "#EF5A6F", fontFamily: '"JetBrains Mono", ui-monospace' }}>{fmtPct(r.rate)}</span>
+                    <span className="font-mono" style={{ fontSize: 12, fontWeight: 700, color: r.rate >= 50 ? "#34D399" : r.rate >= 30 ? "#F5B84A" : "#EF5A6F" }}>{fmtPct(r.rate)}</span>
                   </div>
                 </div>
               ))}
@@ -214,7 +214,7 @@ export const ReportsPage = () => {
         {/* By category */}
         <div style={{ padding: "20px 24px", borderRadius: 12, background: "#0D1424", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: 9.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4A5270", fontWeight: 700, marginBottom: 4 }}>Vertical</div>
-          <div style={{ fontFamily: '"Manrope Variable", ui-sans-serif', fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Revenue by category</div>
+          <div className="font-heading" style={{ fontSize: 15, fontWeight: 700, color: "#ECEEF5", marginBottom: 16 }}>Revenue by category</div>
           {catStats.length === 0 ? (
             <div style={{ color: "#4A5270", fontSize: 13, padding: "20px 0" }}>No category data yet.</div>
           ) : (
@@ -227,8 +227,8 @@ export const ReportsPage = () => {
                     <div style={{ flex: 1, height: 7, background: "rgba(255,255,255,0.03)", borderRadius: 4, overflow: "hidden" }}>
                       <div style={{ height: "100%", width: `${(t.value / maxCat) * 100}%`, background: `linear-gradient(90deg, ${color}aa, ${color})`, borderRadius: 4, boxShadow: `0 0 12px ${color}44` }} />
                     </div>
-                    <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 11.5, color: "#ECEEF5", fontWeight: 600, width: 56, textAlign: "right" }}>{t.value ? fmt(t.value, true) : "—"}</div>
-                    <div style={{ fontFamily: '"JetBrains Mono", ui-monospace', fontSize: 11, color: "#4A5270", width: 24, textAlign: "right" }}>{t.won}W</div>
+                    <div className="font-mono" style={{ fontSize: 11.5, color: "#ECEEF5", fontWeight: 600, width: 56, textAlign: "right" }}>{t.value ? fmt(t.value, true) : "—"}</div>
+                    <div className="font-mono" style={{ fontSize: 11, color: "#4A5270", width: 24, textAlign: "right" }}>{t.won}W</div>
                   </div>
                 );
               })}

@@ -49,6 +49,7 @@ const InitialsAvatar = ({
     name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
   return (
     <div
+      className="font-mono"
       style={{
         width: size,
         height: size,
@@ -61,7 +62,6 @@ const InitialsAvatar = ({
         fontSize: Math.round(size * 0.38),
         fontWeight: 700,
         color: "#fff",
-        fontFamily: "JetBrains Mono, monospace",
         flexShrink: 0,
       }}
     >
@@ -288,10 +288,9 @@ export const ActiveProjectsGrid = () => {
             In delivery
           </div>
           <h3
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily:
-                "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 18,
               fontWeight: 700,
               color: "#ECEEF5",
@@ -350,8 +349,8 @@ export const ActiveProjectsGrid = () => {
               Capacity
             </div>
             <div
+              className="font-mono"
               style={{
-                fontFamily: "JetBrains Mono, monospace",
                 fontSize: 15,
                 fontWeight: 700,
                 color: "#ECEEF5",
@@ -412,8 +411,8 @@ export const ActiveProjectsGrid = () => {
             }}
           >
             <span
+              className="font-mono"
               style={{
-                fontFamily: "JetBrains Mono, monospace",
                 fontSize: 13,
                 fontWeight: 700,
                 color: capacityColor,
@@ -520,9 +519,8 @@ export const ActiveProjectsGrid = () => {
                 {/* Company + deal */}
                 <div>
                   <div
+                    className="font-heading"
                     style={{
-                      fontFamily:
-                        "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                       fontSize: 14.5,
                       fontWeight: 700,
                       color: "#ECEEF5",
@@ -624,8 +622,8 @@ export const ActiveProjectsGrid = () => {
                       />
                     </div>
                     <span
+                      className="font-mono"
                       style={{
-                        fontFamily: "JetBrains Mono, monospace",
                         fontSize: 11,
                         fontWeight: 600,
                         color,
@@ -652,10 +650,10 @@ export const ActiveProjectsGrid = () => {
                     Started
                   </div>
                   <div
+                    className="font-mono"
                     style={{
                       fontSize: 12.5,
                       color: "var(--fg-1)",
-                      fontFamily: "JetBrains Mono, monospace",
                     }}
                   >
                     {deal.project_started_at
@@ -805,9 +803,8 @@ export const ActiveProjectsGrid = () => {
                     <div style={detailPanelStyle}>
                       <div style={subLabelStyle}>Open tasks</div>
                       <div
+                        className="font-heading"
                         style={{
-                          fontFamily:
-                            "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
                           fontSize: 28,
                           fontWeight: 700,
                           color:
@@ -869,7 +866,7 @@ export const ActiveProjectsGrid = () => {
                         gap: 8,
                       }}
                     >
-                      <input className="obs-action-btn"
+                      <input className="obs-action-btn font-mono"
                         type="number"
                         min={0}
                         max={100}
@@ -883,15 +880,14 @@ export const ActiveProjectsGrid = () => {
                           borderRadius: 6,
                           color: "#ECEEF5",
                           fontSize: 14,
-                          fontFamily: "JetBrains Mono, monospace",
                           padding: "6px 10px",
                         }}
                       />
                       <span
+                        className="font-mono"
                         style={{
                           fontSize: 12,
                           color: "var(--fg-3)",
-                          fontFamily: "JetBrains Mono, monospace",
                         }}
                       >
                         %

@@ -158,8 +158,8 @@ const Header = () => {
         </div>
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
           <div
+            className="font-heading"
             style={{
-              fontFamily: '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
               fontWeight: 800,
               fontSize: 15,
               color: "#ECEEF5",
@@ -255,8 +255,8 @@ const Header = () => {
             </span>
           ) : (
             <span
+              className="font-mono"
               style={{
-                fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
                 fontSize: 13,
                 fontWeight: 600,
                 color: "#ECEEF5",
@@ -284,6 +284,7 @@ const Header = () => {
       </div>
       <Link
         to="/deals/create"
+        className="font-heading"
         style={{
           zIndex: 1,
           display: "inline-flex",
@@ -293,7 +294,6 @@ const Header = () => {
           background: "#4DC8E8",
           color: "#061022",
           borderRadius: 7,
-          fontFamily: '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
           fontWeight: 700,
           fontSize: 12.5,
           textDecoration: "none",
@@ -308,14 +308,13 @@ const Header = () => {
         style={{ position: "relative", zIndex: 1, width: 32, height: 32 }}
       >
         <div
-          className="obsidian-user-menu-visual"
+          className="obsidian-user-menu-visual font-heading"
           style={{
             width: 32,
             height: 32,
             borderRadius: "50%",
             background: "oklch(0.55 0.13 220)",
             color: "#FFFFFF",
-            fontFamily: '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
             fontWeight: 700,
             fontSize: 12,
             display: "grid",

@@ -101,11 +101,7 @@ export const ActionQueue = () => {
           <Zap className="text-primary w-6 h-6" />
         </div>
         <h2
-          className="text-xl font-semibold text-muted-foreground"
-          style={{
-            fontFamily:
-              '"Manrope Variable", ui-sans-serif, system-ui, sans-serif',
-          }}
+          className="text-xl font-semibold text-muted-foreground font-heading"
         >
           Action Queue
         </h2>

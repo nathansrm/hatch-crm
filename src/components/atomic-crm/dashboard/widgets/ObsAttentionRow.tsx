@@ -109,15 +109,15 @@ export const ObsAttentionRow = ({
             Needs attention
           </div>
           <div
+            className="font-heading"
             style={{
-              fontFamily: "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 14.5,
               fontWeight: 700,
               color: "#ECEEF5",
               letterSpacing: "-0.01em",
             }}
           >
-            <span style={{ fontFamily: '"JetBrains Mono", ui-monospace' }}>
+            <span className="font-mono">
               {overdueTasksCount}
             </span>{" "}
             overdue tasks

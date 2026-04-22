@@ -273,10 +273,10 @@ const ContactItemContent = ({
       >
         {contact.last_seen ? (
           <span
+            className="font-mono"
             style={{
               fontSize: 11.5,
               color: "#5C6784",
-              fontFamily: '"JetBrains Mono", ui-monospace',
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",

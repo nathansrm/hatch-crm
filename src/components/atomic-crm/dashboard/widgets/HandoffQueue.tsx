@@ -54,7 +54,6 @@ const labelStyle: React.CSSProperties = {
 };
 
 const metricValueStyle: React.CSSProperties = {
-  fontFamily: "JetBrains Mono, monospace",
   fontSize: 14,
   fontWeight: 700,
   color: "#ECEEF5",
@@ -112,10 +111,9 @@ const HandoffCard = ({
             }}
           />
           <h3
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily:
-                "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 17,
               fontWeight: 700,
               color: "#ECEEF5",
@@ -179,7 +177,7 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Deal Value</div>
-        <div style={metricValueStyle}>{dealValue}</div>
+        <div className="font-mono" style={metricValueStyle}>{dealValue}</div>
       </div>
       <div
         style={{
@@ -190,7 +188,7 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Won Date</div>
-        <div style={metricValueStyle}>{wonDate}</div>
+        <div className="font-mono" style={metricValueStyle}>{wonDate}</div>
       </div>
       <div
         style={{
@@ -201,7 +199,7 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Sales</div>
-        <div style={metricValueStyle}>{salesName}</div>
+        <div className="font-mono" style={metricValueStyle}>{salesName}</div>
       </div>
     </div>
   </div>
@@ -322,10 +320,9 @@ export const HandoffQueue = () => {
             Handoff Queue
           </div>
           <h3
+            className="font-heading"
             style={{
               margin: 0,
-              fontFamily:
-                "Manrope Variable, ui-sans-serif, system-ui, sans-serif",
               fontSize: 16,
               fontWeight: 700,
               color: "#ECEEF5",
@@ -336,8 +333,8 @@ export const HandoffQueue = () => {
           </h3>
         </div>
         <span
+          className="font-mono"
           style={{
-            fontFamily: "JetBrains Mono, monospace",
             fontSize: 11,
             fontWeight: 700,
             color: "#F5B84A",

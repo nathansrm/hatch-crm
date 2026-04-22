@@ -179,9 +179,9 @@ export const Task = ({
             >
               {formattedDueDate ? (
                 <span
+                  className="font-mono"
                   style={{
                     color: "#9AA3BE",
-                    fontFamily: '"JetBrains Mono", ui-monospace',
                     fontWeight: 600,
                   }}
                 >

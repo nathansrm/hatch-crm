@@ -16,12 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
 
+import { HATCH } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Contact, Task as TData } from "../types";
 import { TaskEdit } from "./TaskEdit";
 import { TaskEditSheet } from "./TaskEditSheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Task = ({
   task: taskProp,
@@ -112,7 +113,7 @@ export const Task = ({
           padding: "14px 16px",
           borderRadius: 10,
           transition: "all 0.15s",
-          background: isHovered ? "#111A2E" : "#0D1424",
+          background: isHovered ? "rgb(17 26 46)" : HATCH.surface,
           border: "1px solid rgba(255,255,255,0.07)",
           opacity: isDone ? 0.5 : 1,
           marginBottom: 8,
@@ -140,15 +141,15 @@ export const Task = ({
               flexShrink: 0,
               borderRadius: 6,
               marginTop: 2,
-              background: isDone ? "#34D399" : "rgba(255,255,255,0.03)",
+              background: isDone ? "rgb(52 211 153)" : HATCH.fieldBg,
               border: isDone
-                ? "1.5px solid #34D399"
+                ? "1.5px solid rgb(52 211 153)"
                 : "1.5px solid rgba(255,255,255,0.2)",
               display: "grid",
               placeItems: "center",
               cursor: isUpdatePending ? "default" : "pointer",
               transition: "all 0.15s",
-              color: "white",
+              color: "rgb(255 255 255)",
               fontSize: 11,
             }}
           >
@@ -160,7 +161,7 @@ export const Task = ({
               style={{
                 fontSize: 13.5,
                 fontWeight: 500,
-                color: isDone ? "#5C6784" : "#ECEEF5",
+                color: isDone ? HATCH.textMuted : HATCH.textHi,
                 textDecoration: isDone ? "line-through" : "none",
                 marginBottom: 4,
                 lineHeight: 1.35,
@@ -181,7 +182,7 @@ export const Task = ({
                 <span
                   className="font-mono"
                   style={{
-                    color: "#9AA3BE",
+                    color: HATCH.textLo,
                     fontWeight: 600,
                   }}
                 >
@@ -196,7 +197,7 @@ export const Task = ({
                     borderRadius: 4,
                     background: "rgba(255,255,255,0.04)",
                     border: "1px solid rgba(255,255,255,0.07)",
-                    color: "#5C6784",
+                    color: HATCH.textMuted,
                     fontWeight: 600,
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
@@ -217,7 +218,7 @@ export const Task = ({
                     return (
                       <span
                         style={{
-                          color: "#9AA3BE",
+                          color: HATCH.textLo,
                           fontSize: 11.5,
                         }}
                       >
@@ -246,7 +247,7 @@ export const Task = ({
                 borderRadius: 8,
                 border: "1px solid rgba(255,255,255,0.08)",
                 background: "rgba(255,255,255,0.02)",
-                color: "#9AA3BE",
+                color: HATCH.textLo,
                 cursor: "pointer",
                 flexShrink: 0,
               }}
@@ -257,14 +258,14 @@ export const Task = ({
           <DropdownMenuContent
             align="end"
             style={{
-              background: "#0D1424",
+              background: HATCH.surface,
               border: "1px solid rgba(255,255,255,0.08)",
-              color: "#ECEEF5",
+              color: HATCH.textHi,
             }}
           >
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
-              style={{ color: "#ECEEF5" }}
+              style={{ color: HATCH.textHi }}
               onClick={() => {
                 update("tasks", {
                   id: task.id,
@@ -281,7 +282,7 @@ export const Task = ({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
-              style={{ color: "#ECEEF5" }}
+              style={{ color: HATCH.textHi }}
               onClick={() => {
                 update("tasks", {
                   id: task.id,
@@ -298,14 +299,14 @@ export const Task = ({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
-              style={{ color: "#ECEEF5" }}
+              style={{ color: HATCH.textHi }}
               onClick={handleEdit}
             >
               {translate("ra.action.edit")}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer h-12 md:h-8 px-4 md:px-2 text-base md:text-sm"
-              style={{ color: "#ECEEF5" }}
+              style={{ color: HATCH.textHi }}
               onClick={handleDelete}
             >
               {translate("ra.action.delete")}

@@ -5,6 +5,7 @@ import {
   useTranslate,
 } from "ra-core";
 
+import { HATCH } from "../_primitives";
 import { TasksIterator } from "./TasksIterator";
 
 type TaskListProps = {
@@ -30,15 +31,15 @@ export const TaskListFilter = ({
   const { total } = listContext;
   const titleLower = title.toLowerCase();
   const groupTone = titleLower.includes("overdue")
-    ? "#EF5A6F"
+    ? HATCH.danger
     : titleLower.includes("today")
-      ? "#F5B84A"
+      ? "rgb(245 184 74)"
       : titleLower.includes("tomorrow") ||
           titleLower.includes("week") ||
             titleLower.includes("upcoming") ||
               titleLower.includes("later")
-        ? "#4DC8E8"
-        : "#5C6784";
+        ? HATCH.cyan
+        : HATCH.textMuted;
 
   if (!tasks?.length || !total) return null;
 
@@ -75,7 +76,7 @@ export const TaskListFilter = ({
           className="font-mono"
           style={{
             fontSize: 10.5,
-            color: "#5C6784",
+            color: HATCH.textMuted,
             fontWeight: 600,
           }}
         >
@@ -97,7 +98,7 @@ export const TaskListFilter = ({
             }}
             style={{
               fontSize: 12,
-              color: "#4DC8E8",
+              color: HATCH.cyan,
               cursor: "pointer",
               textDecoration: "none",
             }}

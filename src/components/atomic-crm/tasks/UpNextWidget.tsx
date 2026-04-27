@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { HATCH } from "../_primitives";
 import type { Company, Contact } from "../types";
 import type { Task } from "../types";
 import { TaskCreateSheet } from "./TaskCreateSheet";
@@ -52,10 +53,10 @@ const GROUP_LABELS: Record<TaskGroup, string> = {
 };
 
 const GROUP_COLORS: Record<TaskGroup, string> = {
-  overdue: "#F87171",
-  today: "#4DC8E8",
-  this_week: "#A78BFA",
-  later: "#9AA3BE",
+  overdue: "rgb(248 113 113)",
+  today: HATCH.cyan,
+  this_week: "rgb(167 139 250)",
+  later: HATCH.textLo,
 };
 
 const GROUP_ORDER: TaskGroup[] = ["overdue", "today", "this_week", "later"];
@@ -243,14 +244,14 @@ const TaskRow = ({
         <DropdownMenuContent
           align="end"
           style={{
-            background: "#0D1424",
+            background: HATCH.surface,
             border: "1px solid rgba(255,255,255,0.08)",
-            color: "#ECEEF5",
+            color: HATCH.textHi,
           }}
         >
           <DropdownMenuItem
             className="cursor-pointer"
-            style={{ color: "#ECEEF5" }}
+            style={{ color: HATCH.textHi }}
             onClick={handleDelete}
           >
             Delete
@@ -278,7 +279,7 @@ export const UpNextWidget = () => {
     { enabled: !!identity },
   );
 
-  const taskList = tasks ?? [];
+  const taskList = useMemo(() => tasks ?? [], [tasks]);
   const contactDisplayMap = useContactDisplayMap(taskList);
   const groups = useMemo(() => buildTaskGroups(taskList), [taskList]);
   const visibleCount = GROUP_ORDER.reduce(
@@ -307,7 +308,7 @@ export const UpNextWidget = () => {
         overflow: "hidden",
         borderRadius: 12,
         padding: "20px 22px",
-        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        background: HATCH.surfaceBg,
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         display: "flex",
@@ -322,7 +323,7 @@ export const UpNextWidget = () => {
               fontSize: 10,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#5C6784",
+              color: HATCH.textMuted,
               fontWeight: 700,
               marginBottom: 4,
             }}
@@ -335,13 +336,13 @@ export const UpNextWidget = () => {
               fontSize: 16,
               fontWeight: 700,
               letterSpacing: "-0.01em",
-              color: "#ECEEF5",
+              color: HATCH.textHi,
               margin: 0,
             }}
           >
             Up next
           </h3>
-          <p style={{ color: "#9AA3BE", fontSize: 12, marginTop: 4 }}>
+          <p style={{ color: HATCH.textLo, fontSize: 12, marginTop: 4 }}>
             {visibleCount} open or recently completed
           </p>
         </div>

@@ -6,6 +6,7 @@ import { required } from "ra-core";
 import { DateTimeInput } from "@/components/admin";
 
 import { contactOptionText } from "../misc/ContactOption";
+import { HATCH_CLASS } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 
 export const TaskFormContent = ({
@@ -21,7 +22,7 @@ export const TaskFormContent = ({
         source="text"
         validate={required()}
         multiline
-        className="m-0"
+        className={`m-0 ${HATCH_CLASS.field}`}
         helperText={false}
       />
       {selectContact && (
@@ -41,6 +42,7 @@ export const TaskFormContent = ({
           source="due_date"
           helperText={false}
           validate={required()}
+          className={HATCH_CLASS.field}
         />
         <SelectInput
           source="type"
@@ -50,6 +52,7 @@ export const TaskFormContent = ({
           optionValue="value"
           defaultValue="none"
           helperText={false}
+          className={HATCH_CLASS.field}
         />
       </div>
     </div>

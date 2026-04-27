@@ -45,8 +45,8 @@ export const ToggleFilterButton = ({
       variant={isSelected ? "secondary" : "ghost"}
       onClick={handleClick}
       className={cn(
-        "cursor-pointer",
-        "flex flex-row items-center justify-between gap-2 px-2.5 w-full",
+        "cursor-pointer flex flex-row items-center justify-between gap-2 px-2.5 w-full",
+        !isSelected && "text-foreground/85 hover:text-foreground",
         className,
       )}
       size={size}

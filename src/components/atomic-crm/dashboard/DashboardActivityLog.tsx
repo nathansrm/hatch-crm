@@ -13,6 +13,7 @@ export function DashboardActivityLog() {
         boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         display: "flex",
         flexDirection: "column",
+        color: "#B8C0D6",
       }}
     >
       <div

@@ -4,13 +4,25 @@ import {
   useGetIdentity,
   useGetList,
   useGetMany,
+  useDeleteWithUndoController,
+  useNotify,
   useTranslate,
+  useUpdate,
 } from "ra-core";
-import { CheckCircle2, Clock, MoreHorizontal } from "lucide-react";
+import { Check, Clock, MoreHorizontal, Plus } from "lucide-react";
+import { useSearchParams } from "react-router";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import type { Company, Contact } from "../types";
 import type { Task } from "../types";
-import { AddTask } from "./AddTask";
+import { TaskCreateSheet } from "./TaskCreateSheet";
+import { TaskEditSheet } from "./TaskEditSheet";
 import { getTaskMeta } from "./taskTypeMeta";
 import {
   isDone,
@@ -22,8 +34,8 @@ import {
   isRecentlyDone,
 } from "./tasksPredicate";
 
-type TaskView = "all" | "overdue" | "today" | "this_week" | "later";
-type TaskGroup = Exclude<TaskView, "all">;
+type TaskView = "all" | "open" | "completed";
+type TaskGroup = "overdue" | "today" | "this_week" | "later";
 
 type ContactDisplay = {
   name: string;
@@ -31,20 +43,12 @@ type ContactDisplay = {
 };
 
 const VIEW_LABELS: Record<TaskView, string> = {
-  all: "All tasks",
-  overdue: "Overdue",
-  today: "Today",
-  this_week: "This week",
-  later: "Later",
+  all: "All",
+  open: "Open",
+  completed: "Completed",
 };
 
-const VIEW_ORDER: TaskView[] = [
-  "all",
-  "overdue",
-  "today",
-  "this_week",
-  "later",
-];
+const VIEW_ORDER: TaskView[] = ["all", "open", "completed"];
 
 const GROUP_ORDER: TaskGroup[] = ["overdue", "today", "this_week", "later"];
 
@@ -88,7 +92,7 @@ const getTaskGroup = (task: Task): TaskGroup => {
 const getVisibleTasks = (tasks: Task[]) =>
   tasks.filter((task) => !isDone(task) || isRecentlyDone(task));
 
-const buildTaskGroups = (tasks: Task[]) => {
+const buildTaskGroups = (tasks: Task[], includeCompleted = false) => {
   const groups: Record<TaskGroup, Task[]> = {
     overdue: [],
     today: [],
@@ -96,7 +100,7 @@ const buildTaskGroups = (tasks: Task[]) => {
     later: [],
   };
 
-  getVisibleTasks(tasks).forEach((task) => {
+  (includeCompleted ? tasks : getVisibleTasks(tasks)).forEach((task) => {
     groups[getTaskGroup(task)].push(task);
   });
 
@@ -159,36 +163,68 @@ const TaskRow = ({
   contact,
   selected,
   onSelect,
+  onToggle,
+  onEdit,
 }: {
   task: Task;
   contact: ContactDisplay | undefined;
   selected: boolean;
   onSelect: () => void;
+  onToggle: (task: Task) => void;
+  onEdit: (task: Task) => void;
 }) => {
   const meta = getTaskMeta(task.type);
   const Icon = meta.icon;
   const taskDone = isDone(task);
+  const notify = useNotify();
+  const { handleDelete } = useDeleteWithUndoController({
+    record: task,
+    resource: "tasks",
+    redirect: false,
+    mutationOptions: {
+      onSuccess() {
+        notify("resources.tasks.deleted", { undoable: true });
+      },
+    },
+  });
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <div
       className={`grid w-full grid-cols-[44px_minmax(220px,1.8fr)_150px_130px_120px_44px] items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
         selected
           ? "border-cyan-500/40 bg-cyan-500/10"
           : "border-border/70 bg-card hover:bg-muted/40"
-      }`}
+      } ${taskDone ? "opacity-50" : ""}`}
+      onClick={onSelect}
     >
-      <span className="grid h-5 w-5 place-items-center rounded border border-muted-foreground/40 bg-background">
-        {taskDone ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> : null}
-      </span>
+      <button
+        type="button"
+        aria-label={`Mark "${task.text}" ${taskDone ? "incomplete" : "complete"}`}
+        aria-pressed={taskDone}
+        onClick={(event) => {
+          event.stopPropagation();
+          onToggle(task);
+        }}
+        className="grid h-5 w-5 place-items-center rounded border border-muted-foreground/40 bg-background"
+      >
+        {taskDone ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : null}
+      </button>
       <span className="min-w-0">
-        <span className="block truncate text-sm font-semibold text-card-foreground">
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onEdit(task);
+          }}
+          className={`block max-w-full truncate text-left text-sm font-semibold text-card-foreground hover:text-cyan-400 ${
+            taskDone ? "line-through" : ""
+          }`}
+        >
           {task.text}
-        </span>
+        </button>
         <span className="mt-1 block truncate text-xs text-muted-foreground">
           {contact?.name ?? "Unknown contact"}
-          {contact?.companyName ? ` · ${contact.companyName}` : ""}
+          {contact?.companyName ? ` - ${contact.companyName}` : ""}
         </span>
       </span>
       <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -208,18 +244,38 @@ const TaskRow = ({
       >
         {taskDone ? "Done" : "Open"}
       </span>
-      <span className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground">
-        <MoreHorizontal className="h-4 w-4" />
-      </span>
-    </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={`Task actions for "${task.text}"`}
+            onClick={(event) => event.stopPropagation()}
+            className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 
 export const TasksPage = () => {
   const translate = useTranslate();
   const { identity } = useGetIdentity();
-  const [activeView, setActiveView] = useState<TaskView>("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewParam = searchParams.get("view");
+  const activeView: TaskView =
+    viewParam === "all" || viewParam === "completed" ? viewParam : "open";
   const [selectedTaskId, setSelectedTaskId] = useState<Identifier | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<Identifier | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [update] = useUpdate();
 
   const { data: tasks, isPending } = useGetList<Task>(
     "tasks",
@@ -233,8 +289,26 @@ export const TasksPage = () => {
 
   const taskList = tasks ?? [];
   const contactDisplayMap = useContactDisplayMap(taskList);
-  const groups = useMemo(() => buildTaskGroups(taskList), [taskList]);
-  const visibleTasks = useMemo(() => getVisibleTasks(taskList), [taskList]);
+  const filteredTasks = useMemo(() => {
+    if (activeView === "completed") {
+      return taskList.filter((task) => isDone(task));
+    }
+    if (activeView === "open") {
+      return taskList.filter((task) => !isDone(task));
+    }
+    return taskList;
+  }, [activeView, taskList]);
+  const groups = useMemo(
+    () => buildTaskGroups(filteredTasks, activeView === "completed"),
+    [activeView, filteredTasks],
+  );
+  const visibleTasks = useMemo(
+    () =>
+      activeView === "completed"
+        ? filteredTasks
+        : getVisibleTasks(filteredTasks),
+    [activeView, filteredTasks],
+  );
   const selectedTask =
     visibleTasks.find((task) => task.id === selectedTaskId) ?? null;
   const selectedContact =
@@ -243,14 +317,29 @@ export const TasksPage = () => {
       : undefined;
 
   const viewCounts: Record<TaskView, number> = {
-    all: visibleTasks.length,
-    overdue: groups.overdue.length,
-    today: groups.today.length,
-    this_week: groups.this_week.length,
-    later: groups.later.length,
+    all: taskList.length,
+    open: taskList.filter((task) => !isDone(task)).length,
+    completed: taskList.filter((task) => isDone(task)).length,
   };
 
-  // Wave 2: wire activeView into the visible task list filter (BRIEF-021)
+  const handleViewChange = (view: string) => {
+    const nextView: TaskView =
+      view === "all" || view === "completed" ? view : "open";
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("view", nextView);
+    setSearchParams(nextParams, { replace: true });
+  };
+  const handleToggle = (task: Task) => {
+    update(
+      "tasks",
+      {
+        id: task.id,
+        data: { done_date: task.done_date ? null : new Date().toISOString() },
+        previousData: task,
+      },
+      { mutationMode: "undoable" },
+    );
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-background">
@@ -267,8 +356,35 @@ export const TasksPage = () => {
               })}
             </h1>
           </div>
-          <AddTask display="chip" selectContact />
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-semibold text-card-foreground hover:bg-muted/40"
+          >
+            <Plus className="h-4 w-4" />
+            {translate("resources.tasks.action.add", { _: "Add task" })}
+          </button>
         </div>
+        <Tabs
+          value={activeView}
+          onValueChange={handleViewChange}
+          className="mt-5"
+        >
+          <TabsList className="bg-muted/40">
+            {VIEW_ORDER.map((view) => (
+              <TabsTrigger
+                key={view}
+                value={view}
+                className="data-[state=active]:bg-[#4DC8E8] data-[state=active]:text-[#06111F]"
+              >
+                {VIEW_LABELS[view]}
+                <span className="ml-2 font-mono text-xs">
+                  {viewCounts[view]}
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </header>
 
       <main className="grid min-h-0 flex-1 grid-cols-[220px_minmax(0,1fr)_300px] gap-0">
@@ -278,7 +394,7 @@ export const TasksPage = () => {
               <button
                 key={view}
                 type="button"
-                onClick={() => setActiveView(view)}
+                onClick={() => handleViewChange(view)}
                 className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                   activeView === view
                     ? "bg-cyan-500/10 text-card-foreground"
@@ -343,6 +459,8 @@ export const TasksPage = () => {
                           contact={contactDisplayMap.get(task.contact_id)}
                           selected={selectedTaskId === task.id}
                           onSelect={() => setSelectedTaskId(task.id)}
+                          onToggle={handleToggle}
+                          onEdit={(task) => setEditingTaskId(task.id)}
                         />
                       ))}
                     </div>
@@ -377,7 +495,7 @@ export const TasksPage = () => {
                 <p className="mt-2 text-sm text-muted-foreground">
                   {selectedContact?.name ?? "Unknown contact"}
                   {selectedContact?.companyName
-                    ? ` · ${selectedContact.companyName}`
+                    ? ` - ${selectedContact.companyName}`
                     : ""}
                 </p>
               </div>
@@ -410,22 +528,35 @@ export const TasksPage = () => {
               </dl>
 
               <div className="mt-auto space-y-2">
-                {["Mark complete", "Edit", "Delete"].map((label) => (
-                  <button
-                    key={label}
+                <button
                     type="button"
-                    disabled
-                    title="Wired in Wave 2"
-                    className="w-full rounded-md border border-border px-3 py-2 text-sm font-semibold text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => handleToggle(selectedTask)}
+                  className="w-full rounded-md border border-border px-3 py-2 text-sm font-semibold text-card-foreground hover:bg-muted/40"
                   >
-                    {label}
-                  </button>
-                ))}
+                  {isDone(selectedTask) ? "Mark incomplete" : "Mark complete"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingTaskId(selectedTask.id)}
+                  className="w-full rounded-md border border-border px-3 py-2 text-sm font-semibold text-card-foreground hover:bg-muted/40"
+                >
+                  Edit
+                </button>
               </div>
             </div>
           )}
         </aside>
       </main>
+      {editingTaskId != null ? (
+        <TaskEditSheet
+          taskId={editingTaskId}
+          open={editingTaskId != null}
+          onOpenChange={(open) => {
+            if (!open) setEditingTaskId(null);
+          }}
+        />
+      ) : null}
+      <TaskCreateSheet open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 };

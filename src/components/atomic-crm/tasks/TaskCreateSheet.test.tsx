@@ -47,29 +47,25 @@ describe("TaskCreateSheet", () => {
       </Mobile>,
     );
 
-    await screen
-      .getByLabelText(/description/i)
-      .fill("Follow up about onboarding");
+    await screen.getByLabelText(/^task$/i).fill("Follow up about onboarding");
 
-    const [contactInput, typeInput] = screen.getByRole("combobox").all();
+    const contactInput = screen.getByRole("combobox");
 
     await contactInput.click();
     await screen.getByText("Grace Hopper").click();
 
-    await typeInput.click();
-    const typeOptions = screen.getByRole("listbox");
-    await typeOptions.getByText("Call", { exact: true }).click();
+    await screen.getByRole("button", { name: /^call$/i }).click();
 
     const dueDateInput = screen.getByLabelText(/due date/i);
     await dueDateInput.clear();
-    await dueDateInput.fill("2026-03-06T12:30");
+    await dueDateInput.fill("2026-03-06");
 
     await screen.getByRole("button", { name: /^save$/i }).click();
 
     await expect.element(screen.getByText("Task added")).toBeInTheDocument();
 
     await expect
-      .element(screen.getByText("Create Task"))
+      .element(screen.getByText("What needs to happen?"))
       .not.toBeInTheDocument();
 
     await expect

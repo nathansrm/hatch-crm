@@ -16,7 +16,7 @@ import { TagsListEdit } from "./TagsListEdit";
 import { ContactStatusSelector } from "./ContactInputs";
 import { ContactPersonalInfo } from "./ContactPersonalInfo";
 import { ContactBackgroundInfo } from "./ContactBackgroundInfo";
-import { AsideSection } from "../misc/AsideSection";
+import { HatchAside, HatchAsideSection } from "../_primitives";
 import type { Contact, Deal } from "../types";
 import { ContactMergeButton } from "./ContactMergeButton";
 import { ExportVCardButton } from "./ExportVCardButton";
@@ -41,7 +41,7 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
   if (!record) return null;
 
   return (
-    <div className="hidden sm:block w-92 min-w-92 text-sm space-y-6">
+    <HatchAside>
       <div className="mb-4 -ml-1">
         {link === "edit" ? (
           <EditButton label="resources.contacts.action.edit" />
@@ -50,29 +50,29 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
         )}
       </div>
 
-      <AsideSection title={translate("resources.notes.fields.status")}>
+      <HatchAsideSection title={translate("resources.notes.fields.status")}>
         <ContactStatusSelector />
-      </AsideSection>
+      </HatchAsideSection>
 
-      <AsideSection
+      <HatchAsideSection
         title={translate("resources.contacts.field_categories.personal_info")}
       >
         <ContactPersonalInfo />
-      </AsideSection>
+      </HatchAsideSection>
 
-      <AsideSection
+      <HatchAsideSection
         title={translate("resources.contacts.field_categories.background_info")}
       >
         <ContactBackgroundInfo />
-      </AsideSection>
+      </HatchAsideSection>
 
-      <AsideSection
+      <HatchAsideSection
         title={translate("resources.tags.name", { smart_count: 2 })}
       >
         <TagsListEdit />
-      </AsideSection>
+      </HatchAsideSection>
 
-      <AsideSection
+      <HatchAsideSection
         title={translate("resources.tasks.name", { smart_count: 2 })}
       >
         <ReferenceManyField
@@ -84,10 +84,10 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
           <TasksIterator />
         </ReferenceManyField>
         <AddTask />
-      </AsideSection>
+      </HatchAsideSection>
 
       {!isPending && !!deals?.length && (
-        <AsideSection title={translate("resources.deals.name", { smart_count: 2 })}>
+        <HatchAsideSection title={translate("resources.deals.name", { smart_count: 2 })}>
           <div className="flex flex-col gap-1">
             {deals.map((deal) => (
               <Link
@@ -119,7 +119,7 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
               </Link>
             ))}
           </div>
-        </AsideSection>
+        </HatchAsideSection>
       )}
 
       {link !== "edit" && (
@@ -136,6 +136,6 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
           </div>
         </>
       )}
-    </div>
+    </HatchAside>
   );
 };

@@ -1,11 +1,13 @@
 import { SaveIcon } from "lucide-react";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useTranslate } from "ra-core";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 
+import {
+  HatchField,
+  HatchGhostButton,
+  HatchPrimaryButton,
+  HatchTextInput,
+} from "../_primitives";
 import type { Tag } from "../types";
 import { colors } from "./colors";
 import { RoundButton } from "./RoundButton";
@@ -58,21 +60,20 @@ export function TagForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-4 py-4">
-        <div className="space-y-2">
-          <Label htmlFor="tag-name">
-            {translate("resources.tags.dialog.name_label")}
-          </Label>
-          <Input
+        <HatchField
+          label={translate("resources.tags.dialog.name_label")}
+          htmlFor="tag-name"
+        >
+          <HatchTextInput
             id="tag-name"
             autoFocus
             value={newTagName}
             onChange={handleNewTagNameChange}
             placeholder={translate("resources.tags.dialog.name_placeholder")}
           />
-        </div>
+        </HatchField>
 
-        <div className="space-y-2">
-          <Label>{translate("resources.tags.dialog.color")}</Label>
+        <HatchField label={translate("resources.tags.dialog.color")}>
           <div className="flex flex-wrap">
             {colors.map((color) => (
               <RoundButton
@@ -85,33 +86,27 @@ export function TagForm({
               />
             ))}
           </div>
-        </div>
+        </HatchField>
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
         {onCancel && (
-          <Button
+          <HatchGhostButton
             type="button"
-            variant="ghost"
             onClick={onCancel}
             disabled={isSubmitting}
           >
             {cancelLabel ?? translate("ra.action.cancel")}
-          </Button>
+          </HatchGhostButton>
         )}
-        <Button
+        <HatchPrimaryButton
           type="submit"
-          variant="outline"
           disabled={isSubmitting || !newTagName.trim()}
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "text-primary",
-            isSubmitting ? "cursor-not-allowed" : "cursor-pointer",
-          )}
+          className={isSubmitting ? "cursor-not-allowed" : "cursor-pointer"}
         >
           <SaveIcon />
           {translate("ra.action.save")}
-        </Button>
+        </HatchPrimaryButton>
       </div>
     </form>
   );

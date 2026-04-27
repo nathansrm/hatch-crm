@@ -42,7 +42,7 @@ const DealLinkedToInputs = () => {
   const translate = useTranslate();
   return (
     <div className="flex flex-col gap-4 flex-1">
-      <h3 className="text-base font-medium">
+      <h3 className="font-heading text-base font-semibold text-[#ECEEF5]">
         {translate("resources.deals.inputs.linked_to")}
       </h3>
       <ReferenceInput source="company_id" reference="companies">
@@ -72,7 +72,7 @@ const DealMiscInputs = () => {
 
   return (
     <div className="flex flex-col gap-4 flex-1">
-      <h3 className="text-base font-medium">
+      <h3 className="font-heading text-base font-semibold text-[#ECEEF5]">
         {translate("resources.deals.field_categories.misc")}
       </h3>
 

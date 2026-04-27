@@ -3,6 +3,7 @@ import { SaveButton } from "@/components/admin/form";
 import { FormToolbar as Toolbar } from "@/components/admin/simple-form";
 
 import { HatchCard, HatchPageHeader } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import { ContactInputs } from "./ContactInputs";
 import {
   cleanupContactForCreate,
@@ -38,7 +39,7 @@ export const ContactCreate = ({
               <Toolbar className="flex flex-row justify-end gap-2">
                 <SaveButton
                   label="Create Contact"
-                  className="bg-[#4DC8E8] font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]"
+                  className={HATCH_PRIMARY_BUTTON_CLASS}
                 />
               </Toolbar>
             </HatchCard>

@@ -6,6 +6,7 @@ import { ListPagination } from "@/components/admin/list-pagination";
 import { SortButton } from "@/components/admin/sort-button";
 
 import { TopToolbar } from "../layout/TopToolbar";
+import { HatchPageHeader, HatchPanel } from "../_primitives";
 import { CompanyEmpty } from "./CompanyEmpty";
 import { CompanyListFilter } from "./CompanyListFilter";
 import { ImageList } from "./GridList";
@@ -35,65 +36,17 @@ const CompanyListLayout = () => {
 
   return (
     <>
-      <div style={{ padding: "0 0 20px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "#4DC8E8",
-              fontWeight: 700,
-            }}
-          >
-            Accounts
-          </span>
-          <span
-            style={{
-              height: 1,
-              width: 24,
-              background: "rgba(77,200,232,0.4)",
-            }}
-          />
-        </div>
-        <h1
-          className="font-heading"
-          style={{
-            margin: 0,
-            fontSize: 26,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "#ECEEF5",
-            marginBottom: 4,
-          }}
-        >
-          Companies
-        </h1>
-        <p style={{ margin: 0, color: "#B8C0D6", fontSize: 13 }}>
-          <span
-            className="font-mono"
-            style={{
-              fontWeight: 600,
-              color: "#ECEEF5",
-            }}
-          >
-            {total ?? 0}
-          </span>
-          {" accounts tracked"}
-        </p>
-      </div>
+      <HatchPageHeader
+        eyebrow="Accounts"
+        title="Companies"
+        count={total ?? 0}
+        countSuffix="accounts tracked"
+      />
       <div className="w-full flex flex-row gap-8">
         <CompanyListFilter />
-        <div className="flex flex-col flex-1 gap-4">
+        <HatchPanel className="flex flex-col flex-1 gap-4 p-4">
           <ImageList />
-        </div>
+        </HatchPanel>
       </div>
     </>
   );

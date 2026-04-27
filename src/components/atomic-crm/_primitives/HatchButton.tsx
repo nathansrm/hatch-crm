@@ -1,6 +1,9 @@
 import type * as React from "react";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+// TODO(BRIEF-007): Primitive build blocker: ui/button does not export ButtonProps.
+type HatchButtonProps = React.ComponentProps<typeof Button>;
 
 /**
  * Hatch buttons — thin wrappers over shadcn Button that lock in the cyan/ghost
@@ -11,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const HatchPrimaryButton = ({
   className,
   ...rest
-}: ButtonProps) => (
+}: HatchButtonProps) => (
   <Button
     {...rest}
     className={cn(
@@ -25,7 +28,7 @@ export const HatchGhostButton = ({
   className,
   variant,
   ...rest
-}: ButtonProps) => (
+}: HatchButtonProps) => (
   <Button
     variant={variant ?? "ghost"}
     {...rest}
@@ -39,7 +42,7 @@ export const HatchGhostButton = ({
 export const HatchDangerButton = ({
   className,
   ...rest
-}: ButtonProps) => (
+}: HatchButtonProps) => (
   <Button
     {...rest}
     className={cn(

@@ -12,6 +12,7 @@ import { SaveButton } from "@/components/admin/form";
 import { FormToolbar } from "@/components/admin/simple-form";
 
 import { HatchDialog } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import type { Deal } from "../types";
 import { DealInputs } from "./DealInputs";
 
@@ -94,7 +95,10 @@ export const DealCreate = ({ open }: { open: boolean }) => {
       )}
       footer={
         <FormToolbar>
-          <SaveButton label="Create Deal" />
+          <SaveButton
+            label="Create Deal"
+            className={HATCH_PRIMARY_BUTTON_CLASS}
+          />
         </FormToolbar>
       }
     >

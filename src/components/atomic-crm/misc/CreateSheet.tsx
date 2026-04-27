@@ -11,6 +11,7 @@ import {
 } from "ra-core";
 import { type ReactNode } from "react";
 import { HatchSheet } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 
 export interface CreateSheetProps extends CreateBaseProps {
   /**
@@ -151,7 +152,7 @@ export const CreateSheet = ({
       headerActions={headerActions}
       contentClassName="sm:max-w-xl"
       footer={
-        <SaveButton className="h-11 bg-[#4DC8E8] px-5 font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]" />
+        <SaveButton className={`h-11 px-5 ${HATCH_PRIMARY_BUTTON_CLASS}`} />
       }
       wrap={(node) => (
         <CreateBase

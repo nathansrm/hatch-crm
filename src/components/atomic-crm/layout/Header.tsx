@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { HATCH } from "@/components/atomic-crm/_primitives";
 import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext";
 import type { Deal } from "@/components/atomic-crm/types";
 import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
@@ -73,7 +74,7 @@ const Header = () => {
         position: "relative",
         overflow: "hidden",
         flexShrink: 0,
-        background: "linear-gradient(180deg, #0C1224 0%, #060A16 100%)",
+        background: HATCH.surfaceBg,
         borderBottom: "1px solid rgba(77,200,232,0.18)",
         boxShadow:
           "0 8px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.04) inset",
@@ -137,7 +138,7 @@ const Header = () => {
             width: 34,
             height: 34,
             borderRadius: 8,
-            background: "linear-gradient(180deg, #132446 0%, #091227 100%)",
+            background: "linear-gradient(180deg, rgb(19 36 70) 0%, rgb(9 18 39) 100%)",
             border: "1px solid rgba(77,200,232,0.25)",
             overflow: "hidden",
             display: "grid",
@@ -162,12 +163,12 @@ const Header = () => {
             style={{
               fontWeight: 800,
               fontSize: 15,
-              color: "#ECEEF5",
+              color: HATCH.textHi,
               letterSpacing: "-0.01em",
             }}
           >
             HATCH
-            <span style={{ color: "#4DC8E8", margin: "0 3px" }}>{"\u00B7"}</span>
+            <span style={{ color: HATCH.cyan, margin: "0 3px" }}>{"\u00B7"}</span>
             CRM
           </div>
           <div
@@ -175,7 +176,7 @@ const Header = () => {
               fontSize: 9.5,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#5C6784",
+              color: HATCH.textMuted,
               marginTop: 4,
               fontWeight: 600,
             }}
@@ -209,7 +210,7 @@ const Header = () => {
             width: 7,
             height: 7,
             borderRadius: 999,
-            background: "#34D399",
+            background: "rgb(52 211 153)",
           }}
         />
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
@@ -218,7 +219,7 @@ const Header = () => {
               fontSize: 9.5,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#5C6784",
+              color: HATCH.textMuted,
               fontWeight: 600,
             }}
           >
@@ -259,7 +260,7 @@ const Header = () => {
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#ECEEF5",
+                color: HATCH.textHi,
                 marginTop: 2,
               }}
             >
@@ -271,7 +272,10 @@ const Header = () => {
               {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0 && pipelineLive.delta !== null ? (
                 <span
                   style={{
-                    color: pipelineLive.delta >= 0 ? "#34D399" : "#EF5A6F",
+                    color:
+                      pipelineLive.delta >= 0
+                        ? "rgb(52 211 153)"
+                        : HATCH.danger,
                   }}
                 >
                   {pipelineLive.delta >= 0 ? "+" : ""}
@@ -291,8 +295,8 @@ const Header = () => {
           alignItems: "center",
           gap: 6,
           padding: "8px 14px",
-          background: "#4DC8E8",
-          color: "#061022",
+          background: HATCH.cyan,
+          color: HATCH.cyanInk,
           borderRadius: 7,
           fontWeight: 700,
           fontSize: 12.5,
@@ -314,7 +318,7 @@ const Header = () => {
             height: 32,
             borderRadius: "50%",
             background: "oklch(0.55 0.13 220)",
-            color: "#FFFFFF",
+            color: HATCH.textHi,
             fontWeight: 700,
             fontSize: 12,
             display: "grid",

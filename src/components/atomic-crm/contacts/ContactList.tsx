@@ -31,6 +31,7 @@ import { TopToolbar } from "../layout/TopToolbar";
 import { InfinitePagination } from "../misc/InfinitePagination";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
+import { HatchPageHeader, HatchPanel } from "../_primitives";
 
 export const ContactList = () => {
   const { identity } = useGetIdentity();
@@ -61,82 +62,18 @@ const ContactListLayoutDesktop = () => {
 
   return (
     <>
-      <div style={{ padding: "0 0 20px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "#4DC8E8",
-              fontWeight: 700,
-            }}
-          >
-            People
-          </span>
-          <span
-            style={{
-              height: 1,
-              width: 24,
-              background: "rgba(77,200,232,0.4)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h1
-              className="font-heading"
-              style={{
-                margin: 0,
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: "#ECEEF5",
-              }}
-            >
-              Contacts
-            </h1>
-            <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
-              <span
-                className="font-mono"
-                style={{
-                  fontWeight: 600,
-                  color: "#ECEEF5",
-                }}
-              >
-                {total ?? 0}
-              </span>
-              {" contacts in the pipeline"}
-            </p>
-          </div>
-        </div>
-      </div>
+      <HatchPageHeader
+        eyebrow="People"
+        title="Contacts"
+        count={total ?? 0}
+        countSuffix="contacts in the pipeline"
+      />
       <div className="flex flex-row gap-8">
         <ContactListFilter />
         <div className="w-full flex flex-col gap-4">
-          <div
-            style={{
-              background: "#0D1424",
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: 12,
-              overflow: "hidden",
-            }}
-          >
+          <HatchPanel>
             <ContactListContent />
-          </div>
+          </HatchPanel>
         </div>
         <BulkActionsToolbar>
           <ContactBulkActionButtons />

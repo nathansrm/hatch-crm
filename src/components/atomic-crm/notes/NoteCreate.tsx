@@ -15,6 +15,7 @@ import { useFormContext } from "react-hook-form";
 import { SaveButton } from "@/components/admin/form";
 import { cn } from "@/lib/utils";
 
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import { NoteInputs } from "./NoteInputs";
 import { getCurrentDate } from "./utils";
 import { foreignKeyMapping } from "./foreignKeyMapping";
@@ -109,6 +110,7 @@ const NoteCreateButton = ({
       <SaveButton
         type="button"
         label={translate("resources.notes.action.add_this")}
+        className={HATCH_PRIMARY_BUTTON_CLASS}
         transform={(data) => ({
           ...data,
           [foreignKeyMapping[reference]]: record.id,

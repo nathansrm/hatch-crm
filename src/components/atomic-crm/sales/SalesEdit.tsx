@@ -13,6 +13,10 @@ import { CancelButton } from "@/components/admin/cancel-button";
 import { SaveButton } from "@/components/admin/form";
 
 import { HatchCard, HatchPageHeader } from "../_primitives";
+import {
+  HATCH_GHOST_BUTTON_CLASS,
+  HATCH_PRIMARY_BUTTON_CLASS,
+} from "../layout/FormToolbar";
 import type { CrmDataProvider } from "../providers/types";
 import type { Sale, SalesFormData } from "../types";
 import { SalesInputs } from "./SalesInputs";
@@ -20,8 +24,8 @@ import { SalesInputs } from "./SalesInputs";
 function EditToolbar() {
   return (
     <div className="flex justify-end gap-4">
-      <CancelButton />
-      <SaveButton className="bg-[#4DC8E8] font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]" />
+      <CancelButton className={HATCH_GHOST_BUTTON_CLASS} />
+      <SaveButton className={HATCH_PRIMARY_BUTTON_CLASS} />
     </div>
   );
 }

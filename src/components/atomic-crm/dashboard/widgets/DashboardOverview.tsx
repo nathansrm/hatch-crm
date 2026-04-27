@@ -3,7 +3,7 @@ import { useGetIdentity, useGetList } from "ra-core";
 import type { Task } from "../../types";
 import { DashboardActivityLog } from "../DashboardActivityLog";
 import { StaleDeals } from "../StaleDeals";
-import { TasksList } from "../TasksList";
+import { UpNextWidget } from "../../tasks/UpNextWidget";
 import { ObsAttentionRow } from "./ObsAttentionRow";
 import { ObsHeroPipeline } from "./ObsHeroPipeline";
 import { ObsHotDealsPanel } from "./ObsHotDealsPanel";
@@ -66,7 +66,7 @@ export const DashboardOverview = ({ totalDeal }: { totalDeal?: number }) => {
           gap: 14,
         }}
       >
-        <TasksList />
+        <UpNextWidget />
         <DashboardActivityLog />
         <StaleDeals />
       </div>

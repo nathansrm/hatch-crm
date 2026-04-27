@@ -4,12 +4,28 @@ import {
   useGetIdentity,
   useGetList,
   useGetMany,
+  useDeleteWithUndoController,
+  useNotify,
+  useUpdate,
 } from "ra-core";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  MoreHorizontal,
+  Plus,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import type { Company, Contact } from "../types";
 import type { Task } from "../types";
-import { AddTask } from "./AddTask";
+import { TaskCreateSheet } from "./TaskCreateSheet";
+import { TaskEditSheet } from "./TaskEditSheet";
 import { getTaskMeta } from "./taskTypeMeta";
 import {
   isDone,
@@ -35,11 +51,11 @@ const GROUP_LABELS: Record<TaskGroup, string> = {
   later: "Later",
 };
 
-const GROUP_CLASSES: Record<TaskGroup, string> = {
-  overdue: "text-destructive",
-  today: "text-cyan-400",
-  this_week: "text-violet-400",
-  later: "text-muted-foreground",
+const GROUP_COLORS: Record<TaskGroup, string> = {
+  overdue: "#F87171",
+  today: "#4DC8E8",
+  this_week: "#A78BFA",
+  later: "#9AA3BE",
 };
 
 const GROUP_ORDER: TaskGroup[] = ["overdue", "today", "this_week", "later"];
@@ -153,32 +169,94 @@ const useContactDisplayMap = (tasks: Task[]) => {
 const TaskRow = ({
   task,
   contact,
+  onToggle,
+  onEdit,
 }: {
   task: Task;
   contact: ContactDisplay | undefined;
+  onToggle: (task: Task) => void;
+  onEdit: (task: Task) => void;
 }) => {
   const meta = getTaskMeta(task.type);
   const Icon = meta.icon;
+  const taskDone = isDone(task);
+  const notify = useNotify();
+  const { handleDelete } = useDeleteWithUndoController({
+    record: task,
+    resource: "tasks",
+    redirect: false,
+    mutationOptions: {
+      onSuccess() {
+        notify("resources.tasks.deleted", { undoable: true });
+      },
+    },
+  });
 
   return (
-    <li className="group flex items-start gap-3 rounded-lg border border-border/70 bg-card/70 px-3 py-3 transition-colors hover:bg-muted/40">
+    <li
+      className={`group flex items-start gap-3 rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] px-3 py-3 transition-colors hover:bg-[rgba(255,255,255,0.06)] ${
+        taskDone ? "opacity-50" : ""
+      }`}
+    >
+      <button
+        type="button"
+        aria-label={`Mark "${task.text}" ${taskDone ? "incomplete" : "complete"}`}
+        aria-pressed={taskDone}
+        onClick={() => onToggle(task)}
+        className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded border border-[rgba(255,255,255,0.25)] bg-[rgba(255,255,255,0.03)] text-white transition-colors hover:border-[#4DC8E8]"
+      >
+        {taskDone ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : null}
+      </button>
       <span
         className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md ${meta.bgClass}`}
       >
         <Icon className={`h-4 w-4 ${meta.accentClass}`} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-semibold text-card-foreground">
+        <button
+          type="button"
+          onClick={() => onEdit(task)}
+          className={`block max-w-full truncate text-left text-sm font-semibold text-[#ECEEF5] hover:text-[#4DC8E8] ${
+            taskDone ? "line-through" : ""
+          }`}
+        >
           {task.text}
-        </span>
-        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+        </button>
+        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#9AA3BE]">
           <span>{contact?.name ?? "Unknown contact"}</span>
           {contact?.companyName ? <span>{contact.companyName}</span> : null}
         </span>
       </span>
-      <span className="shrink-0 text-xs font-medium text-muted-foreground">
+      <span className="shrink-0 text-xs font-medium text-[#9AA3BE]">
         {formatDueDate(task.due_date)}
       </span>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={`Task actions for "${task.text}"`}
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-[#9AA3BE] hover:bg-[rgba(255,255,255,0.06)] hover:text-[#ECEEF5]"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          style={{
+            background: "#0D1424",
+            border: "1px solid rgba(255,255,255,0.08)",
+            color: "#ECEEF5",
+          }}
+        >
+          <DropdownMenuItem
+            className="cursor-pointer"
+            style={{ color: "#ECEEF5" }}
+            onClick={handleDelete}
+          >
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </li>
   );
 };
@@ -186,6 +264,9 @@ const TaskRow = ({
 export const UpNextWidget = () => {
   const { identity } = useGetIdentity();
   const [expanded, setExpanded] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<Identifier | null>(null);
+  const [update] = useUpdate();
 
   const { data: tasks, isPending } = useGetList<Task>(
     "tasks",
@@ -207,20 +288,71 @@ export const UpNextWidget = () => {
 
   const visibleGroups = GROUP_ORDER.filter((group) => groups[group].length > 0);
   const renderedGroups = expanded ? visibleGroups : visibleGroups.slice(0, 3);
+  const handleToggle = (task: Task) => {
+    update(
+      "tasks",
+      {
+        id: task.id,
+        data: { done_date: task.done_date ? null : new Date().toISOString() },
+        previousData: task,
+      },
+      { mutationMode: "undoable" },
+    );
+  };
 
   return (
-    <section className="relative flex min-h-[320px] flex-col overflow-hidden rounded-lg border border-border/70 bg-card p-5 text-card-foreground shadow-sm">
-      <header className="mb-4 flex items-start justify-between border-b border-border/70 pb-4">
+    <section
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 12,
+        padding: "20px 22px",
+        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 320,
+      }}
+    >
+      <header className="mb-4 flex items-start justify-between border-b border-[rgba(255,255,255,0.07)] pb-4">
         <div>
-          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#5C6784",
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
             Today
           </div>
-          <h3 className="font-heading m-0 text-base font-bold">Up next</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <h3
+            className="font-heading"
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              letterSpacing: "-0.01em",
+              color: "#ECEEF5",
+              margin: 0,
+            }}
+          >
+            Up next
+          </h3>
+          <p style={{ color: "#9AA3BE", fontSize: 12, marginTop: 4 }}>
             {visibleCount} open or recently completed
           </p>
         </div>
-        <AddTask display="icon" selectContact />
+        <button
+          type="button"
+          aria-label="Create task"
+          onClick={() => setCreateOpen(true)}
+          className="grid h-8 w-8 place-items-center rounded-md text-[#9AA3BE] hover:bg-[rgba(255,255,255,0.06)] hover:text-[#ECEEF5]"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
       </header>
 
       {isPending ? (
@@ -244,7 +376,8 @@ export const UpNextWidget = () => {
             <section key={group} className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4
-                  className={`text-[11px] font-bold uppercase tracking-[0.18em] ${GROUP_CLASSES[group]}`}
+                  className="text-[11px] font-bold uppercase tracking-[0.18em]"
+                  style={{ color: GROUP_COLORS[group] }}
                 >
                   {GROUP_LABELS[group]}
                 </h4>
@@ -258,6 +391,8 @@ export const UpNextWidget = () => {
                     key={task.id}
                     task={task}
                     contact={contactDisplayMap.get(task.contact_id)}
+                    onToggle={handleToggle}
+                    onEdit={(task) => setEditingTaskId(task.id)}
                   />
                 ))}
               </ul>
@@ -282,6 +417,16 @@ export const UpNextWidget = () => {
           ) : null}
         </div>
       )}
+      {editingTaskId != null ? (
+        <TaskEditSheet
+          taskId={editingTaskId}
+          open={editingTaskId != null}
+          onOpenChange={(open) => {
+            if (!open) setEditingTaskId(null);
+          }}
+        />
+      ) : null}
+      <TaskCreateSheet open={createOpen} onOpenChange={setCreateOpen} />
     </section>
   );
 };

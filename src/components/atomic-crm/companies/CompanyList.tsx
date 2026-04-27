@@ -76,7 +76,7 @@ const CompanyListLayout = () => {
         >
           Companies
         </h1>
-        <p style={{ margin: 0, color: "#9AA3BE", fontSize: 13 }}>
+        <p style={{ margin: 0, color: "#B8C0D6", fontSize: 13 }}>
           <span
             className="font-mono"
             style={{

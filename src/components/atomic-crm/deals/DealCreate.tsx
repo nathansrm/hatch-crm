@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  CreateBase,
   Form,
   useDataProvider,
   useGetIdentity,
@@ -7,9 +8,7 @@ import {
   useRedirect,
   type GetListResult,
 } from "ra-core";
-import { Create } from "@/components/admin/create";
 import { SaveButton } from "@/components/admin/form";
-import { FormToolbar } from "@/components/admin/simple-form";
 
 import { HatchDialog } from "../_primitives";
 import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
@@ -81,7 +80,7 @@ export const DealCreate = ({ open }: { open: boolean }) => {
       title="Create a deal"
       size="xl"
       wrap={(node) => (
-        <Create resource="deals" mutationOptions={{ onSuccess }}>
+        <CreateBase resource="deals" mutationOptions={{ onSuccess }}>
           <Form
             defaultValues={{
               sales_id: identity?.id,
@@ -91,15 +90,13 @@ export const DealCreate = ({ open }: { open: boolean }) => {
           >
             {node}
           </Form>
-        </Create>
+        </CreateBase>
       )}
       footer={
-        <FormToolbar>
-          <SaveButton
-            label="Create Deal"
-            className={HATCH_PRIMARY_BUTTON_CLASS}
-          />
-        </FormToolbar>
+        <SaveButton
+          label="Create Deal"
+          className={HATCH_PRIMARY_BUTTON_CLASS}
+        />
       }
     >
       <DealInputs />

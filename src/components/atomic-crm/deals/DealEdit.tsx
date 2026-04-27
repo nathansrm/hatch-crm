@@ -11,9 +11,9 @@ import { Link } from "react-router";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-import { FormToolbar } from "../layout/FormToolbar";
+import { HatchDialog } from "../_primitives";
+import { FormToolbar } from "@/components/admin/simple-form";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import type { Deal } from "../types";
 import { DealInputs } from "./DealInputs";
@@ -28,60 +28,109 @@ export const DealEdit = ({ open, id }: { open: boolean; id?: string }) => {
     });
   };
 
+  if (!id) {
+    return (
+      <HatchDialog
+        open={open}
+        onOpenChange={() => handleClose()}
+        eyebrow="EDIT DEAL"
+        title=""
+        size="xl"
+      >
+        <div />
+      </HatchDialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={() => handleClose()}>
-      <DialogContent className="lg:max-w-4xl p-4 overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
-        {id ? (
-          <EditBase
-            id={id}
-            mutationMode="pessimistic"
-            mutationOptions={{
-              onSuccess: () => {
-                notify("resources.deals.updated", {});
-                redirect(`/deals/${id}/show`, undefined, undefined, undefined, {
-                  _scrollToTop: false,
-                });
-              },
-            }}
-          >
-            <EditHeader />
-            <Form>
-              <DealInputs />
-              <FormToolbar />
-            </Form>
-          </EditBase>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+    <HatchDialogEditBody id={id} open={open} onClose={handleClose} notify={notify} redirect={redirect} />
   );
 };
 
-function EditHeader() {
-  const translate = useTranslate();
+function HatchDialogEditBody({
+  id,
+  open,
+  onClose,
+  notify,
+  redirect,
+}: {
+  id: string;
+  open: boolean;
+  onClose: () => void;
+  notify: ReturnType<typeof useNotify>;
+  redirect: ReturnType<typeof useRedirect>;
+}) {
+  return (
+    <HatchDialog
+      open={open}
+      onOpenChange={() => onClose()}
+      eyebrow="EDIT DEAL"
+      title={<DealEditTitle />}
+      headerActions={<DealEditActions />}
+      size="xl"
+      wrap={(node) => (
+        <EditBase
+          id={id}
+          mutationMode="pessimistic"
+          mutationOptions={{
+            onSuccess: () => {
+              notify("resources.deals.updated", {});
+              redirect(
+                `/deals/${id}/show`,
+                undefined,
+                undefined,
+                undefined,
+                { _scrollToTop: false },
+              );
+            },
+          }}
+        >
+          <Form className="flex flex-col">{node}</Form>
+        </EditBase>
+      )}
+    >
+      <DealInputs />
+      <FormToolbar />
+    </HatchDialog>
+  );
+}
+
+function DealEditTitle() {
   const { defaultTitle } = useEditContext<Deal>();
   const deal = useRecordContext<Deal>();
   if (!deal) {
     return null;
   }
-
   return (
-    <DialogTitle className="pb-0">
-      <div className="flex justify-between items-start mb-8">
-        <div className="flex items-center gap-4">
-          <ReferenceField source="company_id" reference="companies" link="show">
-            <CompanyAvatar />
-          </ReferenceField>
-          <h2 className="text-2xl font-semibold">{defaultTitle}</h2>
-        </div>
-        <div className="flex gap-2 pr-12">
-          <DeleteButton />
-          <Button asChild variant="outline" className="h-9">
-            <Link to={`/deals/${deal.id}/show`}>
-              {translate("resources.deals.action.back_to_deal")}
-            </Link>
-          </Button>
-        </div>
-      </div>
-    </DialogTitle>
+    <div className="flex items-center gap-3">
+      <ReferenceField source="company_id" reference="companies" link="show">
+        <CompanyAvatar />
+      </ReferenceField>
+      <span className="font-heading text-lg font-bold text-[#ECEEF5] truncate">
+        {defaultTitle}
+      </span>
+    </div>
+  );
+}
+
+function DealEditActions() {
+  const translate = useTranslate();
+  const deal = useRecordContext<Deal>();
+  if (!deal) {
+    return null;
+  }
+  return (
+    <>
+      <DeleteButton />
+      <Button
+        asChild
+        variant="outline"
+        className="h-9 border-[rgba(255,255,255,0.09)] bg-transparent text-[#B8C0D6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#ECEEF5]"
+      >
+        <Link to={`/deals/${deal.id}/show`}>
+          {translate("resources.deals.action.back_to_deal")}
+        </Link>
+      </Button>
+    </>
   );
 }

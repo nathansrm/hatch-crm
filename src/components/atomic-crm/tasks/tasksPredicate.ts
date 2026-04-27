@@ -9,7 +9,7 @@ export const isBeforeFriday = () => getDay(new Date()) < 5; // Friday is represe
 
 type Task = {
   due_date: string;
-  done_date: string | null;
+  done_date?: string | null;
 };
 
 export const isDone = (task: Task) => task.done_date != null;

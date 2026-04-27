@@ -1,8 +1,6 @@
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
 import { SortButton } from "@/components/admin/sort-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserPlus } from "lucide-react";
 import {
   RecordContextProvider,
@@ -23,6 +21,13 @@ import {
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ActivityLog } from "../activity/ActivityLog";
+import {
+  HatchCard,
+  HatchTabs,
+  HatchTabsContent,
+  HatchTabsList,
+  HatchTabsTrigger,
+} from "../_primitives";
 import { Avatar } from "../contacts/Avatar";
 import { TagsList } from "../contacts/TagsList";
 import { findDealLabel } from "../deals/dealUtils";
@@ -113,76 +118,81 @@ const CompanyShowContent = () => {
   return (
     <div className="mt-2 flex pb-2 gap-8">
       <div className="flex-1">
-        <Card>
-          <CardContent>
-            <div className="flex mb-3">
-              <CompanyAvatar />
-              <h5 className="text-xl ml-2 flex-1">{record.name}</h5>
+        <HatchCard padding="lg">
+          <div className="flex mb-4 items-center gap-3">
+            <CompanyAvatar />
+            <div className="min-w-0">
+              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+                COMPANY
+              </div>
+              <h5 className="font-heading text-xl font-bold text-[#ECEEF5] truncate">
+                {record.name}
+              </h5>
             </div>
-            <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="activity">
-                  {translate("crm.common.activity")}
-                </TabsTrigger>
-                <TabsTrigger value="contacts">
-                  {record.nb_contacts === 0
-                    ? translate("resources.companies.no_contacts")
-                    : translate("resources.companies.nb_contacts", {
-                        smart_count: record.nb_contacts ?? 0,
-                      })}
-                </TabsTrigger>
-                {record.nb_deals ? (
-                  <TabsTrigger value="deals">
-                    {translate("resources.companies.nb_deals", {
-                      smart_count: record.nb_deals ?? 0,
+          </div>
+          <HatchTabs defaultValue={currentTab} onValueChange={handleTabChange}>
+            <HatchTabsList>
+              <HatchTabsTrigger value="activity">
+                {translate("crm.common.activity")}
+              </HatchTabsTrigger>
+              <HatchTabsTrigger value="contacts">
+                {record.nb_contacts === 0
+                  ? translate("resources.companies.no_contacts")
+                  : translate("resources.companies.nb_contacts", {
+                      smart_count: record.nb_contacts ?? 0,
                     })}
-                  </TabsTrigger>
-                ) : null}
-              </TabsList>
-              <TabsContent value="activity" className="pt-2">
-                <ActivityLog companyId={record.id} context="company" />
-              </TabsContent>
-              <TabsContent value="contacts">
-                {record.nb_contacts ? (
-                  <ReferenceManyField
-                    reference="contacts_summary"
-                    target="company_id"
-                    sort={{ field: "last_name", order: "ASC" }}
-                  >
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-row justify-end space-x-2 mt-1">
-                        {!!record.nb_contacts && (
-                          <SortButton
-                            fields={["last_name", "first_name", "last_seen"]}
-                          />
-                        )}
-                        <CreateRelatedContactButton />
-                      </div>
-                      <ContactsIterator />
-                    </div>
-                  </ReferenceManyField>
-                ) : (
+              </HatchTabsTrigger>
+              {record.nb_deals ? (
+                <HatchTabsTrigger value="deals">
+                  {translate("resources.companies.nb_deals", {
+                    smart_count: record.nb_deals ?? 0,
+                  })}
+                </HatchTabsTrigger>
+              ) : null}
+            </HatchTabsList>
+            <HatchTabsContent value="activity" className="pt-4">
+              <ActivityLog companyId={record.id} context="company" />
+            </HatchTabsContent>
+            <HatchTabsContent value="contacts" className="pt-4">
+              {record.nb_contacts ? (
+                <ReferenceManyField
+                  reference="contacts_summary"
+                  target="company_id"
+                  sort={{ field: "last_name", order: "ASC" }}
+                >
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-row justify-end space-x-2 mt-1">
+                      {!!record.nb_contacts && (
+                        <SortButton
+                          fields={["last_name", "first_name", "last_seen"]}
+                        />
+                      )}
                       <CreateRelatedContactButton />
                     </div>
+                    <ContactsIterator />
                   </div>
-                )}
-              </TabsContent>
-              <TabsContent value="deals">
-                {record.nb_deals ? (
-                  <ReferenceManyField
-                    reference="deals"
-                    target="company_id"
-                    sort={{ field: "name", order: "ASC" }}
-                  >
-                    <DealsIterator />
-                  </ReferenceManyField>
-                ) : null}
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                </ReferenceManyField>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-row justify-end space-x-2 mt-1">
+                    <CreateRelatedContactButton />
+                  </div>
+                </div>
+              )}
+            </HatchTabsContent>
+            <HatchTabsContent value="deals" className="pt-4">
+              {record.nb_deals ? (
+                <ReferenceManyField
+                  reference="deals"
+                  target="company_id"
+                  sort={{ field: "name", order: "ASC" }}
+                >
+                  <DealsIterator />
+                </ReferenceManyField>
+              ) : null}
+            </HatchTabsContent>
+          </HatchTabs>
+        </HatchCard>
       </div>
       <CompanyAside />
     </div>

@@ -7,14 +7,9 @@ import {
 } from "ra-core";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { SaveButton } from "@/components/admin/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
+import { HatchDialog } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import { TaskFormContent } from "./TaskFormContent";
 
 export const TaskEdit = ({
@@ -28,9 +23,17 @@ export const TaskEdit = ({
 }) => {
   const notify = useNotify();
   const translate = useTranslate();
+  if (!open || !taskId) return null;
+
   return (
-    <Dialog open={open} onOpenChange={close}>
-      {open && taskId && (
+    <HatchDialog
+      open={open}
+      onOpenChange={close}
+      eyebrow="EDIT TASK"
+      title={translate("resources.tasks.action.edit")}
+      size="lg"
+      contentClassName="max-h-[90vh]"
+      wrap={(node) => (
         <EditBase
           id={taskId}
           resource="tasks"
@@ -46,33 +49,31 @@ export const TaskEdit = ({
           }}
           redirect={false}
         >
-          <DialogContent className="lg:max-w-xl overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
-            <Form className="flex flex-col gap-4">
-              <DialogHeader>
-                <DialogTitle>
-                  {translate("resources.tasks.action.edit")}
-                </DialogTitle>
-              </DialogHeader>
-              <TaskFormContent />
-              <DialogFooter className="w-full sm:justify-between gap-4">
-                <DeleteButton
-                  mutationOptions={{
-                    onSuccess: () => {
-                      close();
-                      notify("resources.tasks.deleted", {
-                        type: "info",
-                        undoable: true,
-                      });
-                    },
-                  }}
-                  redirect={false}
-                />
-                <SaveButton label="ra.action.save" />
-              </DialogFooter>
-            </Form>
-          </DialogContent>
+          <Form className="flex flex-col gap-4">{node}</Form>
         </EditBase>
       )}
-    </Dialog>
+      footer={
+        <div className="flex w-full items-center justify-between gap-4">
+          <DeleteButton
+            mutationOptions={{
+              onSuccess: () => {
+                close();
+                notify("resources.tasks.deleted", {
+                  type: "info",
+                  undoable: true,
+                });
+              },
+            }}
+            redirect={false}
+          />
+          <SaveButton
+            label="ra.action.save"
+            className={HATCH_PRIMARY_BUTTON_CLASS}
+          />
+        </div>
+      }
+    >
+      <TaskFormContent />
+    </HatchDialog>
   );
 };

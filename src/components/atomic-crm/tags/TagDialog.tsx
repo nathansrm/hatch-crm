@@ -1,10 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
+import { HatchDialog } from "../_primitives";
 import type { Tag } from "../types";
 import { TagForm } from "./TagForm";
 
@@ -35,13 +29,14 @@ export function TagDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
-        <TagForm open={open} tag={tag} onSubmit={handleSubmit} />
-      </DialogContent>
-    </Dialog>
+    <HatchDialog
+      open={open}
+      onOpenChange={handleClose}
+      eyebrow={tag ? "EDIT TAG" : "NEW TAG"}
+      title={title}
+      size="md"
+    >
+      <TagForm open={open} tag={tag} onSubmit={handleSubmit} />
+    </HatchDialog>
   );
 }

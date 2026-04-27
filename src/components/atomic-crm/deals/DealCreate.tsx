@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  CreateBase,
   Form,
   useDataProvider,
   useGetIdentity,
@@ -7,11 +8,10 @@ import {
   useRedirect,
   type GetListResult,
 } from "ra-core";
-import { Create } from "@/components/admin/create";
 import { SaveButton } from "@/components/admin/form";
-import { FormToolbar } from "@/components/admin/simple-form";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
+import { HatchDialog } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import type { Deal } from "../types";
 import { DealInputs } from "./DealInputs";
 
@@ -73,20 +73,14 @@ export const DealCreate = ({ open }: { open: boolean }) => {
   const { identity } = useGetIdentity();
 
   return (
-    <Dialog open={open} onOpenChange={() => handleClose()}>
-      <DialogContent className="lg:max-w-4xl overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
-        <Create resource="deals" mutationOptions={{ onSuccess }}>
-          <h1
-            style={{
-              fontSize: 22,
-              fontWeight: 700,
-              color: "#ECEEF5",
-              marginBottom: 24,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            New Deal
-          </h1>
+    <HatchDialog
+      open={open}
+      onOpenChange={() => handleClose()}
+      eyebrow="NEW DEAL"
+      title="Create a deal"
+      size="xl"
+      wrap={(node) => (
+        <CreateBase resource="deals" mutationOptions={{ onSuccess }}>
           <Form
             defaultValues={{
               sales_id: identity?.id,
@@ -94,13 +88,18 @@ export const DealCreate = ({ open }: { open: boolean }) => {
               index: 0,
             }}
           >
-            <DealInputs />
-            <FormToolbar>
-              <SaveButton label="Create Deal" />
-            </FormToolbar>
+            {node}
           </Form>
-        </Create>
-      </DialogContent>
-    </Dialog>
+        </CreateBase>
+      )}
+      footer={
+        <SaveButton
+          label="Create Deal"
+          className={HATCH_PRIMARY_BUTTON_CLASS}
+        />
+      }
+    >
+      <DealInputs />
+    </HatchDialog>
   );
 };

@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { EditBase, Form, useEditContext, type MutationMode } from "ra-core";
 
+import { HatchCard, HatchPageHeader } from "../_primitives";
 import type { Contact } from "../types";
 import { ContactAside } from "./ContactAside";
 import { ContactInputs } from "./ContactInputs";
@@ -46,12 +46,11 @@ const ContactEditContent = () => {
         className="flex flex-1 flex-col gap-4"
         record={normalizeContactArrayFields(record)}
       >
-        <Card>
-          <CardContent>
-            <ContactInputs />
-            <FormToolbar />
-          </CardContent>
-        </Card>
+        <HatchPageHeader eyebrow="CONTACTS" title="Edit contact" />
+        <HatchCard padding="lg">
+          <ContactInputs />
+          <FormToolbar />
+        </HatchCard>
       </Form>
 
       <ContactAside link="show" />

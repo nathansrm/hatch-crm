@@ -1,8 +1,9 @@
 import { CreateBase, Form, useGetIdentity, type MutationMode } from "ra-core";
 import { SaveButton } from "@/components/admin/form";
 import { FormToolbar as Toolbar } from "@/components/admin/simple-form";
-import { Card, CardContent } from "@/components/ui/card";
 
+import { HatchCard, HatchPageHeader } from "../_primitives";
+import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 import { ContactInputs } from "./ContactInputs";
 import {
   cleanupContactForCreate,
@@ -25,18 +26,7 @@ export const ContactCreate = ({
     >
       <div className="mt-2 flex lg:mr-72">
         <div className="flex-1">
-          <h1
-            className="font-heading"
-            style={{
-              fontSize: 26,
-              fontWeight: 700,
-              color: "#ECEEF5",
-              marginBottom: 24,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            New Contact
-          </h1>
+          <HatchPageHeader eyebrow="CONTACTS" title="New contact" />
           <Form
             defaultValues={{
               sales_id: identity?.id,
@@ -44,14 +34,15 @@ export const ContactCreate = ({
               phone_jsonb: defaultPhoneJsonb,
             }}
           >
-            <Card>
-              <CardContent>
-                <ContactInputs />
-                <Toolbar className="flex flex-row justify-end gap-2">
-                  <SaveButton label="Create Contact" />
-                </Toolbar>
-              </CardContent>
-            </Card>
+            <HatchCard padding="lg">
+              <ContactInputs />
+              <Toolbar className="flex flex-row justify-end gap-2">
+                <SaveButton
+                  label="Create Contact"
+                  className={HATCH_PRIMARY_BUTTON_CLASS}
+                />
+              </Toolbar>
+            </HatchCard>
           </Form>
         </div>
       </div>

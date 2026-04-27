@@ -18,9 +18,8 @@ import { ReferenceArrayField } from "@/components/admin/reference-array-field";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 
+import { HatchCard, HatchDialog, HatchStagePill } from "../_primitives";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import { NoteCreate } from "../notes/NoteCreate";
 import { NotesIterator } from "../notes/NotesIterator";
@@ -30,7 +29,6 @@ import { ContactList } from "./ContactList";
 import { DecisionContextBlock } from "./DecisionContextBlock";
 import { findDealLabel, formatISODateString } from "./dealUtils";
 import { StackBlock } from "./StackBlock";
-import { stageColorMap } from "./stageColors";
 
 export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
   const redirect = useRedirect();
@@ -39,15 +37,19 @@ export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="lg:max-w-4xl p-4 overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
-        {id ? (
-          <ShowBase id={id}>
-            <DealShowContent />
-          </ShowBase>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+    <HatchDialog
+      open={open}
+      onOpenChange={(open) => !open && handleClose()}
+      title="Deal details"
+      showHeader={false}
+      size="xl"
+    >
+      {id ? (
+        <ShowBase id={id}>
+          <DealShowContent />
+        </ShowBase>
+      ) : null}
+    </HatchDialog>
   );
 };
 
@@ -58,161 +60,165 @@ const DealShowContent = () => {
   if (!record) return null;
 
   return (
-    <>
-      <div className="space-y-2">
-        {record.archived_at ? <ArchivedTitle /> : null}
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start mb-8">
-            <div className="flex items-center gap-4">
-              <ReferenceField
-                source="company_id"
-                reference="companies"
-                link="show"
-              >
-                <CompanyAvatar />
-              </ReferenceField>
-              <h2 className="text-2xl font-semibold">{record.name}</h2>
+    <div className="space-y-5">
+      {record.archived_at ? <ArchivedBanner /> : null}
+
+      {/* Title row + actions, inline so they share record context */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <ReferenceField source="company_id" reference="companies" link="show">
+            <CompanyAvatar />
+          </ReferenceField>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+              DEAL
             </div>
-            <div className={`flex gap-2 ${record.archived_at ? "" : "pr-12"}`}>
-              {record.archived_at ? (
-                <>
-                  <UnarchiveButton record={record} />
-                  <DeleteButton />
-                </>
-              ) : (
-                <>
-                  <ArchiveButton record={record} />
-                  <EditButton />
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-6">
-            <div className="flex min-w-[140px] flex-col">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.stage")}
-              </span>
-              <div>
-                <Badge
-                  style={{
-                    backgroundColor:
-                      stageColorMap[record.stage]?.bg ?? "#F5F5F4",
-                    color: stageColorMap[record.stage]?.text ?? "#1A1A2E",
-                    border: `1px solid ${
-                      stageColorMap[record.stage]?.border ?? "#E5E5E3"
-                    }`,
-                  }}
-                >
-                  {findDealLabel(dealStages, record.stage)}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="flex min-w-[140px] flex-col">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.amount")}
-              </span>
-              <span className="text-sm">
-                {record.amount.toLocaleString("en-US", {
-                  notation: "compact",
-                  style: "currency",
-                  currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
-                })}
-              </span>
-            </div>
-
-            <div className="flex min-w-[160px] flex-col">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.expected_closing_date")}
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-sm">
-                  {isValid(new Date(record.expected_closing_date))
-                    ? formatISODateString(record.expected_closing_date)
-                    : translate("resources.deals.invalid_date")}
-                </span>
-                {new Date(record.expected_closing_date) < new Date() ? (
-                  <Badge variant="destructive">
-                    {translate("crm.common.past")}
-                  </Badge>
-                ) : null}
-              </div>
-            </div>
-
-            {record.category && (
-              <div className="flex min-w-[140px] flex-col">
-                <span className="text-xs text-muted-foreground tracking-wide">
-                  {translate("resources.deals.fields.category")}
-                </span>
-                <span className="text-sm">
-                  {dealCategories.find((c) => c.value === record.category)
-                    ?.label ?? record.category}
-                </span>
-              </div>
-            )}
-          </div>
-
-          <Separator className="mt-4" />
-
-          <div className="mt-4 flex flex-col gap-6 md:flex-row">
-            <div className="flex min-w-0 flex-1 flex-col gap-4">
-              <DecisionContextBlock record={record} />
-              <StackBlock record={record} />
-
-              {record.description && (
-                <section className="rounded-lg border p-4 space-y-2 whitespace-pre-line">
-                  <h3 className="text-sm font-semibold">
-                    {translate("resources.deals.fields.description")}
-                  </h3>
-                  <p className="text-sm leading-6">{record.description}</p>
-                </section>
-              )}
-
-              <section className="rounded-lg border p-4">
-                <InfiniteListBase
-                  resource="deal_notes"
-                  filter={{ deal_id: record.id }}
-                  sort={{ field: "date", order: "DESC" }}
-                  perPage={25}
-                  disableSyncWithLocation
-                  storeKey={false}
-                  empty={<NoteCreate reference={"deals"} />}
-                >
-                  <NotesIterator reference="deals" />
-                </InfiniteListBase>
-              </section>
-            </div>
-
-            <div className="flex w-full flex-col gap-4 md:w-64 md:shrink-0">
-              {!!record.contact_ids?.length && (
-                <section className="rounded-lg border p-4 space-y-3">
-                  <h3 className="text-sm font-semibold">
-                    {translate("resources.deals.fields.contact_ids")}
-                  </h3>
-                  <ReferenceArrayField
-                    source="contact_ids"
-                    reference="contacts_summary"
-                  >
-                    <ContactList />
-                  </ReferenceArrayField>
-                </section>
-              )}
-            </div>
+            <h2 className="font-heading text-2xl font-bold text-[#ECEEF5] truncate">
+              {record.name}
+            </h2>
           </div>
         </div>
+        <div className="flex shrink-0 gap-2">
+          {record.archived_at ? (
+            <>
+              <UnarchiveButton record={record} />
+              <DeleteButton />
+            </>
+          ) : (
+            <>
+              <ArchiveButton record={record} />
+              <EditButton />
+            </>
+          )}
+        </div>
       </div>
-    </>
+
+      {/* Stat strip */}
+      <div className="flex flex-wrap gap-x-8 gap-y-4 border-y border-[rgba(255,255,255,0.07)] py-4">
+        <StatCol label={translate("resources.deals.fields.stage")}>
+          <HatchStagePill
+            stage={record.stage}
+            label={findDealLabel(dealStages, record.stage)}
+          />
+        </StatCol>
+        <StatCol label={translate("resources.deals.fields.amount")}>
+          <span className="font-mono text-sm font-semibold text-[#ECEEF5]">
+            {record.amount.toLocaleString("en-US", {
+              notation: "compact",
+              style: "currency",
+              currency,
+              currencyDisplay: "narrowSymbol",
+              minimumSignificantDigits: 3,
+            })}
+          </span>
+        </StatCol>
+        <StatCol
+          label={translate("resources.deals.fields.expected_closing_date")}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#ECEEF5]">
+              {isValid(new Date(record.expected_closing_date))
+                ? formatISODateString(record.expected_closing_date)
+                : translate("resources.deals.invalid_date")}
+            </span>
+            {new Date(record.expected_closing_date) < new Date() ? (
+              <Badge
+                className="border border-[rgba(239,90,111,0.28)] bg-[rgba(239,90,111,0.08)] text-[10.5px] font-bold uppercase tracking-[0.04em] text-[#EF5A6F]"
+              >
+                {translate("crm.common.past")}
+              </Badge>
+            ) : null}
+          </div>
+        </StatCol>
+        {record.category && (
+          <StatCol label={translate("resources.deals.fields.category")}>
+            <span className="text-sm text-[#ECEEF5]">
+              {dealCategories.find((c) => c.value === record.category)?.label ??
+                record.category}
+            </span>
+          </StatCol>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-5 md:flex-row">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
+          <DecisionContextBlock record={record} />
+          <StackBlock record={record} />
+
+          {record.description && (
+            <HatchCard className="space-y-2 whitespace-pre-line" padding="md">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+                {translate("resources.deals.fields.description")}
+              </h3>
+              <p className="text-sm leading-6 text-[#B8C0D6]">
+                {record.description}
+              </p>
+            </HatchCard>
+          )}
+
+          <HatchCard padding="md">
+            <InfiniteListBase
+              resource="deal_notes"
+              filter={{ deal_id: record.id }}
+              sort={{ field: "date", order: "DESC" }}
+              perPage={25}
+              disableSyncWithLocation
+              storeKey={false}
+              empty={<NoteCreate reference={"deals"} />}
+            >
+              <NotesIterator reference="deals" />
+            </InfiniteListBase>
+          </HatchCard>
+        </div>
+
+        <div className="flex w-full flex-col gap-4 md:w-64 md:shrink-0">
+          {!!record.contact_ids?.length && (
+            <HatchCard padding="md" className="space-y-3">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+                {translate("resources.deals.fields.contact_ids")}
+              </h3>
+              <ReferenceArrayField
+                source="contact_ids"
+                reference="contacts_summary"
+              >
+                <ContactList />
+              </ReferenceArrayField>
+            </HatchCard>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
-const ArchivedTitle = () => {
+function StatCol({
+  label,
+  children,
+}: {
+  label: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-w-[140px] flex-col gap-1.5">
+      <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+        {label}
+      </span>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+const ArchivedBanner = () => {
   const translate = useTranslate();
   return (
-    <div className="bg-orange-500 px-6 py-4">
-      <h3 className="text-lg font-bold text-white">
+    <div
+      className="rounded-lg border px-4 py-3"
+      style={{
+        background: "rgba(239,90,111,0.08)",
+        borderColor: "rgba(239,90,111,0.28)",
+      }}
+    >
+      <h3 className="font-heading text-sm font-bold uppercase tracking-[0.16em] text-[#EF5A6F]">
         {translate("resources.deals.archived.title")}
       </h3>
     </div>
@@ -256,7 +262,7 @@ const ArchiveButton = ({ record }: { record: Deal }) => {
       onClick={handleClick}
       size="sm"
       variant="outline"
-      className="flex items-center gap-2 h-9"
+      className="flex h-9 items-center gap-2 border-[rgba(255,255,255,0.09)] bg-transparent text-[#B8C0D6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#ECEEF5]"
     >
       <Archive className="w-4 h-4" />
       {translate("resources.deals.archived.action")}
@@ -288,16 +294,12 @@ const UnarchiveButton = ({ record }: { record: Deal }) => {
     },
   });
 
-  const handleClick = () => {
-    mutate();
-  };
-
   return (
     <Button
-      onClick={handleClick}
+      onClick={() => mutate()}
       size="sm"
       variant="outline"
-      className="flex items-center gap-2 h-9"
+      className="flex h-9 items-center gap-2 border-[rgba(255,255,255,0.09)] bg-transparent text-[#B8C0D6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#ECEEF5]"
     >
       <ArchiveRestore className="w-4 h-4" />
       {translate("resources.deals.unarchived.action")}

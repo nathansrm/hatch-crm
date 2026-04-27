@@ -1,5 +1,6 @@
 import { TasksListByDueDate } from "./TasksListByDueDate";
 import { useTranslate } from "ra-core";
+import { HATCH } from "../_primitives";
 
 export const TasksListContent = () => {
   const translate = useTranslate();
@@ -10,7 +11,7 @@ export const TasksListContent = () => {
           style={{
             padding: "60px 0",
             textAlign: "center",
-            color: "#5C6784",
+            color: HATCH.textMuted,
             fontSize: 14,
           }}
         >

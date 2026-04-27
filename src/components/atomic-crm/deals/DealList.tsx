@@ -9,6 +9,7 @@ import { ReferenceInput } from "@/components/admin/reference-input";
 import { SearchInput } from "@/components/admin/search-input";
 import { SelectInput } from "@/components/admin/select-input";
 
+import { HatchPageHeader, HatchPrimaryButton, HATCH } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import { DealArchivedList } from "./DealArchivedList";
 import { DealCreate } from "./DealCreate";
@@ -91,7 +92,7 @@ const DealLayout = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        background: "#060A16",
+        background: HATCH.surfaceDeep,
         flex: 1,
         minHeight: 0,
       }}
@@ -99,93 +100,31 @@ const DealLayout = () => {
       <div
         style={{
           padding: "24px 28px 20px",
-          background: "#060A16",
+          background: HATCH.surfaceDeep,
           flexShrink: 0,
           position: "relative",
           zIndex: 1,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "#4DC8E8",
-              fontWeight: 700,
-            }}
-          >
-            Pipeline
-          </span>
-          <span
-            style={{
-              height: 1,
-              width: 24,
-              background: "rgba(77,200,232,0.4)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h1
-              className="font-heading"
-              style={{
-                margin: 0,
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: "#ECEEF5",
-              }}
-            >
-              Deals
-            </h1>
-            <p style={{ margin: "4px 0 0", color: "#9AA3BE", fontSize: 13 }}>
-              <span
-                className="font-mono"
-                style={{
-                  color: "#ECEEF5",
-                  fontWeight: 600,
-                }}
-              >
-                {activeDealCount}
-              </span>
-              {" active deals"}
-            </p>
-          </div>
+        <HatchPageHeader
+          eyebrow="Pipeline"
+          title="Deals"
+          count={activeDealCount}
+          countSuffix="active deals"
+          actions={
           <Link
             to="/deals/create"
             className="font-heading"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "7px 14px",
-              background: "#4DC8E8",
-              color: "#061022",
-              borderRadius: 7,
-              fontWeight: 700,
-              fontSize: 12.5,
-              textDecoration: "none",
-              boxShadow: "0 2px 0 rgba(0,0,0,0.3)",
-            }}
           >
-            <Plus size={14} strokeWidth={2.5} />
-            Add deal
+            <HatchPrimaryButton asChild>
+              <span className="inline-flex items-center gap-2">
+                <Plus size={14} strokeWidth={2.5} />
+                Add deal
+              </span>
+            </HatchPrimaryButton>
           </Link>
-        </div>
+          }
+        />
       </div>
       {dealData.length === 0 ? (
         <DealsFilteredEmptyState onClear={() => setFilters({}, [])} />
@@ -217,13 +156,13 @@ const DealsFilteredEmptyState = ({ onClear }: { onClear: () => void }) => (
         gap: 8,
       }}
     >
-      <span style={{ color: "#9AA3BE", fontSize: 14 }}>
+      <span style={{ color: HATCH.textLo, fontSize: 14 }}>
         No deals match your filters.
       </span>
       <button
         onClick={onClear}
         style={{
-          color: "#4DC8E8",
+          color: HATCH.cyan,
           fontSize: 13,
           background: "none",
           border: "none",

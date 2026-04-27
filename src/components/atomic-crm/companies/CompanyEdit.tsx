@@ -1,6 +1,6 @@
 import { EditBase, Form } from "ra-core";
-import { Card, CardContent } from "@/components/ui/card";
 
+import { HatchCard, HatchPageHeader } from "../_primitives";
 import { CompanyInputs } from "./CompanyInputs";
 import { CompanyAside } from "./CompanyAside";
 import { FormToolbar } from "../layout/FormToolbar";
@@ -19,12 +19,11 @@ export const CompanyEdit = () => (
   >
     <div className="mt-2 flex gap-8">
       <Form className="flex flex-1 flex-col gap-4 pb-2">
-        <Card>
-          <CardContent>
-            <CompanyInputs />
-            <FormToolbar />
-          </CardContent>
-        </Card>
+        <HatchPageHeader eyebrow="COMPANIES" title="Edit company" />
+        <HatchCard padding="lg">
+          <CompanyInputs />
+          <FormToolbar />
+        </HatchCard>
       </Form>
 
       <CompanyAside link="show" />

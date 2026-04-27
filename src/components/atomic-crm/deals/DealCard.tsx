@@ -1,5 +1,9 @@
 import type { CSSProperties } from "react";
-import { Draggable } from "@hello-pangea/dnd";
+import {
+  Draggable,
+  type DraggableProvided,
+  type DraggableStateSnapshot,
+} from "@hello-pangea/dnd";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useRedirect, RecordContextProvider } from "ra-core";
 import { ReferenceField } from "@/components/admin/reference-field";
@@ -7,6 +11,7 @@ import { NumberField } from "@/components/admin/number-field";
 import { SelectField } from "@/components/admin/select-field";
 
 import { CompanyAvatar } from "../companies/CompanyAvatar";
+import { HATCH } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { getBottleneckLabel } from "./bottleneckLabels";
@@ -37,8 +42,8 @@ export const DealCardContent = ({
   snapshot,
   deal,
 }: {
-  provided?: any;
-  snapshot?: any;
+  provided?: DraggableProvided;
+  snapshot?: DraggableStateSnapshot;
   deal: Deal;
 }) => {
   const { dealCategories, currency } = useConfigurationContext();
@@ -75,9 +80,9 @@ export const DealCardContent = ({
       <RecordContextProvider value={deal}>
         <div
           style={{
-            background: snapshot?.isDragging ? "#161F36" : "#0D1424",
+            background: snapshot?.isDragging ? "rgb(22 31 54)" : HATCH.surface,
             border: "1px solid rgba(255,255,255,0.07)",
-            borderLeft: `3px solid ${colors?.border ?? "#4DC8E8"}`,
+            borderLeft: `3px solid ${colors?.border ?? HATCH.cyan}`,
             borderRadius: 10,
             padding: "12px 14px",
             cursor: "pointer",
@@ -101,7 +106,7 @@ export const DealCardContent = ({
                   style={{
                     fontSize: 13,
                     fontWeight: 600,
-                    color: "#ECEEF5",
+                    color: HATCH.textHi,
                     lineHeight: 1.35,
                     margin: 0,
                     overflow: "hidden",
@@ -119,7 +124,7 @@ export const DealCardContent = ({
                   style={{
                     fontSize: 11,
                     fontWeight: 400,
-                    color: "#9AA3BE",
+                    color: HATCH.textLo,
                     lineHeight: 1.35,
                     margin: 0,
                     marginTop: 2,
@@ -143,7 +148,7 @@ export const DealCardContent = ({
               className="font-mono"
               style={{
                 fontSize: 12,
-                color: "#9AA3BE",
+                color: HATCH.textLo,
                 margin: 0,
               }}
             >
@@ -169,7 +174,7 @@ export const DealCardContent = ({
               <p
                 style={{
                   fontSize: 11,
-                  color: decay === "red" ? "#EF5A6F" : "#F5B84A",
+                  color: decay === "red" ? HATCH.danger : "rgb(245 184 74)",
                   fontWeight: 600,
                   marginTop: 2,
                   marginBottom: 0,
@@ -200,7 +205,7 @@ export const DealCardContent = ({
                       borderRadius: 4,
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.07)",
-                      color: "#5C6784",
+                      color: HATCH.textMuted,
                       maxWidth: 120,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -220,7 +225,7 @@ export const DealCardContent = ({
                       borderRadius: 4,
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.07)",
-                      color: "#5C6784",
+                      color: HATCH.textMuted,
                       maxWidth: 110,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -232,7 +237,7 @@ export const DealCardContent = ({
                   </span>
                 ))}
                 {remainingStackCount > 0 && (
-                  <span style={{ fontSize: 10, color: "#5C6784" }}>
+                  <span style={{ fontSize: 10, color: HATCH.textMuted }}>
                     +{remainingStackCount} more
                   </span>
                 )}
@@ -242,26 +247,26 @@ export const DealCardContent = ({
                       display: "inline-flex",
                       alignItems: "center",
                       gap: 4,
-                      color: "#9AA3BE",
+                      color: HATCH.textLo,
                       fontSize: 11,
                     }}
                   >
                     {deal.dm_present ? (
                       <CheckCircle2
                         size={12}
-                        style={{ color: "#34D399", flexShrink: 0 }}
+                        style={{ color: "rgb(52 211 153)", flexShrink: 0 }}
                       />
                     ) : (
                       <XCircle
                         size={12}
-                        style={{ color: "#9AA3BE", flexShrink: 0 }}
+                        style={{ color: HATCH.textLo, flexShrink: 0 }}
                       />
                     )}
                     {deal.dm_present ? "Owner" : "No Owner"}
                   </span>
                 )}
                 {hasHoursWasted && (
-                  <span style={{ color: "#9AA3BE", fontSize: 11 }}>
+                  <span style={{ color: HATCH.textLo, fontSize: 11 }}>
                     {deal.hours_wasted_per_week}h/wk
                   </span>
                 )}

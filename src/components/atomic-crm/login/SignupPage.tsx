@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { HatchCard } from "../_primitives";
 import type { CrmDataProvider } from "../providers/types";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { SignUpData } from "../types";
@@ -19,7 +20,7 @@ export const SignupPage = () => {
   const queryClient = useQueryClient();
   const dataProvider = useDataProvider<CrmDataProvider>();
   const {
-    lightModeLogo: logo,
+    darkModeLogo: logo,
     title,
     googleWorkplaceDomain,
   } = useConfigurationContext();
@@ -49,14 +50,12 @@ export const SignupPage = () => {
               _: "Initial user successfully created",
             },
           });
-          // FIXME: We should probably provide a hook for that in the ra-core package
           queryClient.invalidateQueries({
             queryKey: ["auth", "canAccess"],
           });
         })
         .catch((err) => {
           if (err.code === "email_not_confirmed") {
-            // An email confirmation is required to continue.
             navigate(ConfirmationRequired.path);
           } else {
             notify("crm.auth.sign_in_failed", {
@@ -85,18 +84,10 @@ export const SignupPage = () => {
     mode: "onChange",
   });
 
-  const firstNameLabel = translate("crm.auth.first_name", {
-    _: "First name",
-  });
-  const lastNameLabel = translate("crm.auth.last_name", {
-    _: "Last name",
-  });
-  const emailLabel = translate("ra.auth.email", {
-    _: "Email",
-  });
-  const passwordLabel = translate("ra.auth.password", {
-    _: "Password",
-  });
+  const firstNameLabel = translate("crm.auth.first_name", { _: "First name" });
+  const lastNameLabel = translate("crm.auth.last_name", { _: "Last name" });
+  const emailLabel = translate("ra.auth.email", { _: "Email" });
+  const passwordLabel = translate("ra.auth.password", { _: "Password" });
 
   const getRequiredMessage = (label: string) => `${label} is required`;
   const getFieldErrorMessage = (message: unknown) =>
@@ -106,7 +97,6 @@ export const SignupPage = () => {
     return <LoginSkeleton />;
   }
 
-  // For the moment, we only allow one user to sign up. Other users must be created by the administrator.
   if (isInitialized) {
     return <Navigate to="/login" />;
   }
@@ -116,65 +106,86 @@ export const SignupPage = () => {
   };
 
   return (
-    <div className="h-screen p-8">
-      <div className="flex items-center gap-4">
+    <div className="relative min-h-screen overflow-hidden bg-[#06111F] p-8">
+      {/* Background glow */}
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-[#4DC8E8] opacity-[0.06] blur-3xl" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, rgba(77,200,232,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(77,200,232,0.5) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+
+      <div className="relative flex items-center gap-3">
         <img src={logo} alt={title} width={24} />
-        <h1 className="text-xl font-semibold">{title}</h1>
+        <h1 className="font-heading text-xl font-bold text-[#ECEEF5]">
+          {title}
+        </h1>
       </div>
-      <div className="h-full">
-        <div className="max-w-sm mx-auto h-full flex flex-col justify-center gap-4">
-          <h1 className="text-2xl font-bold mb-4">
-            {translate("crm.auth.welcome_title", {
-              _: "Welcome to Hatch CRM",
-            })}
-          </h1>
-          <p className="text-base mb-4">
+
+      <div className="relative mx-auto mt-12 max-w-md">
+        <div className="mb-6 space-y-2 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(77,200,232,0.3)] bg-[rgba(77,200,232,0.08)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#7DDCF0]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#4DC8E8] shadow-[0_0_8px_#4DC8E8]" />
+            Get started
+          </div>
+          <h2 className="font-heading text-3xl font-bold tracking-[-0.02em] text-[#ECEEF5]">
+            {translate("crm.auth.welcome_title", { _: "Welcome to Hatch CRM" })}
+          </h2>
+          <p className="text-sm text-[rgba(236,238,245,0.6)]">
             {translate("crm.auth.signup.create_first_user", {
               _: "Create the first user account to complete the setup.",
             })}
           </p>
+        </div>
+
+        <HatchCard padding="lg">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4"
+            className="space-y-5"
             noValidate
           >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="first_name">{firstNameLabel}</Label>
-              <Input
-                {...register("first_name", {
-                  required: getRequiredMessage(firstNameLabel),
-                })}
-                id="first_name"
-                type="text"
-                aria-invalid={errors.first_name ? true : undefined}
-                aria-describedby={
-                  errors.first_name ? "first_name-error" : undefined
-                }
-              />
-              {getFieldErrorMessage(errors.first_name?.message) ? (
-                <p id="first_name-error" className="text-sm text-destructive">
-                  {getFieldErrorMessage(errors.first_name?.message)}
-                </p>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="last_name">{lastNameLabel}</Label>
-              <Input
-                {...register("last_name", {
-                  required: getRequiredMessage(lastNameLabel),
-                })}
-                id="last_name"
-                type="text"
-                aria-invalid={errors.last_name ? true : undefined}
-                aria-describedby={
-                  errors.last_name ? "last_name-error" : undefined
-                }
-              />
-              {getFieldErrorMessage(errors.last_name?.message) ? (
-                <p id="last_name-error" className="text-sm text-destructive">
-                  {getFieldErrorMessage(errors.last_name?.message)}
-                </p>
-              ) : null}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="first_name">{firstNameLabel}</Label>
+                <Input
+                  {...register("first_name", {
+                    required: getRequiredMessage(firstNameLabel),
+                  })}
+                  id="first_name"
+                  type="text"
+                  aria-invalid={errors.first_name ? true : undefined}
+                  aria-describedby={
+                    errors.first_name ? "first_name-error" : undefined
+                  }
+                />
+                {getFieldErrorMessage(errors.first_name?.message) ? (
+                  <p id="first_name-error" className="text-sm text-destructive">
+                    {getFieldErrorMessage(errors.first_name?.message)}
+                  </p>
+                ) : null}
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="last_name">{lastNameLabel}</Label>
+                <Input
+                  {...register("last_name", {
+                    required: getRequiredMessage(lastNameLabel),
+                  })}
+                  id="last_name"
+                  type="text"
+                  aria-invalid={errors.last_name ? true : undefined}
+                  aria-describedby={
+                    errors.last_name ? "last_name-error" : undefined
+                  }
+                />
+                {getFieldErrorMessage(errors.last_name?.message) ? (
+                  <p id="last_name-error" className="text-sm text-destructive">
+                    {getFieldErrorMessage(errors.last_name?.message)}
+                  </p>
+                ) : null}
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">{emailLabel}</Label>
@@ -216,18 +227,16 @@ export const SignupPage = () => {
                 </p>
               ) : null}
             </div>
-            <div className="flex flex-col gap-4 justify-between items-center mt-8">
+            <div className="flex flex-col gap-3 pt-2">
               <Button
                 type="submit"
                 disabled={!isValid || isSignUpPending}
-                className="w-full"
+                className="w-full bg-[#4DC8E8] font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]"
               >
                 {isSignUpPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    {translate("crm.auth.signup.creating", {
-                      _: "Creating...",
-                    })}
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {translate("crm.auth.signup.creating", { _: "Creating..." })}
                   </>
                 ) : (
                   translate("crm.auth.signup.create_account", {
@@ -247,7 +256,7 @@ export const SignupPage = () => {
               ) : null}
             </div>
           </form>
-        </div>
+        </HatchCard>
       </div>
       <Notification />
     </div>

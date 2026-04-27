@@ -10,13 +10,13 @@ import type { ShowBaseProps } from "ra-core";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
 import { Link } from "react-router";
 
+import { HatchCard } from "../_primitives";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
@@ -255,70 +255,71 @@ const ContactShowContent = () => {
   return (
     <div className="mt-2 mb-2 flex gap-8">
       <div className="flex-1">
-        <Card>
-          <CardContent>
-            <div className="flex">
-              <Avatar />
-              <div className="ml-2 flex-1">
-                <h5 className="text-xl font-semibold">
-                  <RecordRepresentation />
-                </h5>
-                <div className="inline-flex text-sm text-muted-foreground">
-                  {record.title && record.company_id != null
-                    ? `${translate("resources.contacts.position_at", {
-                        title: record.title,
-                      })} `
-                    : record.title}
-                  {record.company_id != null && (
-                    <ReferenceField
-                      source="company_id"
-                      reference="companies"
-                      link="show"
-                    >
-                      &nbsp;
-                      <TextField source="name" />
-                    </ReferenceField>
-                  )}
-                </div>
-                {record.lead_source_id != null && (
-                  <div className="text-sm text-muted-foreground mt-1">
-                    <span>Lead Source: </span>
-                    <ReferenceField
-                      source="lead_source_id"
-                      reference="lead_sources"
-                      link={false}
-                    >
-                      <TextField source="name" />
-                    </ReferenceField>
-                  </div>
+        <HatchCard padding="lg">
+          <div className="flex items-start gap-3">
+            <Avatar />
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+                CONTACT
+              </div>
+              <h5 className="font-heading text-xl font-bold text-[#ECEEF5]">
+                <RecordRepresentation />
+              </h5>
+              <div className="inline-flex text-sm text-[#9AA3BE]">
+                {record.title && record.company_id != null
+                  ? `${translate("resources.contacts.position_at", {
+                      title: record.title,
+                    })} `
+                  : record.title}
+                {record.company_id != null && (
+                  <ReferenceField
+                    source="company_id"
+                    reference="companies"
+                    link="show"
+                  >
+                    &nbsp;
+                    <TextField source="name" />
+                  </ReferenceField>
                 )}
               </div>
-              <div>
-                <ReferenceField
-                  source="company_id"
-                  reference="companies"
-                  link="show"
-                  className="no-underline"
-                >
-                  <CompanyAvatar />
-                </ReferenceField>
-              </div>
+              {record.lead_source_id != null && (
+                <div className="text-sm text-[#9AA3BE] mt-1">
+                  <span>Lead Source: </span>
+                  <ReferenceField
+                    source="lead_source_id"
+                    reference="lead_sources"
+                    link={false}
+                  >
+                    <TextField source="name" />
+                  </ReferenceField>
+                </div>
+              )}
             </div>
-            <InfiniteListBase
-              resource="contact_notes"
-              filter={{ contact_id: record.id }}
-              sort={{ field: "date", order: "DESC" }}
-              perPage={25}
-              disableSyncWithLocation
-              storeKey={false}
-              empty={
-                <NoteCreate reference="contacts" showStatus className="mt-4" />
-              }
-            >
-              <NotesIterator reference="contacts" showStatus />
-            </InfiniteListBase>
-          </CardContent>
-        </Card>
+            <div>
+              <ReferenceField
+                source="company_id"
+                reference="companies"
+                link="show"
+                className="no-underline"
+              >
+                <CompanyAvatar />
+              </ReferenceField>
+            </div>
+          </div>
+          <InfiniteListBase
+            resource="contact_notes"
+            filter={{ contact_id: record.id }}
+            sort={{ field: "date", order: "DESC" }}
+            perPage={25}
+            disableSyncWithLocation
+            storeKey={false}
+            empty={
+              <NoteCreate reference="contacts" showStatus className="mt-4" />
+            }
+          >
+            <NotesIterator reference="contacts" showStatus />
+          </InfiniteListBase>
+        </HatchCard>
       </div>
       <ContactAside />
     </div>

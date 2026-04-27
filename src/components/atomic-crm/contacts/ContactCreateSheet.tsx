@@ -21,6 +21,7 @@ export const ContactCreateSheet = ({
   return (
     <CreateSheet
       resource="contacts"
+      eyebrow="NEW CONTACT"
       title={translate("resources.contacts.action.new")}
       defaultValues={{
         sales_id: identity?.id,

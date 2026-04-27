@@ -11,8 +11,8 @@ import type { SubmitHandler } from "react-hook-form";
 import { SimpleForm } from "@/components/admin/simple-form";
 import { CancelButton } from "@/components/admin/cancel-button";
 import { SaveButton } from "@/components/admin/form";
-import { Card, CardContent } from "@/components/ui/card";
 
+import { HatchCard, HatchPageHeader } from "../_primitives";
 import type { CrmDataProvider } from "../providers/types";
 import type { Sale, SalesFormData } from "../types";
 import { SalesInputs } from "./SalesInputs";
@@ -21,7 +21,7 @@ function EditToolbar() {
   return (
     <div className="flex justify-end gap-4">
       <CancelButton />
-      <SaveButton />
+      <SaveButton className="bg-[#4DC8E8] font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]" />
     </div>
   );
 }
@@ -70,18 +70,17 @@ export function SalesEdit() {
 
   return (
     <div className="max-w-lg w-full mx-auto mt-8">
-      <Card>
-        <CardContent>
-          <SimpleForm
-            toolbar={<EditToolbar />}
-            onSubmit={onSubmit as SubmitHandler<any>}
-            record={record}
-          >
-            <SaleEditTitle />
-            <SalesInputs />
-          </SimpleForm>
-        </CardContent>
-      </Card>
+      <HatchPageHeader eyebrow="USERS" title="Edit user" />
+      <HatchCard padding="lg">
+        <SimpleForm
+          toolbar={<EditToolbar />}
+          onSubmit={onSubmit as SubmitHandler<any>}
+          record={record}
+        >
+          <SaleEditTitle />
+          <SalesInputs />
+        </SimpleForm>
+      </HatchCard>
     </div>
   );
 }
@@ -91,7 +90,7 @@ const SaleEditTitle = () => {
   const translate = useTranslate();
   if (!record) return null;
   return (
-    <h2 className="text-lg font-semibold mb-4">
+    <h2 className="font-heading text-lg font-bold text-[#ECEEF5] mb-4">
       {translate("resources.sales.edit.title", {
         name: `${record.first_name} ${record.last_name}`,
       })}

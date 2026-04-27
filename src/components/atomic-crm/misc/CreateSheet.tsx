@@ -1,12 +1,5 @@
 import { SaveButton } from "@/components/admin/form";
 import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import {
   CreateBase,
   Form,
   useNotify,
@@ -17,7 +10,7 @@ import {
   type FormProps,
 } from "ra-core";
 import { type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { HatchSheet } from "../_primitives";
 
 export interface CreateSheetProps extends CreateBaseProps {
   /**
@@ -41,6 +34,17 @@ export interface CreateSheetProps extends CreateBaseProps {
   title?: ReactNode;
 
   /**
+   * Optional eyebrow above the title (e.g. "NEW CONTACT", "ADD NOTE").
+   * Falls back to a translated default per resource if omitted.
+   */
+  eyebrow?: ReactNode;
+
+  /**
+   * Optional subtitle line under the title.
+   */
+  subtitle?: ReactNode;
+
+  /**
    * Default values for the form
    */
   defaultValues?: FormProps["defaultValues"];
@@ -54,9 +58,11 @@ export interface CreateSheetProps extends CreateBaseProps {
 /**
  * A Sheet component that contains a create form with externally controlled open state.
  *
- * Renders a Sheet containing a CreateBase form. The sheet has a fixed footer with Save and Close buttons.
- * The open state is controlled externally via the open and onOpenChange props. The sheet will automatically
- * close itself on successful submission (if redirect is false) or when the Close button is clicked.
+ * Renders a HatchSheet (Obsidian dark surface) containing a CreateBase form.
+ * The sheet has a fixed footer with a Save button. The open state is
+ * controlled externally via the open and onOpenChange props. The sheet will
+ * automatically close itself on successful submission (if redirect is false)
+ * or when the Save action completes.
  *
  * @example
  * ```tsx
@@ -84,6 +90,8 @@ export const CreateSheet = ({
   open,
   onOpenChange,
   title = "Create",
+  eyebrow,
+  subtitle,
   redirect: redirectTo = "show",
   mutationOptions,
   defaultValues,
@@ -122,13 +130,30 @@ export const CreateSheet = ({
     onSuccess: handleSuccess,
   };
 
+  // Resolve a sensible eyebrow default from the resource name when not given.
+  const resolvedEyebrow =
+    eyebrow ??
+    (resource ? `NEW ${String(resource).replace(/_/g, " ").toUpperCase()}` : undefined);
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="h-dvh flex flex-col"
-        aria-describedby={undefined}
-      >
+    <HatchSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      eyebrow={resolvedEyebrow}
+      title={
+        typeof title === "string" ? (
+          <span className="block truncate">{title}</span>
+        ) : (
+          title
+        )
+      }
+      subtitle={subtitle}
+      headerActions={headerActions}
+      contentClassName="sm:max-w-xl"
+      footer={
+        <SaveButton className="h-11 bg-[#4DC8E8] px-5 font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]" />
+      }
+      wrap={(node) => (
         <CreateBase
           {...createBaseProps}
           redirect={redirectTo}
@@ -136,38 +161,14 @@ export const CreateSheet = ({
         >
           <Form
             defaultValues={defaultValues}
-            className="h-dvh flex-1 flex flex-col"
+            className="flex min-h-0 flex-1 flex-col"
           >
-            <SheetHeader className="border-b">
-              <div
-                className={cn(
-                  "flex items-center gap-2",
-                  headerActions && "pr-12",
-                )}
-              >
-                <SheetTitle className="min-w-0 flex-1 truncate">
-                  {typeof title === "string" ? (
-                    <span className="text-xl font-semibold">{title}</span>
-                  ) : (
-                    title
-                  )}
-                </SheetTitle>
-                {headerActions && (
-                  <div className="shrink-0">{headerActions}</div>
-                )}
-              </div>
-            </SheetHeader>
-
-            <div className="flex-1 overflow-y-auto flex flex-col gap-3 p-4">
-              {children}
-            </div>
-
-            <SheetFooter className="border-t flex flex-row w-full gap-4">
-              <SaveButton className="flex-1 h-12" />
-            </SheetFooter>
+            {node}
           </Form>
         </CreateBase>
-      </SheetContent>
-    </Sheet>
+      )}
+    >
+      {children}
+    </HatchSheet>
   );
 };

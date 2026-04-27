@@ -1,12 +1,5 @@
 import { SaveButton } from "@/components/admin/form";
 import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import {
   EditBase,
   Form,
   useEditContext,
@@ -18,7 +11,7 @@ import {
   type FormProps,
 } from "ra-core";
 import { type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { HatchSheet } from "../_primitives";
 
 export interface EditSheetProps extends EditBaseProps {
   /**
@@ -37,9 +30,21 @@ export interface EditSheetProps extends EditBaseProps {
   onOpenChange: (open: boolean) => void;
 
   /**
-   * The title displayed in the sheet header
+   * The title displayed in the sheet header. Pass `false` to suppress.
+   * Defaults to `useEditContext().defaultTitle`.
    */
   title?: ReactNode;
+
+  /**
+   * Optional eyebrow above the title (e.g. "EDIT NOTE", "EDIT CONTACT").
+   * Falls back to a translated default per resource if omitted.
+   */
+  eyebrow?: ReactNode;
+
+  /**
+   * Optional subtitle line under the title.
+   */
+  subtitle?: ReactNode;
 
   /**
    * Default values for the form
@@ -55,9 +60,10 @@ export interface EditSheetProps extends EditBaseProps {
 /**
  * A Sheet component that contains an edit form with externally controlled open state.
  *
- * Renders a Sheet containing an EditBase form. The sheet has a fixed footer with Save and Delete buttons.
- * The open state is controlled externally via the open and onOpenChange props. The sheet will automatically
- * close itself on successful submission (if redirect is false) or when the Delete/Close actions are triggered.
+ * Renders a HatchSheet (Obsidian dark surface) containing an EditBase form.
+ * The sheet has a fixed footer with a Save button. The open state is
+ * controlled externally via the open and onOpenChange props. The sheet will
+ * automatically close itself on successful submission (if redirect is false).
  *
  * @example
  * ```tsx
@@ -86,6 +92,8 @@ export const EditSheet = ({
   open,
   onOpenChange,
   title,
+  eyebrow,
+  subtitle,
   redirect: redirectTo = "show",
   mutationOptions,
   mutationMode = "undoable",
@@ -98,7 +106,6 @@ export const EditSheet = ({
   const notify = useNotify();
   const redirect = useRedirect();
 
-  // Handle success - close sheet in addition to default behavior
   const handleSuccess = (...args: any[]) => {
     if (mutationOptions?.onSuccess) {
       return mutationOptions.onSuccess(
@@ -125,13 +132,23 @@ export const EditSheet = ({
     onSuccess: handleSuccess,
   };
 
+  const resolvedEyebrow =
+    eyebrow ??
+    (resource ? `EDIT ${String(resource).replace(/_/g, " ").toUpperCase()}` : undefined);
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="h-dvh flex flex-col"
-        aria-describedby={undefined}
-      >
+    <HatchSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      eyebrow={resolvedEyebrow}
+      title={<EditSheetTitle title={title} />}
+      subtitle={subtitle}
+      headerActions={headerActions}
+      contentClassName="sm:max-w-xl"
+      footer={
+        <SaveButton className="h-11 bg-[#4DC8E8] px-5 font-semibold text-[#06111F] shadow-[0_0_20px_rgba(77,200,232,0.25)] hover:bg-[#7DDCF0]" />
+      }
+      wrap={(node) => (
         <EditBase
           {...editBaseProps}
           redirect={redirectTo}
@@ -140,35 +157,15 @@ export const EditSheet = ({
         >
           <Form
             defaultValues={defaultValues}
-            className="h-dvh flex-1 flex flex-col"
+            className="flex min-h-0 flex-1 flex-col"
           >
-            <SheetHeader className="border-b">
-              <div
-                className={cn(
-                  "flex items-center gap-2",
-                  headerActions && "pr-12",
-                )}
-              >
-                <SheetTitle className="min-w-0 flex-1 truncate">
-                  <EditSheetTitle title={title} />
-                </SheetTitle>
-                {headerActions && (
-                  <div className="shrink-0">{headerActions}</div>
-                )}
-              </div>
-            </SheetHeader>
-
-            <div className="flex-1 overflow-y-auto flex flex-col gap-3 p-4">
-              {children}
-            </div>
-
-            <SheetFooter className="border-t flex flex-row w-full gap-4">
-              <SaveButton className="flex-1 h-12" />
-            </SheetFooter>
+            {node}
           </Form>
         </EditBase>
-      </SheetContent>
-    </Sheet>
+      )}
+    >
+      {children}
+    </HatchSheet>
   );
 };
 
@@ -185,8 +182,8 @@ const EditSheetTitle = ({ title }: { title?: ReactNode | string | false }) => {
   }
 
   return typeof resolvedTitle === "string" ? (
-    <span className="text-xl font-semibold">{resolvedTitle}</span>
+    <span className="block truncate">{resolvedTitle}</span>
   ) : (
-    resolvedTitle
+    <>{resolvedTitle}</>
   );
 };

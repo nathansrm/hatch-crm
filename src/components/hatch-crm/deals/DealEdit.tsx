@@ -10,9 +10,8 @@ import {
 import { Link } from "react-router";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { ReferenceField } from "@/components/admin/reference-field";
-import { Button } from "@/components/ui/button";
 
-import { HatchDialog } from "../_primitives";
+import { HatchDialog, HatchGhostButton } from "../_primitives";
 import { FormToolbar } from "@/components/admin/simple-form";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import type { Deal } from "../types";
@@ -122,7 +121,7 @@ function DealEditActions() {
   return (
     <>
       <DeleteButton />
-      <Button
+      <HatchGhostButton
         asChild
         variant="outline"
         className="h-9 border-[rgba(255,255,255,0.09)] bg-transparent text-[#B8C0D6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#ECEEF5]"
@@ -130,7 +129,7 @@ function DealEditActions() {
         <Link to={`/deals/${deal.id}/show`}>
           {translate("resources.deals.action.back_to_deal")}
         </Link>
-      </Button>
+      </HatchGhostButton>
     </>
   );
 }

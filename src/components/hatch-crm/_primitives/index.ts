@@ -1,4 +1,9 @@
 // Hatch primitive barrel — single import surface for all polished surfaces.
+//
+// PUBLIC API CONTRACT (locked 2026-04-28, BRIEF-023):
+// Removing or renaming an export here is a breaking change. Any such change
+// must update every caller across src/components/hatch-crm/ in the same PR.
+// Adding new exports is always safe.
 export { HatchSheet, HatchSheetHeader } from "./HatchSheet";
 export type { HatchSheetProps } from "./HatchSheet";
 export { HatchDialog } from "./HatchDialog";

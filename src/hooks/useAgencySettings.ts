@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSupabaseClient } from "@/components/atomic-crm/providers/supabase/supabase";
+import { getSupabaseClient } from "@/components/hatch-crm/providers/supabase/supabase";
 
 export type AgencySettings = {
   weekly_capacity_hours: number;

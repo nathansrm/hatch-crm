@@ -13,7 +13,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/admin/text-input";
 import { Notification } from "@/components/admin/notification";
-import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext.tsx";
+import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext.tsx";
 import { HatchCard } from "../_primitives";
 import { SSOAuthButton } from "./SSOAuthButton";
 

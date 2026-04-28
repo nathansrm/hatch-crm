@@ -10,7 +10,7 @@ import { CircleX } from "lucide-react";
  * A button that renders only if a specific filter is on, and allows to remove the filter.
  *
  * @example
- * import { ActiveFilterButton } from '@/components/atomic-crm/misc';
+ * import { ActiveFilterButton } from '@/components/hatch-crm/misc';
  *
  * const PostFilters = () => (
  *   <div className="flex flex-row gap-2">

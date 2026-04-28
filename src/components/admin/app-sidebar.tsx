@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useGetIdentity, useGetList } from "ra-core";
 import { Link, useMatch } from "react-router";
-import { isDone } from "../atomic-crm/tasks/tasksPredicate";
+import { isDone } from "../hatch-crm/tasks/tasksPredicate";
 
 type NavItemConfig = {
   key: string;

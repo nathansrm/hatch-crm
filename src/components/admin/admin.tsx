@@ -12,7 +12,6 @@ import { LoginPage } from "@/components/admin/login-page";
 import { Ready } from "@/components/admin/ready";
 import { ThemeProvider } from "@/components/admin/theme-provider";
 import { AuthCallback } from "@/components/admin/authentication";
-import { useEffect } from "react";
 
 const defaultStore = localStorageStore();
 
@@ -31,27 +30,13 @@ const AdminContext = (props: CoreAdminContextProps) => (
 /**
  * UI component for the Admin application.
  *
- * Wraps CoreAdminUI with theme provider and handles telemetry reporting.
+ * Wraps CoreAdminUI with theme provider.
  * Provides the main layout, login page, ready page, and authentication callback.
  *
  * @internal
  */
 const AdminUI = (props: CoreAdminUIProps) => {
-  const { disableTelemetry = false, ...rest } = props;
-
-  useEffect(() => {
-    if (
-      disableTelemetry ||
-      process.env.NODE_ENV !== "production" ||
-      typeof window === "undefined" ||
-      typeof window.location === "undefined" ||
-      typeof Image === "undefined"
-    ) {
-      return;
-    }
-    const img = new Image();
-    img.src = `https://shadcn-admin-kit-telemetry.marmelab.com/shadcn-admin-kit-telemetry?domain=${window.location.hostname}`;
-  }, [disableTelemetry]);
+  const { ...rest } = props;
 
   return (
     <ThemeProvider defaultTheme="dark">

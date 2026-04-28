@@ -17,9 +17,13 @@ import { EditButton } from "@/components/admin/edit-button";
 import { ReferenceArrayField } from "@/components/admin/reference-array-field";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
-import { HatchCard, HatchDialog, HatchStagePill } from "../_primitives";
+import {
+  HatchCard,
+  HatchDialog,
+  HatchGhostButton,
+  HatchStagePill,
+} from "../_primitives";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import { NoteCreate } from "../notes/NoteCreate";
 import { NotesIterator } from "../notes/NotesIterator";
@@ -258,7 +262,7 @@ const ArchiveButton = ({ record }: { record: Deal }) => {
   };
 
   return (
-    <Button
+    <HatchGhostButton
       onClick={handleClick}
       size="sm"
       variant="outline"
@@ -266,7 +270,7 @@ const ArchiveButton = ({ record }: { record: Deal }) => {
     >
       <Archive className="w-4 h-4" />
       {translate("resources.deals.archived.action")}
-    </Button>
+    </HatchGhostButton>
   );
 };
 
@@ -295,7 +299,7 @@ const UnarchiveButton = ({ record }: { record: Deal }) => {
   });
 
   return (
-    <Button
+    <HatchGhostButton
       onClick={() => mutate()}
       size="sm"
       variant="outline"
@@ -303,6 +307,6 @@ const UnarchiveButton = ({ record }: { record: Deal }) => {
     >
       <ArchiveRestore className="w-4 h-4" />
       {translate("resources.deals.unarchived.action")}
-    </Button>
+    </HatchGhostButton>
   );
 };

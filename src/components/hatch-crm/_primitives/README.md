@@ -1,7 +1,7 @@
 # Hatch Primitives
 
 Single-source-of-truth primitives for Hatch CRM's dark "Hatch" surface
-language. Everything in `src/components/atomic-crm/_primitives/` wraps the
+language. Everything in `src/components/hatch-crm/_primitives/` wraps the
 existing shadcn primitive (so accessibility behavior is identical) and locks
 in the audited tokens — gradient surfaces, cyan accent, eyebrow micro-type,
 field shells, stage pills.
@@ -160,3 +160,24 @@ inline styling. Do them one at a time, run the app, eyeball the diff.
 If you need a value the primitives don't expose, reach into `HATCH` (style
 object) or `HATCH_CLASS` (className strings) — don't re-author the literals
 inline.
+
+## Audit Notes (BRIEF-023)
+
+Audited 2026-04-28 against existing callers and BRIEF-024 migration targets.
+
+| Primitive | Status | Finding |
+|-----------|--------|---------|
+| HatchSheet | ✅ complete | Covers create/edit sheet needs with header slots, footer, side/content classes, aria hooks, and form wrapping; inline literals match locked tokens. |
+| HatchDialog | ✅ complete | Covers modal/show-page needs with size variants, optional header suppression, footer/header slots, and form wrapping; inline literals match locked tokens. |
+| HatchCard | ✅ complete | Provides reusable dark surface, padding variants, accent rail, and native div props for show/login/card migrations. |
+| HatchPanel | ✅ complete | Provides list/table surface with flush overflow default and native div props for dense list migrations. |
+| HatchPageHeader | ✅ complete | Covers eyebrow, title, counts, subline, actions, and className needs for list/create/show headers. |
+| HatchField + variants | ✅ complete | Field wrappers cover labels, hints, errors, native text/textarea/date inputs, pill groups, and autocomplete shells for sheet forms. |
+| HatchButton variants | ✅ complete | Button wrappers mirror shadcn Button props; FormToolbar raw class exports remain intentional for ra-core SaveButton/CancelButton className injection. |
+| HatchStagePill | ✅ complete | Pulls deal stage colors from `stageColors.ts` and supports labels, sizes, and className for deal chips. |
+| HatchTabs | ✅ complete | Wraps shadcn/Radix tab primitives with Hatch visuals while preserving component props and accessibility behavior. |
+| HatchAside + Section | ✅ complete | Covers desktop show-page side rails with section titles, actions, children, and className customization. |
+
+Status key: ✅ complete | ✏️ minor gap fixed in this brief | ⚠️ gap deferred to BRIEF-024
+
+**BRIEF-024 gate:** CLEAR — proceed with mass migration.

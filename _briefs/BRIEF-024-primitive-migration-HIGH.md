@@ -242,3 +242,39 @@ Replace legacy `Button`, `Tabs`, `Card`, and `Input`/`Label` imports with Hatch 
 - [ ] Built (Codex) — SB-3
 - [ ] Reviewed (Claude)
 - **Revision count:** 0
+
+## Plan Review
+
+**Reviewed:** 2026-04-28T18:41Z
+**Reviewer:** codex (gpt-5.4)
+**Verdict:** REVISE_AND_RESUBMIT
+**Confidence:** high — multiple scope/acceptance contradictions likely to cause incorrect implementation
+**Findings:** 5 blockers, 5 high, 3 medium, 0 low
+
+### Blockers
+
+- **SB-1 wraps page forms in dialogs.** `ContactCreate.tsx`, `CompanyCreate.tsx`, `SalesCreate.tsx` are route-level page forms — only `DealCreate.tsx` is dialog-shaped. Acceptance criterion "HatchDialog wrapping all 4 create dialogs" would change routing/layout, violating "mechanical substitution, no layout changes." → **Resolution:** Restrict HatchDialog wrap to DealCreate only. Other three get button + structural primitives only.
+- **Field inputs are out of scope.** Real inputs live in `*Inputs.tsx` siblings (`DealInputs`, `ContactInputs`, `CompanyInputs`, `SalesInputs`, `NoteInputsMobile`). HatchField migration impossible inside the 10 named files. → **Resolution:** Either pull `*Inputs.tsx` into scope, or defer field migration to BRIEF-025 and remove HatchField acceptance from this brief.
+- **CompanyShow → HatchAside is impossible.** `CompanyShow` delegates sidebar to `CompanyAside.tsx` (out of scope). → **Resolution:** Add `CompanyAside.tsx` to SB-2 scope, or drop HatchAside acceptance for CompanyShow.
+- **DealEdit is a HatchDialog, not a sheet.** Manual checklist phrasing "Open Deal Edit sheet" pushes toward out-of-scope component swap. → **Resolution:** Rewrite manual check to "Open Deal Edit dialog."
+- **SalesCreate/SalesEdit use custom `useMutation` + `as SubmitHandler<any>`.** Strict-TS / no-`any` rule conflicts with pre-existing pattern. → **Resolution:** Add explicit grandfathering clause for pre-existing `any` in SalesCreate, SalesEdit, NoteEditSheet — do not require removal in this brief.
+
+### High
+
+- `_primitives/index.ts` comment ("Adding new exports is always safe") contradicts brief's "do not add exports." → Reconcile language; brief governs for this brief, comment is general.
+- Verification command mismatch — brief uses `npx tsc --noEmit --ignoreDeprecations 6.0`; repo script is `tsc --noEmit --project tsconfig.app.json`. → Switch to repo script.
+- Admin action buttons (`EditButton`, `DeleteButton`, `SortButton`, `ShowButton`) not addressed — only Cancel/Save explicitly bounded. → Explicitly exclude all admin action buttons.
+- Inline `rgba(...)` styles ambiguity — banned with hex, or only raw hex strings? → Clarify: only raw hex strings banned in this brief; rgba() preserved.
+- TagDialog pattern vs ra-core form dialog pattern — brief cites TagDialog but DealCreate uses different shape. → Reference DealCreate as ra-core form dialog pattern; TagDialog only for plain dialogs.
+
+### Medium
+
+- ContactShow mobile tab verification — legacy tabs live in `ContactShowContentMobile`. Add explicit mobile manual check.
+- DealEdit no-id fallback — empty fallback dialog behavior should be a Must Not Change invariant.
+- DealShow `ArchivedBanner` inline rgba — explicit decision: preserve as-is.
+
+### Resolution Status
+
+- [ ] Brief revised to address blockers (Nathan to confirm scope reshape: keep field migration vs defer to BRIEF-025)
+- [ ] Re-run plan-review after revision
+- [ ] Re-run Brief Health Check after revision

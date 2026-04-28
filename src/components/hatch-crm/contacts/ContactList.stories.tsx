@@ -1,17 +1,14 @@
 import type { Meta } from "@storybook/react-vite";
 import { ResourceContextProvider } from "ra-core";
 
-import { ContactListMobile } from "./ContactList";
+import { ContactList } from "./ContactList";
 
 import { StoryWrapper, buildContact } from "@/test/StoryWrapper";
 
 const meta = {
-  title: "Atomic CRM/Contacts/Contact List",
+  title: "Hatch CRM/Contacts/Contact List",
   parameters: {
     layout: "fullscreen",
-  },
-  globals: {
-    viewport: { value: "mobile1", isRotated: false },
   },
 } satisfies Meta;
 
@@ -34,23 +31,23 @@ const successContacts = [
   }),
 ];
 
-export const MobileEmpty = () => (
+export const DesktopEmpty = () => (
   <StoryWrapper>
     <ResourceContextProvider value="contacts">
-      <ContactListMobile />
+      <ContactList />
     </ResourceContextProvider>
   </StoryWrapper>
 );
 
-export const MobileSuccess = () => (
+export const DesktopSuccess = () => (
   <StoryWrapper data={{ contacts: successContacts }}>
     <ResourceContextProvider value="contacts">
-      <ContactListMobile />
+      <ContactList />
     </ResourceContextProvider>
   </StoryWrapper>
 );
 
-export const MobileLoading = () => (
+export const DesktopLoading = () => (
   <StoryWrapper
     dataProvider={{
       getList: async (resource) => {
@@ -62,12 +59,12 @@ export const MobileLoading = () => (
     }}
   >
     <ResourceContextProvider value="contacts">
-      <ContactListMobile />
+      <ContactList />
     </ResourceContextProvider>
   </StoryWrapper>
 );
 
-export const MobileError = () => (
+export const DesktopError = () => (
   <StoryWrapper
     dataProvider={{
       getList: async (resource) => {
@@ -79,7 +76,33 @@ export const MobileError = () => (
     }}
   >
     <ResourceContextProvider value="contacts">
-      <ContactListMobile />
+      <ContactList />
+    </ResourceContextProvider>
+  </StoryWrapper>
+);
+
+const dataForBulkAddTag = {
+  contacts: [
+    buildContact({
+      first_name: "Ada",
+      id: 1,
+      last_name: "Lovelace",
+      tags: [1],
+    }),
+    buildContact({
+      first_name: "Grace",
+      id: 2,
+      last_name: "Hopper",
+      tags: [],
+    }),
+  ],
+  tags: [{ color: "#A5B4FC", id: 1, name: "VIP" }],
+};
+
+export const BulkTagButton = () => (
+  <StoryWrapper data={dataForBulkAddTag}>
+    <ResourceContextProvider value="contacts">
+      <ContactList />
     </ResourceContextProvider>
   </StoryWrapper>
 );

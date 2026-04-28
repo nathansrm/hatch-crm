@@ -4,9 +4,9 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { HATCH } from "@/components/atomic-crm/_primitives";
-import { useConfigurationContext } from "@/components/atomic-crm/root/ConfigurationContext";
-import type { Deal } from "@/components/atomic-crm/types";
+import { HATCH } from "@/components/hatch-crm/_primitives";
+import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext";
+import type { Deal } from "@/components/hatch-crm/types";
 import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
 import { ImportPage } from "../misc/ImportPage";
 import {

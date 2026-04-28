@@ -116,7 +116,7 @@ export type CRMProps = {
  *
  * @example
  * // Basic usage of the CRM component
- * import { CRM } from '@/components/atomic-crm/dashboard/CRM';
+ * import { CRM } from '@/components/hatch-crm/dashboard/CRM';
  *
  * const App = () => (
  *     <CRM

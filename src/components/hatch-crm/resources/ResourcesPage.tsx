@@ -12,7 +12,7 @@ import {
   Star,
   X,
 } from "lucide-react";
-import { getSupabaseClient } from "@/components/atomic-crm/providers/supabase/supabase";
+import { getSupabaseClient } from "@/components/hatch-crm/providers/supabase/supabase";
 
 const ALLOWED_RESOURCE_FILE_TYPES = [
   "application/pdf",

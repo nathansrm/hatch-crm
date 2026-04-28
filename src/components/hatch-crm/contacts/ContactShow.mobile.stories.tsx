@@ -5,9 +5,12 @@ import { ContactShow } from "./ContactShow";
 import { StoryWrapper, buildContact } from "@/test/StoryWrapper";
 
 const meta = {
-  title: "Atomic CRM/Contacts/Contact Show",
+  title: "Hatch CRM/Contacts/Contact Show",
   parameters: {
     layout: "fullscreen",
+  },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
   },
 } satisfies Meta;
 
@@ -23,7 +26,7 @@ const successContacts = [
   }),
 ];
 
-export const DesktopSuccess = () => (
+export const MobileSuccess = () => (
   <StoryWrapper data={{ contacts: successContacts }}>
     <ContactShow resource="contacts" id={1} />
   </StoryWrapper>

@@ -1,6 +1,6 @@
 # Hatch Primitives
 
-Single-source-of-truth primitives for Atomic CRM's dark "Hatch" surface
+Single-source-of-truth primitives for Hatch CRM's dark "Hatch" surface
 language. Everything in `src/components/atomic-crm/_primitives/` wraps the
 existing shadcn primitive (so accessibility behavior is identical) and locks
 in the audited tokens — gradient surfaces, cyan accent, eyebrow micro-type,
@@ -39,7 +39,7 @@ import {
   HatchAsideSection,
   HATCH,
   HATCH_CLASS,
-} from "@/components/atomic-crm/_primitives";
+} from "@/components/hatch-crm/_primitives";
 ```
 
 ## Refactor playbook

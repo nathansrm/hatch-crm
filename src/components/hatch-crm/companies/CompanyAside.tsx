@@ -31,6 +31,7 @@ export const CompanyAside = ({ link = "edit" }: CompanyAsideProps) => {
   if (!record) return null;
 
   return (
+    // HatchAside defaults (sm:flex, gap-6, no width) don't match CompanyAside layout — primitive reconciliation deferred to follow-up brief.
     <div className="hidden sm:block w-92 min-w-92 space-y-4">
       <div className="flex flex-row space-x-1">
         {link === "edit" ? (

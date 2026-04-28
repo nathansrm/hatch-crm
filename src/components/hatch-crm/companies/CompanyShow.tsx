@@ -1,6 +1,5 @@
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
 import { SortButton } from "@/components/admin/sort-button";
-import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import {
   RecordContextProvider,
@@ -23,6 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ActivityLog } from "../activity/ActivityLog";
 import {
   HatchCard,
+  HatchGhostButton,
   HatchTabs,
   HatchTabsContent,
   HatchTabsList,
@@ -257,7 +257,7 @@ const CreateRelatedContactButton = () => {
   const translate = useTranslate();
   const company = useRecordContext<Company>();
   return (
-    <Button variant="outline" asChild size="sm" className="h-9">
+    <HatchGhostButton variant="outline" asChild size="sm" className="h-9">
       <RouterLink
         to="/contacts/create"
         state={company ? { record: { company_id: company.id } } : undefined}
@@ -266,7 +266,7 @@ const CreateRelatedContactButton = () => {
         <UserPlus className="h-4 w-4" />
         {translate("resources.contacts.action.add")}
       </RouterLink>
-    </Button>
+    </HatchGhostButton>
   );
 };
 

@@ -10,13 +10,18 @@ import type { ShowBaseProps } from "ra-core";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
 import { Link } from "react-router";
 
-import { HatchCard } from "../_primitives";
+import {
+  HatchCard,
+  HatchGhostButton,
+  HatchTabs,
+  HatchTabsContent,
+  HatchTabsList,
+  HatchTabsTrigger,
+} from "../_primitives";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
@@ -84,16 +89,15 @@ const ContactShowContentMobile = () => {
             <h1 className="truncate text-xl font-semibold">{defaultTitle}</h1>
           </Link>
         </div>
-        <Button
+        <HatchGhostButton
           type="button"
-          variant="ghost"
           size="icon"
           className="rounded-full"
           aria-label={translate("ra.action.edit")}
           onClick={() => setEditOpen(true)}
         >
           <Pencil className="size-5" />
-        </Button>
+        </HatchGhostButton>
       </MobileHeader>
       <MobileContent>
         <div className="mb-6">
@@ -145,22 +149,22 @@ const ContactShowContentMobile = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="notes" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-10">
-            <TabsTrigger value="notes">
+        <HatchTabs defaultValue="notes" className="w-full">
+          <HatchTabsList className="grid w-full grid-cols-3 h-10">
+            <HatchTabsTrigger value="notes" className="px-2 py-1 text-sm">
               {translate("resources.notes.name", { smart_count: 2 })}
-            </TabsTrigger>
-            <TabsTrigger value="tasks">
+            </HatchTabsTrigger>
+            <HatchTabsTrigger value="tasks" className="px-2 py-1 text-sm">
               {translate("crm.common.task_count", {
                 smart_count: taskCount ?? 0,
               })}
-            </TabsTrigger>
-            <TabsTrigger value="details">
+            </HatchTabsTrigger>
+            <HatchTabsTrigger value="details" className="px-2 py-1 text-sm">
               {translate("crm.common.details")}
-            </TabsTrigger>
-          </TabsList>
+            </HatchTabsTrigger>
+          </HatchTabsList>
 
-          <TabsContent value="notes" className="mt-2">
+          <HatchTabsContent value="notes" className="mt-2">
             <InfiniteListBase
               resource="contact_notes"
               filter={{ contact_id: record.id }}
@@ -173,12 +177,12 @@ const ContactShowContentMobile = () => {
                   <p className="text-muted-foreground mb-4">
                     {translate("resources.notes.empty")}
                   </p>
-                  <Button
+                  <HatchGhostButton
                     variant="outline"
                     onClick={() => setNoteCreateOpen(true)}
                   >
                     {translate("resources.notes.action.add")}
-                  </Button>
+                  </HatchGhostButton>
                 </div>
               }
               loading={false}
@@ -191,13 +195,13 @@ const ContactShowContentMobile = () => {
             >
               <NotesIteratorMobile contactId={record.id} showStatus />
             </InfiniteListBase>
-          </TabsContent>
+          </HatchTabsContent>
 
-          <TabsContent value="tasks" className="mt-4">
+          <HatchTabsContent value="tasks" className="mt-4">
             <ContactTasksList />
-          </TabsContent>
+          </HatchTabsContent>
 
-          <TabsContent value="details" className="mt-4">
+          <HatchTabsContent value="details" className="mt-4">
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold">
@@ -240,8 +244,8 @@ const ContactShowContentMobile = () => {
                 </div>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </HatchTabsContent>
+        </HatchTabs>
       </MobileContent>
     </>
   );

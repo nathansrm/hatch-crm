@@ -52,3 +52,8 @@ node_modules/
 .vercel
 backups/
 .env.seed
+
+# Codex dispatch scratch
+_brief*_dispatch.md
+_codex*_output.txt
+_review-*.md

@@ -29,7 +29,7 @@
 - File size cap: 400 lines (excluding blanks and comments). If a migration pushes a file over 400 lines, flag as a scope gate — do not extract without a brief.
 
 **Required Patterns (follow exactly):**
-- **Button migration:** `Button` from `@/components/ui/button` → `HatchPrimaryButton` (primary/default), `HatchGhostButton` (outline/ghost/secondary), `HatchDangerButton` (destructive). Match variant semantics, not just names. `variant="link"` has no Hatch equivalent — leave `variant="link"` buttons as raw `Button` from `@/components/ui/button` and add a comment: `{/* link-variant — no Hatch primitive yet, keep as-is */}`.
+- **Button migration:** `Button` from `@/components/ui/button` → `HatchPrimaryButton` (primary/default), `HatchGhostButton` (outline/ghost/secondary), `HatchDangerButton` (destructive). Match variant semantics, not just names. `variant="link"` has no Hatch equivalent — leave `variant="link"` buttons as raw `Button` from `@/components/ui/button` and add a comment: `{/* link-variant — no Hatch primitive yet, keep as-is */}`. **Outline preservation:** when migrating `<Button variant="outline">` → `<HatchGhostButton variant="outline">`, KEEP the `variant="outline"` prop. `HatchGhostButton` defaults to `variant="ghost"` (HatchButton.tsx:27-34) — stripping the prop silently turns outline buttons into borderless ghost buttons. **asChild preservation:** `HatchPrimaryButton`/`HatchGhostButton`/`HatchDangerButton` all forward props to the underlying shadcn `Button`, including `asChild` (HatchButton.tsx:6, button.tsx:42-48). Preserve `asChild` as-is — do NOT unwrap it.
 - **Tabs migration:** `Tabs/TabsList/TabsTrigger/TabsContent` from `@/components/ui/tabs` → `HatchTabs/HatchTabsList/HatchTabsTrigger/HatchTabsContent`. These are drop-in replacements — same Radix props, no prop changes needed.
 - **Dialog pattern reference (ra-core form dialogs):** `src/components/hatch-crm/deals/DealCreate.tsx` — canonical HatchDialog usage within ra-core Create/Form context. Direct import from barrel, `eyebrow`/`title`/`size` props, CancelButton/SaveButton via class names from FormToolbar.
 - **Dialog pattern reference (plain dialogs, non-form):** `src/components/hatch-crm/tags/TagDialog.tsx` — canonical HatchDialog usage for non-ra-core dialogs.
@@ -136,17 +136,23 @@ Replace legacy `Button`, `Tabs`, `Card`, and structural imports with Hatch primi
 
 - **CompanyAside — outer wrapper only.** `CompanyInfo`, `ContextInfo`, `AddressInfo`, `ConstructionInfo`, `AdditionalInfo` are exported and consumed directly by mobile CompanyShow. In this brief, migrate only the outer `CompanyAside` desktop rail wrapper to `HatchAside`. Leave the existing local `AsideSection` import and every exported section component completely unchanged. Do NOT use `HatchAsideSection` anywhere in `CompanyAside.tsx` — the exported sections are shared with mobile and their styling must remain visually equivalent.
 
+- **CompanyAside layout invariant (CRITICAL — verified against CompanyAside.tsx:34 and HatchAside.tsx:14-20).** The current outer wrapper is literally `<div className="hidden sm:block w-92 min-w-92 space-y-4">` (a `div`, not `aside`; width is `w-92 min-w-92`; vertical rhythm is `space-y-4`). `HatchAside` defaults to `hidden flex-col gap-6 sm:flex` — naively swapping changes display (`sm:block` → `sm:flex`) AND vertical spacing (`space-y-4` → `gap-6`) AND drops the explicit width classes. **Required path:** keep all four invariant classes (`hidden`, `sm:block`, `w-92`, `min-w-92`, `space-y-4`) on the migrated element. Two acceptable approaches:
+  1. **Preferred:** Pass `className="hidden sm:block w-92 min-w-92 space-y-4"` to `HatchAside`. Because `HatchAside` likely applies its defaults via internal classes that win over `className` order, you may need `!` modifiers (e.g. `sm:!block !space-y-4 !gap-0`) — Codex must verify by running the dev server and checking computed styles, NOT by trusting Tailwind merge order.
+  2. **Acceptable fallback:** Leave the existing `<div>` wrapper unchanged and skip the HatchAside swap on this file. Add a PR comment: "HatchAside defaults (`sm:flex`, `gap-6`, no width) don't match CompanyAside's block + `w-92` + `space-y-4` shape. Reconciliation deferred — primitive's defaults need a follow-up brief."
+  - **Whichever path Codex picks**, verify against `main` on Company Show desktop: (a) aside renders at the same fixed width, (b) sections have `space-y-4` vertical gap (not `gap-6`), (c) the `link !== "edit"` delete-block top border + spacing renders unchanged at CompanyAside.tsx:53-60.
+  - Codex sandbox cannot run `npm run build` (spawn EPERM on Vite/esbuild). Type-check via `tsc --noEmit --project tsconfig.app.json` inside the sandbox; full build verification happens in the main session post-harvest.
+
 - **HatchDialog props:** `eyebrow?: React.ReactNode`, `title: React.ReactNode`, `subtitle?: React.ReactNode`, `footer?: React.ReactNode`, `headerActions?: React.ReactNode`, `showHeader?: boolean`, `className?: string`, `contentClassName?: string`, `size?: "sm" | "md" | "lg" | "xl"`, `wrap?: (node: React.ReactNode) => React.ReactNode`. See `deals/DealCreate.tsx` for the ra-core form dialog pattern and `deals/DealEdit.tsx` for `title={<DealEditTitle />}` (ReactNode title) usage.
 
 - **HatchTabs is Radix-compatible but not always a visual drop-in.** Same Radix props, but `HatchTabsList` and `HatchTabsTrigger` add layout/padding/underline classes. In mobile `ContactShow`, preserve the existing compact grid: keep `HatchTabsList className="grid w-full grid-cols-3 h-10"` and add `className="px-2 py-1 text-sm"` to each mobile `HatchTabsTrigger` to maintain the `h-10` fit.
 
 - **Button variant mapping:**
-  - `variant="default"` or primary intent → `HatchPrimaryButton`
-  - `variant="outline"`, `variant="ghost"`, secondary/cancel intent → `HatchGhostButton`
-  - `variant="destructive"` → `HatchDangerButton`
-  - `variant="link"` → keep as raw `Button`, add comment `{/* link-variant — no Hatch primitive yet */}`, do NOT replace
-  - Remove the original `variant` prop after substitution (Hatch wrappers encode variant semantics internally — do not pass `variant="outline"` to `HatchGhostButton`)
-  - If a `Button` uses `asChild`, check whether the Hatch equivalent supports `asChild`. If not, unwrap the `asChild` pattern and render the child element directly.
+  - `variant="default"` or primary intent → `HatchPrimaryButton` (no variant prop needed)
+  - `variant="ghost"` or secondary/cancel intent → `HatchGhostButton` (no variant prop needed — defaults to ghost)
+  - `variant="outline"` → `HatchGhostButton variant="outline"` — **KEEP the `variant="outline"` prop.** `HatchGhostButton` defaults to ghost; stripping the variant turns outline buttons into borderless ghost buttons. Verified against HatchButton.tsx:27-34.
+  - `variant="destructive"` → `HatchDangerButton` (no variant prop needed)
+  - `variant="link"` → keep as raw `Button`, add comment `{/* link-variant — no Hatch primitive yet, keep as-is */}`, do NOT replace
+  - **`asChild` preservation:** Hatch button primitives forward props (including `asChild`) to the underlying shadcn `Button` (HatchButton.tsx:6, button.tsx:42-48). Preserve `asChild` as-is on Hatch buttons — do NOT unwrap.
 
 - **DealEdit is a HatchDialog (not a sheet).** It wraps the edit form in a dialog, not a slide-over sheet. Do not swap to HatchSheet.
 
@@ -253,7 +259,7 @@ Replace legacy `Button`, `Tabs`, `Card`, and structural imports with Hatch primi
 
 **Scope:** Replace any remaining `Button` from `@/components/ui/button` with appropriate HatchButton variants. Verify ra-core `CancelButton`/`SaveButton` are NOT replaced. `DealCreate` only gets HatchDialog verification (already dialog-shaped). `ContactCreate`, `CompanyCreate`, `SalesCreate` are page-level forms — DO NOT wrap in HatchDialog; apply HatchButton only.
 **Acceptance:** `tsc --noEmit --project tsconfig.app.json && npm run build` exits 0. Zero legacy button imports in all 4 files. HatchDialog applied to DealCreate only.
-**Verification:** `grep -r "from \"@/components/ui/button\"" src/components/hatch-crm/deals/DealCreate.tsx src/components/hatch-crm/contacts/ContactCreate.tsx src/components/hatch-crm/companies/CompanyCreate.tsx src/components/hatch-crm/sales/SalesCreate.tsx` → 0 results.
+**Verification:** `grep -rE "from ['\"]@/components/ui/button['\"]" src/components/hatch-crm/deals/DealCreate.tsx src/components/hatch-crm/contacts/ContactCreate.tsx src/components/hatch-crm/companies/CompanyCreate.tsx src/components/hatch-crm/sales/SalesCreate.tsx` → 0 results. (Quote-agnostic: matches both single and double quotes.)
 
 ### SB-2: Show Page Migration
 **Wave:** 2
@@ -267,7 +273,7 @@ Replace legacy `Button`, `Tabs`, `Card`, and structural imports with Hatch primi
 
 **Scope:** Replace `Button` → HatchButton variants. Replace `Tabs/TabsList/TabsTrigger/TabsContent` → HatchTabs variants (drop-in). In `CompanyAside.tsx`, replace only the outer desktop rail wrapper div with `HatchAside` from the `../_primitives` barrel, preserving equivalent width/visibility/spacing via `className` as needed. Do NOT replace the local `AsideSection` usage inside exported section components with `HatchAsideSection` — those sections are shared with mobile CompanyShow and must remain visually equivalent. Do NOT change prop interfaces of exported section components (`CompanyInfo`, `ContextInfo`, `AddressInfo`, `ConstructionInfo`, `AdditionalInfo`) — mobile consumers depend on them. Leave `Badge` and `rgba()` imports untouched. Post-migration grep: 0 results for button and tabs imports in all 4 files.
 **Acceptance:** `tsc --noEmit --project tsconfig.app.json && npm run build` exits 0. Zero legacy button and tabs imports in all 4 files. CompanyAside exported section components have identical prop interfaces.
-**Verification:** `grep -r "from \"@/components/ui/button\"\|from \"@/components/ui/tabs\"" src/components/hatch-crm/deals/DealShow.tsx src/components/hatch-crm/contacts/ContactShow.tsx src/components/hatch-crm/companies/CompanyShow.tsx src/components/hatch-crm/companies/CompanyAside.tsx` → 0 results.
+**Verification:** `grep -rE "from ['\"]@/components/ui/(button|tabs)['\"]" src/components/hatch-crm/deals/DealShow.tsx src/components/hatch-crm/contacts/ContactShow.tsx src/components/hatch-crm/companies/CompanyShow.tsx src/components/hatch-crm/companies/CompanyAside.tsx` → 0 results. (Quote-agnostic: matches both single and double quotes.)
 
 ### SB-3: Edit Form + Sheet + NoteInputs Migration
 **Wave:** 3
@@ -286,18 +292,19 @@ Replace legacy `Button`, `Tabs`, `Card`, and structural imports with Hatch primi
 - *NoteInputs.tsx:* Replace non-link `Button` variants with HatchButton equivalents. Leave `variant="link"` button as raw `Button` — add comment `{/* link-variant — no Hatch primitive yet, keep as-is */}`. Pre-existing `any` types are grandfathered. Ra-admin inputs (`TextInput`, `SelectInput`, `FileInput`, `DateTimeInput`, `AutocompleteInput`, `ReferenceInput`) are untouched.
 
 **Acceptance:** `tsc --noEmit --project tsconfig.app.json && npm run build` exits 0. Zero legacy button imports in DealEdit and SalesEdit. NoteEditSheet verified as routing through EditSheet. NoteInputs retains exactly one `@/components/ui/button` import (for the `variant="link"` button).
-**Verification:** `grep -r "from \"@/components/ui/button\"" src/components/hatch-crm/deals/DealEdit.tsx src/components/hatch-crm/sales/SalesEdit.tsx src/components/hatch-crm/notes/NoteEditSheet.tsx` → 0 results. `grep "from \"@/components/ui/button\"" src/components/hatch-crm/notes/NoteInputs.tsx` → exactly 1 result (expected).
+**Verification:** `grep -rE "from ['\"]@/components/ui/button['\"]" src/components/hatch-crm/deals/DealEdit.tsx src/components/hatch-crm/sales/SalesEdit.tsx src/components/hatch-crm/notes/NoteEditSheet.tsx` → 0 results. `grep -E "from ['\"]@/components/ui/button['\"]" src/components/hatch-crm/notes/NoteInputs.tsx` → exactly 1 result (expected). **Plus NoteInputs JSX invariant:** `grep -cE "<Button[\\s>]" src/components/hatch-crm/notes/NoteInputs.tsx` → exactly 1 result. The single remaining raw `<Button>` JSX usage must be the `variant="link"` toggle at NoteInputs.tsx:136-145 — verify by inspecting that line range. All other former `<Button>` usages must have been migrated to `<HatchPrimaryButton>`/`<HatchGhostButton>`/`<HatchDangerButton>`.
 
 ## Status
 
 - [x] Spec drafted
 - [x] Brief approved (Claude)
 - [x] Plan review: Pass 4 complete — SB-1 unblocked, SB-2/SB-3 carry deferred fixes
-- [ ] Built (Codex) — SB-1
-- [ ] Built (Codex) — SB-2 (apply Pass-4 fixes B1/B2/B3 before dispatch)
-- [ ] Built (Codex) — SB-3 (apply Pass-4 fix B1 before dispatch)
+- [x] Pass-4 fixes B1/B2/B3 applied to brief 2026-04-28 — outline preservation, CompanyAside layout invariant, quote-agnostic grep, asChild reversal, NoteInputs JSX invariant, link-variant wording harmonized
+- [x] Built (Codex) — SB-1 (verified complete, zero edits — all 4 Create files already migrated by prior cleanup; tsc + npm run build exit 0)
+- [ ] Built (Codex) — SB-2 (ready to dispatch)
+- [ ] Built (Codex) — SB-3 (dispatch after SB-2 merged)
 - [ ] Reviewed (Claude)
-- **Revision count:** 3 (further revisions deferred to per-wave dispatches)
+- **Revision count:** 3 (Pass-4 blockers resolved in-brief; further revisions deferred to per-wave dispatches if surfaced)
 
 ### Pass 4 Findings — Deferred to SB-2/SB-3 Dispatch
 

@@ -247,7 +247,9 @@ export const ResourcesPage = () => {
   );
   const starred = resources.filter((resource) => resource.starred);
   const rest = resources.filter((resource) => !resource.starred);
-  const actionUnavailableTitle = isDemo ? "Not available in demo" : undefined;
+  const externalActionUnavailableTitle = isDemo
+    ? "Not available in demo"
+    : undefined;
 
   const handleSelect = (resource: ResourceRecord) => {
     setSelectedId(resource.id);
@@ -256,16 +258,10 @@ export const ResourcesPage = () => {
   };
 
   const handleUploadClick = () => {
-    if (isDemo) return;
     fileInputRef.current?.click();
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (isDemo) {
-      event.target.value = "";
-      return;
-    }
-
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -275,6 +271,41 @@ export const ResourcesPage = () => {
 
     setUploading(true);
     try {
+      if (isDemo) {
+        const uploadedAt = new Date().toISOString();
+        const createdResource = await create(
+          "resources",
+          {
+            data: {
+              id: `demo-upload-${Date.now()}`,
+              user_id: "demo",
+              title: file.name,
+              description: "Uploaded during this demo session.",
+              category: "internal",
+              storage_path: null,
+              file_name: file.name,
+              file_size: file.size,
+              file_type: file.type,
+              ext: file.name.split(".").pop() || "",
+              tags: ["uploaded"],
+              starred: false,
+              created_at: uploadedAt,
+              updated_at: uploadedAt,
+              preview:
+                file.type === "text/plain"
+                  ? (await file.text()).slice(0, 4000)
+                  : "Preview is not available for this uploaded file.",
+            },
+          },
+          { returnPromise: true },
+        );
+
+        if (createdResource?.id) {
+          setSelectedId(String(createdResource.id));
+        }
+        return;
+      }
+
       const supabase = getSupabaseClient();
       const { data: userData, error: userError } =
         await supabase.auth.getUser();
@@ -472,6 +503,7 @@ export const ResourcesPage = () => {
         }}
       >
         <div
+          className="hatch-scrollbar-none"
           style={{
             flex: 1,
             overflowY: isMobile ? "visible" : "auto",
@@ -527,8 +559,7 @@ export const ResourcesPage = () => {
                   </div>
                   <button
                     onClick={handleUploadClick}
-                    disabled={uploading || isDemo}
-                    title={actionUnavailableTitle}
+                    disabled={uploading}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -540,8 +571,8 @@ export const ResourcesPage = () => {
                       fontWeight: 700,
                       fontSize: 12.5,
                       border: "none",
-                      cursor: uploading || isDemo ? "not-allowed" : "pointer",
-                      opacity: uploading || isDemo ? 0.75 : 1,
+                      cursor: uploading ? "not-allowed" : "pointer",
+                      opacity: uploading ? 0.75 : 1,
                     }}
                   >
                     <Plus size={14} strokeWidth={2.5} />{" "}
@@ -552,13 +583,16 @@ export const ResourcesPage = () => {
             />
 
             <div
+              className="hatch-scrollbar-none"
               style={{
                 display: "flex",
                 gap: 6,
                 marginTop: 20,
                 overflowX: isMobile ? "auto" : "visible",
-                paddingBottom: isMobile ? 2 : 0,
-                scrollbarWidth: isMobile ? "none" : "auto",
+                paddingBottom: isMobile ? 2 : 10,
+                borderBottom: isMobile
+                  ? "none"
+                  : "1px solid rgba(255,255,255,0.07)",
               }}
             >
               {CATEGORIES.map((c) => (
@@ -569,21 +603,22 @@ export const ResourcesPage = () => {
                     setPage(1);
                   }}
                   style={{
-                    padding: "6px 14px",
-                    borderRadius: 7,
+                    padding: "8px 14px",
+                    borderRadius: 8,
                     fontSize: 12.5,
-                    fontWeight: 600,
+                    fontWeight: 650,
                     color:
                       category === c.key ? "var(--fg-1)" : "var(--fg-2-muted)",
                     background:
                       category === c.key
-                        ? "rgba(255,255,255,0.06)"
+                        ? "rgba(77,200,232,0.1)"
                         : "transparent",
                     border:
                       category === c.key
-                        ? "1px solid rgba(255,255,255,0.1)"
+                        ? "1px solid rgba(77,200,232,0.28)"
                         : "1px solid transparent",
                     cursor: "pointer",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {c.label}{" "}
@@ -614,7 +649,7 @@ export const ResourcesPage = () => {
               padding: isMobile ? "0 16px 36px" : "0 28px 40px",
               display: "flex",
               flexDirection: "column",
-              gap: 20,
+              gap: 18,
             }}
           >
             {isPending ? (
@@ -657,7 +692,7 @@ export const ResourcesPage = () => {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        gap: 8,
+                        gap: 7,
                       }}
                     >
                       {starred.map((resource) => (
@@ -693,7 +728,7 @@ export const ResourcesPage = () => {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        gap: 8,
+                        gap: 7,
                       }}
                     >
                       {rest.map((resource) => (
@@ -782,19 +817,18 @@ export const ResourcesPage = () => {
 
         {selected && (
           <div
+            className="hatch-scrollbar-none"
             style={{
-              width: isMobile ? "auto" : 380,
+              width: isMobile ? "auto" : 360,
               flexShrink: 0,
-              background: "var(--ink-2)",
-              borderLeft: isMobile
-                ? "none"
-                : "1px solid rgba(255,255,255,0.06)",
-              borderTop: isMobile ? "1px solid rgba(255,255,255,0.06)" : "none",
+              background: "var(--ink-2-deep)",
+              border: "1px solid rgba(255,255,255,0.07)",
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              margin: isMobile ? "0 16px 24px" : 0,
-              borderRadius: isMobile ? 12 : 0,
+              margin: isMobile ? "0 16px 24px" : "28px 28px 28px 0",
+              borderRadius: 12,
+              boxShadow: "0 12px 28px rgba(0,0,0,0.22)",
             }}
           >
             <div
@@ -807,7 +841,7 @@ export const ResourcesPage = () => {
                 flexShrink: 0,
               }}
             >
-              <div style={{ flex: 1, marginRight: 12 }}>
+              <div style={{ flex: 1, minWidth: 0, marginRight: 12 }}>
                 {editing ? (
                   <div
                     style={{
@@ -843,7 +877,7 @@ export const ResourcesPage = () => {
                         ...DETAIL_INPUT_STYLE,
                         fontSize: 17,
                         fontWeight: 700,
-                        letterSpacing: "-0.01em",
+                        letterSpacing: 0,
                         lineHeight: 1.3,
                       }}
                     />
@@ -910,8 +944,9 @@ export const ResourcesPage = () => {
                         fontSize: 17,
                         fontWeight: 700,
                         color: "var(--fg-1)",
-                        letterSpacing: "-0.01em",
+                        letterSpacing: 0,
                         lineHeight: 1.3,
+                        overflowWrap: "anywhere",
                       }}
                     >
                       {selected.title}
@@ -921,6 +956,8 @@ export const ResourcesPage = () => {
                         fontSize: 12,
                         color: "var(--fg-2-muted)",
                         marginTop: 4,
+                        lineHeight: 1.45,
+                        overflowWrap: "anywhere",
                       }}
                     >
                       {selected.desc}
@@ -933,6 +970,7 @@ export const ResourcesPage = () => {
                   setSelectedId(null);
                   setEditing(false);
                 }}
+                aria-label="Close resource details"
                 style={{
                   color: "var(--fg-2-muted)",
                   padding: 4,
@@ -998,7 +1036,7 @@ export const ResourcesPage = () => {
               <button
                 onClick={handleOpenSend}
                 disabled={isDemo}
-                title={actionUnavailableTitle}
+                title={externalActionUnavailableTitle}
                 style={{
                   flex: 1,
                   display: "flex",
@@ -1021,7 +1059,8 @@ export const ResourcesPage = () => {
               <button
                 onClick={handleCopy}
                 disabled={isDemo}
-                title={actionUnavailableTitle}
+                aria-label="Copy resource link"
+                title={externalActionUnavailableTitle}
                 style={{
                   padding: "9px 12px",
                   borderRadius: 8,
@@ -1036,6 +1075,7 @@ export const ResourcesPage = () => {
               </button>
               <button
                 onClick={handleEditStart}
+                aria-label="Edit resource details"
                 style={{
                   padding: "9px 12px",
                   borderRadius: 8,
@@ -1049,7 +1089,10 @@ export const ResourcesPage = () => {
               </button>
             </div>
 
-            <div style={{ padding: "16px 22px", flex: 1, overflowY: "auto" }}>
+            <div
+              className="hatch-scrollbar-none"
+              style={{ padding: "16px 22px", flex: 1, overflowY: "auto" }}
+            >
               <div
                 style={{
                   fontSize: 9.5,
@@ -1087,23 +1130,9 @@ export const ResourcesPage = () => {
                     : "No preview available. Use Copy to get a download link."}
                 </div>
               ) : (
-                <pre
-                  className="font-mono"
-                  style={{
-                    margin: 0,
-                    fontSize: 11.5,
-                    color: "var(--fg-2-muted)",
-                    lineHeight: 1.7,
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.05)",
-                    borderRadius: 8,
-                    padding: "14px 16px",
-                  }}
-                >
-                  {selected.preview}
-                </pre>
+                <div style={{ color: "var(--fg-4a)", fontSize: 12 }}>
+                  No preview available for this resource.
+                </div>
               )}
             </div>
           </div>
@@ -1125,11 +1154,12 @@ export const ResourcesPage = () => {
         >
           <div
             style={{
-              width: 420,
-              background: "var(--ink-2)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              width: "min(420px, calc(100vw - 32px))",
+              background: "var(--ink-2-deep)",
+              border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 12,
               padding: 24,
+              boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
             }}
           >
             <div
@@ -1351,7 +1381,7 @@ export const ResourcesPage = () => {
               <button
                 onClick={handleSend}
                 disabled={sendLoading || isDemo}
-                title={actionUnavailableTitle}
+                title={externalActionUnavailableTitle}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -1379,7 +1409,6 @@ export const ResourcesPage = () => {
         ref={fileInputRef}
         type="file"
         accept={ALLOWED_RESOURCE_FILE_TYPES}
-        disabled={isDemo}
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
@@ -1406,25 +1435,28 @@ const ResourceCard = ({
 
   return (
     <div
+      className="transition-colors"
       onClick={() => onSelect(resource)}
       style={{
         display: "flex",
         alignItems: "flex-start",
-        gap: 14,
-        padding: "14px 16px",
-        borderRadius: 10,
-        background: isActive ? "var(--ink-4)" : "var(--ink-3)",
+        gap: 12,
+        padding: "12px 14px",
+        borderRadius: 8,
+        background: isActive
+          ? "rgba(77,200,232,0.1)"
+          : "rgba(255,255,255,0.03)",
         border: isActive
-          ? "1px solid rgba(77,200,232,0.3)"
-          : "1px solid rgba(255,255,255,0.05)",
+          ? "1px solid rgba(77,200,232,0.34)"
+          : "1px solid rgba(255,255,255,0.06)",
         cursor: "pointer",
       }}
     >
       <div
         style={{
-          width: 42,
-          height: 42,
-          borderRadius: 9,
+          width: 38,
+          height: 38,
+          borderRadius: 8,
           flexShrink: 0,
           background: `${color}12`,
           border: `1px solid ${color}33`,
@@ -1460,19 +1492,27 @@ const ResourceCard = ({
             alignItems: "center",
             gap: 8,
             marginBottom: 3,
+            minWidth: 0,
           }}
         >
           <span
             className="font-heading"
             style={{
+              flex: 1,
+              minWidth: 0,
               fontSize: 13.5,
               fontWeight: 600,
               color: "var(--fg-1)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
           >
             {resource.title}
           </span>
           <button
+            type="button"
+            aria-label={`${resource.starred ? "Unpin" : "Pin"} ${resource.title}`}
             onClick={(event) => onToggleStar(event, resource)}
             style={{
               display: "inline-flex",
@@ -1498,6 +1538,10 @@ const ResourceCard = ({
             color: "var(--fg-2-muted)",
             marginBottom: 6,
             lineHeight: 1.4,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}
         >
           {resource.desc}
@@ -1508,6 +1552,7 @@ const ResourceCard = ({
             alignItems: "center",
             gap: 8,
             flexWrap: "wrap",
+            minWidth: 0,
           }}
         >
           {resource.tags.map((tag) => (
@@ -1523,6 +1568,10 @@ const ResourceCard = ({
                 border: "1px solid rgba(255,255,255,0.05)",
                 padding: "2px 7px",
                 borderRadius: 3,
+                maxWidth: 140,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {tag}
@@ -1534,6 +1583,7 @@ const ResourceCard = ({
               fontSize: 11,
               color: "var(--fg-4a)",
               marginLeft: "auto",
+              whiteSpace: "nowrap",
             }}
           >
             {resource.size} - {fmtRel(resource.updated)}

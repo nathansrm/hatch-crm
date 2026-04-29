@@ -3,6 +3,7 @@ import isEqual from "lodash/isEqual";
 import { useDataProvider, useListContext, type DataProvider } from "ra-core";
 import { useEffect, useState } from "react";
 
+import { HATCH } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { DealColumn } from "./DealColumn";
@@ -77,14 +78,32 @@ export const DealListContent = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4">
-        {dealStages.map((stage) => (
-          <DealColumn
-            stage={stage.value}
-            deals={dealsByStage[stage.value]}
-            key={stage.value}
-          />
-        ))}
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowX: "auto",
+          padding: "0 28px 28px",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${dealStages.length}, minmax(232px, 1fr))`,
+            gap: 16,
+            minWidth: 1160,
+            paddingTop: 0,
+            borderTop: `1px solid ${HATCH.border}`,
+          }}
+        >
+          {dealStages.map((stage) => (
+            <DealColumn
+              stage={stage.value}
+              deals={dealsByStage[stage.value]}
+              key={stage.value}
+            />
+          ))}
+        </div>
       </div>
     </DragDropContext>
   );

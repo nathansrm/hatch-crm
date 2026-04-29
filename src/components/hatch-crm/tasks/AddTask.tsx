@@ -11,8 +11,10 @@ import {
   useUpdate,
 } from "ra-core";
 import { useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { SaveButton } from "@/components/admin/form";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -28,9 +30,17 @@ import { TaskFormContent } from "./TaskFormContent";
 export const AddTask = ({
   selectContact,
   display = "chip",
+  label,
+  className,
+  wrapperClassName,
+  style,
 }: {
   selectContact?: boolean;
   display?: "chip" | "icon";
+  label?: ReactNode;
+  className?: string;
+  wrapperClassName?: string;
+  style?: CSSProperties;
 }) => {
   const { identity } = useGetIdentity();
   const dataProvider = useDataProvider();
@@ -83,15 +93,16 @@ export const AddTask = ({
           </Tooltip>
         </TooltipProvider>
       ) : (
-        <div className="my-2">
+        <div className={cn("my-2", wrapperClassName)}>
           <Button
             variant="outline"
-            className="h-6 cursor-pointer"
+            className={cn("h-6 cursor-pointer", className)}
+            style={style}
             onClick={handleOpen}
             size="sm"
           >
             <Plus className="w-4 h-4" />
-            {translate("resources.tasks.action.add")}
+            {label ?? translate("resources.tasks.action.add")}
           </Button>
         </div>
       )}

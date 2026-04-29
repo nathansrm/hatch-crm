@@ -149,6 +149,7 @@ export type Deal = {
 
 export type DealNote = {
   deal_id: Identifier;
+  type?: string | null;
   text: string;
   date: string;
   sales_id: Identifier;

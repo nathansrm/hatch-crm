@@ -1,5 +1,11 @@
 import { Import, Plus, Settings, User, Users } from "lucide-react";
-import { CanAccess, useGetIdentity, useGetList, useTranslate, useUserMenu } from "ra-core";
+import {
+  CanAccess,
+  useGetIdentity,
+  useGetList,
+  useTranslate,
+  useUserMenu,
+} from "ra-core";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
@@ -13,18 +19,22 @@ import {
   getValidDate,
 } from "../dashboard/widgets/dashboardUtils";
 
+const USER_MENU_STYLES =
+  ".obsidian-user-menu-shell > * { position: absolute; inset: 0; } .obsidian-user-menu-shell button { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; border-radius: 9999px; opacity: 0; } .obsidian-user-menu:focus-within .obsidian-user-menu-visual { box-shadow: 0 0 0 2px rgba(77, 200, 232, 0.45); } @keyframes obsidian-pulse { 0% { opacity: 0.55; } 50% { opacity: 1; } 100% { opacity: 0.55; } }";
+
 const Header = () => {
   const { data: identity } = useGetIdentity();
   const { currency, darkModeLogo, title } = useConfigurationContext();
   const initial = identity?.fullName?.charAt(0) ?? "U";
-  const { data: pipelineDeals, isPending: isPipelinePending } = useGetList<Deal>(
-    "deals",
-    OPEN_DEALS_LIST_PARAMS,
-  );
+  const { data: pipelineDeals, isPending: isPipelinePending } =
+    useGetList<Deal>("deals", OPEN_DEALS_LIST_PARAMS);
 
   const pipelineLive = useMemo(() => {
     const deals = pipelineDeals ?? [];
-    const value = deals.reduce((sum, deal) => sum + (typeof deal.amount === 'number' ? deal.amount : 0), 0);
+    const value = deals.reduce(
+      (sum, deal) => sum + (typeof deal.amount === "number" ? deal.amount : 0),
+      0,
+    );
     const currentMonthStart = new Date();
     currentMonthStart.setDate(1);
     currentMonthStart.setHours(0, 0, 0, 0);
@@ -38,7 +48,8 @@ const Header = () => {
         createdAt: getValidDate(deal.created_at),
       }))
       .filter(
-        (deal): deal is { amount: number; createdAt: Date } => deal.createdAt !== null,
+        (deal): deal is { amount: number; createdAt: Date } =>
+          deal.createdAt !== null,
       );
 
     if (datedDeals.length === 0) {
@@ -50,7 +61,9 @@ const Header = () => {
       .reduce((sum, deal) => sum + deal.amount, 0);
     const priorValue = datedDeals
       .filter(
-        (deal) => deal.createdAt >= priorMonthStart && deal.createdAt < currentMonthStart,
+        (deal) =>
+          deal.createdAt >= priorMonthStart &&
+          deal.createdAt < currentMonthStart,
       )
       .reduce((sum, deal) => sum + deal.amount, 0);
 
@@ -79,49 +92,7 @@ const Header = () => {
           "0 8px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.04) inset",
       }}
     >
-      <style>
-        {`
-          .obsidian-user-menu-shell > * {
-            position: absolute;
-            inset: 0;
-          }
-
-          .obsidian-user-menu-shell button {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            border-radius: 9999px;
-            opacity: 0;
-          }
-
-          .obsidian-user-menu:focus-within .obsidian-user-menu-visual {
-            box-shadow: 0 0 0 2px rgba(77, 200, 232, 0.45);
-          }
-
-          @keyframes obsidian-pulse {
-            0% { opacity: 0.55; }
-            50% { opacity: 1; }
-            100% { opacity: 0.55; }
-          }
-        `}
-      </style>
-      <div
-        style={{
-          position: "absolute",
-          left: "-8%",
-          top: "50%",
-          transform: "translateY(-50%)",
-          width: 420,
-          height: 420,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(77,200,232,0.1) 0%, transparent 60%)",
-          filter: "blur(8px)",
-          pointerEvents: "none",
-        }}
-      />
+      <style>{USER_MENU_STYLES}</style>
       <Link
         to="/"
         style={{
@@ -137,7 +108,8 @@ const Header = () => {
             width: 34,
             height: 34,
             borderRadius: 8,
-            background: "linear-gradient(180deg, rgb(19 36 70) 0%, rgb(9 18 39) 100%)",
+            background:
+              "linear-gradient(180deg, rgb(19 36 70) 0%, rgb(9 18 39) 100%)",
             border: "1px solid rgba(77,200,232,0.25)",
             overflow: "hidden",
             display: "grid",
@@ -156,7 +128,9 @@ const Header = () => {
             }}
           />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}
+        >
           <div
             className="font-heading"
             style={{
@@ -167,7 +141,9 @@ const Header = () => {
             }}
           >
             HATCH
-            <span style={{ color: HATCH.cyan, margin: "0 3px" }}>{"\u00B7"}</span>
+            <span style={{ color: HATCH.cyan, margin: "0 3px" }}>
+              {"\u00B7"}
+            </span>
             CRM
           </div>
           <div
@@ -191,7 +167,10 @@ const Header = () => {
           background: "rgba(255,255,255,0.12)",
         }}
       />
-      <div id="breadcrumb" style={{ flex: 1, display: "flex", alignItems: "center" }} />
+      <div
+        id="breadcrumb"
+        style={{ flex: 1, display: "flex", alignItems: "center" }}
+      />
       <div
         style={{
           zIndex: 1,
@@ -212,7 +191,9 @@ const Header = () => {
             background: "rgb(52 211 153)",
           }}
         />
-        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}
+        >
           <span
             style={{
               fontSize: 9.5,
@@ -266,9 +247,11 @@ const Header = () => {
               {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0
                 ? formatCompactCurrency(pipelineLive.value, currency)
                 : pipelineLive.count > 0
-                ? `${pipelineLive.count} open`
-                : "No open deals"}{" "}
-              {Number.isFinite(pipelineLive.value) && pipelineLive.value > 0 && pipelineLive.delta !== null ? (
+                  ? `${pipelineLive.count} open`
+                  : "No open deals"}{" "}
+              {Number.isFinite(pipelineLive.value) &&
+              pipelineLive.value > 0 &&
+              pipelineLive.delta !== null ? (
                 <span
                   style={{
                     color:
@@ -328,7 +311,10 @@ const Header = () => {
         >
           {initial}
         </div>
-        <div className="obsidian-user-menu-shell" style={{ position: "absolute", inset: 0 }}>
+        <div
+          className="obsidian-user-menu-shell"
+          style={{ position: "absolute", inset: 0 }}
+        >
           <UserMenu>
             <ProfileMenu />
             <CanAccess resource="sales" action="list">

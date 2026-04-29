@@ -7,15 +7,23 @@ import {
   ValidationError,
   RecordContextProvider,
 } from "ra-core";
-import { AutocompleteInput, ReferenceInput } from "@/components/admin";
+import {
+  AutocompleteInput,
+  DateTimeInput,
+  ReferenceInput,
+  SelectInput,
+} from "@/components/admin";
 import { FileInputPreview } from "@/components/admin/file-input";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { contactOptionText } from "../misc/ContactOption";
+import { Status } from "../misc/Status";
+import { useConfigurationContext } from "../root/ConfigurationContext";
 import { AttachmentField } from "./AttachmentField";
 import { foreignKeyMapping } from "./foreignKeyMapping";
 import { validateNoteOrAttachmentRequired } from "./noteModel";
 import type { ContactNote } from "../types";
+import { getCurrentDate } from "./utils";
 
 export const NoteInputsMobile = ({
   selectContact,
@@ -23,6 +31,7 @@ export const NoteInputsMobile = ({
   selectContact?: boolean;
 }) => {
   const translate = useTranslate();
+  const { noteStatuses } = useConfigurationContext();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { field, fieldState } = useInput({
     source: "text",
@@ -40,8 +49,8 @@ export const NoteInputsMobile = ({
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 -m-4">
-      <div className="flex-1 flex flex-col">
+    <div className="grid gap-5">
+      <div className="grid gap-2">
         <textarea
           {...field}
           ref={(node) => {
@@ -49,16 +58,35 @@ export const NoteInputsMobile = ({
             textareaRef.current = node;
           }}
           placeholder={translate("resources.notes.inputs.add_note")}
-          className="flex-1 min-h-0 resize-none bg-background p-4 outline-none text-base"
+          className="min-h-[220px] resize-y rounded-lg border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.035)] p-4 text-base leading-6 text-[var(--fg-1)] outline-none transition focus:border-[rgba(77,200,232,0.45)] focus:ring-2 focus:ring-[rgba(77,200,232,0.16)]"
         />
         {fieldState.error && (
-          <p className="px-4 text-sm text-destructive">
+          <p className="text-sm text-destructive">
             <ValidationError error={fieldState.error.message ?? ""} />
           </p>
         )}
       </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <SelectInput
+          source="status"
+          label="resources.notes.fields.status"
+          choices={noteStatuses.map((status) => ({
+            id: status.value,
+            name: status.label,
+            value: status.value,
+          }))}
+          optionText={optionRenderer}
+          helperText={false}
+        />
+        <DateTimeInput
+          source="date"
+          label="resources.notes.fields.date"
+          helperText={false}
+          defaultValue={getCurrentDate()}
+        />
+      </div>
       {selectContact && (
-        <div className="px-4 py-4">
+        <div>
           <ReferenceInput
             source={foreignKeyMapping["contacts"]}
             reference="contacts"
@@ -73,7 +101,7 @@ export const NoteInputsMobile = ({
           </ReferenceInput>
         </div>
       )}
-      <div className="px-4">
+      <div className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-3">
         <AttachmentPreviewsMobile />
         <AttachButton />
       </div>
@@ -109,7 +137,7 @@ const AttachButton = () => {
     <>
       <button
         type="button"
-        className="flex items-center gap-2 py-3 text-sm text-muted-foreground"
+        className="flex h-9 items-center gap-2 rounded-md px-2 text-sm font-semibold text-[var(--fg-mid)] transition hover:bg-[rgba(255,255,255,0.055)] hover:text-[var(--fg-1)]"
         onClick={() => inputRef.current?.click()}
       >
         <Paperclip className="size-4" />
@@ -142,7 +170,7 @@ const AttachmentPreviewsMobile = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="mb-3 flex flex-col gap-2">
       {attachments.map((file, index: number) => (
         <FileInputPreview
           key={file.src}
@@ -157,3 +185,9 @@ const AttachmentPreviewsMobile = () => {
     </div>
   );
 };
+
+const optionRenderer = (choice: any) => (
+  <div>
+    <Status status={choice.value} /> {choice.name}
+  </div>
+);

@@ -47,6 +47,8 @@ export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
       title="Deal details"
       showHeader={false}
       size="xl"
+      contentClassName="max-h-[calc(100vh-48px)]"
+      className="max-h-[calc(100vh-48px)] overflow-y-auto"
     >
       {id ? (
         <ShowBase id={id}>

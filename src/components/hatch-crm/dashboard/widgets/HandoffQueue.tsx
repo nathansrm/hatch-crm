@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { useGetList, useRefresh, useUpdate } from "ra-core";
 
+import { HatchGhostButton, HatchPrimaryButton } from "../../_primitives";
 import { useConfigurationContext } from "../../root/ConfigurationContext";
 import type { Deal } from "../../types";
 
@@ -137,26 +138,14 @@ const HandoffCard = ({
           {dealName}
         </p>
       </div>
-      <button
+      <HatchPrimaryButton
         onClick={onStart}
         disabled={isUpdating || !onStart}
-        style={{
-          padding: "9px 16px",
-          borderRadius: 8,
-          fontWeight: 700,
-          fontSize: 12.5,
-          background: "var(--hatch-cyan)",
-          color: "var(--hatch-ink)",
-          border: "none",
-          boxShadow: "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
-          cursor: isUpdating ? "not-allowed" : "pointer",
-          whiteSpace: "nowrap",
-          opacity: isUpdating ? 0.6 : 1,
-          flexShrink: 0,
-        }}
+        size="sm"
+        className="h-9 flex-shrink-0 whitespace-nowrap"
       >
-        Start Onboarding →
-      </button>
+        Start onboarding
+      </HatchPrimaryButton>
     </div>
 
     {/* Metric stack */}
@@ -447,37 +436,19 @@ export const HandoffQueue = () => {
                     <div
                       style={{ display: "flex", alignItems: "center", gap: 10 }}
                     >
-                      <button
+                      <HatchPrimaryButton
                         onClick={() => handleConfirmOnboarding(deal)}
                         disabled={isUpdating}
-                        style={{
-                          padding: "8px 18px",
-                          borderRadius: 7,
-                          fontWeight: 700,
-                          fontSize: 12.5,
-                          background: "var(--hatch-cyan)",
-                          color: "var(--hatch-ink)",
-                          border: "none",
-                          cursor: isUpdating ? "not-allowed" : "pointer",
-                          opacity: isUpdating ? 0.6 : 1,
-                        }}
+                        size="sm"
                       >
                         Confirm
-                      </button>
-                      <button
+                      </HatchPrimaryButton>
+                      <HatchGhostButton
                         onClick={() => setExpandedCard(null)}
-                        style={{
-                          padding: "8px 14px",
-                          borderRadius: 7,
-                          fontSize: 12.5,
-                          background: "transparent",
-                          color: "var(--fg-3)",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
+                        size="sm"
                       >
                         Cancel
-                      </button>
+                      </HatchGhostButton>
                     </div>
                   </div>
                 )}

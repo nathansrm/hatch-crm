@@ -19,7 +19,6 @@ import companies from "../companies";
 import contacts from "../contacts";
 import { Dashboard } from "../dashboard/Dashboard";
 import { MobileDashboard } from "../dashboard/MobileDashboard";
-import intake from "../intake";
 import deals from "../deals";
 import { Layout } from "../layout/Layout";
 import { MobileLayout } from "../layout/MobileLayout";
@@ -68,7 +67,9 @@ import { ContactShow } from "../contacts/ContactShow.tsx";
 import { CompanyShow } from "../companies/CompanyShow.tsx";
 
 const ImportPage = lazy(() =>
-  import("../misc/ImportPage").then((module) => ({ default: module.ImportPage })),
+  import("../misc/ImportPage").then((module) => ({
+    default: module.ImportPage,
+  })),
 );
 const SettingsPageMobile = lazy(() =>
   import("../settings/SettingsPageMobile").then((module) => ({
@@ -88,6 +89,16 @@ const SettingsPage = lazy(() =>
 const ReportsPage = lazy(() =>
   import("../reports/ReportsPage").then((module) => ({
     default: module.ReportsPage,
+  })),
+);
+const DeliveryDashboard = lazy(() =>
+  import("../dashboard/DeliveryDashboard").then((module) => ({
+    default: module.DeliveryDashboard,
+  })),
+);
+const IntakeList = lazy(() =>
+  import("../intake/IntakeList").then((module) => ({
+    default: module.IntakeList,
   })),
 );
 const ResourcesPage = lazy(() =>
@@ -314,6 +325,10 @@ const DesktopAdmin = (
         <Route path="/import" element={lazyRouteElement(<ImportPage />)} />
         <Route path="/reports" element={lazyRouteElement(<ReportsPage />)} />
         <Route
+          path="/delivery"
+          element={lazyRouteElement(<DeliveryDashboard />)}
+        />
+        <Route
           path="/resources"
           element={lazyRouteElement(<ResourcesPage />)}
         />
@@ -330,7 +345,7 @@ const DesktopAdmin = (
       <Resource name="deal_notes" />
       <Resource name="tasks" list={TasksPage} />
       <Resource name="sales" {...sales} />
-      <Resource name="intake_leads" {...intake} />
+      <Resource name="intake_leads" list={IntakeList} />
       <Resource name="outreach_steps" />
       <Resource name="resources" />
       <Resource name="tags" />
@@ -419,7 +434,7 @@ const MobileAdmin = (
           list={CompanyListMobile}
           show={CompanyShow}
         />
-        <Resource name="intake_leads" {...intake} />
+        <Resource name="intake_leads" list={IntakeList} />
         <Resource name="outreach_steps" />
         <Resource name="tasks" list={MobileTasksList} />
         <Resource name="tags" />

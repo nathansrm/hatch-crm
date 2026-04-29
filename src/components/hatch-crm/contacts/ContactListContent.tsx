@@ -8,18 +8,22 @@ import {
   useTimeout,
   useTranslate,
 } from "ra-core";
-import { type MouseEvent, useCallback, useRef } from "react";
-import { Link } from "react-router";
+import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useRef } from "react";
+import { Link, useNavigate } from "react-router";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { ExternalLink, Mail, Phone, RotateCcw } from "lucide-react";
 
 import { Status } from "../misc/Status";
 import { formatRelativeDate } from "../misc/RelativeDate";
 import type { Contact } from "../types";
 import { Avatar } from "./Avatar";
+import { TagsList } from "./TagsList";
+
+const CONTACT_TABLE_COLUMNS =
+  "30px minmax(190px, 1.7fr) minmax(130px, 1.15fr) minmax(105px, 0.85fr) 92px 105px 118px minmax(100px, 0.8fr) 96px";
 
 export const ContactListContent = () => {
   const translate = useTranslate();
@@ -78,21 +82,27 @@ export const ContactListContent = () => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "2.5fr 1.5fr 1fr 1fr",
-          gap: 16,
-          padding: "10px 20px",
+          gridTemplateColumns: CONTACT_TABLE_COLUMNS,
+          gap: 12,
+          padding: "10px 16px",
           borderBottom: "1px solid rgba(255,255,255,0.07)",
           fontSize: 9.5,
           letterSpacing: "0.18em",
           textTransform: "uppercase",
           color: "var(--fg-3)",
           fontWeight: 700,
+          alignItems: "center",
         }}
       >
+        <div />
         <div>Name</div>
         <div>Company</div>
         <div>Role</div>
-        <div>Last Activity</div>
+        <div>Lifecycle</div>
+        <div>Last touch</div>
+        <div>Next action</div>
+        <div>Tags</div>
+        <div>Quick actions</div>
       </div>
       {contacts.map((contact) => (
         <RecordContextProvider key={contact.id} value={contact}>
@@ -127,19 +137,36 @@ const ContactItemContent = ({
   handleToggleItem: (id: Identifier, event: MouseEvent) => void;
 }) => {
   const [locale = "en"] = useLocaleState();
+  const navigate = useNavigate();
   const { selectedIds } = useListContext<Contact>();
-  const isSelected = selectedIds.includes(contact.id);
+  const isSelected = selectedIds?.includes(contact.id) ?? false;
   const primaryEmail =
     contact.email_jsonb?.find((email) => email.type === "Work")?.email ??
     contact.email_jsonb?.[0]?.email;
+  const primaryPhone =
+    contact.phone_jsonb?.find((phone) => phone.type === "Work")?.number ??
+    contact.phone_jsonb?.[0]?.number;
+  const contactPath = `/contacts/${contact.id}/show`;
+  const nextAction =
+    (contact.nb_tasks ?? 0) > 0 ? "Follow up today" : "Open profile";
+
+  const handleRowClick = () => {
+    navigate(contactPath);
+  };
+
+  const handleCheckboxClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    handleToggleItem(contact.id, event);
+  };
 
   return (
     <div
+      onClick={handleRowClick}
       style={{
         display: "grid",
-        gridTemplateColumns: "2.5fr 1.5fr 1fr 1fr",
-        gap: 16,
-        padding: "13px 20px",
+        gridTemplateColumns: CONTACT_TABLE_COLUMNS,
+        gap: 12,
+        padding: "13px 16px",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
         alignItems: "center",
         cursor: "pointer",
@@ -157,44 +184,45 @@ const ContactItemContent = ({
         }
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <div
+        onClick={handleCheckboxClick}
+        style={{ cursor: "pointer", flexShrink: 0 }}
+      >
         <div
-          onClick={(e) => handleToggleItem(contact.id, e)}
-          style={{ cursor: "pointer", flexShrink: 0 }}
+          data-slot="checkbox"
+          role="checkbox"
+          aria-checked={isSelected}
+          tabIndex={0}
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: 4,
+            background: isSelected ? "var(--hatch-cyan)" : "transparent",
+            border: isSelected
+              ? "1.5px solid var(--hatch-cyan)"
+              : "1.5px solid rgba(255,255,255,0.22)",
+            display: "grid",
+            placeItems: "center",
+          }}
         >
-          <div
-            data-slot="checkbox"
-            role="checkbox"
-            aria-checked={isSelected}
-            tabIndex={0}
-            style={{
-              width: 16,
-              height: 16,
-              borderRadius: 4,
-              background: isSelected ? "var(--hatch-cyan)" : "transparent",
-              border: isSelected
-                ? "1.5px solid var(--hatch-cyan)"
-                : "1.5px solid rgba(255,255,255,0.2)",
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            {isSelected && (
-              <span
-                style={{
-                  color: "var(--hatch-ink)",
-                  fontSize: 10,
-                  fontWeight: 900,
-                  lineHeight: 1,
-                }}
-              >
-                {"\u2713"}
-              </span>
-            )}
-          </div>
+          {isSelected && (
+            <span
+              style={{
+                color: "var(--hatch-ink)",
+                fontSize: 10,
+                fontWeight: 900,
+                lineHeight: 1,
+              }}
+            >
+              {"\u2713"}
+            </span>
+          )}
         </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
         <Link
-          to={`/contacts/${contact.id}/show`}
+          to={contactPath}
+          onClick={(event) => event.stopPropagation()}
           style={{
             display: "flex",
             alignItems: "center",
@@ -233,10 +261,7 @@ const ContactItemContent = ({
           </div>
         </Link>
       </div>
-      <Link
-        to={`/contacts/${contact.id}/show`}
-        style={{ textDecoration: "none", minWidth: 0 }}
-      >
+      <div style={{ minWidth: 0 }}>
         {contact.company_id != null ? (
           <span style={{ fontSize: 12.5, color: "var(--fg-2)" }}>
             <ReferenceField
@@ -250,11 +275,8 @@ const ContactItemContent = ({
         ) : (
           <span style={{ color: "var(--fg-3)", fontSize: 12 }}>{"\u2014"}</span>
         )}
-      </Link>
-      <Link
-        to={`/contacts/${contact.id}/show`}
-        style={{ textDecoration: "none", minWidth: 0 }}
-      >
+      </div>
+      <div style={{ minWidth: 0 }}>
         <span
           style={{
             fontSize: 12,
@@ -267,11 +289,11 @@ const ContactItemContent = ({
         >
           {contact.title || "\u2014"}
         </span>
-      </Link>
-      <Link
-        to={`/contacts/${contact.id}/show`}
-        style={{ textDecoration: "none", minWidth: 0 }}
-      >
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <LifecycleBadge status={contact.status} />
+      </div>
+      <div style={{ minWidth: 0 }}>
         {contact.last_seen ? (
           <span
             className="font-mono"
@@ -291,8 +313,171 @@ const ContactItemContent = ({
             {"\u2014"}
           </span>
         )}
-      </Link>
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            minHeight: 24,
+            padding: "3px 9px",
+            borderRadius: 7,
+            border:
+              (contact.nb_tasks ?? 0) > 0
+                ? "1px solid rgba(232,203,125,0.24)"
+                : "1px solid rgba(255,255,255,0.07)",
+            background:
+              (contact.nb_tasks ?? 0) > 0
+                ? "rgba(232,203,125,0.08)"
+                : "rgba(255,255,255,0.025)",
+            color: (contact.nb_tasks ?? 0) > 0 ? "var(--warn)" : "var(--fg-3)",
+            fontSize: 11.5,
+            fontWeight: 650,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {nextAction}
+        </span>
+      </div>
+      <div
+        onClick={(event) => event.stopPropagation()}
+        style={{
+          minWidth: 0,
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          overflow: "hidden",
+        }}
+      >
+        {contact.tags?.length ? (
+          <TagsList />
+        ) : (
+          <span style={{ color: "var(--fg-3)", fontSize: 12 }}>{"\u2014"}</span>
+        )}
+      </div>
+      <div
+        onClick={(event) => event.stopPropagation()}
+        style={{ display: "flex", alignItems: "center", gap: 6 }}
+      >
+        <QuickAction
+          href={primaryEmail ? `mailto:${primaryEmail}` : undefined}
+          label="Email contact"
+          disabled={!primaryEmail}
+        >
+          <Mail style={{ width: 14, height: 14 }} />
+        </QuickAction>
+        <QuickAction
+          href={primaryPhone ? `tel:${primaryPhone}` : undefined}
+          label="Call contact"
+          disabled={!primaryPhone}
+        >
+          <Phone style={{ width: 14, height: 14 }} />
+        </QuickAction>
+        <QuickAction href={contactPath} label="Open contact profile">
+          <ExternalLink style={{ width: 14, height: 14 }} />
+        </QuickAction>
+      </div>
     </div>
+  );
+};
+
+const statusAccent: Record<string, { bg: string; border: string; text: string }> = {
+  cold: {
+    bg: "rgba(125,189,232,0.08)",
+    border: "rgba(125,189,232,0.24)",
+    text: "#7DBDE8",
+  },
+  warm: {
+    bg: "rgba(232,203,125,0.08)",
+    border: "rgba(232,203,125,0.24)",
+    text: "#E8CB7D",
+  },
+  hot: {
+    bg: "rgba(232,139,125,0.08)",
+    border: "rgba(232,139,125,0.24)",
+    text: "#E88B7D",
+  },
+  closed: {
+    bg: "rgba(164,232,125,0.08)",
+    border: "rgba(164,232,125,0.24)",
+    text: "#A4E87D",
+  },
+};
+
+const LifecycleBadge = ({ status }: { status: string }) => {
+  const accent = statusAccent[status] ?? {
+    bg: "rgba(255,255,255,0.04)",
+    border: "rgba(255,255,255,0.1)",
+    text: "var(--fg-2)",
+  };
+  const label = status
+    ? status.charAt(0).toUpperCase() + status.slice(1).replace("-", " ")
+    : "Unknown";
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        minHeight: 24,
+        padding: "3px 9px",
+        borderRadius: 7,
+        border: `1px solid ${accent.border}`,
+        background: accent.bg,
+        color: accent.text,
+        fontSize: 11.5,
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {label}
+    </span>
+  );
+};
+
+const QuickAction = ({
+  href,
+  label,
+  disabled,
+  children,
+}: {
+  href?: string;
+  label: string;
+  disabled?: boolean;
+  children: ReactNode;
+}) => {
+  const baseStyle: CSSProperties = {
+    width: 29,
+    height: 29,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: 7,
+    border: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(255,255,255,0.03)",
+    color: disabled ? "rgba(154,163,190,0.35)" : "var(--fg-2)",
+    cursor: disabled ? "not-allowed" : "pointer",
+  };
+
+  if (!href || disabled) {
+    return (
+      <span aria-label={label} aria-disabled style={baseStyle}>
+        {children}
+      </span>
+    );
+  }
+
+  if (href.startsWith("/")) {
+    return (
+      <Link to={href} aria-label={label} style={baseStyle}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={href} aria-label={label} style={baseStyle}>
+      {children}
+    </a>
   );
 };
 

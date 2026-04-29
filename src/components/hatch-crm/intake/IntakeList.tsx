@@ -6,7 +6,14 @@ import {
   useListContext,
   useTranslate,
 } from "ra-core";
-import { ChevronDown } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import {
+  ChevronDown,
+  ClipboardCheck,
+  MessageCircle,
+  PlayCircle,
+  Send,
+} from "lucide-react";
 import { List } from "@/components/admin/list";
 import { ListPagination } from "@/components/admin/list-pagination";
 import { ReferenceField } from "@/components/admin/reference-field";
@@ -15,40 +22,33 @@ import { SelectInput } from "@/components/admin/select-input";
 import { TextField } from "@/components/admin/text-field";
 import { TextInput } from "@/components/admin/text-input";
 
+import { HatchPageHeader } from "../_primitives";
 import type { IntakeLead } from "../types";
 import { IntakeExpandedRow } from "./IntakeExpandedRow";
 import { IntakeActionButton, OutreachProgress } from "./IntakeListShared";
 import { IntakeStatusBadge } from "./IntakeStatusBadge";
 import { IntakeMobileList } from "./IntakeMobileList";
 
-const ACTIVE_PIPELINE_STATUSES = [
+const INTAKE_QUEUE_STATUSES = [
   "uncontacted",
   "in-sequence",
   "engaged",
   "not-interested",
   "unresponsive",
+  "qualified",
+  "rejected",
 ] as const;
 
-const ACTIVE_PIPELINE_FILTER = `(${ACTIVE_PIPELINE_STATUSES.join(",")})`;
-const TABLE_GRID_TEMPLATE_COLUMNS = "2fr 1fr 1fr 1fr 1fr 180px 180px 48px";
+const DISQUALIFIED_STATUSES = [
+  "not-interested",
+  "unresponsive",
+  "rejected",
+] as const;
+const READY_REVIEW_STATUS = "ai_reviewed";
+const DISQUALIFIED_FILTER = `(${DISQUALIFIED_STATUSES.join(",")})`;
+const TABLE_GRID_TEMPLATE_COLUMNS = "2fr 1fr 0.9fr 1fr 1fr 1.25fr 170px 42px";
 const MOBILE_SAFE_BOTTOM_SPACE = "calc(7rem + env(safe-area-inset-bottom))";
 const INTAKE_PROMOTE_BUTTON_STYLES = `
-  [data-intake-promote-button] button {
-    padding: 6px 14px;
-    border-radius: 7px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--good);
-    background: rgba(52, 211, 153, 0.1);
-    border: 1px solid rgba(52, 211, 153, 0.25);
-    cursor: pointer;
-  }
-
-  [data-intake-promote-button] button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
   .intake-mobile-cards {
     display: none;
   }
@@ -127,17 +127,12 @@ const intakeFilters = [
 ];
 
 export const IntakeList = () => {
-  const translate = useTranslate();
-
   return (
     <List
-      title={translate("resources.intake_leads.name", {
-        smart_count: 2,
-        _: "Intake Leads",
-      })}
+      title={false}
       actions={false}
       filters={intakeFilters}
-      filterDefaultValues={{ "status@in": ACTIVE_PIPELINE_FILTER }}
+      filterDefaultValues={{}}
       sort={{ field: "created_at", order: "DESC" }}
       perPage={25}
       pagination={<ListPagination className="intake-pagination" />}
@@ -150,13 +145,35 @@ export const IntakeList = () => {
 const IntakeListLayout = () => {
   const translate = useTranslate();
   const { data, isPending, error, filterValues } = useListContext<IntakeLead>();
+  const { data: allIntakeLeads = [] } = useGetList<IntakeLead>(
+    "intake_leads",
+    {
+      filter: {},
+      pagination: { page: 1, perPage: 1000 },
+      sort: { field: "created_at", order: "DESC" },
+    },
+  );
+  const metricLeads = allIntakeLeads.length ? allIntakeLeads : data ?? [];
+  const intakeMetricLeads = metricLeads.filter((lead) =>
+    INTAKE_QUEUE_STATUSES.includes(
+      lead.status as (typeof INTAKE_QUEUE_STATUSES)[number],
+    ),
+  );
+  const firstTouchCount = intakeMetricLeads.filter(
+    (lead) => lead.status === "uncontacted",
+  ).length;
+  const reviewReadyCount = intakeMetricLeads.filter((lead) =>
+    lead.current_draft_status === READY_REVIEW_STATUS,
+  ).length;
+  const inSequenceCount = intakeMetricLeads.filter(
+    (lead) => lead.status === "in-sequence",
+  ).length;
+  const engagedCount = intakeMetricLeads.filter(
+    (lead) => lead.status === "engaged",
+  ).length;
   const hasFilters = Boolean(
     filterValues &&
-    Object.entries(filterValues).some(([key, value]) => {
-      if (key === "status@in" && value === ACTIVE_PIPELINE_FILTER) {
-        return false;
-      }
-
+    Object.entries(filterValues).some(([, value]) => {
       return value !== undefined && value !== null && value !== "";
     }),
   );
@@ -218,56 +235,11 @@ const IntakeListLayout = () => {
           flexShrink: 0,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--hatch-cyan)",
-              fontWeight: 700,
-            }}
-          >
-            Lead Triage
-          </span>
-          <span
-            style={{
-              height: 1,
-              width: 24,
-              background: "rgba(77,200,232,0.4)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h1
-              className="font-heading"
-              style={{
-                margin: 0,
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: "var(--fg-1)",
-              }}
-            >
-              Intake Queue
-            </h1>
-            <p
-              style={{ margin: "4px 0 0", color: "var(--fg-2)", fontSize: 13 }}
-            >
+        <HatchPageHeader
+          eyebrow="Lead Triage"
+          title="Intake Queue"
+          subline={
+            <>
               <span
                 className="font-mono"
                 style={{
@@ -275,21 +247,20 @@ const IntakeListLayout = () => {
                   color: "var(--warn)",
                 }}
               >
-                {data?.filter(
-                  (lead: IntakeLead) => lead.status === "uncontacted",
-                ).length ?? 0}
+                {firstTouchCount}
               </span>
               {" leads awaiting first touch"}
-            </p>
-          </div>
-        </div>
+            </>
+          }
+        />
       </div>
-      <StatusTabBar />
+      <StatusTabBar allLeads={intakeMetricLeads} />
       <div
         className="intake-summary-grid"
         style={{
           padding: "0 28px 20px",
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
           gap: 12,
           flexShrink: 0,
         }}
@@ -298,68 +269,50 @@ const IntakeListLayout = () => {
           [
             {
               key: "uncontacted",
-              label: "Uncontacted",
+              label: "First touch",
+              value: firstTouchCount,
+              helper: "New leads waiting",
+              trend: "+12% vs last 30 days",
               color: "#4DC8E8",
               bg: "rgba(77,200,232,0.08)",
+              icon: Send,
+              series: [8, 12, 9, 15, 13, 19, 17, 24],
+            },
+            {
+              key: "review",
+              label: "Ready review",
+              value: reviewReadyCount,
+              helper: "Drafts to inspect",
+              color: "#A78BFA",
+              bg: "rgba(167,139,250,0.08)",
+              trend: "+8% vs last 30 days",
+              icon: ClipboardCheck,
+              series: [4, 7, 6, 9, 8, 12, 10, 18],
             },
             {
               key: "in-sequence",
-              label: "In Sequence",
-              color: "#A78BFA",
-              bg: "rgba(167,139,250,0.08)",
+              label: "In sequence",
+              value: inSequenceCount,
+              helper: "Active follow-up",
+              color: "#34D399",
+              bg: "rgba(52,211,153,0.08)",
+              trend: "+5% vs last 30 days",
+              icon: PlayCircle,
+              series: [14, 17, 13, 20, 18, 21, 19, 25],
             },
             {
               key: "engaged",
-              label: "Engaged",
-              color: "#34D399",
-              bg: "rgba(52,211,153,0.08)",
-            },
-            {
-              key: "not-interested",
-              label: "Not Interested",
+              label: "Replies",
+              value: engagedCount,
+              helper: "Needs promotion",
               color: "#EF5A6F",
               bg: "rgba(239,90,111,0.08)",
+              trend: "Email replies synced",
+              icon: MessageCircle,
+              series: [2, 4, 3, 7, 5, 6, 8, 6],
             },
           ] as const
-        ).map((tile) => (
-          <div
-            key={tile.key}
-            className="intake-summary-tile"
-            style={{
-              flex: 1,
-              padding: "14px 18px",
-              borderRadius: 10,
-              background: tile.bg,
-              border: `1px solid ${tile.color}33`,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 9.5,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: tile.color,
-                fontWeight: 700,
-              }}
-            >
-              {tile.label}
-            </span>
-            <span
-              className="font-heading"
-              style={{
-                fontSize: 24,
-                fontWeight: 700,
-                color: "var(--fg-1)",
-              }}
-            >
-              {data?.filter((lead: IntakeLead) => lead.status === tile.key)
-                .length ?? 0}
-            </span>
-          </div>
-        ))}
+        ).map(({ key, ...tile }) => <IntakeMetricTile key={key} {...tile} />)}
       </div>
       {!data?.length ? (
         <IntakeEmpty hasFilters={hasFilters} />
@@ -384,25 +337,194 @@ const IntakeListLayout = () => {
   );
 };
 
-const StatusTabBar = () => {
+const IntakeMetricTile = ({
+  label,
+  value,
+  helper,
+  trend,
+  color,
+  bg,
+  icon: Icon,
+  series,
+}: {
+  label: string;
+  value: number;
+  helper: string;
+  trend: string;
+  color: string;
+  bg: string;
+  icon: LucideIcon;
+  series: readonly number[];
+}) => (
+  <div
+    className="intake-summary-tile"
+    style={{
+      minHeight: 106,
+      padding: "15px 16px",
+      borderRadius: 10,
+      background:
+        "linear-gradient(180deg, rgba(13,20,36,0.98) 0%, rgba(8,12,26,0.98) 100%)",
+      border: `1px solid ${color}33`,
+      boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+      display: "grid",
+      gridTemplateColumns: "auto minmax(0, 1fr) 90px",
+      alignItems: "center",
+      gap: 14,
+    }}
+  >
+    <div
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: 9,
+        display: "grid",
+        placeItems: "center",
+        background: bg,
+        border: `1px solid ${color}33`,
+        color,
+      }}
+    >
+      <Icon style={{ width: 21, height: 21 }} />
+    </div>
+    <div style={{ minWidth: 0 }}>
+      <div
+        style={{
+          fontSize: 12.5,
+          color: "var(--fg-2)",
+          fontWeight: 700,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        className="font-heading"
+        style={{
+          marginTop: 3,
+          fontSize: 27,
+          lineHeight: 1,
+          fontWeight: 800,
+          color: "var(--fg-1)",
+        }}
+      >
+        {value}
+      </div>
+      <div
+        style={{
+          marginTop: 7,
+          color: trend.includes("synced") ? "var(--fg-3)" : "var(--good)",
+          fontSize: 11.5,
+          fontWeight: 650,
+        }}
+      >
+        {trend}
+      </div>
+      <div style={{ marginTop: 2, color: "var(--fg-3)", fontSize: 11.5 }}>
+        {helper}
+      </div>
+    </div>
+    <Sparkline values={series} color={color} />
+  </div>
+);
+
+const Sparkline = ({
+  values,
+  color,
+}: {
+  values: readonly number[];
+  color: string;
+}) => {
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = Math.max(1, max - min);
+  const points = values
+    .map((value, index) => {
+      const x = (index / Math.max(1, values.length - 1)) * 88;
+      const y = 34 - ((value - min) / range) * 30;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return (
+    <svg
+      viewBox="0 0 88 38"
+      role="img"
+      aria-label="Intake trend"
+      style={{ width: 88, height: 38, overflow: "visible" }}
+    >
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+const getActiveIntakeTab = (filterValues: Record<string, unknown>) => {
+  if (
+    (filterValues["current_draft_status@eq"] ??
+      filterValues.current_draft_status) === READY_REVIEW_STATUS
+  ) {
+    return "ready-review";
+  }
+
+  if (filterValues["status@in"] === DISQUALIFIED_FILTER) {
+    return "disqualified";
+  }
+
+  const status = filterValues["status@eq"] ?? filterValues.status;
+  if (typeof status === "string") {
+    return status;
+  }
+
+  return "all";
+};
+
+const getIntakeTabFilter = (
+  tabId: string,
+  baseFilters: Record<string, unknown>,
+) => {
+  if (tabId === "all") {
+    return { ...baseFilters };
+  }
+
+  if (tabId === "ready-review") {
+    return {
+      ...baseFilters,
+      "current_draft_status@eq": READY_REVIEW_STATUS,
+    };
+  }
+
+  if (tabId === "disqualified") {
+    return { ...baseFilters, "status@in": DISQUALIFIED_FILTER };
+  }
+
+  return { ...baseFilters, "status@eq": tabId };
+};
+
+const StatusTabBar = ({ allLeads }: { allLeads: IntakeLead[] }) => {
   const {
     displayedFilters,
     filterValues = {},
     setFilters,
   } = useListContext<IntakeLead>();
 
-  // Single query for all active-pipeline leads, count by status client-side
-  const { data: allLeads = [] } = useGetList<IntakeLead>("intake_leads", {
-    filter: { "status@in": ACTIVE_PIPELINE_FILTER },
-    pagination: { page: 1, perPage: 1000 },
-    sort: { field: "id", order: "ASC" },
-  });
-
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
     for (const lead of allLeads) {
       map[lead.status] = (map[lead.status] || 0) + 1;
     }
+    map["ready-review"] = allLeads.filter(
+      (lead) => lead.current_draft_status === READY_REVIEW_STATUS,
+    ).length;
+    map.disqualified = allLeads.filter((lead) =>
+      DISQUALIFIED_STATUSES.includes(
+        lead.status as (typeof DISQUALIFIED_STATUSES)[number],
+      ),
+    ).length;
     return map;
   }, [allLeads]);
 
@@ -411,49 +533,45 @@ const StatusTabBar = () => {
     delete next.status;
     delete next["status@eq"];
     delete next["status@in"];
+    delete next.current_draft_status;
+    delete next["current_draft_status@eq"];
     return next;
   }, [filterValues]);
 
   const tabs = [
-    { id: "all", label: "All", count: allLeads.length },
+    { id: "all", label: "All Leads", count: allLeads.length },
     {
       id: "uncontacted",
-      label: "Uncontacted",
+      label: "First Touch",
       count: counts["uncontacted"] || 0,
+    },
+    {
+      id: "ready-review",
+      label: "Ready Review",
+      count: counts["ready-review"] || 0,
     },
     {
       id: "in-sequence",
       label: "In Sequence",
       count: counts["in-sequence"] || 0,
     },
-    { id: "engaged", label: "Engaged", count: counts["engaged"] || 0 },
+    { id: "engaged", label: "Replies", count: counts["engaged"] || 0 },
     {
-      id: "not-interested",
-      label: "Not Interested",
-      count: counts["not-interested"] || 0,
+      id: "qualified",
+      label: "Converted",
+      count: counts["qualified"] || 0,
     },
     {
-      id: "unresponsive",
-      label: "Unresponsive",
-      count: counts["unresponsive"] || 0,
+      id: "disqualified",
+      label: "Disqualified",
+      count: counts.disqualified || 0,
     },
   ] as const;
 
-  const activeTabId =
-    typeof (filterValues["status@eq"] ?? filterValues.status) === "string" &&
-    ACTIVE_PIPELINE_STATUSES.includes(
-      (filterValues["status@eq"] ??
-        filterValues.status) as (typeof ACTIVE_PIPELINE_STATUSES)[number],
-    )
-      ? (filterValues["status@eq"] ?? filterValues.status)
-      : "all";
+  const activeTabId = getActiveIntakeTab(filterValues);
 
   const handleTabClick = (tabId: string) => {
-    const filter =
-      tabId === "all"
-        ? { ...baseFilters, "status@in": ACTIVE_PIPELINE_FILTER }
-        : { ...baseFilters, "status@eq": tabId };
-    setFilters(filter, displayedFilters);
+    setFilters(getIntakeTabFilter(tabId, baseFilters), displayedFilters);
   };
 
   return (

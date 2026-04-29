@@ -12,6 +12,7 @@ import { SaveButton } from "@/components/admin/form";
 
 import { HatchDialog } from "../_primitives";
 import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
+import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { DealInputs } from "./DealInputs";
 
@@ -25,6 +26,7 @@ export const DealCreate = ({ open }: { open: boolean }) => {
   };
 
   const queryClient = useQueryClient();
+  const { dealStages } = useConfigurationContext();
 
   const onSuccess = async (deal: Deal) => {
     if (!allDeals) {
@@ -86,6 +88,9 @@ export const DealCreate = ({ open }: { open: boolean }) => {
               sales_id: identity?.id,
               contact_ids: [],
               index: 0,
+              amount: 0,
+              expected_closing_date: new Date().toISOString().split("T")[0],
+              stage: dealStages[0]?.value ?? "discovery",
             }}
           >
             {node}

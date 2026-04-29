@@ -1,8 +1,8 @@
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useDataProvider, useNotify, useRefresh, useTranslate } from "ra-core";
-import { Button } from "@/components/ui/button";
 
+import { HatchPrimaryButton } from "../_primitives";
 import type { CrmDataProvider } from "../providers/types";
 import type { IntakeLead } from "../types";
 
@@ -43,11 +43,11 @@ export const IntakePromoteButton = ({ record }: { record: IntakeLead }) => {
   };
 
   return (
-    <Button
+    <HatchPrimaryButton
       type="button"
-      variant="outline"
       size="sm"
       disabled={disabled}
+      className="h-8 px-3 text-xs"
       onClick={(event) => {
         event.stopPropagation();
         void handlePromote();
@@ -57,6 +57,6 @@ export const IntakePromoteButton = ({ record }: { record: IntakeLead }) => {
       {isPending
         ? translate("resources.intake_leads.action.promoting", { _: "Promoting..." })
         : translate("resources.intake_leads.action.promote", { _: "Promote" })}
-    </Button>
+    </HatchPrimaryButton>
   );
 };

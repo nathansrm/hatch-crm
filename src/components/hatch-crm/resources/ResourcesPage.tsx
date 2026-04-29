@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getSupabaseClient } from "@/components/hatch-crm/providers/supabase/supabase";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { HatchPageHeader } from "../_primitives";
 
 const ALLOWED_RESOURCE_FILE_TYPES = [
   "application/pdf",
@@ -480,129 +481,75 @@ export const ResourcesPage = () => {
           <div
             style={{ padding: isMobile ? "20px 16px 16px" : "24px 28px 20px" }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: 6,
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 10.5,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: "var(--hatch-cyan)",
-                  fontWeight: 700,
-                }}
-              >
-                Library
-              </span>
-              <span
-                style={{
-                  height: 1,
-                  width: 24,
-                  background: "rgba(77,200,232,0.4)",
-                }}
-              />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: isMobile ? "stretch" : "flex-end",
-                justifyContent: "space-between",
-                flexDirection: isMobile ? "column" : "row",
-                gap: isMobile ? 16 : 0,
-              }}
-            >
-              <div>
-                <h1
-                  className="font-heading"
-                  style={{
-                    margin: 0,
-                    fontSize: 26,
-                    fontWeight: 700,
-                    letterSpacing: "-0.02em",
-                    color: "var(--fg-1)",
-                  }}
-                >
-                  Resources
-                </h1>
-                <p
-                  style={{
-                    margin: "4px 0 0",
-                    color: "var(--fg-2-muted)",
-                    fontSize: 13,
-                  }}
-                >
-                  Sales scripts, onboarding packages, templates, and client
-                  materials
-                </p>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 10,
-                  alignItems: "stretch",
-                  width: isMobile ? "100%" : "auto",
-                }}
-              >
+            <HatchPageHeader
+              eyebrow="Library"
+              title="Resources"
+              subline="Sales scripts, onboarding packages, templates, and client materials"
+              actions={
                 <div
                   style={{
                     display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: 8,
-                    padding: "8px 12px",
-                    width: isMobile ? "100%" : 220,
-                    minWidth: 0,
+                    gap: 10,
+                    alignItems: "stretch",
+                    width: isMobile ? "100%" : "auto",
                   }}
                 >
-                  <Search size={14} color="var(--fg-4a)" />
-                  <input
-                    value={search}
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                      setPage(1);
-                    }}
-                    placeholder="Search resources..."
+                  <div
                     style={{
-                      background: "transparent",
-                      border: "none",
-                      outline: "none",
-                      color: "var(--fg-1)",
-                      fontSize: 13,
-                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.06)",
+                      borderRadius: 8,
+                      padding: "8px 12px",
+                      width: isMobile ? "100%" : 220,
+                      minWidth: 0,
                     }}
-                  />
+                  >
+                    <Search size={14} color="var(--fg-4a)" />
+                    <input
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPage(1);
+                      }}
+                      placeholder="Search resources…"
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        outline: "none",
+                        color: "var(--fg-1)",
+                        fontSize: 13,
+                        width: "100%",
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleUploadClick}
+                    disabled={uploading || isDemo}
+                    title={actionUnavailableTitle}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "8px 14px",
+                      background: "var(--hatch-cyan)",
+                      color: "var(--hatch-ink)",
+                      borderRadius: 7,
+                      fontWeight: 700,
+                      fontSize: 12.5,
+                      border: "none",
+                      cursor: uploading || isDemo ? "not-allowed" : "pointer",
+                      opacity: uploading || isDemo ? 0.75 : 1,
+                    }}
+                  >
+                    <Plus size={14} strokeWidth={2.5} />{" "}
+                    {uploading ? "Uploading…" : "Upload"}
+                  </button>
                 </div>
-                <button
-                  onClick={handleUploadClick}
-                  disabled={uploading || isDemo}
-                  title={actionUnavailableTitle}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    padding: "8px 14px",
-                    background: "var(--hatch-cyan)",
-                    color: "var(--hatch-ink)",
-                    borderRadius: 7,
-                    fontWeight: 700,
-                    fontSize: 12.5,
-                    border: "none",
-                    cursor: uploading || isDemo ? "not-allowed" : "pointer",
-                    opacity: uploading || isDemo ? 0.75 : 1,
-                  }}
-                >
-                  <Plus size={14} strokeWidth={2.5} />{" "}
-                  {uploading ? "Uploading..." : "Upload"}
-                </button>
-              </div>
-            </div>
+              }
+            />
 
             <div
               style={{
@@ -679,7 +626,7 @@ export const ResourcesPage = () => {
                   fontSize: 14,
                 }}
               >
-                Loading resources...
+                Loading resources…
               </div>
             ) : (
               <>
@@ -1259,7 +1206,7 @@ export const ResourcesPage = () => {
                   <div style={{ position: "relative" }}>
                     <input
                       autoFocus
-                      placeholder="Search contacts..."
+                      placeholder="Search contacts…"
                       value={contactQuery}
                       onChange={(e) => setContactQuery(e.target.value)}
                       style={DETAIL_INPUT_STYLE}
@@ -1421,7 +1368,7 @@ export const ResourcesPage = () => {
                   opacity: sendLoading || isDemo ? 0.75 : 1,
                 }}
               >
-                {sendLoading ? "Sending..." : "Send"}
+                {sendLoading ? "Sending…" : "Send"}
               </button>
             </div>
           </div>

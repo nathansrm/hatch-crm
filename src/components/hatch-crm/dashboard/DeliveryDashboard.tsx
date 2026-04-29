@@ -1,6 +1,7 @@
 import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
+import { HatchPageHeader } from "../_primitives";
 
 export const DeliveryDashboard = () => {
   return (
@@ -16,9 +17,14 @@ export const DeliveryDashboard = () => {
         minHeight: 0,
       }}
     >
+      <HatchPageHeader
+        eyebrow="Client delivery"
+        title="Delivery Hub"
+        subline="Active project load, handoffs, notes, files, and client work in one workspace."
+      />
       <DeliveryKPIs />
-      <HandoffQueue />
       <ActiveProjectsGrid />
+      <HandoffQueue />
     </main>
   );
 };

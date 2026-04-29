@@ -222,6 +222,26 @@ describe("getList", () => {
     });
   });
 
+  it("should transform '@not.in'", async () => {
+    const getList = vi.fn();
+    const mockDataProvider = {
+      getList,
+    } as unknown as DataProvider;
+
+    getList.mockResolvedValueOnce([{ id: 1 }]);
+
+    const { getList: getListAdapter } =
+      withSupabaseFilterAdapter(mockDataProvider);
+
+    await expect(
+      getListAdapter("resource", { filter: { "stage@not.in": "(won,lost)" } }),
+    ).resolves.toEqual([{ id: 1 }]);
+
+    expect(getList).toHaveBeenCalledWith("resource", {
+      filter: { stage_neq_any: ["won", "lost"] },
+    });
+  });
+
   it("should transform '@cs'", async () => {
     const getList = vi.fn();
     const mockDataProvider = {

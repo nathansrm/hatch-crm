@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { CreateButton } from "@/components/admin/create-button";
 import { Progress } from "@/components/ui/progress";
 
-import useAppBarHeight from "../misc/useAppBarHeight";
 import type { Contact } from "../types";
 import { DealCreate } from "./DealCreate";
 
@@ -12,7 +11,6 @@ export const DealEmpty = ({ children }: { children?: ReactNode }) => {
   const translate = useTranslate();
   const location = useLocation();
   const matchCreate = matchPath("/deals/create", location.pathname);
-  const appbarHeight = useAppBarHeight();
 
   // get Contact data
   const { data: contacts, isPending: contactsLoading } = useGetList<Contact>(
@@ -28,7 +26,8 @@ export const DealEmpty = ({ children }: { children?: ReactNode }) => {
     <div
       className="flex flex-col justify-center items-center gap-12"
       style={{
-        height: `calc(100dvh - ${appbarHeight}px)`,
+        flex: 1,
+        minHeight: 460,
       }}
     >
       <img

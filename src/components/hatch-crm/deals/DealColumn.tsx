@@ -1,5 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 
+import { HATCH } from "../_primitives";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { findDealLabel } from "./dealUtils";
@@ -22,12 +23,12 @@ export const DealColumn = ({
   };
 
   return (
-    <div style={{ flex: 1, paddingBottom: 32 }}>
+    <div style={{ minWidth: 0, paddingBottom: 32, paddingTop: 16 }}>
       <div
         style={{
-          background: "var(--ink-3)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          borderRadius: 12,
+          background: HATCH.surface,
+          border: `1px solid ${HATCH.border}`,
+          borderRadius: 8,
           padding: 14,
           display: "flex",
           flexDirection: "column",
@@ -54,11 +55,12 @@ export const DealColumn = ({
                 }}
               />
               <span
+                className="font-heading"
                 style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  color: "var(--fg-1)",
-                  letterSpacing: "0.02em",
+                  fontSize: 12,
+                  fontWeight: 750,
+                  color: HATCH.textHi,
+                  letterSpacing: 0,
                 }}
               >
                 {findDealLabel(dealStages, stage)}
@@ -79,7 +81,7 @@ export const DealColumn = ({
             className="font-mono"
             style={{
               fontSize: 11,
-              color: "var(--fg-3)",
+              color: HATCH.textLo,
             }}
           >
             {totalAmount.toLocaleString("en-US", {
@@ -110,8 +112,9 @@ export const DealColumn = ({
               flexDirection: "column",
               gap: 10,
               marginTop: 10,
+              minHeight: 80,
               background: snapshot.isDraggingOver
-                ? "rgba(255,255,255,0.02)"
+                ? colors.bg
                 : "transparent",
             }}
           >
@@ -122,10 +125,11 @@ export const DealColumn = ({
                   alignItems: "center",
                   justifyContent: "center",
                   height: 80,
-                  color: "var(--fg-4)",
+                  color: HATCH.textMuted,
                   fontSize: 12,
                   border: `1px dashed ${colors.border}22`,
                   borderRadius: 8,
+                  background: "rgba(255,255,255,0.015)",
                 }}
               >
                 Drop here

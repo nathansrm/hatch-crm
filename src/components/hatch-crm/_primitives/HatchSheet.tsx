@@ -54,19 +54,16 @@ export const HatchSheet = ({
   wrap,
 }: HatchSheetProps) => {
   const labelledBy = ariaLabelledBy ?? titleId;
-  const usesCustomLabel = Boolean(labelledBy);
+  const radixTitle = typeof title === "string" ? title : "Sheet";
   const inner = (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
-      {usesCustomLabel ? (
-        <SheetTitle className="sr-only">{title}</SheetTitle>
-      ) : null}
       <HatchSheetHeader
         eyebrow={eyebrow}
         title={title}
         titleId={titleId}
         subtitle={subtitle}
         actions={headerActions}
-        titleAsRadix={!usesCustomLabel}
+        titleAsRadix={false}
       />
       <div className="flex-1 overflow-y-auto px-6 py-5">
         <div className="space-y-5">{children}</div>
@@ -96,6 +93,7 @@ export const HatchSheet = ({
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         }}
       >
+        <SheetTitle className="sr-only">{radixTitle}</SheetTitle>
         {wrap ? wrap(inner) : inner}
       </SheetContent>
     </Sheet>

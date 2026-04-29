@@ -76,14 +76,18 @@ export const NoteCreateSheet = ({
           : translate("resources.notes.sheet.create")
       }
       redirect={false}
-      defaultValues={{ sales_id: identity?.id }}
+      defaultValues={{
+        sales_id: identity?.id,
+        status: defaultStatus,
+        date: getCurrentDate(),
+      }}
       transform={(data: any) => ({
         ...data,
         [foreignKeyMapping["contacts"]]:
           contact_id ?? data[foreignKeyMapping["contacts"]],
         sales_id: identity.id,
         date: new Date(data.date || getCurrentDate()).toISOString(),
-        status: defaultStatus,
+        status: data.status ?? defaultStatus,
       })}
       mutationOptions={{ onSuccess: handleSuccess }}
       open={open}

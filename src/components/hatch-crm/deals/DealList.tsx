@@ -1,9 +1,15 @@
 import type { ReactNode } from "react";
 import { Plus } from "lucide-react";
 import type { InputProps } from "ra-core";
-import { useGetIdentity, useListContext, useTranslate } from "ra-core";
+import {
+  FilterContext,
+  useGetIdentity,
+  useListContext,
+  useTranslate,
+} from "ra-core";
 import { Link, matchPath, useLocation } from "react-router";
 import { AutocompleteInput } from "@/components/admin/autocomplete-input";
+import { FilterForm } from "@/components/admin/filter-form";
 import { List } from "@/components/admin/list";
 import { ReferenceInput } from "@/components/admin/reference-input";
 import { SearchInput } from "@/components/admin/search-input";
@@ -55,16 +61,15 @@ const DealList = () => {
       filter={OPEN_DEALS_FILTER}
       title={false}
       sort={{ field: "index", order: "DESC" }}
-      filters={dealFilters}
       actions={false}
       pagination={null}
     >
-      <DealLayout />
+      <DealLayout filters={dealFilters} />
     </List>
   );
 };
 
-const DealLayout = () => {
+const DealLayout = ({ filters }: { filters: ReactNode[] }) => {
   const location = useLocation();
   const matchCreate = matchPath("/deals/create", location.pathname);
   const matchShow = matchPath("/deals/:id/show", location.pathname);
@@ -79,12 +84,21 @@ const DealLayout = () => {
   if (isPending) return null;
   if (dealData.length === 0 && !hasFilters)
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          background: HATCH.surfaceDeep,
+          flex: 1,
+          minHeight: 0,
+        }}
+      >
+        <DealPageHeader activeDealCount={0} filters={filters} />
         <DealEmpty>
           <DealShow open={!!matchShow} id={matchShow?.params.id} />
           <DealArchivedList />
         </DealEmpty>
-      </>
+      </div>
     );
 
   return (
@@ -97,35 +111,7 @@ const DealLayout = () => {
         minHeight: 0,
       }}
     >
-      <div
-        style={{
-          padding: "24px 28px 20px",
-          background: HATCH.surfaceDeep,
-          flexShrink: 0,
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <HatchPageHeader
-          eyebrow="Pipeline"
-          title="Deals"
-          count={activeDealCount}
-          countSuffix="active deals"
-          actions={
-          <Link
-            to="/deals/create"
-            className="font-heading"
-          >
-            <HatchPrimaryButton asChild>
-              <span className="inline-flex items-center gap-2">
-                <Plus size={14} strokeWidth={2.5} />
-                Add deal
-              </span>
-            </HatchPrimaryButton>
-          </Link>
-          }
-        />
-      </div>
+      <DealPageHeader activeDealCount={activeDealCount} filters={filters} />
       {dealData.length === 0 ? (
         <DealsFilteredEmptyState onClear={() => setFilters({}, [])} />
       ) : (
@@ -138,6 +124,80 @@ const DealLayout = () => {
     </div>
   );
 };
+
+const DealPageHeader = ({
+  activeDealCount,
+  filters,
+}: {
+  activeDealCount: number;
+  filters: ReactNode[];
+}) => (
+  <div
+    style={{
+      padding: "24px 28px 20px",
+      background: HATCH.surfaceDeep,
+      flexShrink: 0,
+      position: "relative",
+      zIndex: 1,
+    }}
+  >
+    <HatchPageHeader
+      eyebrow="Pipeline"
+      title="Deals"
+      count={activeDealCount}
+      countSuffix="active deals"
+      actions={
+        <Link to="/deals/create" className="font-heading">
+          <HatchPrimaryButton asChild>
+            <span className="inline-flex items-center gap-2">
+              <Plus size={14} strokeWidth={2.5} />
+              Add deal
+            </span>
+          </HatchPrimaryButton>
+        </Link>
+      }
+    />
+    <FilterContext.Provider value={filters}>
+      <style>{DEAL_FILTER_STYLES}</style>
+      <FilterForm className="deal-filter-toolbar mt-5" />
+    </FilterContext.Provider>
+  </div>
+);
+
+const DEAL_FILTER_STYLES = `
+  .deal-filter-toolbar {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .deal-filter-toolbar .filter-field[data-source="q"] {
+    width: 238px;
+  }
+
+  .deal-filter-toolbar input,
+  .deal-filter-toolbar button[role="combobox"] {
+    height: 36px;
+    border-radius: 8px;
+    border-color: rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.03);
+    color: #ECEEF5;
+    font-size: 13px;
+  }
+
+  .deal-filter-toolbar input::placeholder {
+    color: #5C6784;
+  }
+
+  .deal-filter-toolbar label {
+    color: #9AA3BE;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .deal-filter-toolbar [data-state="checked"] {
+    background: #4DC8E8;
+  }
+`;
 
 const DealsFilteredEmptyState = ({ onClear }: { onClear: () => void }) => (
   <div

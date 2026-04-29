@@ -1,10 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-react";
 import { buildContact, createCrmDb, StoryWrapper } from "@/test/StoryWrapper";
-
-vi.mock("./DeliveryDashboard", () => ({
-  DeliveryDashboard: () => <div>DeliveryDashboard component</div>,
-}));
 
 import { Dashboard } from "./Dashboard";
 
@@ -93,7 +89,7 @@ const createDashboardData = () =>
   } as any);
 
 describe("Dashboard", () => {
-  it("renders the delivery dashboard when ?view=delivery is set", async () => {
+  it("keeps dashboard focused when a stale delivery query param is present", async () => {
     const screen = await render(
       <StoryWrapper
         data={createDashboardData()}
@@ -104,7 +100,10 @@ describe("Dashboard", () => {
     );
 
     await expect
-      .element(screen.getByText("DeliveryDashboard component"))
+      .element(screen.getByText("Pipeline Value", { exact: false }))
       .toBeInTheDocument();
+    await expect
+      .element(screen.getByText("Delivery Hub"))
+      .not.toBeInTheDocument();
   });
 });

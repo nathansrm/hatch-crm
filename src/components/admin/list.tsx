@@ -90,8 +90,7 @@ export const List = <RecordType extends RaRecord = RaRecord>(
 };
 
 export interface ListProps<RecordType extends RaRecord = RaRecord>
-  extends ListBaseProps<RecordType>,
-    ListViewProps<RecordType> {}
+  extends ListBaseProps<RecordType>, ListViewProps<RecordType> {}
 
 /**
  * The view component for List pages with layout and UI.
@@ -126,6 +125,10 @@ export const ListView = <RecordType extends RaRecord = RaRecord>(
         });
   const { hasCreate } = useResourceDefinition({ resource });
   const hasDashboard = useHasDashboard();
+  const shouldRenderTitle =
+    finalTitle !== false ||
+    actions !== false ||
+    (actions === undefined && (filters?.length || hasCreate));
 
   return (
     <>
@@ -143,18 +146,22 @@ export const ListView = <RecordType extends RaRecord = RaRecord>(
       )}
 
       <FilterContext.Provider value={filters}>
-        <div className="flex justify-between items-start flex-wrap gap-2 my-2">
-          <h2 className="text-2xl font-bold tracking-tight mb-2">
-            {finalTitle}
-          </h2>
-          {actions ?? (
-            <div className="flex items-center gap-2">
-              {filters && filters.length > 0 ? <FilterButton /> : null}
-              {hasCreate ? <CreateButton /> : null}
-              {<ExportButton />}
-            </div>
-          )}
-        </div>
+        {shouldRenderTitle ? (
+          <div className="flex justify-between items-start flex-wrap gap-2 my-2">
+            {finalTitle !== false ? (
+              <h2 className="text-2xl font-bold tracking-tight mb-2">
+                {finalTitle}
+              </h2>
+            ) : null}
+            {actions ?? (
+              <div className="flex items-center gap-2">
+                {filters && filters.length > 0 ? <FilterButton /> : null}
+                {hasCreate ? <CreateButton /> : null}
+                {<ExportButton />}
+              </div>
+            )}
+          </div>
+        ) : null}
         <FilterForm />
 
         <div className={cn("my-2", props.className)}>{children}</div>

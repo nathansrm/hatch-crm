@@ -1,4 +1,5 @@
 import { useGetList } from "ra-core";
+import { HatchPageHeader } from "../_primitives";
 import { OPEN_DEALS_FILTER } from "../deals/dealFilters";
 import { formatCategory } from "../deals/dealFormatters";
 import type { Deal, Sale } from "../types";
@@ -158,62 +159,12 @@ export const ReportsPage = () => {
         background: "var(--ink-1)",
       }}
     >
-      {/* Page header */}
       <div style={{ padding: "24px 28px 20px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--hatch-cyan)",
-              fontWeight: 700,
-            }}
-          >
-            Analytics
-          </span>
-          <span
-            style={{ height: 1, width: 24, background: "rgba(77,200,232,0.4)" }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h1
-              className="font-heading"
-              style={{
-                margin: 0,
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: "var(--fg-1)",
-              }}
-            >
-              Reports
-            </h1>
-            <p
-              style={{
-                margin: "4px 0 0",
-                color: "var(--fg-2-muted)",
-                fontSize: 13,
-              }}
-            >
-              Pipeline metrics and revenue breakdown
-            </p>
-          </div>
-        </div>
+        <HatchPageHeader
+          eyebrow="Analytics"
+          title="Reports"
+          subline="Pipeline metrics and revenue breakdown"
+        />
       </div>
 
       {/* KPI strip */}

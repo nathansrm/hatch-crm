@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import {
   Draggable,
   type DraggableProvided,
@@ -19,10 +18,20 @@ import { getDealDecayLevel, type DecayLevel } from "./dealUtils";
 import { stackInfo } from "./stackInfo";
 import { stageColorMap } from "./stageColors";
 
-const decayStyles: Record<DecayLevel, CSSProperties> = {
-  none: {},
-  amber: { outline: "2px solid rgba(245,184,74,0.5)", outlineOffset: "-2px" },
-  red: { outline: "2px solid rgba(239,90,111,0.6)", outlineOffset: "-2px" },
+const decayBadgeStyles: Record<
+  Exclude<DecayLevel, "none">,
+  { color: string; background: string; border: string }
+> = {
+  amber: {
+    color: "rgb(245 184 74)",
+    background: "rgba(245,184,74,0.08)",
+    border: "rgba(245,184,74,0.24)",
+  },
+  red: {
+    color: HATCH.danger,
+    background: HATCH.dangerBg,
+    border: HATCH.dangerBorder,
+  },
 };
 
 export const DealCard = ({ deal, index }: { deal: Deal; index: number }) => {
@@ -49,6 +58,9 @@ export const DealCardContent = ({
   const { dealCategories, currency } = useConfigurationContext();
   const colors = stageColorMap[deal.stage];
   const decay = getDealDecayLevel(deal);
+  const staleDays = Math.floor(
+    (Date.now() - new Date(deal.updated_at).getTime()) / 86400000,
+  );
   const stackSlugs = Array.isArray(deal.software_stack)
     ? deal.software_stack.filter(Boolean)
     : [];
@@ -81,13 +93,12 @@ export const DealCardContent = ({
         <div
           style={{
             background: snapshot?.isDragging ? "rgb(22 31 54)" : HATCH.surface,
-            border: "1px solid rgba(255,255,255,0.07)",
+            border: `1px solid ${HATCH.border}`,
             borderLeft: `3px solid ${colors?.border ?? HATCH.cyan}`,
-            borderRadius: 10,
+            borderRadius: 8,
             padding: "12px 14px",
             cursor: "pointer",
             transition: "all 0.15s",
-            ...decayStyles[decay],
           }}
         >
           <div
@@ -103,9 +114,10 @@ export const DealCardContent = ({
             >
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p
+                  className="font-heading"
                   style={{
                     fontSize: 13,
-                    fontWeight: 600,
+                    fontWeight: 700,
                     color: HATCH.textHi,
                     lineHeight: 1.35,
                     margin: 0,
@@ -123,8 +135,8 @@ export const DealCardContent = ({
                 <p
                   style={{
                     fontSize: 11,
-                    fontWeight: 400,
-                    color: HATCH.textLo,
+                    fontWeight: 500,
+                    color: HATCH.textMd,
                     lineHeight: 1.35,
                     margin: 0,
                     marginTop: 2,
@@ -145,47 +157,56 @@ export const DealCardContent = ({
               </ReferenceField>
             </div>
             <p
-              className="font-mono"
               style={{
                 fontSize: 12,
                 color: HATCH.textLo,
                 margin: 0,
               }}
             >
-              <NumberField
-                source="amount"
-                options={{
-                  notation: "compact",
-                  style: "currency",
-                  currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
-                }}
-              />
-              {deal.category && ", "}
-              <SelectField
-                source="category"
-                choices={dealCategories}
-                optionText="label"
-                optionValue="value"
-              />
+              <span className="font-mono">
+                <NumberField
+                  source="amount"
+                  options={{
+                    notation: "compact",
+                    style: "currency",
+                    currency,
+                    currencyDisplay: "narrowSymbol",
+                    minimumSignificantDigits: 3,
+                  }}
+                />
+              </span>
+              {deal.category ? (
+                <>
+                  <span style={{ color: HATCH.textMuted }}> / </span>
+                  <SelectField
+                    source="category"
+                    choices={dealCategories}
+                    optionText="label"
+                    optionValue="value"
+                  />
+                </>
+              ) : null}
             </p>
             {decay !== "none" && (
-              <p
+              <span
                 style={{
-                  fontSize: 11,
-                  color: decay === "red" ? HATCH.danger : "rgb(245 184 74)",
-                  fontWeight: 600,
-                  marginTop: 2,
-                  marginBottom: 0,
+                  alignSelf: "flex-start",
+                  marginTop: 4,
+                  padding: "2px 7px",
+                  borderRadius: 4,
+                  border: `1px solid ${decayBadgeStyles[decay].border}`,
+                  background: decayBadgeStyles[decay].background,
+                  color: decayBadgeStyles[decay].color,
+                  fontSize: 10,
+                  fontWeight: 750,
+                  lineHeight: 1.4,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
                 }}
+                title={`${staleDays} days without activity`}
               >
-                {Math.floor(
-                  (Date.now() - new Date(deal.updated_at).getTime()) /
-                    86400000,
-                )}
-                d stale
-              </p>
+                {staleDays}d stale
+              </span>
             )}
             {hasEnrichment && (
               <div

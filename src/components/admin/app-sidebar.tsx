@@ -3,6 +3,7 @@ import {
   Briefcase,
   Building2,
   CheckSquare,
+  ClipboardCheck,
   Inbox,
   Layers,
   LayoutDashboard,
@@ -141,6 +142,12 @@ export function AppSidebar() {
       end: true,
     },
     { key: "deals", label: "Deals", icon: Briefcase, to: "/deals" },
+    {
+      key: "delivery",
+      label: "Delivery",
+      icon: ClipboardCheck,
+      to: "/delivery",
+    },
     {
       key: "intake",
       label: "Intake",

@@ -19,6 +19,7 @@ import { SimpleFormIterator } from "@/components/admin/simple-form-iterator";
 import { TextInput } from "@/components/admin/text-input";
 
 import ImageEditorField from "../misc/ImageEditorField";
+import { HatchPageHeader } from "../_primitives";
 import {
   useConfigurationContext,
   useConfigurationUpdater,
@@ -150,50 +151,11 @@ export const SettingsPage = () => {
           borderBottom: "1px solid rgba(255,255,255,0.07)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--hatch-cyan)",
-              fontWeight: 700,
-            }}
-          >
-            Workspace
-          </span>
-          <span
-            style={{ height: 1, width: 24, background: "rgba(77,200,232,0.4)" }}
-          />
-        </div>
-        <h1
-          className="font-heading"
-          style={{
-            margin: 0,
-            fontSize: 26,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "var(--fg-1)",
-          }}
-        >
-          Settings
-        </h1>
-        <p
-          style={{
-            margin: "4px 0 0",
-            color: "var(--fg-2-muted)",
-            fontSize: 13,
-          }}
-        >
-          Configure your CRM workspace, pipeline, and data fields
-        </p>
+        <HatchPageHeader
+          eyebrow="Workspace"
+          title="Settings"
+          subline="Configure your CRM workspace, pipeline, and data fields"
+        />
       </div>
       <EditBase
         resource="configuration"

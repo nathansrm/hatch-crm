@@ -19,7 +19,7 @@ export const CompanyList = () => {
       title={false}
       perPage={25}
       sort={{ field: "name", order: "ASC" }}
-      actions={<CompanyListActions />}
+      actions={false}
       pagination={<ListPagination rowsPerPageOptions={[10, 25, 50, 100]} />}
     >
       <CompanyListLayout />
@@ -41,6 +41,7 @@ const CompanyListLayout = () => {
         title="Companies"
         count={total ?? 0}
         countSuffix="accounts tracked"
+        actions={<CompanyListActions />}
       />
       <div className="w-full flex flex-row gap-8">
         <CompanyListFilter />
@@ -55,7 +56,7 @@ const CompanyListLayout = () => {
 const CompanyListActions = () => {
   const translate = useTranslate();
   return (
-    <TopToolbar>
+    <TopToolbar className="flex-none">
       <SortButton fields={["name", "created_at", "nb_contacts"]} />
       <ExportButton />
       <CreateButton

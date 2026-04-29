@@ -1,13 +1,11 @@
 import type { Identifier } from "ra-core";
+import { Eye, FileCheck2, Send } from "lucide-react";
 
-import { HATCH } from "../_primitives";
+import { HatchGhostButton, HatchPrimaryButton, HATCH } from "../_primitives";
 import type { IntakeLead } from "../types";
 import { IntakePromoteButton } from "./IntakePromoteButton";
 
 const OUTREACH_STEPS_TOTAL = 7;
-const SUCCESS = "#34D399";
-const SUCCESS_BG = "rgba(52,211,153,0.1)";
-const SUCCESS_BORDER = "rgba(52,211,153,0.25)";
 const TRACK_BG = "rgba(255,255,255,0.06)";
 
 export const OutreachProgress = ({ record }: { record: IntakeLead }) => {
@@ -108,31 +106,10 @@ export const IntakeActionButton = ({
   onToggleExpanded: (id: Identifier) => void;
 }) => {
   const handleExpand = () => onToggleExpanded(record.id);
-  const primaryButtonStyle = {
-    padding: "6px 14px",
-    borderRadius: 7,
-    fontSize: 12,
-    fontWeight: 600,
-    color: SUCCESS,
-    background: SUCCESS_BG,
-    border: `1px solid ${SUCCESS_BORDER}`,
-    cursor: "pointer",
-  } as const;
-  const secondaryButtonStyle = {
-    padding: "6px 14px",
-    borderRadius: 7,
-    fontSize: 12,
-    fontWeight: 600,
-    color: HATCH.textLo,
-    background: HATCH.hover,
-    border: `1px solid ${HATCH.border}`,
-    cursor: "pointer",
-  } as const;
-  const disabledButtonStyle = {
-    ...secondaryButtonStyle,
-    opacity: 0.5,
-    cursor: "not-allowed",
-  } as const;
+  const hasDraft = Boolean(record.outreach_draft || record.outreach_subject);
+  const ghostClass =
+    "h-8 border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] px-3 text-xs";
+  const disabledClass = `${ghostClass} opacity-50`;
 
   if (record.status === "engaged") {
     return (
@@ -144,41 +121,63 @@ export const IntakeActionButton = ({
 
   if (record.status === "qualified") {
     return (
-      <button type="button" disabled style={disabledButtonStyle}>
+      <HatchGhostButton type="button" size="sm" disabled className={disabledClass}>
         Promoted
-      </button>
+      </HatchGhostButton>
     );
   }
 
   if (record.status === "rejected") {
     return (
-      <button type="button" disabled style={disabledButtonStyle}>
+      <HatchGhostButton type="button" size="sm" disabled className={disabledClass}>
         Rejected
-      </button>
+      </HatchGhostButton>
     );
   }
 
   if (record.status === "not-interested") {
     return (
-      <button type="button" onClick={handleExpand} style={secondaryButtonStyle}>
+      <HatchGhostButton
+        type="button"
+        size="sm"
+        onClick={handleExpand}
+        className={ghostClass}
+      >
+        <Eye className="mr-1.5 size-3.5" />
         Review Notes
-      </button>
+      </HatchGhostButton>
     );
   }
 
   if (record.status === "uncontacted") {
     return (
-      <button type="button" onClick={handleExpand} style={primaryButtonStyle}>
-        Send Outreach
-      </button>
+      <HatchPrimaryButton
+        type="button"
+        size="sm"
+        onClick={handleExpand}
+        className="h-8 px-3 text-xs"
+      >
+        {hasDraft ? (
+          <FileCheck2 className="mr-1.5 size-3.5" />
+        ) : (
+          <Send className="mr-1.5 size-3.5" />
+        )}
+        {hasDraft ? "Review Draft" : "Prep Outreach"}
+      </HatchPrimaryButton>
     );
   }
 
   if (record.status === "in-sequence" || record.status === "unresponsive") {
     return (
-      <button type="button" onClick={handleExpand} style={secondaryButtonStyle}>
+      <HatchGhostButton
+        type="button"
+        size="sm"
+        onClick={handleExpand}
+        className={ghostClass}
+      >
+        <Eye className="mr-1.5 size-3.5" />
         View Sequence
-      </button>
+      </HatchGhostButton>
     );
   }
 

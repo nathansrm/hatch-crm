@@ -1,71 +1,32 @@
-import { useMemo } from "react";
-import { useGetList } from "ra-core";
 import {
-  AlertCircle,
   ArrowRight,
   Check,
   ExternalLink,
   Mail,
-  MailCheck,
-  Pencil,
-  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
   HatchGhostButton,
-  HatchPrimaryButton,
   HATCH,
   HATCH_CLASS,
 } from "../_primitives";
-import type { IntakeLead, OutreachStep } from "../types";
+import type { IntakeLead } from "../types";
+import { SnapshotItem, SnapshotTagList } from "./IntakeExpandedRowParts";
+import { OutreachStepsTimeline } from "./OutreachStepsTimeline";
 import {
-  DraftStatusPill,
-  SnapshotItem,
-  SnapshotTagList,
-} from "./IntakeExpandedRowParts";
-import {
-  capitalize,
   DRAFT_STATUS_LABELS,
   formatShortDate,
   getCadenceStyles,
   intakeExpandedPanelStyle,
   OUTREACH_CADENCE,
-  STEP_STATUS_LABELS,
 } from "./IntakeExpandedRowUtils";
 
 export const IntakeExpandedRow = ({ record }: { record: IntakeLead }) => {
-  const { data: outreachSteps = [] } = useGetList<OutreachStep>(
-    "outreach_steps",
-    {
-      filter: { intake_lead_id: String(record.id) },
-      pagination: { page: 1, perPage: 10 },
-      sort: { field: "sequence_step", order: "DESC" },
-    },
-  );
-
   const currentStep = Math.max(
     0,
     Math.min(OUTREACH_CADENCE.length, record.outreach_sequence_step),
   );
-  const reviewStep = useMemo(
-    () =>
-      outreachSteps.find((step) =>
-        ["ai_reviewed", "action_needed", "drafting", "approved"].includes(
-          step.status,
-        ),
-      ) ?? outreachSteps[0],
-    [outreachSteps],
-  );
-  const draftSubject = reviewStep?.subject ?? record.outreach_subject;
-  const draftBody = reviewStep?.body ?? record.outreach_draft;
-  const draftStatus = reviewStep?.status
-    ? STEP_STATUS_LABELS[reviewStep.status]
-    : DRAFT_STATUS_LABELS[record.current_draft_status];
-  const reviewStatus = reviewStep?.review_status
-    ? `${capitalize(reviewStep.review_status)} validation`
-    : "Validation not run";
-  const hasDraft = Boolean(draftBody);
   const snapshotTags = [
     record.city,
     record.source,
@@ -148,117 +109,10 @@ export const IntakeExpandedRow = ({ record }: { record: IntakeLead }) => {
       </section>
 
       <section style={{ ...intakeExpandedPanelStyle, padding: 18 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 16,
-          }}
-        >
-          <div>
-            <div className={HATCH_CLASS.eyebrowAccent}>Outreach draft</div>
-            <h4
-              className="font-heading"
-              style={{
-                margin: "8px 0 0",
-                color: HATCH.textHi,
-                fontSize: 17,
-                fontWeight: 800,
-              }}
-            >
-              {draftSubject || "No subject generated yet"}
-            </h4>
-          </div>
-          <DraftStatusPill label={draftStatus} />
-        </div>
-
-        <div
-          className="intake-draft-scroll"
-          style={{
-            marginTop: 16,
-            minHeight: 190,
-            maxHeight: 280,
-            overflowY: "auto",
-            scrollbarWidth: "none",
-            padding: 16,
-            borderRadius: 10,
-            border: `1px solid ${HATCH.fieldBorder}`,
-            background: "rgba(8,12,26,0.74)",
-            color: hasDraft ? HATCH.textMd : HATCH.textMuted,
-            fontSize: 13,
-            lineHeight: 1.65,
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          <style>{`.intake-draft-scroll::-webkit-scrollbar{display:none;}`}</style>
-          {draftBody ||
-            "No draft generated yet. Once the outreach agent creates one, it will appear here for review before anything is sent."}
-        </div>
-
-        {reviewStep?.review_feedback ? (
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              marginTop: 12,
-              padding: "10px 12px",
-              borderRadius: 8,
-              background: "rgba(239,90,111,0.08)",
-              border: `1px solid ${HATCH.dangerBorder}`,
-              color: HATCH.textMd,
-              fontSize: 12.5,
-            }}
-          >
-            <AlertCircle style={{ width: 15, height: 15, color: HATCH.danger }} />
-            <span>{reviewStep.review_feedback}</span>
-          </div>
-        ) : null}
-
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            marginTop: 14,
-          }}
-        >
-          <span style={{ color: HATCH.textMuted, fontSize: 12 }}>
-            {reviewStatus}
-          </span>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            <HatchGhostButton
-              type="button"
-              size="sm"
-              disabled={!hasDraft}
-              className="border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)]"
-              onClick={() => toast.info("Draft editing is coming soon.")}
-            >
-              <Pencil className="mr-1.5 size-3.5" />
-              Edit draft
-            </HatchGhostButton>
-            <HatchPrimaryButton
-              type="button"
-              size="sm"
-              disabled={!hasDraft}
-              onClick={() => toast.info("Draft approval is coming soon.")}
-            >
-              <MailCheck className="mr-1.5 size-3.5" />
-              Approve
-            </HatchPrimaryButton>
-            <HatchPrimaryButton
-              type="button"
-              size="sm"
-              disabled={!hasDraft}
-              onClick={() => toast.info("Gmail send handoff is coming soon.")}
-            >
-              <Send className="mr-1.5 size-3.5" />
-              Send
-            </HatchPrimaryButton>
-          </div>
-        </div>
+        <OutreachStepsTimeline
+          leadId={String(record.id)}
+          leadEmail={record.email ?? undefined}
+        />
       </section>
 
       <section style={{ ...intakeExpandedPanelStyle, padding: 16 }}>

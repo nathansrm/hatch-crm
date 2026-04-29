@@ -8,7 +8,6 @@ import { HATCH } from "@/components/hatch-crm/_primitives";
 import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext";
 import type { Deal } from "@/components/hatch-crm/types";
 import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
-import { ImportPage } from "../misc/ImportPage";
 import {
   formatCompactCurrency,
   getValidDate,
@@ -402,7 +401,7 @@ const ImportFromJsonMenuItem = () => {
   }
   return (
     <DropdownMenuItem asChild onClick={userMenuContext.onClose}>
-      <Link to={ImportPage.path} className="flex items-center gap-2">
+      <Link to="/import" className="flex items-center gap-2">
         <Import />
         {translate("crm.header.import_data")}
       </Link>

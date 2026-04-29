@@ -5,7 +5,7 @@ import type {
   LayoutComponent,
 } from "ra-core";
 import { CustomRoutes, localStorageStore, Resource } from "ra-core";
-import { useEffect, useMemo } from "react";
+import { lazy, Suspense, type ReactNode, useEffect, useMemo } from "react";
 import { Route, Navigate } from "react-router";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
@@ -25,7 +25,6 @@ import { Layout } from "../layout/Layout";
 import { MobileLayout } from "../layout/MobileLayout";
 import { SignupPage } from "../login/SignupPage";
 import { ConfirmationRequired } from "../login/ConfirmationRequired";
-import { ImportPage } from "../misc/ImportPage";
 import {
   getAuthProvider as supabaseAuthProviderBuilder,
   getDataProvider as supabaseDataProviderBuilder,
@@ -44,11 +43,6 @@ const defaultAuthProviderBuilder = isDemo
   : supabaseAuthProviderBuilder;
 import integrationLog from "../integration-log";
 import sales from "../sales";
-import { SettingsPageMobile } from "../settings/SettingsPageMobile";
-import { ProfilePage } from "../settings/ProfilePage";
-import { SettingsPage } from "../settings/SettingsPage";
-import { ReportsPage } from "../reports/ReportsPage";
-import { ResourcesPage } from "../resources/ResourcesPage";
 import {
   CONFIGURATION_STORE_KEY,
   type ConfigurationContextValue,
@@ -69,14 +63,67 @@ import {
 import { i18nProvider as defaulti18nProvider } from "../providers/commons/i18nProvider";
 import { StartPage } from "../login/StartPage.tsx";
 import { useIsMobile } from "@/hooks/use-mobile.ts";
-import { MobileTasksList } from "../tasks/MobileTasksList.tsx";
-import { TasksPage } from "../tasks/TasksPage.tsx";
 import { ContactListMobile } from "../contacts/ContactList.tsx";
 import { ContactShow } from "../contacts/ContactShow.tsx";
-import { CompanyListMobile } from "../companies/CompanyListMobile.tsx";
 import { CompanyShow } from "../companies/CompanyShow.tsx";
-import { DealListMobile } from "../deals/DealListMobile.tsx";
-import { NoteShowPage } from "../notes/NoteShowPage.tsx";
+
+const ImportPage = lazy(() =>
+  import("../misc/ImportPage").then((module) => ({ default: module.ImportPage })),
+);
+const SettingsPageMobile = lazy(() =>
+  import("../settings/SettingsPageMobile").then((module) => ({
+    default: module.SettingsPageMobile,
+  })),
+);
+const ProfilePage = lazy(() =>
+  import("../settings/ProfilePage").then((module) => ({
+    default: module.ProfilePage,
+  })),
+);
+const SettingsPage = lazy(() =>
+  import("../settings/SettingsPage").then((module) => ({
+    default: module.SettingsPage,
+  })),
+);
+const ReportsPage = lazy(() =>
+  import("../reports/ReportsPage").then((module) => ({
+    default: module.ReportsPage,
+  })),
+);
+const ResourcesPage = lazy(() =>
+  import("../resources/ResourcesPage").then((module) => ({
+    default: module.ResourcesPage,
+  })),
+);
+const MobileTasksList = lazy(() =>
+  import("../tasks/MobileTasksList.tsx").then((module) => ({
+    default: module.MobileTasksList,
+  })),
+);
+const TasksPage = lazy(() =>
+  import("../tasks/TasksPage.tsx").then((module) => ({
+    default: module.TasksPage,
+  })),
+);
+const CompanyListMobile = lazy(() =>
+  import("../companies/CompanyListMobile.tsx").then((module) => ({
+    default: module.CompanyListMobile,
+  })),
+);
+const DealListMobile = lazy(() =>
+  import("../deals/DealListMobile.tsx").then((module) => ({
+    default: module.DealListMobile,
+  })),
+);
+const NoteShowPage = lazy(() =>
+  import("../notes/NoteShowPage.tsx").then((module) => ({
+    default: module.NoteShowPage,
+  })),
+);
+
+const lazyRouteElement = (component: ReactNode) => (
+  <Suspense fallback={null}>{component}</Suspense>
+);
 
 const defaultStore = localStorageStore(undefined, "CRM");
 
@@ -262,11 +309,14 @@ const DesktopAdmin = (
       </CustomRoutes>
 
       <CustomRoutes>
-        <Route path={ProfilePage.path} element={<ProfilePage />} />
-        <Route path={SettingsPage.path} element={<SettingsPage />} />
-        <Route path={ImportPage.path} element={<ImportPage />} />
-        <Route path={ReportsPage.path} element={<ReportsPage />} />
-        <Route path={ResourcesPage.path} element={<ResourcesPage />} />
+        <Route path="/profile" element={lazyRouteElement(<ProfilePage />)} />
+        <Route path="/settings" element={lazyRouteElement(<SettingsPage />)} />
+        <Route path="/import" element={lazyRouteElement(<ImportPage />)} />
+        <Route path="/reports" element={lazyRouteElement(<ReportsPage />)} />
+        <Route
+          path="/resources"
+          element={lazyRouteElement(<ResourcesPage />)}
+        />
         <Route
           path="/intake"
           element={<Navigate to="/intake_leads" replace />}
@@ -340,10 +390,13 @@ const MobileAdmin = (
         </CustomRoutes>
         <CustomRoutes>
           <Route
-            path={SettingsPageMobile.path}
-            element={<SettingsPageMobile />}
+            path="/settings"
+            element={lazyRouteElement(<SettingsPageMobile />)}
           />
-          <Route path={ResourcesPage.path} element={<ResourcesPage />} />
+          <Route
+            path="/resources"
+            element={lazyRouteElement(<ResourcesPage />)}
+          />
           <Route
             path="/intake"
             element={<Navigate to="/intake_leads" replace />}
@@ -355,7 +408,10 @@ const MobileAdmin = (
           show={ContactShow}
           recordRepresentation={contacts.recordRepresentation}
         >
-          <Route path=":id/notes/:noteId" element={<NoteShowPage />} />
+          <Route
+            path=":id/notes/:noteId"
+            element={lazyRouteElement(<NoteShowPage />)}
+          />
         </Resource>
         <Resource name="deals" list={DealListMobile} />
         <Resource

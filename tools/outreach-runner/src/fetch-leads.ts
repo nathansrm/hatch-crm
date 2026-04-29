@@ -3,6 +3,7 @@
 declare const process: {
   argv: string[];
   env: Record<string, string | undefined>;
+  stdout: { write(data: string): boolean };
   exit(code?: number): never;
 };
 
@@ -174,7 +175,7 @@ export async function fetchLeads(
 export async function runFetchLeads(
   argv: string[],
   env: Record<string, string | undefined>,
-  stdout: Logger = console.log,
+  stdout: Logger = (message) => process.stdout.write(`${message}\n`),
   stderr: Logger = console.error
 ) {
   try {

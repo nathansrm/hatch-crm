@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-// @ts-expect-error Node types are intentionally not a package dependency.
 import { readFileSync } from 'node:fs';
 import { validate } from './validator.js';
 
 declare const process: {
   argv: string[];
+  stdout: { write(data: string): boolean };
   exit(code?: number): never;
 };
 
@@ -28,7 +28,7 @@ try {
     trade_type?: string;
   };
   const result = validate(draft, lead);
-  console.log(JSON.stringify(result));
+  process.stdout.write(`${JSON.stringify(result)}\n`);
   process.exit(result.pass ? 0 : 1);
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));

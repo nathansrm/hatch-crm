@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test, { mock } from 'node:test';
+import type * as FetchLeadsExports from '../src/fetch-leads.ts';
 
 type QueryResult = {
   data: unknown[] | null;
@@ -12,7 +13,7 @@ type QueryCall = {
 };
 
 type TableCalls = Record<string, QueryCall[]>;
-type FetchLeadsModule = typeof import('../src/fetch-leads.ts');
+type FetchLeadsModule = typeof FetchLeadsExports;
 type ModuleMock = {
   module?: (specifier: string, options: { namedExports: Record<string, unknown> }) => unknown;
   restoreAll: () => void;

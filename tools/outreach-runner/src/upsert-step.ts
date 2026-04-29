@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-// @ts-expect-error Node types are intentionally not a package dependency.
 import { readFileSync } from 'node:fs';
 
 declare const process: {
   argv: string[];
   env: Record<string, string | undefined>;
+  stdout: { write(data: string): boolean };
   exit(code?: number): never;
 };
 
@@ -130,7 +130,7 @@ async function parseResponseJson(response: Response) {
 export async function runUpsertStep(
   argv: string[],
   env: Record<string, string | undefined>,
-  stdout: Logger = console.log,
+  stdout: Logger = (message) => process.stdout.write(`${message}\n`),
   stderr: Logger = console.error,
   readStdin: () => string = () => readFileSync(0, 'utf8'),
   fetchImpl: FetchLike = fetch

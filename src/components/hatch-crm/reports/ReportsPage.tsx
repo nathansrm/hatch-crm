@@ -1,6 +1,5 @@
 import { useGetList } from "ra-core";
 import {
-  Activity,
   BarChart3,
   CircleDollarSign,
   Gauge,
@@ -10,7 +9,7 @@ import {
 
 import { HatchCard, HatchPageHeader, HatchPanel, HATCH } from "../_primitives";
 import { OPEN_DEALS_FILTER } from "../deals/dealFilters";
-import { formatCategory, formatStage } from "../deals/dealFormatters";
+import { formatCategory } from "../deals/dealFormatters";
 import type { Deal, Sale } from "../types";
 
 const REPORTS_DEALS_FILTER = {
@@ -133,20 +132,6 @@ export const ReportsPage = () => {
     .slice(0, 7);
   const maxCat = catStats[0]?.value ?? 1;
 
-  const pipelineStats = Array.from(new Set(active.map((d) => d.stage)))
-    .map((stage) => {
-      const stageDeals = active.filter((d) => d.stage === stage);
-      const value = stageDeals.reduce((a, d) => a + (d.amount ?? 0), 0);
-      return {
-        stage,
-        count: stageDeals.length,
-        value,
-        share: pipelineValue > 0 ? (value / pipelineValue) * 100 : 0,
-      };
-    })
-    .sort((a, b) => b.value - a.value);
-
-  const maxPipeline = Math.max(...pipelineStats.map((item) => item.value), 1);
   const outcomeWonPct = closedTotal > 0 ? (won.length / closedTotal) * 100 : 50;
   const outcomeLostPct =
     closedTotal > 0 ? (lost.length / closedTotal) * 100 : 50;
@@ -338,47 +323,7 @@ export const ReportsPage = () => {
           </HatchPanel>
         </section>
 
-        <section className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start gap-5">
-          <HatchPanel className="p-5">
-            <PanelHeader eyebrow="Pipeline" title="Open value by stage" />
-            {pipelineStats.length === 0 ? (
-              <EmptyState>No pipeline data yet.</EmptyState>
-            ) : (
-              <div className="mt-4 space-y-3">
-                {pipelineStats.map((item, i) => {
-                  const color = barColors[i % barColors.length];
-                  return (
-                    <div key={item.stage} className="space-y-2">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-[#ECEEF5]">
-                            {formatStage(item.stage)}
-                          </p>
-                          <p className="font-mono mt-0.5 text-[11px] text-[#9AA3BE]">
-                            {item.count} deal{item.count !== 1 ? "s" : ""} -{" "}
-                            {fmtPct(item.share)}
-                          </p>
-                        </div>
-                        <span className="font-mono text-xs font-semibold text-[#ECEEF5]">
-                          {fmt(item.value, true)}
-                        </span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.035)]">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${(item.value / maxPipeline) * 100}%`,
-                            background: `linear-gradient(90deg, ${color}aa, ${color})`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </HatchPanel>
-
+        <section className="grid grid-cols-2 items-start gap-5">
           <HatchPanel className="p-5">
             <PanelHeader eyebrow="Team" title="Performance by rep" />
             {repStats.length === 0 ? (
@@ -426,9 +371,7 @@ export const ReportsPage = () => {
               </div>
             )}
           </HatchPanel>
-        </section>
 
-        <section className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5">
           <HatchPanel className="p-5">
             <PanelHeader eyebrow="Vertical" title="Revenue by category" />
             {catStats.length === 0 ? (
@@ -467,52 +410,6 @@ export const ReportsPage = () => {
               </div>
             )}
           </HatchPanel>
-
-          <HatchCard padding="md" className="flex flex-col justify-between">
-            <div>
-              <p className={sectionHeadingClass}>Activity</p>
-              <h2 className={`${panelTitleClass} mt-1`}>Closed deal mix</h2>
-            </div>
-            <div className="mt-5 space-y-3">
-              {[
-                {
-                  label: "Won value",
-                  value: fmt(wonValue, true),
-                  color: "text-emerald-400",
-                },
-                {
-                  label: "Lost value",
-                  value: fmt(lostValue, true),
-                  color: "text-rose-400",
-                },
-                {
-                  label: "Average won",
-                  value: fmt(avgDeal, true),
-                  color: "text-amber-300",
-                },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] px-3 py-2"
-                >
-                  <span className="text-sm font-medium text-[#9AA3BE]">
-                    {item.label}
-                  </span>
-                  <span
-                    className={`font-mono text-sm font-semibold ${item.color}`}
-                  >
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 flex items-center gap-2 border-t border-[rgba(255,255,255,0.07)] pt-4 text-xs text-[#9AA3BE]">
-              <Activity className="h-4 w-4 text-[#4DC8E8]" />
-              <span className="font-mono">
-                {closedTotal} closed / {active.length} active
-              </span>
-            </div>
-          </HatchCard>
         </section>
       </main>
     </div>

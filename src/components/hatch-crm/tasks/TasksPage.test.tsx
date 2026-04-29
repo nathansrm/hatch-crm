@@ -9,6 +9,7 @@ const testState = vi.hoisted(() => ({
   tasks: [] as Task[],
   update: vi.fn(),
   deleteHandler: vi.fn(),
+  redirect: vi.fn(),
 }));
 
 vi.mock("ra-core", () => ({
@@ -20,22 +21,24 @@ vi.mock("ra-core", () => ({
         ? [{ id: 1, first_name: "Ada", last_name: "Lovelace" }]
         : [],
   }),
-  useTranslate: () => (key: string, options?: { _: string }) => options?._ ?? key,
+  useTranslate: () => (key: string, options?: { _: string }) =>
+    options?._ ?? key,
   useUpdate: () => [testState.update],
+  useRedirect: () => testState.redirect,
   useDeleteWithUndoController: () => ({
     handleDelete: testState.deleteHandler,
   }),
   useNotify: () => vi.fn(),
 }));
 
-vi.mock("./TaskEditSheet", () => ({
-  TaskEditSheet: ({ taskId }: { taskId: string | number }) => (
-    <div data-testid="task-edit-sheet">Editing {taskId}</div>
+vi.mock("./TaskEditDialog", () => ({
+  TaskEditDialog: ({ taskId }: { taskId: string | number }) => (
+    <div data-testid="task-edit-dialog">Editing {taskId}</div>
   ),
 }));
 
-vi.mock("./TaskCreateSheet", () => ({
-  TaskCreateSheet: () => null,
+vi.mock("./TaskCreateDialog", () => ({
+  TaskCreateDialog: () => null,
 }));
 
 const buildTask = (id: number, done: boolean): Task => ({
@@ -51,6 +54,7 @@ describe("TasksPage", () => {
   beforeEach(() => {
     testState.update.mockClear();
     testState.deleteHandler.mockClear();
+    testState.redirect.mockClear();
     testState.tasks = [
       buildTask(1, true),
       buildTask(2, true),

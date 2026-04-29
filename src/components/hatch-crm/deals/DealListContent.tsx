@@ -31,6 +31,12 @@ export const DealListContent = () => {
 
   if (isPending) return null;
 
+  const boardColumnMinWidth = 208;
+  const boardGap = 16;
+  const boardMinWidth =
+    dealStages.length * boardColumnMinWidth +
+    Math.max(0, dealStages.length - 1) * boardGap;
+
   const onDragEnd: OnDragEndResponder = (result) => {
     const { destination, source } = result;
 
@@ -89,9 +95,9 @@ export const DealListContent = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: `repeat(${dealStages.length}, minmax(232px, 1fr))`,
-            gap: 16,
-            minWidth: 1160,
+            gridTemplateColumns: `repeat(${dealStages.length}, minmax(${boardColumnMinWidth}px, 1fr))`,
+            gap: boardGap,
+            minWidth: boardMinWidth,
             paddingTop: 0,
             borderTop: `1px solid ${HATCH.border}`,
           }}

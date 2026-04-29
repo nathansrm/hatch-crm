@@ -23,6 +23,7 @@ import {
   type Identifier,
 } from "ra-core";
 import { useEffect, useMemo, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import {
   HatchGhostButton,
@@ -257,6 +258,7 @@ const getNoteTag = (value?: string | null) =>
   };
 
 export const ActiveProjectsGrid = () => {
+  const isMobile = useIsMobile();
   const redirect = useRedirect();
   const refresh = useRefresh();
   const { identity } = useGetIdentity();
@@ -483,8 +485,9 @@ export const ActiveProjectsGrid = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "300px minmax(430px, 1fr) minmax(360px, 0.9fr)",
+            gridTemplateColumns: isMobile
+              ? "minmax(0, 1fr)"
+              : "300px minmax(430px, 1fr) minmax(360px, 0.9fr)",
             gap: 14,
             alignItems: "stretch",
           }}
@@ -648,12 +651,13 @@ export const ActiveProjectsGrid = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: 18,
-                  minHeight: 640,
+                  minHeight: isMobile ? "auto" : 640,
                 }}
               >
                 <div
                   style={{
                     display: "flex",
+                    flexDirection: isMobile ? "column" : "row",
                     alignItems: "flex-start",
                     justifyContent: "space-between",
                     gap: 18,
@@ -820,7 +824,9 @@ export const ActiveProjectsGrid = () => {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                      gridTemplateColumns: isMobile
+                        ? "minmax(0, 1fr)"
+                        : "repeat(2, minmax(0, 1fr))",
                       gap: 12,
                     }}
                   >
@@ -923,6 +929,7 @@ export const ActiveProjectsGrid = () => {
                 <div
                   style={{
                     display: "flex",
+                    flexWrap: isMobile ? "wrap" : "nowrap",
                     gap: 8,
                     marginTop: "auto",
                     paddingTop: 2,

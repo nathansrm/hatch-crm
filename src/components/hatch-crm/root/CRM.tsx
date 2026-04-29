@@ -408,6 +408,11 @@ const MobileAdmin = (
             path="/settings"
             element={lazyRouteElement(<SettingsPageMobile />)}
           />
+          <Route path="/reports" element={lazyRouteElement(<ReportsPage />)} />
+          <Route
+            path="/delivery"
+            element={lazyRouteElement(<DeliveryDashboard />)}
+          />
           <Route
             path="/resources"
             element={lazyRouteElement(<ResourcesPage />)}

@@ -36,7 +36,7 @@ export const HatchPageHeader = ({
           style={{ background: "rgba(77,200,232,0.4)" }}
         />
       </div>
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <h1
             className="font-heading text-[26px] font-bold tracking-[-0.02em] text-[#ECEEF5]"
@@ -56,7 +56,9 @@ export const HatchPageHeader = ({
           ) : null}
         </div>
         {actions ? (
-          <div className="flex items-center gap-2">{actions}</div>
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            {actions}
+          </div>
         ) : null}
       </div>
     </div>

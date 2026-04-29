@@ -176,7 +176,7 @@ export const ReportsPage = () => {
 
   return (
     <div
-      className="hatch-scrollbar-none flex min-h-0 flex-1 flex-col overflow-y-auto p-7"
+      className="hatch-scrollbar-none flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-5 pb-[calc(7rem_+_env(safe-area-inset-bottom))] sm:p-7"
       style={{ background: HATCH.surfaceDeep }}
     >
       <header className="pb-5">
@@ -190,12 +190,12 @@ export const ReportsPage = () => {
       </header>
 
       <main className="space-y-5">
-        <section className="grid grid-cols-5 gap-3">
+        <section className="grid grid-cols-2 gap-3 xl:grid-cols-5">
           {kpis.map(({ Icon, ...kpi }) => (
             <HatchCard
               key={kpi.label}
               padding="md"
-              className="relative min-h-[132px] overflow-hidden"
+              className="relative min-h-[116px] overflow-hidden sm:min-h-[132px]"
             >
               <div
                 className="absolute inset-x-0 top-0 h-0.5"
@@ -227,7 +227,7 @@ export const ReportsPage = () => {
           ))}
         </section>
 
-        <section className="grid grid-cols-[minmax(0,1.55fr)_minmax(320px,0.9fr)] gap-5">
+        <section className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.9fr)]">
           <HatchPanel className="p-5">
             <PanelHeader eyebrow="Revenue Trend" title="Monthly closed won" />
             <div className="mt-5 grid h-[168px] grid-cols-6 items-end gap-2">
@@ -323,21 +323,21 @@ export const ReportsPage = () => {
           </HatchPanel>
         </section>
 
-        <section className="grid grid-cols-2 items-start gap-5">
+        <section className="grid grid-cols-1 items-start gap-5 xl:grid-cols-2">
           <HatchPanel className="p-5">
             <PanelHeader eyebrow="Team" title="Performance by rep" />
             {repStats.length === 0 ? (
               <EmptyState>No rep data yet.</EmptyState>
             ) : (
-              <div className="mt-4">
-                <div className="grid grid-cols-[minmax(160px,1.6fr)_0.7fr_0.7fr_0.9fr_0.7fr] gap-3 border-b border-[rgba(255,255,255,0.07)] px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#5C6784]">
+              <div className="hatch-scrollbar-none mt-4 overflow-x-auto">
+                <div className="grid min-w-[560px] grid-cols-[minmax(160px,1.6fr)_0.7fr_0.7fr_0.9fr_0.7fr] gap-3 border-b border-[rgba(255,255,255,0.07)] px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#5C6784]">
                   <span>Rep</span>
                   <span className="text-right">Pipe</span>
                   <span className="text-right">Won</span>
                   <span className="text-right">Revenue</span>
                   <span className="text-right">Rate</span>
                 </div>
-                <div className="divide-y divide-[rgba(255,255,255,0.05)]">
+                <div className="min-w-[560px] divide-y divide-[rgba(255,255,255,0.05)]">
                   {repStats.map((r) => (
                     <div
                       key={r.name}

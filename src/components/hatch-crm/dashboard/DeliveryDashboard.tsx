@@ -2,12 +2,17 @@ import { ActiveProjectsGrid } from "./widgets/ActiveProjectsGrid";
 import { DeliveryKPIs } from "./widgets/DeliveryKPIs";
 import { HandoffQueue } from "./widgets/HandoffQueue";
 import { HatchPageHeader } from "../_primitives";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const DeliveryDashboard = () => {
+  const isMobile = useIsMobile();
+
   return (
     <main
       style={{
-        padding: "24px 28px 48px",
+        padding: isMobile
+          ? "20px 16px calc(7rem + env(safe-area-inset-bottom))"
+          : "24px 28px 48px",
         display: "flex",
         flexDirection: "column",
         gap: 20,

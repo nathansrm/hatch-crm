@@ -65,7 +65,7 @@ export const HatchSheet = ({
         actions={headerActions}
         titleAsRadix={false}
       />
-      <div className="flex-1 overflow-y-auto px-6 py-5">
+      <div className="hatch-scrollbar-none flex-1 overflow-y-auto px-6 py-5">
         <div className="space-y-5">{children}</div>
       </div>
       {footer ? (

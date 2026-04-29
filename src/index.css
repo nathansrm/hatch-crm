@@ -248,6 +248,17 @@ input[type="time"] {
   }
 }
 
+@layer utilities {
+  .hatch-scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hatch-scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 body {
   font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 }

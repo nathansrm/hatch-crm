@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   type Identifier,
   useGetIdentity,
@@ -6,10 +6,18 @@ import {
   useGetMany,
   useDeleteWithUndoController,
   useNotify,
+  useRedirect,
   useTranslate,
   useUpdate,
 } from "ra-core";
-import { Check, Clock, MoreHorizontal, Plus } from "lucide-react";
+import {
+  Building2,
+  Check,
+  Clock,
+  MoreHorizontal,
+  Plus,
+  UserRound,
+} from "lucide-react";
 import { useSearchParams } from "react-router";
 import {
   DropdownMenu,
@@ -17,19 +25,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
   HatchCard,
+  HatchGhostButton,
   HatchPageHeader,
   HatchPanel,
   HatchPrimaryButton,
+  HatchTabs,
+  HatchTabsList,
+  HatchTabsTrigger,
   HATCH,
 } from "../_primitives";
 import type { Company, Contact } from "../types";
 import type { Task } from "../types";
-import { TaskCreateSheet } from "./TaskCreateSheet";
-import { TaskEditSheet } from "./TaskEditSheet";
+import { TaskCreateDialog } from "./TaskCreateDialog";
+import { TaskEditDialog } from "./TaskEditDialog";
 import { getTaskMeta } from "./taskTypeMeta";
 import {
   isDone,
@@ -45,7 +56,9 @@ type TaskView = "all" | "open" | "completed";
 type TaskGroup = "overdue" | "today" | "this_week" | "later";
 
 type ContactDisplay = {
+  id: Identifier;
   name: string;
+  companyId: Identifier | null;
   companyName: string | null;
 };
 
@@ -160,7 +173,9 @@ const useContactDisplayMap = (tasks: Task[]) => {
       (contacts ?? []).map((contact) => [
         contact.id,
         {
+          id: contact.id,
           name: formatContactName(contact),
+          companyId: contact.company_id ?? null,
           companyName:
             contact.company_name ??
             (contact.company_id != null
@@ -179,6 +194,9 @@ const TaskRow = ({
   onSelect,
   onToggle,
   onEdit,
+  onPostpone,
+  onOpenContact,
+  onOpenCompany,
 }: {
   task: Task;
   contact: ContactDisplay | undefined;
@@ -186,6 +204,9 @@ const TaskRow = ({
   onSelect: () => void;
   onToggle: (task: Task) => void;
   onEdit: (task: Task) => void;
+  onPostpone: (task: Task, days: number) => void;
+  onOpenContact: (contactId: Identifier) => void;
+  onOpenCompany: (companyId: Identifier) => void;
 }) => {
   const meta = getTaskMeta(task.type);
   const Icon = meta.icon;
@@ -204,7 +225,7 @@ const TaskRow = ({
 
   return (
     <div
-      className={`grid w-full grid-cols-[44px_minmax(220px,1.8fr)_150px_130px_120px_44px] items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
+      className={`grid w-full grid-cols-[32px_minmax(150px,1fr)_96px_112px_56px_32px] items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
         selected
           ? "border-[#4DC8E8]/40 bg-[#4DC8E8]/10"
           : "border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.06)]"
@@ -237,8 +258,39 @@ const TaskRow = ({
           {task.text}
         </button>
         <span className="mt-1 block truncate text-xs text-[#9AA3BE]">
-          {contact?.name ?? "Unknown contact"}
-          {contact?.companyName ? ` - ${contact.companyName}` : ""}
+          {contact ? (
+            <>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onOpenContact(contact.id);
+                }}
+                className="hover:text-[#4DC8E8]"
+              >
+                {contact.name}
+              </button>
+              {contact.companyName ? (
+                <>
+                  <span> - </span>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (contact.companyId != null) {
+                        onOpenCompany(contact.companyId);
+                      }
+                    }}
+                    className="hover:text-[#4DC8E8]"
+                  >
+                    {contact.companyName}
+                  </button>
+                </>
+              ) : null}
+            </>
+          ) : (
+            "Unknown contact"
+          )}
         </span>
       </span>
       <span className="flex items-center gap-2 text-xs font-medium text-[#9AA3BE]">
@@ -270,7 +322,40 @@ const TaskRow = ({
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(event) => {
+              event.stopPropagation();
+              onPostpone(task, 1);
+            }}
+          >
+            Tomorrow
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(event) => {
+              event.stopPropagation();
+              onPostpone(task, 7);
+            }}
+          >
+            Next week
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit(task);
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleDelete(event);
+            }}
+          >
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -282,6 +367,7 @@ const TaskRow = ({
 export const TasksPage = () => {
   const translate = useTranslate();
   const { identity } = useGetIdentity();
+  const redirect = useRedirect();
   const [searchParams, setSearchParams] = useSearchParams();
   const viewParam = searchParams.get("view");
   const activeView: TaskView =
@@ -335,6 +421,21 @@ export const TasksPage = () => {
     open: taskList.filter((task) => !isDone(task)).length,
     completed: taskList.filter((task) => isDone(task)).length,
   };
+  const groupCounts: Record<TaskGroup, number> = {
+    overdue: groups.overdue.length,
+    today: groups.today.length,
+    this_week: groups.this_week.length,
+    later: groups.later.length,
+  };
+
+  useEffect(() => {
+    if (
+      selectedTaskId != null &&
+      !visibleTasks.some((task) => task.id === selectedTaskId)
+    ) {
+      setSelectedTaskId(null);
+    }
+  }, [selectedTaskId, visibleTasks]);
 
   const handleViewChange = (view: string) => {
     const nextView: TaskView =
@@ -354,11 +455,25 @@ export const TasksPage = () => {
       { mutationMode: "undoable" },
     );
   };
+  const handlePostpone = (task: Task, days: number) => {
+    const dueDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
+    update(
+      "tasks",
+      {
+        id: task.id,
+        data: { due_date: dueDate },
+        previousData: task,
+      },
+      { mutationMode: "undoable" },
+    );
+  };
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col overflow-y-auto p-7"
-      style={{ background: HATCH.surface }}
+      className="hatch-scrollbar-none flex min-h-0 flex-1 flex-col overflow-y-auto p-7"
+      style={{ background: HATCH.surfaceDeep }}
     >
       <header className="pb-5">
         <HatchPageHeader
@@ -370,66 +485,79 @@ export const TasksPage = () => {
           count={visibleTasks.length}
           countSuffix="visible tasks"
           actions={
-            <HatchPrimaryButton
-              type="button"
-              onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              {translate("resources.tasks.action.add", { _: "Add task" })}
-            </HatchPrimaryButton>
+            <div className="flex items-center gap-2">
+              <HatchGhostButton
+                type="button"
+                onClick={() => redirect("/contacts")}
+                className="h-10"
+              >
+                Contacts
+              </HatchGhostButton>
+              <HatchPrimaryButton
+                type="button"
+                onClick={() => setCreateOpen(true)}
+                className="inline-flex h-10 items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                {translate("resources.tasks.action.add", { _: "Add task" })}
+              </HatchPrimaryButton>
+            </div>
           }
         />
-        <Tabs
+        <HatchTabs
           value={activeView}
           onValueChange={handleViewChange}
           className="mt-5"
         >
-          <TabsList className="bg-[rgba(255,255,255,0.04)]">
+          <HatchTabsList className="w-fit min-w-[360px]">
             {VIEW_ORDER.map((view) => (
-              <TabsTrigger
-                key={view}
-                value={view}
-                className="data-[state=active]:bg-[#4DC8E8] data-[state=active]:text-[#06111F]"
-              >
+              <HatchTabsTrigger key={view} value={view} className="gap-2">
                 {VIEW_LABELS[view]}
                 <span className="ml-2 font-mono text-xs">
                   {viewCounts[view]}
                 </span>
-              </TabsTrigger>
+              </HatchTabsTrigger>
             ))}
-          </TabsList>
-        </Tabs>
+          </HatchTabsList>
+        </HatchTabs>
       </header>
 
-      <main className="grid min-h-0 flex-1 grid-cols-[220px_minmax(0,1fr)_300px] gap-5">
+      <main className="grid min-h-0 flex-1 grid-cols-[190px_minmax(0,1fr)_320px] gap-5">
         <HatchPanel className="p-4">
-          <nav className="space-y-1">
-            {VIEW_ORDER.map((view) => (
-              <button
-                key={view}
-                type="button"
-                onClick={() => handleViewChange(view)}
-                className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  activeView === view
-                    ? "bg-[#4DC8E8]/10 text-[#ECEEF5]"
-                    : "text-[#9AA3BE] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#ECEEF5]"
-                }`}
+          <div className="mb-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5C6784]">
+              Due buckets
+            </p>
+            <p className="mt-1 text-sm text-[#9AA3BE]">
+              {activeView === "completed"
+                ? "Completed tasks by original due date."
+                : "Open work grouped by urgency."}
+            </p>
+          </div>
+          <div className="space-y-2">
+            {GROUP_ORDER.map((group) => (
+              <div
+                key={group}
+                className="flex items-center justify-between rounded-md border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.025)] px-3 py-2"
               >
-                <span>{VIEW_LABELS[view]}</span>
-                <span className="font-mono text-xs">{viewCounts[view]}</span>
-              </button>
+                <span className="text-sm font-medium text-[#B8C0D6]">
+                  {GROUP_LABELS[group]}
+                </span>
+                <span className="font-mono text-xs text-[#ECEEF5]">
+                  {groupCounts[group]}
+                </span>
+              </div>
             ))}
-          </nav>
+          </div>
         </HatchPanel>
 
-        <HatchPanel className="min-w-0 overflow-y-auto p-5">
-          <div className="mb-3 grid grid-cols-[44px_minmax(220px,1.8fr)_150px_130px_120px_44px] gap-3 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#5C6784]">
+        <HatchPanel className="hatch-scrollbar-none min-w-0 overflow-y-auto p-5">
+          <div className="mb-3 grid grid-cols-[32px_minmax(150px,1fr)_96px_112px_56px_32px] gap-3 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#5C6784]">
             <span />
             <span>Task</span>
             <span>Due</span>
             <span>Type</span>
-            <span>Done</span>
+            <span>Status</span>
             <span />
           </div>
 
@@ -445,9 +573,7 @@ export const TasksPage = () => {
           ) : visibleTasks.length === 0 ? (
             <div className="grid min-h-[320px] place-items-center rounded-lg border border-dashed border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.03)] p-8 text-center">
               <div>
-                <p className="text-sm font-semibold text-[#ECEEF5]">
-                  No tasks
-                </p>
+                <p className="text-sm font-semibold text-[#ECEEF5]">No tasks</p>
                 <p className="mt-1 text-sm text-[#9AA3BE]">
                   Create a task to start filling the queue.
                 </p>
@@ -476,6 +602,13 @@ export const TasksPage = () => {
                           onSelect={() => setSelectedTaskId(task.id)}
                           onToggle={handleToggle}
                           onEdit={(task) => setEditingTaskId(task.id)}
+                          onPostpone={handlePostpone}
+                          onOpenContact={(contactId) =>
+                            redirect(`/contacts/${contactId}/show`)
+                          }
+                          onOpenCompany={(companyId) =>
+                            redirect(`/companies/${companyId}/show`)
+                          }
                         />
                       ))}
                     </div>
@@ -486,7 +619,10 @@ export const TasksPage = () => {
           )}
         </HatchPanel>
 
-        <HatchCard padding="md" className="min-h-0 overflow-y-auto">
+        <HatchCard
+          padding="md"
+          className="hatch-scrollbar-none min-h-0 overflow-y-auto"
+        >
           {selectedTask == null ? (
             <div className="grid h-full place-items-center text-center">
               <div>
@@ -515,55 +651,100 @@ export const TasksPage = () => {
                 </p>
               </div>
 
-              <dl className="space-y-4 text-sm">
-                <div>
+              <dl className="space-y-3 text-sm">
+                <div className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-3">
                   <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5C6784]">
                     Due
                   </dt>
-                  <dd className="mt-1 text-[#ECEEF5]">
+                  <dd className="mt-1 flex items-center gap-2 text-[#ECEEF5]">
+                    <Clock className="h-4 w-4 text-[#9AA3BE]" />
                     {formatDueDate(selectedTask.due_date)}
                   </dd>
                 </div>
-                <div>
+                <div className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-3">
                   <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5C6784]">
                     Type
                   </dt>
-                  <dd className="mt-1 text-[#ECEEF5]">
-                    {getTaskMeta(selectedTask.type).label}
+                  <dd className="mt-1 flex items-center gap-2 text-[#ECEEF5]">
+                    {(() => {
+                      const meta = getTaskMeta(selectedTask.type);
+                      const Icon = meta.icon;
+                      return (
+                        <>
+                          <Icon className={`h-4 w-4 ${meta.accentClass}`} />
+                          {meta.label}
+                        </>
+                      );
+                    })()}
                   </dd>
                 </div>
-                <div>
+                <div className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-3">
                   <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5C6784]">
-                    Done
+                    Relationship
                   </dt>
-                  <dd className="mt-1 text-[#ECEEF5]">
-                    {isDone(selectedTask) ? "Done" : "Open"}
+                  <dd className="mt-2 space-y-2">
+                    {selectedContact ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            redirect(`/contacts/${selectedContact.id}/show`)
+                          }
+                          className="flex w-full items-center gap-2 rounded-md text-left text-[#ECEEF5] hover:text-[#4DC8E8]"
+                        >
+                          <UserRound className="h-4 w-4 text-[#9AA3BE]" />
+                          <span className="truncate">
+                            {selectedContact.name}
+                          </span>
+                        </button>
+                        {selectedContact.companyName ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (selectedContact.companyId != null) {
+                                redirect(
+                                  `/companies/${selectedContact.companyId}/show`,
+                                );
+                              }
+                            }}
+                            className="flex w-full items-center gap-2 rounded-md text-left text-[#B8C0D6] hover:text-[#4DC8E8]"
+                          >
+                            <Building2 className="h-4 w-4 text-[#9AA3BE]" />
+                            <span className="truncate">
+                              {selectedContact.companyName}
+                            </span>
+                          </button>
+                        ) : null}
+                      </>
+                    ) : (
+                      <span className="text-[#9AA3BE]">Unknown contact</span>
+                    )}
                   </dd>
                 </div>
               </dl>
 
-              <div className="mt-auto space-y-2">
-                <button
+              <div className="mt-auto space-y-2 pt-5">
+                <HatchPrimaryButton
                   type="button"
                   onClick={() => handleToggle(selectedTask)}
-                  className="w-full rounded-md border border-[rgba(255,255,255,0.07)] px-3 py-2 text-sm font-semibold text-[#ECEEF5] hover:bg-[rgba(255,255,255,0.04)]"
+                  className="w-full"
                 >
                   {isDone(selectedTask) ? "Mark incomplete" : "Mark complete"}
-                </button>
-                <button
+                </HatchPrimaryButton>
+                <HatchGhostButton
                   type="button"
                   onClick={() => setEditingTaskId(selectedTask.id)}
-                  className="w-full rounded-md border border-[rgba(255,255,255,0.07)] px-3 py-2 text-sm font-semibold text-[#ECEEF5] hover:bg-[rgba(255,255,255,0.04)]"
+                  className="w-full border border-[rgba(255,255,255,0.07)]"
                 >
                   Edit
-                </button>
+                </HatchGhostButton>
               </div>
             </div>
           )}
         </HatchCard>
       </main>
       {editingTaskId != null ? (
-        <TaskEditSheet
+        <TaskEditDialog
           taskId={editingTaskId}
           open={editingTaskId != null}
           onOpenChange={(open) => {
@@ -571,7 +752,7 @@ export const TasksPage = () => {
           }}
         />
       ) : null}
-      <TaskCreateSheet open={createOpen} onOpenChange={setCreateOpen} />
+      <TaskCreateDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 };

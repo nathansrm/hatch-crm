@@ -1,7 +1,16 @@
 import { useGetList } from "ra-core";
-import { HatchPageHeader } from "../_primitives";
+import {
+  Activity,
+  BarChart3,
+  CircleDollarSign,
+  Gauge,
+  Target,
+  Trophy,
+} from "lucide-react";
+
+import { HatchCard, HatchPageHeader, HatchPanel, HATCH } from "../_primitives";
 import { OPEN_DEALS_FILTER } from "../deals/dealFilters";
-import { formatCategory } from "../deals/dealFormatters";
+import { formatCategory, formatStage } from "../deals/dealFormatters";
 import type { Deal, Sale } from "../types";
 
 const REPORTS_DEALS_FILTER = {
@@ -32,6 +41,26 @@ const MONTH_LABELS = [
   "Dec",
 ];
 
+const barColors = [
+  "#4DC8E8",
+  "#34D399",
+  "#A78BFA",
+  "#F5B84A",
+  "#5EEAD4",
+  "#EF5A6F",
+  "#F5B84A",
+];
+
+const sectionHeadingClass =
+  "text-[10px] font-bold uppercase tracking-[0.2em] text-[#5C6784]";
+const panelTitleClass = "font-heading text-sm font-bold text-[#ECEEF5]";
+
+const getRateColor = (rate: number) => {
+  if (rate >= 50) return "text-emerald-400";
+  if (rate >= 30) return "text-amber-300";
+  return "text-rose-400";
+};
+
 export const ReportsPage = () => {
   const { data: deals = [] } = useGetList<Deal>("deals", {
     filter: REPORTS_DEALS_FILTER,
@@ -52,7 +81,6 @@ export const ReportsPage = () => {
   const winRate = closedTotal > 0 ? (won.length / closedTotal) * 100 : 0;
   const avgDeal = won.length > 0 ? wonValue / won.length : 0;
 
-  // Monthly revenue (last 6 months from won deals by expected_closing_date)
   const now = new Date();
   const monthlyData = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
@@ -68,7 +96,6 @@ export const ReportsPage = () => {
   });
   const maxBar = Math.max(...monthlyData.map((d) => d.value), 1);
 
-  // By rep
   const repStats = sales.map((rep) => {
     const repDeals = deals.filter((d) => d.sales_id === rep.id);
     const repWon = repDeals.filter((d) => d.stage === "won");
@@ -89,7 +116,6 @@ export const ReportsPage = () => {
     };
   });
 
-  // By category (trade)
   const categories = Array.from(
     new Set(deals.map((d) => d.category).filter(Boolean)),
   );
@@ -107,648 +133,409 @@ export const ReportsPage = () => {
     .slice(0, 7);
   const maxCat = catStats[0]?.value ?? 1;
 
+  const pipelineStats = Array.from(new Set(active.map((d) => d.stage)))
+    .map((stage) => {
+      const stageDeals = active.filter((d) => d.stage === stage);
+      const value = stageDeals.reduce((a, d) => a + (d.amount ?? 0), 0);
+      return {
+        stage,
+        count: stageDeals.length,
+        value,
+        share: pipelineValue > 0 ? (value / pipelineValue) * 100 : 0,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
+
+  const maxPipeline = Math.max(...pipelineStats.map((item) => item.value), 1);
+  const outcomeWonPct = closedTotal > 0 ? (won.length / closedTotal) * 100 : 50;
+  const outcomeLostPct =
+    closedTotal > 0 ? (lost.length / closedTotal) * 100 : 50;
+
   const kpis = [
     {
       label: "Closed Won",
       value: fmt(wonValue, true),
       sub: `${won.length} deal${won.length !== 1 ? "s" : ""}`,
       color: "#34D399",
+      Icon: Trophy,
     },
     {
       label: "Pipeline",
       value: fmt(pipelineValue, true),
       sub: `${active.length} active`,
       color: "#4DC8E8",
+      Icon: BarChart3,
     },
     {
       label: "Closed Lost",
       value: fmt(lostValue, true),
       sub: `${lost.length} deal${lost.length !== 1 ? "s" : ""}`,
       color: "#EF5A6F",
+      Icon: Target,
     },
     {
       label: "Win Rate",
       value: fmtPct(winRate),
       sub: "closed deals",
       color: "#A78BFA",
+      Icon: Gauge,
     },
     {
       label: "Avg Deal Size",
       value: fmt(avgDeal, true),
       sub: "closed won",
       color: "#F5B84A",
+      Icon: CircleDollarSign,
     },
-  ];
-
-  const barColors = [
-    "#4DC8E8",
-    "#34D399",
-    "#A78BFA",
-    "#F5B84A",
-    "#5EEAD4",
-    "#EF5A6F",
-    "#F5B84A",
   ];
 
   return (
     <div
-      style={{
-        flex: 1,
-        overflowY: "auto",
-        minHeight: 0,
-        background: "var(--ink-1)",
-      }}
+      className="hatch-scrollbar-none flex min-h-0 flex-1 flex-col overflow-y-auto p-7"
+      style={{ background: HATCH.surfaceDeep }}
     >
-      <div style={{ padding: "24px 28px 20px" }}>
+      <header className="pb-5">
         <HatchPageHeader
           eyebrow="Analytics"
           title="Reports"
+          count={deals.length}
+          countSuffix="open deal records"
           subline="Pipeline metrics and revenue breakdown"
         />
-      </div>
+      </header>
 
-      {/* KPI strip */}
-      <div
-        style={{
-          padding: "0 28px 20px",
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: 14,
-        }}
-      >
-        {kpis.map((k) => (
-          <div
-            key={k.label}
-            style={{
-              padding: "16px 20px",
-              borderRadius: 12,
-              background: "var(--ink-3)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 2,
-                background: `linear-gradient(90deg, ${k.color} 0%, ${k.color}44 50%, transparent 100%)`,
-              }}
-            />
-            <div
-              style={{
-                fontSize: 9.5,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "var(--fg-4a)",
-                fontWeight: 700,
-                marginBottom: 10,
-              }}
-            >
-              {k.label}
-            </div>
-            <div
-              className="font-heading"
-              style={{
-                fontSize: 26,
-                fontWeight: 700,
-                color: "var(--white)",
-                letterSpacing: "-0.02em",
-                marginBottom: 4,
-              }}
-            >
-              {k.value}
-            </div>
-            <div style={{ fontSize: 11, color: "var(--fg-4a)" }}>{k.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      <div
-        style={{
-          padding: "0 28px 28px",
-          display: "grid",
-          gridTemplateColumns: "1.6fr 1fr",
-          gap: 20,
-        }}
-      >
-        {/* Revenue bar chart */}
-        <div
-          style={{
-            padding: "20px 24px",
-            borderRadius: 12,
-            background: "var(--ink-3)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9.5,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--fg-4a)",
-              fontWeight: 700,
-              marginBottom: 4,
-            }}
-          >
-            Revenue trend
-          </div>
-          <div
-            className="font-heading"
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: "var(--fg-1)",
-              marginBottom: 16,
-            }}
-          >
-            Monthly closed won
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              gap: 8,
-              height: 140,
-              padding: "0 4px",
-            }}
-          >
-            {monthlyData.map((d, i) => {
-              const h =
-                maxBar > 0
-                  ? Math.max((d.value / maxBar) * 120, d.value > 0 ? 6 : 0)
-                  : 0;
-              const isLast = i === monthlyData.length - 1;
-              return (
-                <div
-                  key={d.month}
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 9.5,
-                      color: isLast ? "var(--hatch-cyan)" : "var(--fg-4a)",
-                      marginBottom: 4,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {d.value > 0 ? fmt(d.value, true) : ""}
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      height: h || 4,
-                      borderRadius: "5px 5px 2px 2px",
-                      background: isLast
-                        ? "linear-gradient(180deg, var(--hatch-cyan) 0%, rgba(77,200,232,0.5) 100%)"
-                        : "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%)",
-                      boxShadow: isLast
-                        ? "0 0 20px rgba(77,200,232,0.3)"
-                        : "none",
-                      border: isLast
-                        ? "1px solid rgba(77,200,232,0.4)"
-                        : "1px solid rgba(255,255,255,0.06)",
-                    }}
-                  />
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: "var(--fg-4a)",
-                      marginTop: 6,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {d.month}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Won vs Lost */}
-        <div
-          style={{
-            padding: "20px 24px",
-            borderRadius: 12,
-            background: "var(--ink-3)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9.5,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--fg-4a)",
-              fontWeight: 700,
-              marginBottom: 4,
-            }}
-          >
-            Outcomes
-          </div>
-          <div
-            className="font-heading"
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: "var(--fg-1)",
-              marginBottom: 20,
-            }}
-          >
-            Won vs Lost
-          </div>
-          <div>
-            <div
-              style={{
-                display: "flex",
-                height: 20,
-                borderRadius: 6,
-                overflow: "hidden",
-                gap: 2,
-              }}
+      <main className="space-y-5">
+        <section className="grid grid-cols-5 gap-3">
+          {kpis.map(({ Icon, ...kpi }) => (
+            <HatchCard
+              key={kpi.label}
+              padding="md"
+              className="relative min-h-[132px] overflow-hidden"
             >
               <div
+                className="absolute inset-x-0 top-0 h-0.5"
                 style={{
-                  width: `${closedTotal > 0 ? (won.length / closedTotal) * 100 : 50}%`,
-                  background:
-                    "linear-gradient(90deg, var(--green-500), var(--good))",
-                  transition: "width .6s",
-                  minWidth: closedTotal > 0 && won.length > 0 ? 4 : 0,
+                  background: `linear-gradient(90deg, ${kpi.color} 0%, ${kpi.color}66 44%, transparent 100%)`,
                 }}
               />
-              <div
-                style={{
-                  flex: 1,
-                  background:
-                    "linear-gradient(90deg, var(--bad), var(--pink-400))",
-                  minWidth: closedTotal > 0 && lost.length > 0 ? 4 : 0,
-                }}
-              />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 6,
-                fontSize: 10.5,
-                fontWeight: 600,
-              }}
-            >
-              <span style={{ color: "var(--good)" }}>
-                Won{" "}
-                {closedTotal > 0
-                  ? fmtPct((won.length / closedTotal) * 100)
-                  : "—"}
-              </span>
-              <span style={{ color: "var(--bad)" }}>
-                Lost{" "}
-                {closedTotal > 0
-                  ? fmtPct((lost.length / closedTotal) * 100)
-                  : "—"}
-              </span>
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              marginTop: 24,
-            }}
-          >
-            {[
-              { label: "Won", color: "#34D399", val: won.length },
-              { label: "Lost", color: "#EF5A6F", val: lost.length },
-              { label: "Active", color: "#4DC8E8", val: active.length },
-            ].map((item) => (
-              <div
-                key={item.label}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 999,
-                    background: item.color,
-                  }}
-                />
-                <span
-                  className="font-heading"
-                  style={{
-                    fontSize: 28,
-                    fontWeight: 700,
-                    color: "var(--white)",
-                  }}
-                >
-                  {item.val}
-                </span>
-                <span
-                  style={{
-                    fontSize: 10.5,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--fg-4a)",
-                    fontWeight: 700,
-                  }}
-                >
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          padding: "0 28px 40px",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 20,
-        }}
-      >
-        {/* By rep */}
-        <div
-          style={{
-            padding: "20px 24px",
-            borderRadius: 12,
-            background: "var(--ink-3)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9.5,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--fg-4a)",
-              fontWeight: 700,
-              marginBottom: 4,
-            }}
-          >
-            Team
-          </div>
-          <div
-            className="font-heading"
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: "var(--fg-1)",
-              marginBottom: 16,
-            }}
-          >
-            Performance by rep
-          </div>
-          {repStats.length === 0 ? (
-            <div
-              style={{ color: "var(--fg-4a)", fontSize: 13, padding: "20px 0" }}
-            >
-              No rep data yet.
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr",
-                  gap: 12,
-                  padding: "8px 4px",
-                  fontSize: 9,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--fg-4a)",
-                  fontWeight: 700,
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
-                  marginBottom: 6,
-                }}
-              >
-                <div>Rep</div>
-                <div style={{ textAlign: "right" }}>Pipe</div>
-                <div style={{ textAlign: "right" }}>Won</div>
-                <div style={{ textAlign: "right" }}>Revenue</div>
-                <div style={{ textAlign: "right" }}>Rate</div>
-              </div>
-              {repStats.map((r) => (
-                <div
-                  key={r.name}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr",
-                    gap: 12,
-                    padding: "10px 4px",
-                    borderBottom: "1px solid rgba(255,255,255,0.04)",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 10 }}
-                  >
-                    <div
-                      className="font-heading"
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: "50%",
-                        background: "oklch(0.55 0.13 220)",
-                        display: "grid",
-                        placeItems: "center",
-                        fontWeight: 700,
-                        fontSize: 10,
-                        color: "var(--white)",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {r.initials}
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: "var(--fg-1)",
-                      }}
-                    >
-                      {r.name}
-                    </span>
-                  </div>
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 12,
-                      color: "var(--fg-1)",
-                      textAlign: "right",
-                    }}
-                  >
-                    {r.pipeline}
-                  </div>
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 12,
-                      color: "var(--good)",
-                      textAlign: "right",
-                    }}
-                  >
-                    {r.won}
-                  </div>
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 12,
-                      color: "var(--fg-1)",
-                      textAlign: "right",
-                    }}
-                  >
-                    {fmt(r.revenue, true)}
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <span
-                      className="font-mono"
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color:
-                          r.rate >= 50
-                            ? "var(--good)"
-                            : r.rate >= 30
-                              ? "var(--warn)"
-                              : "var(--bad)",
-                      }}
-                    >
-                      {fmtPct(r.rate)}
-                    </span>
-                  </div>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className={sectionHeadingClass}>{kpi.label}</p>
+                  <p className="font-heading mt-3 text-2xl font-bold text-[#ECEEF5]">
+                    {kpi.value}
+                  </p>
+                  <p className="mt-1 text-xs font-medium text-[#9AA3BE]">
+                    {kpi.sub}
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <span
+                  className="grid h-8 w-8 place-items-center rounded-lg border bg-[rgba(255,255,255,0.03)]"
+                  style={{
+                    borderColor: `${kpi.color}44`,
+                    color: kpi.color,
+                  }}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+              </div>
+            </HatchCard>
+          ))}
+        </section>
 
-        {/* By category */}
-        <div
-          style={{
-            padding: "20px 24px",
-            borderRadius: 12,
-            background: "var(--ink-3)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9.5,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--fg-4a)",
-              fontWeight: 700,
-              marginBottom: 4,
-            }}
-          >
-            Vertical
-          </div>
-          <div
-            className="font-heading"
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: "var(--fg-1)",
-              marginBottom: 16,
-            }}
-          >
-            Revenue by category
-          </div>
-          {catStats.length === 0 ? (
-            <div
-              style={{ color: "var(--fg-4a)", fontSize: 13, padding: "20px 0" }}
-            >
-              No category data yet.
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {catStats.map((t, i) => {
-                const color = barColors[i % barColors.length];
+        <section className="grid grid-cols-[minmax(0,1.55fr)_minmax(320px,0.9fr)] gap-5">
+          <HatchPanel className="p-5">
+            <PanelHeader eyebrow="Revenue Trend" title="Monthly closed won" />
+            <div className="mt-5 grid h-[168px] grid-cols-6 items-end gap-2">
+              {monthlyData.map((d, i) => {
+                const h =
+                  maxBar > 0
+                    ? Math.max((d.value / maxBar) * 128, d.value > 0 ? 8 : 4)
+                    : 4;
+                const isLast = i === monthlyData.length - 1;
                 return (
                   <div
-                    key={t.cat}
-                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    key={d.month}
+                    className="flex min-w-0 flex-col items-center"
                   >
-                    <div
-                      style={{
-                        width: 90,
-                        fontSize: 12,
-                        color: "var(--fg-2)",
-                        fontWeight: 500,
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                      }}
+                    <span
+                      className={`font-mono mb-1 min-h-4 text-[10px] font-semibold ${
+                        isLast ? "text-[#4DC8E8]" : "text-[#9AA3BE]"
+                      }`}
                     >
-                      {formatCategory(t.cat ?? "")}
-                    </div>
+                      {d.value > 0 ? fmt(d.value, true) : ""}
+                    </span>
                     <div
+                      className={`w-full rounded-t-md rounded-b-sm border ${
+                        isLast
+                          ? "border-[#4DC8E8]/40 shadow-[0_0_20px_rgba(77,200,232,0.24)]"
+                          : "border-[rgba(255,255,255,0.06)]"
+                      }`}
                       style={{
-                        flex: 1,
-                        height: 7,
-                        background: "rgba(255,255,255,0.03)",
-                        borderRadius: 4,
-                        overflow: "hidden",
+                        height: h,
+                        background: isLast
+                          ? "linear-gradient(180deg, var(--hatch-cyan) 0%, rgba(77,200,232,0.48) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.055) 100%)",
                       }}
-                    >
-                      <div
-                        style={{
-                          height: "100%",
-                          width: `${(t.value / maxCat) * 100}%`,
-                          background: `linear-gradient(90deg, ${color}aa, ${color})`,
-                          borderRadius: 4,
-                          boxShadow: `0 0 12px ${color}44`,
-                        }}
-                      />
-                    </div>
-                    <div
-                      className="font-mono"
-                      style={{
-                        fontSize: 11.5,
-                        color: "var(--fg-1)",
-                        fontWeight: 600,
-                        width: 56,
-                        textAlign: "right",
-                      }}
-                    >
-                      {t.value ? fmt(t.value, true) : "—"}
-                    </div>
-                    <div
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "var(--fg-4a)",
-                        width: 24,
-                        textAlign: "right",
-                      }}
-                    >
-                      {t.won}W
-                    </div>
+                    />
+                    <span className="mt-2 text-[11px] font-semibold text-[#5C6784]">
+                      {d.month}
+                    </span>
                   </div>
                 );
               })}
             </div>
-          )}
-        </div>
-      </div>
+          </HatchPanel>
+
+          <HatchPanel className="p-5">
+            <PanelHeader eyebrow="Outcomes" title="Won vs lost" />
+            <div className="mt-5">
+              <div className="flex h-5 gap-0.5 overflow-hidden rounded-md bg-[rgba(255,255,255,0.035)]">
+                <div
+                  className="min-w-0 bg-gradient-to-r from-emerald-500 to-emerald-300 transition-[width]"
+                  style={{
+                    width: `${outcomeWonPct}%`,
+                    minWidth: closedTotal > 0 && won.length > 0 ? 4 : 0,
+                  }}
+                />
+                <div
+                  className="min-w-0 bg-gradient-to-r from-rose-500 to-rose-300 transition-[width]"
+                  style={{
+                    width: `${outcomeLostPct}%`,
+                    minWidth: closedTotal > 0 && lost.length > 0 ? 4 : 0,
+                  }}
+                />
+              </div>
+              <div className="mt-2 flex justify-between text-[11px] font-semibold">
+                <span className="text-emerald-400">
+                  Won {closedTotal > 0 ? fmtPct(outcomeWonPct) : "-"}
+                </span>
+                <span className="text-rose-400">
+                  Lost {closedTotal > 0 ? fmtPct(outcomeLostPct) : "-"}
+                </span>
+              </div>
+            </div>
+            <div className="mt-6 grid grid-cols-3 gap-2">
+              {[
+                { label: "Won", color: "#34D399", val: won.length },
+                { label: "Lost", color: "#EF5A6F", val: lost.length },
+                { label: "Active", color: "#4DC8E8", val: active.length },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] px-3 py-3 text-center"
+                >
+                  <span
+                    className="mx-auto block h-1.5 w-8 rounded-full"
+                    style={{ background: item.color }}
+                  />
+                  <p className="font-heading mt-3 text-2xl font-bold text-[#ECEEF5]">
+                    {item.val}
+                  </p>
+                  <p className={sectionHeadingClass}>{item.label}</p>
+                </div>
+              ))}
+            </div>
+          </HatchPanel>
+        </section>
+
+        <section className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start gap-5">
+          <HatchPanel className="p-5">
+            <PanelHeader eyebrow="Pipeline" title="Open value by stage" />
+            {pipelineStats.length === 0 ? (
+              <EmptyState>No pipeline data yet.</EmptyState>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {pipelineStats.map((item, i) => {
+                  const color = barColors[i % barColors.length];
+                  return (
+                    <div key={item.stage} className="space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-[#ECEEF5]">
+                            {formatStage(item.stage)}
+                          </p>
+                          <p className="font-mono mt-0.5 text-[11px] text-[#9AA3BE]">
+                            {item.count} deal{item.count !== 1 ? "s" : ""} -{" "}
+                            {fmtPct(item.share)}
+                          </p>
+                        </div>
+                        <span className="font-mono text-xs font-semibold text-[#ECEEF5]">
+                          {fmt(item.value, true)}
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.035)]">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${(item.value / maxPipeline) * 100}%`,
+                            background: `linear-gradient(90deg, ${color}aa, ${color})`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </HatchPanel>
+
+          <HatchPanel className="p-5">
+            <PanelHeader eyebrow="Team" title="Performance by rep" />
+            {repStats.length === 0 ? (
+              <EmptyState>No rep data yet.</EmptyState>
+            ) : (
+              <div className="mt-4">
+                <div className="grid grid-cols-[minmax(160px,1.6fr)_0.7fr_0.7fr_0.9fr_0.7fr] gap-3 border-b border-[rgba(255,255,255,0.07)] px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#5C6784]">
+                  <span>Rep</span>
+                  <span className="text-right">Pipe</span>
+                  <span className="text-right">Won</span>
+                  <span className="text-right">Revenue</span>
+                  <span className="text-right">Rate</span>
+                </div>
+                <div className="divide-y divide-[rgba(255,255,255,0.05)]">
+                  {repStats.map((r) => (
+                    <div
+                      key={r.name}
+                      className="grid grid-cols-[minmax(160px,1.6fr)_0.7fr_0.7fr_0.9fr_0.7fr] items-center gap-3 px-2 py-3"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="font-heading grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#243B55] text-[10px] font-bold text-[#ECEEF5] ring-1 ring-[rgba(255,255,255,0.12)]">
+                          {r.initials}
+                        </div>
+                        <span className="truncate text-sm font-semibold text-[#ECEEF5]">
+                          {r.name}
+                        </span>
+                      </div>
+                      <span className="font-mono text-right text-xs text-[#B8C0D6]">
+                        {r.pipeline}
+                      </span>
+                      <span className="font-mono text-right text-xs text-emerald-400">
+                        {r.won}
+                      </span>
+                      <span className="font-mono text-right text-xs text-[#ECEEF5]">
+                        {fmt(r.revenue, true)}
+                      </span>
+                      <span
+                        className={`font-mono text-right text-xs font-bold ${getRateColor(r.rate)}`}
+                      >
+                        {fmtPct(r.rate)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </HatchPanel>
+        </section>
+
+        <section className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5">
+          <HatchPanel className="p-5">
+            <PanelHeader eyebrow="Vertical" title="Revenue by category" />
+            {catStats.length === 0 ? (
+              <EmptyState>No category data yet.</EmptyState>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {catStats.map((t, i) => {
+                  const color = barColors[i % barColors.length];
+                  return (
+                    <div
+                      key={t.cat}
+                      className="grid grid-cols-[150px_minmax(0,1fr)_72px_40px] items-center gap-3"
+                    >
+                      <span className="truncate text-sm font-medium text-[#B8C0D6]">
+                        {formatCategory(t.cat ?? "")}
+                      </span>
+                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.035)]">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${(t.value / maxCat) * 100}%`,
+                            background: `linear-gradient(90deg, ${color}aa, ${color})`,
+                            boxShadow: `0 0 12px ${color}40`,
+                          }}
+                        />
+                      </div>
+                      <span className="font-mono text-right text-xs font-semibold text-[#ECEEF5]">
+                        {t.value ? fmt(t.value, true) : "-"}
+                      </span>
+                      <span className="font-mono text-right text-xs text-[#9AA3BE]">
+                        {t.won}W
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </HatchPanel>
+
+          <HatchCard padding="md" className="flex flex-col justify-between">
+            <div>
+              <p className={sectionHeadingClass}>Activity</p>
+              <h2 className={`${panelTitleClass} mt-1`}>Closed deal mix</h2>
+            </div>
+            <div className="mt-5 space-y-3">
+              {[
+                {
+                  label: "Won value",
+                  value: fmt(wonValue, true),
+                  color: "text-emerald-400",
+                },
+                {
+                  label: "Lost value",
+                  value: fmt(lostValue, true),
+                  color: "text-rose-400",
+                },
+                {
+                  label: "Average won",
+                  value: fmt(avgDeal, true),
+                  color: "text-amber-300",
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] px-3 py-2"
+                >
+                  <span className="text-sm font-medium text-[#9AA3BE]">
+                    {item.label}
+                  </span>
+                  <span
+                    className={`font-mono text-sm font-semibold ${item.color}`}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex items-center gap-2 border-t border-[rgba(255,255,255,0.07)] pt-4 text-xs text-[#9AA3BE]">
+              <Activity className="h-4 w-4 text-[#4DC8E8]" />
+              <span className="font-mono">
+                {closedTotal} closed / {active.length} active
+              </span>
+            </div>
+          </HatchCard>
+        </section>
+      </main>
     </div>
   );
 };
+
+const PanelHeader = ({
+  eyebrow,
+  title,
+}: {
+  eyebrow: string;
+  title: string;
+}) => (
+  <div>
+    <p className={sectionHeadingClass}>{eyebrow}</p>
+    <h2 className={`${panelTitleClass} mt-1`}>{title}</h2>
+  </div>
+);
+
+const EmptyState = ({ children }: { children: string }) => (
+  <div className="mt-4 rounded-lg border border-dashed border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.025)] px-4 py-8 text-center text-sm text-[#9AA3BE]">
+    {children}
+  </div>
+);
 
 ReportsPage.path = "/reports";

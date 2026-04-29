@@ -98,7 +98,9 @@ export const HatchDialog = ({
           </DialogDescription>
         </>
       )}
-      <div className={cn("px-6 py-5", className)}>{children}</div>
+      <div className={cn("hatch-scrollbar-none px-6 py-5", className)}>
+        {children}
+      </div>
       {footer ? (
         <div className="flex flex-row justify-end gap-3 border-t border-[rgba(255,255,255,0.07)] px-6 py-4">
           {footer}

@@ -20,10 +20,10 @@ Reorganize the Deal Show dialog into a command center for proposal prep — Deci
 ## Scope
 
 ### In Scope
-- [ ] `src/components/atomic-crm/deals/DealShow.tsx` — restructure `DealShowContent` layout
-- [ ] `src/components/atomic-crm/deals/DecisionContextBlock.tsx` — new component
-- [ ] `src/components/atomic-crm/deals/StackBlock.tsx` — new component
-- [ ] `src/components/atomic-crm/deals/index.ts` — export new components
+- [ ] `src/components/hatch-crm/deals/DealShow.tsx` — restructure `DealShowContent` layout
+- [ ] `src/components/hatch-crm/deals/DecisionContextBlock.tsx` — new component
+- [ ] `src/components/hatch-crm/deals/StackBlock.tsx` — new component
+- [ ] `src/components/hatch-crm/deals/index.ts` — export new components
 
 ### Out of Scope
 - [ ] `DealEdit.tsx` / `DealInputs.tsx` — edit form is separate, leave as-is
@@ -94,7 +94,7 @@ Empty state when array is empty/null: `<p className="text-sm text-muted-foregrou
 - [ ] `Dialog` wrapper in `DealShow.tsx` — `max-w-4xl`, `overflow-y-auto max-h-9/10`, `top-1/20 translate-y-0`; do not change these constraints
 - [ ] `ShowBase` + `DealShowContent` export names — consumed by `DealList.tsx`
 - [ ] `ContactList.tsx` — the contact list component inside DealShow; only move its position, don't modify it
-- [ ] `src/components/atomic-crm/deals/dealUtils.ts` — don't touch
+- [ ] `src/components/hatch-crm/deals/dealUtils.ts` — don't touch
 - [ ] All existing translations (use `useTranslate()` for any new labels or add keys to the i18n file if needed, don't hardcode English strings — OR hardcode only if no translation key exists yet, which is fine for new fields)
 
 ## Scope Gates

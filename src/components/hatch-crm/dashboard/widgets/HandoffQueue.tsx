@@ -56,7 +56,7 @@ const labelStyle: React.CSSProperties = {
 const metricValueStyle: React.CSSProperties = {
   fontSize: 14,
   fontWeight: 700,
-  color: "#ECEEF5",
+  color: "var(--fg-1)",
   letterSpacing: "-0.01em",
 };
 
@@ -71,9 +71,9 @@ const HandoffCard = ({
 }: HandoffCardProps) => (
   <div
     style={{
-      background: "#111A2E",
+      background: "var(--ink-4a)",
       border: "1px solid var(--line)",
-      borderLeft: "3px solid #F5B84A",
+      borderLeft: "3px solid var(--warn)",
       borderRadius: 10,
       padding: "18px 20px",
       display: "flex",
@@ -105,7 +105,7 @@ const HandoffCard = ({
               width: 7,
               height: 7,
               borderRadius: 999,
-              background: "#34D399",
+              background: "var(--good)",
               boxShadow: "0 0 8px rgba(52,211,153,0.7)",
               flexShrink: 0,
             }}
@@ -116,7 +116,7 @@ const HandoffCard = ({
               margin: 0,
               fontSize: 17,
               fontWeight: 700,
-              color: "#ECEEF5",
+              color: "var(--fg-1)",
               letterSpacing: "-0.02em",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -146,10 +146,9 @@ const HandoffCard = ({
           fontWeight: 700,
           fontSize: 12.5,
           background: "var(--hatch-cyan)",
-          color: "#061022",
+          color: "var(--hatch-ink)",
           border: "none",
-          boxShadow:
-            "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
+          boxShadow: "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.2)",
           cursor: isUpdating ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
           opacity: isUpdating ? 0.6 : 1,
@@ -177,7 +176,9 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Deal Value</div>
-        <div className="font-mono" style={metricValueStyle}>{dealValue}</div>
+        <div className="font-mono" style={metricValueStyle}>
+          {dealValue}
+        </div>
       </div>
       <div
         style={{
@@ -188,7 +189,9 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Won Date</div>
-        <div className="font-mono" style={metricValueStyle}>{wonDate}</div>
+        <div className="font-mono" style={metricValueStyle}>
+          {wonDate}
+        </div>
       </div>
       <div
         style={{
@@ -199,7 +202,9 @@ const HandoffCard = ({
         }}
       >
         <div style={labelStyle}>Sales</div>
-        <div className="font-mono" style={metricValueStyle}>{salesName}</div>
+        <div className="font-mono" style={metricValueStyle}>
+          {salesName}
+        </div>
       </div>
     </div>
   </div>
@@ -234,14 +239,9 @@ export const HandoffQueue = () => {
     return null;
   }
 
-  const companyNameById = new Map(
-    (companies ?? []).map((c) => [c.id, c.name]),
-  );
+  const companyNameById = new Map((companies ?? []).map((c) => [c.id, c.name]));
   const salesNameById = new Map(
-    (sales ?? []).map((s) => [
-      s.id,
-      `${s.first_name} ${s.last_name}`.trim(),
-    ]),
+    (sales ?? []).map((s) => [s.id, `${s.first_name} ${s.last_name}`.trim()]),
   );
   const pendingHandoffDeals =
     deals?.filter(
@@ -290,7 +290,7 @@ export const HandoffQueue = () => {
     <section
       style={{
         borderRadius: 12,
-        background: "#0D1424",
+        background: "var(--ink-3)",
         border: "1px solid var(--line)",
         overflow: "hidden",
         flexShrink: 0,
@@ -312,7 +312,7 @@ export const HandoffQueue = () => {
               fontSize: 10,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#F5B84A",
+              color: "var(--warn)",
               fontWeight: 700,
               marginBottom: 4,
             }}
@@ -325,7 +325,7 @@ export const HandoffQueue = () => {
               margin: 0,
               fontSize: 16,
               fontWeight: 700,
-              color: "#ECEEF5",
+              color: "var(--fg-1)",
               letterSpacing: "-0.01em",
             }}
           >
@@ -337,7 +337,7 @@ export const HandoffQueue = () => {
           style={{
             fontSize: 11,
             fontWeight: 700,
-            color: "#F5B84A",
+            color: "var(--warn)",
             background: "rgba(245,184,74,0.1)",
             border: "1px solid rgba(245,184,74,0.25)",
             padding: "4px 10px",
@@ -353,7 +353,7 @@ export const HandoffQueue = () => {
         <div
           style={{
             fontSize: 13,
-            color: "#5C6784",
+            color: "var(--fg-3)",
             padding: 24,
             textAlign: "center",
           }}
@@ -385,7 +385,10 @@ export const HandoffQueue = () => {
                 : 0;
             const isExpanded = expandedCard === deal.id;
             return (
-              <div key={deal.id} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div
+                key={deal.id}
+                style={{ display: "flex", flexDirection: "column", gap: 8 }}
+              >
                 <HandoffCard
                   companyName={companyName}
                   dealName={deal.name ?? "Untitled deal"}
@@ -393,16 +396,14 @@ export const HandoffQueue = () => {
                   wonDate={safeFormatDate(deal.updated_at)}
                   salesName={salesName}
                   onStart={
-                    isExpanded
-                      ? undefined
-                      : () => setExpandedCard(deal.id)
+                    isExpanded ? undefined : () => setExpandedCard(deal.id)
                   }
                   isUpdating={isUpdating}
                 />
                 {isExpanded && (
                   <div
                     style={{
-                      background: "#0D1424",
+                      background: "var(--ink-3)",
                       border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: 8,
                       padding: "14px 16px",
@@ -414,7 +415,7 @@ export const HandoffQueue = () => {
                     <div
                       style={{
                         fontSize: 12,
-                        color: "#5C6784",
+                        color: "var(--fg-3)",
                         letterSpacing: "0.04em",
                       }}
                     >
@@ -433,17 +434,19 @@ export const HandoffQueue = () => {
                       }
                       placeholder="e.g. 120"
                       style={{
-                        background: "#111A2E",
+                        background: "var(--ink-4a)",
                         border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: 6,
                         padding: "8px 12px",
                         fontSize: 14,
-                        color: "#ECEEF5",
+                        color: "var(--fg-1)",
                         width: "100%",
                         boxSizing: "border-box",
                       }}
                     />
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 10 }}
+                    >
                       <button
                         onClick={() => handleConfirmOnboarding(deal)}
                         disabled={isUpdating}
@@ -453,7 +456,7 @@ export const HandoffQueue = () => {
                           fontWeight: 700,
                           fontSize: 12.5,
                           background: "var(--hatch-cyan)",
-                          color: "#061022",
+                          color: "var(--hatch-ink)",
                           border: "none",
                           cursor: isUpdating ? "not-allowed" : "pointer",
                           opacity: isUpdating ? 0.6 : 1,
@@ -468,7 +471,7 @@ export const HandoffQueue = () => {
                           borderRadius: 7,
                           fontSize: 12.5,
                           background: "transparent",
-                          color: "#5C6784",
+                          color: "var(--fg-3)",
                           border: "none",
                           cursor: "pointer",
                         }}

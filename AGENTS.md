@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Atomic CRM is a full-featured CRM built with React, shadcn-admin-kit, and Supabase. It provides contact management, task tracking, notes, email capture, and deal management with a Kanban board.
+Hatch CRM is a full-featured CRM built with React, shadcn-admin-kit, and Supabase. It provides contact management, task tracking, notes, email capture, and deal management with a Kanban board.
 
 ## Development Commands
 
@@ -66,7 +66,7 @@ make registry-build   # Build Shadcn registry
 src/
 ├── components/
 │   ├── admin/              # Shadcn Admin Kit components (mutable dependency)
-│   ├── atomic-crm/         # Main CRM application code (~15,000 LOC)
+│   ├── hatch-crm/         # Main CRM application code (~15,000 LOC)
 │   │   ├── activity/       # Activity logs
 │   │   ├── companies/      # Company management
 │   │   ├── contacts/       # Contact management (includes CSV import/export)
@@ -138,7 +138,7 @@ Two data providers are available:
 1. **Supabase** (default): Production backend using PostgreSQL
 2. **FakeRest**: In-browser fake API for development/demos, resets on page reload
 
-When using FakeRest, database views are emulated in the frontend. Test data generators are in `src/components/atomic-crm/providers/fakerest/dataGenerator/`.
+When using FakeRest, database views are emulated in the frontend. Test data generators are in `src/components/hatch-crm/providers/fakerest/dataGenerator/`.
 
 #### Filter Syntax
 
@@ -160,9 +160,9 @@ When modifying contact or company data structures:
 1. Edit the relevant schema file in `supabase/schemas/` (table in `01_tables.sql`, views in `03_views.sql`, etc.)
 2. Generate a migration: `npx supabase db diff --local -f <name>`
 3. Apply it: `npx supabase migration up --local`
-4. Update the sample CSV: `src/components/atomic-crm/contacts/contacts_export.csv`
-5. Update the import function: `src/components/atomic-crm/contacts/useContactImport.tsx`
-6. If using FakeRest, update data generators in `src/components/atomic-crm/providers/fakerest/dataGenerator/`
+4. Update the sample CSV: `src/components/hatch-crm/contacts/contacts_export.csv`
+5. Update the import function: `src/components/hatch-crm/contacts/useContactImport.tsx`
+6. If using FakeRest, update data generators in `src/components/hatch-crm/providers/fakerest/dataGenerator/`
 7. Don't forget to update the related view (`contacts_summary`, `companies_summary`) in `03_views.sql`
 8. Don't forget the export functions
 9. Don't forget the contact merge logic
@@ -185,7 +185,7 @@ Import `test-data/contacts.csv` via the Contacts page → Import button.
 
 ## Important Notes
 
-- The codebase is intentionally small (~15,000 LOC in `src/components/atomic-crm`) for easy customization
+- The codebase is intentionally small (~15,000 LOC in `src/components/hatch-crm`) for easy customization
 - Modify files in `src/components/admin` and `src/components/ui` directly - they are meant to be customized
 - Unit tests can be added in the `src/` directory (test files are named `*.test.ts` or `*.test.tsx`)
 - User deletion is not supported to avoid data loss; use account disabling instead

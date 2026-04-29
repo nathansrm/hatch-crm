@@ -3,7 +3,7 @@ import { useGetList, useRedirect, useRefresh, useUpdate } from "ra-core";
 import { useState } from "react";
 
 import type { Deal, DealNote } from "../../types";
-import { calcUtilization } from "./DeliveryKPIs";
+import { calcUtilization } from "./deliveryMath";
 import { useAgencySettings } from "@/hooks/useAgencySettings";
 
 type CompanyRecord = {
@@ -45,8 +45,7 @@ const InitialsAvatar = ({
     .join("")
     .slice(0, 2)
     .toUpperCase();
-  const hue =
-    name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+  const hue = name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
   return (
     <div
       className="font-mono"
@@ -61,7 +60,7 @@ const InitialsAvatar = ({
         justifyContent: "center",
         fontSize: Math.round(size * 0.38),
         fontWeight: 700,
-        color: "#fff",
+        color: "var(--white)",
         flexShrink: 0,
       }}
     >
@@ -145,9 +144,7 @@ export const ActiveProjectsGrid = () => {
     return null;
   }
 
-  const companyNameById = new Map(
-    (companies ?? []).map((c) => [c.id, c.name]),
-  );
+  const companyNameById = new Map((companies ?? []).map((c) => [c.id, c.name]));
   const salesNameById = new Map(
     (sales ?? []).map((s) => [s.id, `${s.first_name} ${s.last_name}`.trim()]),
   );
@@ -188,7 +185,11 @@ export const ActiveProjectsGrid = () => {
       "deals",
       {
         id: deal.id,
-        data: { ...deal, project_status: "complete", project_progress_pct: 100 },
+        data: {
+          ...deal,
+          project_status: "complete",
+          project_progress_pct: 100,
+        },
         previousData: deal,
       },
       { onSuccess: () => refresh() },
@@ -229,7 +230,10 @@ export const ActiveProjectsGrid = () => {
         },
       );
     } else {
-      const pct = Math.min(100, Math.max(0, Number.parseInt(editValue, 10) || 0));
+      const pct = Math.min(
+        100,
+        Math.max(0, Number.parseInt(editValue, 10) || 0),
+      );
       update(
         "deals",
         {
@@ -293,7 +297,7 @@ export const ActiveProjectsGrid = () => {
               margin: 0,
               fontSize: 18,
               fontWeight: 700,
-              color: "#ECEEF5",
+              color: "var(--fg-1)",
               letterSpacing: "-0.01em",
             }}
           >
@@ -326,7 +330,7 @@ export const ActiveProjectsGrid = () => {
         <div
           style={{
             borderRadius: 12,
-            background: "#0D1424",
+            background: "var(--ink-3)",
             border: `1px solid ${overCapacity ? "rgba(248,113,113,0.25)" : "var(--line)"}`,
             padding: "14px 18px",
             marginBottom: 14,
@@ -353,7 +357,7 @@ export const ActiveProjectsGrid = () => {
               style={{
                 fontSize: 15,
                 fontWeight: 700,
-                color: "#ECEEF5",
+                color: "var(--fg-1)",
                 letterSpacing: "-0.01em",
               }}
             >
@@ -394,7 +398,7 @@ export const ActiveProjectsGrid = () => {
                     left: "100%",
                     transform: "translateX(-2px)",
                     width: 2,
-                    background: "#ECEEF5",
+                    background: "var(--fg-1)",
                     opacity: 0.5,
                   }}
                 />
@@ -448,7 +452,7 @@ export const ActiveProjectsGrid = () => {
             color: "var(--fg-3)",
             fontSize: 13,
             borderRadius: 12,
-            background: "#0D1424",
+            background: "var(--ink-3)",
             border: "1px solid var(--line)",
           }}
         >
@@ -483,7 +487,7 @@ export const ActiveProjectsGrid = () => {
               key={deal.id}
               style={{
                 borderRadius: 12,
-                background: "#0D1424",
+                background: "var(--ink-3)",
                 border: expanded
                   ? "1px solid rgba(77,200,232,0.25)"
                   : "1px solid var(--line)",
@@ -492,13 +496,12 @@ export const ActiveProjectsGrid = () => {
               }}
             >
               {/* Row header — clickable */}
-              <div className="obs-interactive-row"
+              <div
+                className="obs-interactive-row"
                 role="button"
                 tabIndex={0}
                 onClick={() => handleToggle(deal.id)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && handleToggle(deal.id)
-                }
+                onKeyDown={(e) => e.key === "Enter" && handleToggle(deal.id)}
                 onMouseEnter={(e) =>
                   ((e.currentTarget as HTMLElement).style.background =
                     "rgba(255,255,255,0.02)")
@@ -523,7 +526,7 @@ export const ActiveProjectsGrid = () => {
                     style={{
                       fontSize: 14.5,
                       fontWeight: 700,
-                      color: "#ECEEF5",
+                      color: "var(--fg-1)",
                       marginBottom: 3,
                       letterSpacing: "-0.01em",
                     }}
@@ -702,7 +705,8 @@ export const ActiveProjectsGrid = () => {
                             gap: 8,
                           }}
                         >
-                          <textarea className="obs-action-btn"
+                          <textarea
+                            className="obs-action-btn"
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             rows={4}
@@ -712,7 +716,7 @@ export const ActiveProjectsGrid = () => {
                               background: "rgba(255,255,255,0.04)",
                               border: "1px solid rgba(77,200,232,0.3)",
                               borderRadius: 6,
-                              color: "#ECEEF5",
+                              color: "var(--fg-1)",
                               fontSize: 12.5,
                               lineHeight: 1.5,
                               padding: "8px 10px",
@@ -732,7 +736,7 @@ export const ActiveProjectsGrid = () => {
                                 borderRadius: 6,
                                 border: "none",
                                 background: "var(--hatch-cyan)",
-                                color: "#061022",
+                                color: "var(--hatch-ink)",
                                 fontSize: 11.5,
                                 fontWeight: 700,
                                 cursor: "pointer",
@@ -768,7 +772,12 @@ export const ActiveProjectsGrid = () => {
                           }}
                         >
                           {projectNotes || (
-                            <span style={{ color: "var(--fg-4)", fontStyle: "italic" }}>
+                            <span
+                              style={{
+                                color: "var(--fg-4)",
+                                fontStyle: "italic",
+                              }}
+                            >
                               No notes yet.
                             </span>
                           )}
@@ -791,7 +800,7 @@ export const ActiveProjectsGrid = () => {
                           style={{
                             fontSize: 13,
                             fontWeight: 600,
-                            color: "#ECEEF5",
+                            color: "var(--fg-1)",
                           }}
                         >
                           {ownerName}
@@ -807,8 +816,7 @@ export const ActiveProjectsGrid = () => {
                         style={{
                           fontSize: 28,
                           fontWeight: 700,
-                          color:
-                            taskCount > 0 ? "var(--warn)" : "var(--good)",
+                          color: taskCount > 0 ? "var(--warn)" : "var(--good)",
                         }}
                       >
                         {taskCount}
@@ -866,7 +874,8 @@ export const ActiveProjectsGrid = () => {
                         gap: 8,
                       }}
                     >
-                      <input className="obs-action-btn font-mono"
+                      <input
+                        className="obs-action-btn font-mono"
                         type="number"
                         min={0}
                         max={100}
@@ -878,7 +887,7 @@ export const ActiveProjectsGrid = () => {
                           background: "rgba(255,255,255,0.04)",
                           border: "1px solid rgba(77,200,232,0.3)",
                           borderRadius: 6,
-                          color: "#ECEEF5",
+                          color: "var(--fg-1)",
                           fontSize: 14,
                           padding: "6px 10px",
                         }}
@@ -903,7 +912,7 @@ export const ActiveProjectsGrid = () => {
                           borderRadius: 6,
                           border: "none",
                           background: "var(--hatch-cyan)",
-                          color: "#061022",
+                          color: "var(--hatch-ink)",
                           fontSize: 11.5,
                           fontWeight: 700,
                           cursor: "pointer",
@@ -932,9 +941,7 @@ export const ActiveProjectsGrid = () => {
                   )}
 
                   {/* Action buttons */}
-                  <div
-                    style={{ display: "flex", gap: 8, marginTop: 12 }}
-                  >
+                  <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

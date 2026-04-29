@@ -28,17 +28,12 @@ import type { Task } from "../types";
 import { TaskCreateSheet } from "./TaskCreateSheet";
 import { TaskEditSheet } from "./TaskEditSheet";
 import { getTaskMeta } from "./taskTypeMeta";
+import { isDone } from "./tasksPredicate";
 import {
-  isDone,
-  isDueLater,
-  isDueThisWeek,
-  isDueToday,
-  isDueTomorrow,
-  isOverdue,
-  isRecentlyDone,
-} from "./tasksPredicate";
-
-type TaskGroup = "overdue" | "today" | "this_week" | "later";
+  getTaskGroup,
+  getVisibleTasks,
+  type TaskGroup,
+} from "./upNextWidgetUtils";
 
 type ContactDisplay = {
   name: string;
@@ -74,29 +69,6 @@ const formatDueDate = (value: string) => {
     day: "numeric",
   });
 };
-
-export const getTaskGroup = (task: Task): TaskGroup => {
-  if (isOverdue(task.due_date)) {
-    return "overdue";
-  }
-
-  if (isDueToday(task.due_date)) {
-    return "today";
-  }
-
-  if (isDueTomorrow(task.due_date) || isDueThisWeek(task.due_date)) {
-    return "this_week";
-  }
-
-  if (isDueLater(task.due_date)) {
-    return "later";
-  }
-
-  return "later";
-};
-
-export const getVisibleTasks = (tasks: Task[]) =>
-  tasks.filter((task) => !isDone(task) || isRecentlyDone(task));
 
 const buildTaskGroups = (tasks: Task[]) => {
   const groups: Record<TaskGroup, Task[]> = {
@@ -359,13 +331,18 @@ export const UpNextWidget = () => {
       {isPending ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-14 animate-pulse rounded-lg bg-muted" />
+            <div
+              key={index}
+              className="h-14 animate-pulse rounded-lg bg-muted"
+            />
           ))}
         </div>
       ) : visibleCount === 0 ? (
         <div className="grid flex-1 place-items-center rounded-lg border border-dashed border-border/70 p-6 text-center">
           <div>
-            <p className="text-sm font-semibold text-card-foreground">No tasks</p>
+            <p className="text-sm font-semibold text-card-foreground">
+              No tasks
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               New follow-ups will appear here.
             </p>
@@ -387,15 +364,17 @@ export const UpNextWidget = () => {
                 </span>
               </div>
               <ul className="space-y-2">
-                {groups[group].slice(0, expanded ? undefined : 3).map((task) => (
-                  <TaskRow
-                    key={task.id}
-                    task={task}
-                    contact={contactDisplayMap.get(task.contact_id)}
-                    onToggle={handleToggle}
-                    onEdit={(task) => setEditingTaskId(task.id)}
-                  />
-                ))}
+                {groups[group]
+                  .slice(0, expanded ? undefined : 3)
+                  .map((task) => (
+                    <TaskRow
+                      key={task.id}
+                      task={task}
+                      contact={contactDisplayMap.get(task.contact_id)}
+                      onToggle={handleToggle}
+                      onEdit={(task) => setEditingTaskId(task.id)}
+                    />
+                  ))}
               </ul>
             </section>
           ))}

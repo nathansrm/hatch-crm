@@ -6,14 +6,14 @@ Polish the Dashboard tab (DashboardOverview) to match the same visual quality as
 
 ## Scope
 - Edit:
-  - src/components/atomic-crm/dashboard/Dashboard.tsx
-  - src/components/atomic-crm/dashboard/DealsChart.tsx
+  - src/components/hatch-crm/dashboard/Dashboard.tsx
+  - src/components/hatch-crm/dashboard/DealsChart.tsx
 - Reference only (do not edit):
-  - src/components/atomic-crm/dashboard/DashboardActivityLog.tsx
-  - src/components/atomic-crm/dashboard/DealsByTradeType.tsx
-  - src/components/atomic-crm/dashboard/KPICards.tsx
-  - src/components/atomic-crm/dashboard/TasksList.tsx
-  - src/components/atomic-crm/types.ts
+  - src/components/hatch-crm/dashboard/DashboardActivityLog.tsx
+  - src/components/hatch-crm/dashboard/DealsByTradeType.tsx
+  - src/components/hatch-crm/dashboard/KPICards.tsx
+  - src/components/hatch-crm/dashboard/TasksList.tsx
+  - src/components/hatch-crm/types.ts
 - Do not touch: everything else
 
 ## Requirements

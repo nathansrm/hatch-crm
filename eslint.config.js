@@ -17,6 +17,8 @@ export default tseslint.config(
       "prism.js",
       "packages/create-react-admin/templates/**",
       ".github",
+      ".supabase-e2e",
+      ".supabase-e2e/**",
     ],
   },
   {
@@ -84,6 +86,36 @@ export default tseslint.config(
     rules: {
       "react-refresh/only-export-components": "off",
       "@typescript-eslint/consistent-type-imports": "off",
+    },
+  },
+  {
+    // Existing monoliths/generator outputs. Keep max-lines active everywhere
+    // else so new work does not add to this cleanup queue.
+    files: [
+      "src/components/admin/data-table.tsx",
+      "src/components/admin/filter-form.tsx",
+      "src/components/hatch-crm/contacts/ContactListContent.tsx",
+      "src/components/hatch-crm/dashboard/widgets/ActiveProjectsGrid.tsx",
+      "src/components/hatch-crm/dashboard/widgets/HandoffQueue.tsx",
+      "src/components/hatch-crm/intake/IntakeList.tsx",
+      "src/components/hatch-crm/misc/useImportFromJson.ts",
+      "src/components/hatch-crm/providers/commons/englishCrmMessages.ts",
+      "src/components/hatch-crm/providers/commons/frenchCrmMessages.ts",
+      "src/components/hatch-crm/providers/fakerest/dataProvider.ts",
+      "src/components/hatch-crm/providers/fakerest/internal/supabaseAdapter.test.ts",
+      "src/components/hatch-crm/providers/supabase/dataProvider.ts",
+      "src/components/hatch-crm/reports/ReportsPage.tsx",
+      "src/components/hatch-crm/resources/ResourcesPage.tsx",
+      "src/components/hatch-crm/settings/SettingsPage.tsx",
+      "src/components/hatch-crm/settings/SettingsPageMobile.tsx",
+      "src/components/hatch-crm/tasks/TasksPage.tsx",
+      "src/components/ui/sidebar.tsx",
+      "src/types/supabase.ts",
+      "supabase/functions/postmark/addNoteToContact.test.ts",
+      "supabase/functions/send-outreach/index.ts",
+    ],
+    rules: {
+      "max-lines": "off",
     },
   },
   storybook.configs["flat/recommended"],

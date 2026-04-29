@@ -28,7 +28,7 @@ hatch-crm/
 │   ├── App.tsx                        — root router, resource registration
 │   ├── components/
 │   │   ├── admin/                     — wrappers around ra-core primitives (TextField, ReferenceField, etc.)
-│   │   ├── atomic-crm/               — MAIN DOMAIN LAYER
+│   │   ├── hatch-crm/               — MAIN DOMAIN LAYER
 │   │   │   ├── activity/
 │   │   │   ├── companies/
 │   │   │   ├── contacts/
@@ -64,13 +64,13 @@ hatch-crm/
 ### Components
 - One `.tsx` per component, named after the component (PascalCase)
 - Barrel export from `index.ts` in each domain folder
-- Reference file: `src/components/atomic-crm/deals/DealCard.tsx`
+- Reference file: `src/components/hatch-crm/deals/DealCard.tsx`
 
 ### Data Fetching
 - Use `useGetList<T>` for list queries, `useRecordContext<T>` inside Show/Edit contexts
 - `useUpdate` for mutations (with `mutateAsync`)
 - Demo mode uses fakerest — no real Supabase calls. Safe for layout work.
-- Reference: `src/components/atomic-crm/dashboard/KPICards.tsx`
+- Reference: `src/components/hatch-crm/dashboard/KPICards.tsx`
 
 ### React Admin Context Pattern
 - `RecordContextProvider` wraps components that use `useRecordContext`
@@ -87,14 +87,14 @@ hatch-crm/
 ### Form Inputs
 - Use RA input wrappers in `src/components/admin/` — `TextInput`, `NumberInput`, `SelectInput`, `AutocompleteArrayInput`
 - Form state via `react-hook-form` (`useFormContext`, `useWatch`)
-- Reference: `src/components/atomic-crm/deals/DealInputs.tsx`
+- Reference: `src/components/hatch-crm/deals/DealInputs.tsx`
 
 ### Error Handling
 - RA's `useNotify` for user-facing errors
 - No custom AppError class — handle at boundaries with try/catch
 
 ### Types
-- All shared types in `src/components/atomic-crm/types.ts` — add there, not in component files
+- All shared types in `src/components/hatch-crm/types.ts` — add there, not in component files
 - `Deal` type already has: `primary_bottleneck?`, `software_stack?`, `dm_present?`, `hours_wasted_per_week?`, `response_time_hours?`
 - **IMPORTANT:** These fields exist in the TypeScript type but have NO database migration yet. Adding them to the DB is required before they can be persisted.
 
@@ -134,7 +134,7 @@ Copy-ready directives for any brief targeting this project:
 - **Card layout:** `<Card className="..."><CardContent className="px-3 flex flex-col">` — same as `DealCard.tsx`
 - **Tabs:** `@radix-ui/react-tabs` — already a dep, use `Tabs / TabsList / TabsTrigger / TabsContent` from `@/components/ui/tabs`
 - **Mutations:** `const [update] = useUpdate()` then `update("deals", { id, data: { ... }, previousData: record })`
-- **All new types** go in `src/components/atomic-crm/types.ts`, not in component files
+- **All new types** go in `src/components/hatch-crm/types.ts`, not in component files
 - **Barrel exports:** Add new component exports to the `index.ts` in the relevant domain folder
 - **Must not touch:** `src/components/admin/` wrappers, `src/components/ui/` shadcn library, auth/provider files, existing migrations
 - **Demo data:** Extend `demo/` generators when a new field needs to render in demo mode — fakerest won't know about new fields otherwise

@@ -85,7 +85,7 @@ export const ContactListContent = () => {
           fontSize: 9.5,
           letterSpacing: "0.18em",
           textTransform: "uppercase",
-          color: "#5C6784",
+          color: "var(--fg-3)",
           fontWeight: 700,
         }}
       >
@@ -108,7 +108,7 @@ export const ContactListContent = () => {
           style={{
             padding: "40px 20px",
             textAlign: "center",
-            color: "#5C6784",
+            color: "var(--fg-3)",
             fontSize: 13,
           }}
         >
@@ -157,22 +157,23 @@ const ContactItemContent = ({
         }
       }}
     >
-      <div
-        style={{ display: "flex", alignItems: "center", gap: 12 }}
-      >
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div
           onClick={(e) => handleToggleItem(contact.id, e)}
           style={{ cursor: "pointer", flexShrink: 0 }}
         >
           <div
             data-slot="checkbox"
+            role="checkbox"
+            aria-checked={isSelected}
+            tabIndex={0}
             style={{
               width: 16,
               height: 16,
               borderRadius: 4,
-              background: isSelected ? "#4DC8E8" : "transparent",
+              background: isSelected ? "var(--hatch-cyan)" : "transparent",
               border: isSelected
-                ? "1.5px solid #4DC8E8"
+                ? "1.5px solid var(--hatch-cyan)"
                 : "1.5px solid rgba(255,255,255,0.2)",
               display: "grid",
               placeItems: "center",
@@ -181,7 +182,7 @@ const ContactItemContent = ({
             {isSelected && (
               <span
                 style={{
-                  color: "#061022",
+                  color: "var(--hatch-ink)",
                   fontSize: 10,
                   fontWeight: 900,
                   lineHeight: 1,
@@ -209,7 +210,7 @@ const ContactItemContent = ({
               style={{
                 fontSize: 13.5,
                 fontWeight: 600,
-                color: "#ECEEF5",
+                color: "var(--fg-1)",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -221,7 +222,7 @@ const ContactItemContent = ({
               style={{
                 marginTop: 2,
                 fontSize: 12,
-                color: primaryEmail ? "#9AA3BE" : "#5C6784",
+                color: primaryEmail ? "var(--fg-2)" : "var(--fg-3)",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -237,7 +238,7 @@ const ContactItemContent = ({
         style={{ textDecoration: "none", minWidth: 0 }}
       >
         {contact.company_id != null ? (
-          <span style={{ fontSize: 12.5, color: "#9AA3BE" }}>
+          <span style={{ fontSize: 12.5, color: "var(--fg-2)" }}>
             <ReferenceField
               source="company_id"
               reference="companies"
@@ -247,7 +248,7 @@ const ContactItemContent = ({
             </ReferenceField>
           </span>
         ) : (
-          <span style={{ color: "#5C6784", fontSize: 12 }}>{"\u2014"}</span>
+          <span style={{ color: "var(--fg-3)", fontSize: 12 }}>{"\u2014"}</span>
         )}
       </Link>
       <Link
@@ -257,7 +258,7 @@ const ContactItemContent = ({
         <span
           style={{
             fontSize: 12,
-            color: contact.title ? "#9AA3BE" : "#5C6784",
+            color: contact.title ? "var(--fg-2)" : "var(--fg-3)",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -276,7 +277,7 @@ const ContactItemContent = ({
             className="font-mono"
             style={{
               fontSize: 11.5,
-              color: "#5C6784",
+              color: "var(--fg-3)",
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -286,7 +287,9 @@ const ContactItemContent = ({
             {formatRelativeDate(contact.last_seen, locale)}
           </span>
         ) : (
-          <span style={{ color: "#5C6784", fontSize: 11.5 }}>{"\u2014"}</span>
+          <span style={{ color: "var(--fg-3)", fontSize: 11.5 }}>
+            {"\u2014"}
+          </span>
         )}
       </Link>
     </div>

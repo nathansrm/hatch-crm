@@ -11,8 +11,10 @@ export const ObsKPIWinRate = () => {
     UNARCHIVED_DEALS_LIST_PARAMS,
   );
   const now = new Date();
-  const t90 = new Date(now); t90.setDate(t90.getDate() - 90);
-  const t180 = new Date(now); t180.setDate(t180.getDate() - 180);
+  const t90 = new Date(now);
+  t90.setDate(t90.getDate() - 90);
+  const t180 = new Date(now);
+  t180.setDate(t180.getDate() - 180);
 
   const isClosed = (d: Deal) => ["won", "lost"].includes(d.stage);
   const inWindow = (d: Deal, from: Date, to: Date) => {
@@ -43,8 +45,7 @@ export const ObsKPIWinRate = () => {
             100,
         )
       : null;
-  const winRateDelta =
-    priorWinRate !== null ? winRate - priorWinRate : null;
+  const winRateDelta = priorWinRate !== null ? winRate - priorWinRate : null;
 
   return (
     <section
@@ -53,7 +54,8 @@ export const ObsKPIWinRate = () => {
         overflow: "hidden",
         borderRadius: 14,
         padding: "22px 24px",
-        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        background:
+          "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow:
           "0 1px 0 rgba(255,255,255,0.04) inset, 0 20px 40px rgba(0,0,0,0.35)",
@@ -75,7 +77,7 @@ export const ObsKPIWinRate = () => {
             fontSize: 10.5,
             letterSpacing: "0.24em",
             textTransform: "uppercase",
-            color: "#5C6784",
+            color: "var(--fg-3)",
             fontWeight: 700,
           }}
         >
@@ -90,7 +92,7 @@ export const ObsKPIWinRate = () => {
             placeItems: "center",
             background: "rgba(167,139,250,0.08)",
             border: "1px solid rgba(167,139,250,0.2)",
-            color: "#A78BFA",
+            color: "var(--violet)",
           }}
         >
           <Percent size={13} strokeWidth={2.2} />
@@ -98,7 +100,14 @@ export const ObsKPIWinRate = () => {
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 8,
+              marginBottom: 4,
+            }}
+          >
             <div
               className="font-heading"
               style={{
@@ -106,7 +115,7 @@ export const ObsKPIWinRate = () => {
                 fontWeight: 700,
                 letterSpacing: "-0.03em",
                 lineHeight: 1,
-                color: "#FFFFFF",
+                color: "var(--white)",
               }}
             >
               {closedDeals.length > 0 ? `${winRate}%` : "--"}
@@ -119,9 +128,15 @@ export const ObsKPIWinRate = () => {
                   gap: 3,
                   padding: "5px 12px",
                   borderRadius: 5,
-                  background: winRateDelta >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
-                  border: winRateDelta >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
-                  color: winRateDelta >= 0 ? "#34D399" : "#EF5A6F",
+                  background:
+                    winRateDelta >= 0
+                      ? "rgba(52,211,153,0.15)"
+                      : "rgba(239,90,111,0.15)",
+                  border:
+                    winRateDelta >= 0
+                      ? "1px solid rgba(52,211,153,0.35)"
+                      : "1px solid rgba(239,90,111,0.35)",
+                  color: winRateDelta >= 0 ? "var(--good)" : "var(--bad)",
                   fontSize: 18,
                   fontWeight: 700,
                 }}
@@ -131,19 +146,35 @@ export const ObsKPIWinRate = () => {
                 ) : (
                   <TrendingDown size={15} strokeWidth={2.5} />
                 )}{" "}
-                {winRateDelta >= 0 ? "+" : ""}{winRateDelta}%
+                {winRateDelta >= 0 ? "+" : ""}
+                {winRateDelta}%
               </span>
             )}
           </div>
-          <div style={{ fontSize: 11.5, color: "#5C6784" }}>trailing 90d</div>
+          <div style={{ fontSize: 11.5, color: "var(--fg-3)" }}>
+            trailing 90d
+          </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
           <svg width={56} height={56} viewBox="0 0 56 56">
             <defs>
-              <linearGradient id="winRateRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#A78BFA" />
-                <stop offset="100%" stopColor="#4DC8E8" />
+              <linearGradient
+                id="winRateRing"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="var(--violet)" />
+                <stop offset="100%" stopColor="var(--hatch-cyan)" />
               </linearGradient>
             </defs>
             <circle
@@ -170,7 +201,10 @@ export const ObsKPIWinRate = () => {
         </div>
       </div>
 
-      <div style={{ fontSize: 12, color: "#5C6784", marginTop: "auto" }}>{closedDeals.length} deal{closedDeals.length === 1 ? "" : "s"} closed this period</div>
+      <div style={{ fontSize: 12, color: "var(--fg-3)", marginTop: "auto" }}>
+        {closedDeals.length} deal{closedDeals.length === 1 ? "" : "s"} closed
+        this period
+      </div>
     </section>
   );
 };

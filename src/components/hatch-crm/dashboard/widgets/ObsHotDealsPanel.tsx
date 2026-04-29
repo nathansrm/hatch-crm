@@ -33,7 +33,9 @@ export const ObsHotDealsPanel = () => {
       maximumFractionDigits: 0,
     });
   const fmtRel = (value: string) => {
-    const days = Math.floor((Date.now() - new Date(value).getTime()) / 86400000);
+    const days = Math.floor(
+      (Date.now() - new Date(value).getTime()) / 86400000,
+    );
     return days === 0 ? "today" : days === 1 ? "1d ago" : `${days}d ago`;
   };
 
@@ -70,7 +72,10 @@ export const ObsHotDealsPanel = () => {
     .slice(0, 5)
     .map((id, i) => {
       const name = salesNameById.get(id) ?? "?";
-      return { initial: name.charAt(0).toUpperCase(), color: AVATAR_COLORS[i % AVATAR_COLORS.length] };
+      return {
+        initial: name.charAt(0).toUpperCase(),
+        color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+      };
     });
 
   if (!hotDeals.length) return null;
@@ -80,7 +85,8 @@ export const ObsHotDealsPanel = () => {
       style={{
         borderRadius: 14,
         padding: "24px 28px",
-        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        background:
+          "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
       }}
@@ -101,7 +107,7 @@ export const ObsHotDealsPanel = () => {
               fontSize: 10.5,
               letterSpacing: "0.24em",
               textTransform: "uppercase",
-              color: "#5C6784",
+              color: "var(--fg-3)",
               fontWeight: 700,
               marginBottom: 6,
             }}
@@ -115,11 +121,13 @@ export const ObsHotDealsPanel = () => {
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: "-0.02em",
-              color: "#FFFFFF",
+              color: "var(--white)",
             }}
           >
             Top 5 opportunities{" "}
-            <span style={{ color: "#5C6784", fontWeight: 500, fontSize: 16 }}>
+            <span
+              style={{ color: "var(--fg-3)", fontWeight: 500, fontSize: 16 }}
+            >
               closing this quarter
             </span>
           </h2>
@@ -136,12 +144,12 @@ export const ObsHotDealsPanel = () => {
                   borderRadius: 999,
                   marginLeft: i === 0 ? 0 : -8,
                   background: `linear-gradient(135deg, ${member.color} 0%, ${member.color}aa 100%)`,
-                  border: "2px solid #0D1424",
+                  border: "2px solid var(--ink-3)",
                   display: "grid",
                   placeItems: "center",
                   fontSize: 10.5,
                   fontWeight: 700,
-                  color: "#061022",
+                  color: "var(--hatch-ink)",
                 }}
               >
                 {member.initial}
@@ -156,7 +164,7 @@ export const ObsHotDealsPanel = () => {
               borderRadius: 7,
               fontSize: 11.5,
               fontWeight: 700,
-              color: "#4DC8E8",
+              color: "var(--hatch-cyan)",
               background: "rgba(77,200,232,0.08)",
               border: "1px solid rgba(77,200,232,0.25)",
               cursor: "pointer",
@@ -171,10 +179,10 @@ export const ObsHotDealsPanel = () => {
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
         {hotDeals.map((deal, index) => {
-          const color = stageColor[deal.stage] ?? "#9AA3BE";
+          const color = stageColor[deal.stage] ?? "var(--fg-2)";
           const label = formatStage(deal.stage);
           const decay = getDealDecayLevel(deal);
-          const dot = decayColor[decay] ?? "#9AA3BE";
+          const dot = decayColor[decay] ?? "var(--fg-2)";
           const initial = (deal.name ?? "?").trim().charAt(0).toUpperCase();
           return (
             <div
@@ -205,7 +213,7 @@ export const ObsHotDealsPanel = () => {
                   boxShadow: `0 0 12px ${color}40`,
                   fontSize: 12,
                   fontWeight: 700,
-                  color: "#061022",
+                  color: "var(--hatch-ink)",
                   letterSpacing: "-0.01em",
                 }}
               >
@@ -235,7 +243,7 @@ export const ObsHotDealsPanel = () => {
                     style={{
                       fontSize: 15,
                       fontWeight: 700,
-                      color: "#ECEEF5",
+                      color: "var(--fg-1)",
                       letterSpacing: "-0.01em",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -249,11 +257,12 @@ export const ObsHotDealsPanel = () => {
                   className="font-mono"
                   style={{
                     fontSize: 11,
-                    color: "#5C6784",
+                    color: "var(--fg-3)",
                     marginLeft: 15,
                   }}
                 >
-                  {String(index + 1).padStart(2, "0")} · {fmtRel(deal.updated_at)}
+                  {String(index + 1).padStart(2, "0")} ·{" "}
+                  {fmtRel(deal.updated_at)}
                 </div>
               </div>
               <div
@@ -281,7 +290,7 @@ export const ObsHotDealsPanel = () => {
                   style={{
                     fontSize: 18,
                     fontWeight: 700,
-                    color: "#FFFFFF",
+                    color: "var(--white)",
                     letterSpacing: "-0.01em",
                     lineHeight: 1.1,
                   }}
@@ -291,7 +300,7 @@ export const ObsHotDealsPanel = () => {
                 <div
                   style={{
                     fontSize: 10,
-                    color: "#5C6784",
+                    color: "var(--fg-3)",
                     letterSpacing: "0.1em",
                     fontWeight: 600,
                   }}
@@ -308,7 +317,7 @@ export const ObsHotDealsPanel = () => {
                   placeItems: "center",
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.06)",
-                  color: "#5C6784",
+                  color: "var(--fg-3)",
                   justifySelf: "end",
                 }}
               >

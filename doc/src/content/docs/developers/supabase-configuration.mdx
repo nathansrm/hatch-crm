@@ -1,13 +1,13 @@
 ---
 title: Configuring Supabase
-description: This document explains how to configure a remote Supabase instance for Atomic CRM.
+description: This document explains how to configure a remote Supabase instance for Hatch CRM.
 ---
 
-Atomic CRM uses Supabase as a backend. This document explains how to configure a remote Supabase instance hosted at [supabase.com](https://supabase.com/).
+Hatch CRM uses Supabase as a backend. This document explains how to configure a remote Supabase instance hosted at [supabase.com](https://supabase.com/).
 
 ## Creating a Remote Supabase Instance
 
-Atomic CRM comes with a CLI utility to create a backend instance on [supabase.com](https://supabase.com/):
+Hatch CRM comes with a CLI utility to create a backend instance on [supabase.com](https://supabase.com/):
 
 ```sh
 make supabase-remote-init
@@ -19,7 +19,7 @@ The script cannot yet automate the configuration of the required SMTP provider o
 
 ## Alternative: Using An Existing Supabase Instance
 
-If you already created a project on [supabase.com](https://supabase.com/), you can configure the Atomic CRM frontend to use it.
+If you already created a project on [supabase.com](https://supabase.com/), you can configure the Hatch CRM frontend to use it.
 
 First, log into your Supabase account:
 
@@ -53,7 +53,7 @@ VITE_SUPABASE_URL=<instance_url>
 VITE_SB_PUBLISHABLE_KEY=<instance_publishable_key>
 ```
 
-Atomic CRM requires that you set up an email provider on your Supabase instance. If you don't have one yet, please follow the instructions detailed in the [Email Provider Setup](#email-provider-setup) section.
+Hatch CRM requires that you set up an email provider on your Supabase instance. If you don't have one yet, please follow the instructions detailed in the [Email Provider Setup](#email-provider-setup) section.
 
 ## Testing Production Mode
 
@@ -71,7 +71,7 @@ Using a remote Supabase instance can be interesting if you deploy from your comp
 
 ## Email Provider Setup
 
-In order to support [the invitations workflow](../../users/user-management#adding-users) and the default email/password authentication (including password reset), Atomic CRM needs to be able to send emails from your Supabase instance.
+In order to support [the invitations workflow](../../users/user-management#adding-users) and the default email/password authentication (including password reset), Hatch CRM needs to be able to send emails from your Supabase instance.
 
 By default, Supabase provides a simple SMTP server for all projects. But this server imposes a few important restrictions and is not meant for production use:
 
@@ -132,15 +132,15 @@ If you are using Postmark in **Test Mode**, by default, it will only allow you t
 
 Go to the [Authentication settings page](https://supabase.com/dashboard/project/_/auth/smtp) of your Supabase project, and enable **Custom SMTP** with the following configuration:
 
-| Field                     | Value                                                                   |
-| ------------------------- | ----------------------------------------------------------------------- |
-| Sender email address      | The email address you want to send from (e.g. `atomic-crm@company.com`) |
-| Sender name               | The sender name you want to display in the emails (e.g. `Atomic CRM`)   |
-| Host                      | `smtp.postmarkapp.com`                                                  |
-| Port number               | `587`                                                                   |
-| Minimum interval per user | You can keep the default value (60 seconds)                             |
-| Username                  | Use the Server API token you copied in Step 1 as the username           |
-| Password                  | Use the Server API token you copied in Step 1 as the password           |
+| Field                     | Value                                                                  |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Sender email address      | The email address you want to send from (e.g. `hatch-crm@company.com`) |
+| Sender name               | The sender name you want to display in the emails (e.g. `Hatch CRM`)   |
+| Host                      | `smtp.postmarkapp.com`                                                 |
+| Port number               | `587`                                                                  |
+| Minimum interval per user | You can keep the default value (60 seconds)                            |
+| Username                  | Use the Server API token you copied in Step 1 as the username          |
+| Password                  | Use the Server API token you copied in Step 1 as the password          |
 
 :::tip
 Check out the [Postmark documentation](https://postmarkapp.com/developer/user-guide/send-email-with-smtp) for alternative SMTP settings.
@@ -160,7 +160,7 @@ You can for instance click the "Forgot your password?" link on the login page to
 
 ## Setting The Login Callback
 
-Atomic CRM uses Supabase's authentication system. When a user logs in, Supabase redirects them to an authentication callback URL that is handled by the frontend.
+Hatch CRM uses Supabase's authentication system. When a user logs in, Supabase redirects them to an authentication callback URL that is handled by the frontend.
 
 When developing with a local Supabase instance, the callback URL is already configured--you don't need to do anything.
 
@@ -170,13 +170,13 @@ When using a remote Supabase instance, you need to configure the callback URL as
 2. Go to **Authentication** > **URL Configuration**.
 3. Set up the callback URL of the production frontend in the **Site URL** field.
 
-If you host Atomic CRM under the `https://example.com/atomic-crm/` URL, the callback URL should be `https://example.com/atomic-crm/auth-callback.html`.
+If you host Hatch CRM under the `https://example.com/hatch-crm/` URL, the callback URL should be `https://example.com/hatch-crm/auth-callback.html`.
 
 ## Customizing Email Templates
 
-Atomic CRM uses Supabase to send authentication-related emails (confirm signup, reset password, etc).
+Hatch CRM uses Supabase to send authentication-related emails (confirm signup, reset password, etc).
 
-When developing with a local Supabase instance, you test your custom mail templates via the [supabase TOML config](https://github.com/marmelab/atomic-crm/blob/main/supabase/config.toml) file. An example of a custom template has been done for the [recovery](https://github.com/marmelab/atomic-crm/blob/main/supabase/templates/recovery.html) email. Note that you will need to restart your supabase instance to apply the changes.
+When developing with a local Supabase instance, you test your custom mail templates via the [supabase TOML config](https://github.com/hatchtheory/hatch-crm/blob/main/supabase/config.toml) file. An example of a custom template has been done for the [recovery](https://github.com/hatchtheory/hatch-crm/blob/main/supabase/templates/recovery.html) email. Note that you will need to restart your supabase instance to apply the changes.
 
 When using a remote Supabase instance, you can configure the email templates as follows:
 

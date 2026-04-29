@@ -1,9 +1,9 @@
 ---
 title: Migrations
-description: This document explains how to create and manage database migrations in Atomic CRM.
+description: This document explains how to create and manage database migrations in Hatch CRM.
 ---
 
-Atomic CRM uses [declarative database schemas](https://supabase.com/docs/guides/local-development/declarative-database-schemas) to manage its database structure. The schema is defined in `.sql` files under `supabase/schemas/`, and migrations are auto-generated from those files.
+Hatch CRM uses [declarative database schemas](https://supabase.com/docs/guides/local-development/declarative-database-schemas) to manage its database structure. The schema is defined in `.sql` files under `supabase/schemas/`, and migrations are auto-generated from those files.
 
 ## Schema Files
 
@@ -18,15 +18,16 @@ The `supabase/schemas/` directory contains the **source of truth** for the datab
     }
     `}
 </style>
-| File | Contents |
-|------|----------|
-| `01_tables.sql` | Tables, foreign keys, indexes, extensions |
-| `02_functions.sql` | All PL/pgSQL functions |
-| `03_views.sql` | Views (`contacts_summary`, `companies_summary`, `activity_log`, `init_state`) |
-| `04_triggers.sql` | All triggers (public tables + auth.users) |
-| `05_policies.sql` | Row Level Security policies |
-| `06_grants.sql` | Grants and default privileges |
-| `07_storage.sql` | Storage bucket policies |
+
+| File               | Contents                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| `01_tables.sql`    | Tables, foreign keys, indexes, extensions                                     |
+| `02_functions.sql` | All PL/pgSQL functions                                                        |
+| `03_views.sql`     | Views (`contacts_summary`, `companies_summary`, `activity_log`, `init_state`) |
+| `04_triggers.sql`  | All triggers (public tables + auth.users)                                     |
+| `05_policies.sql`  | Row Level Security policies                                                   |
+| `06_grants.sql`    | Grants and default privileges                                                 |
+| `07_storage.sql`   | Storage bucket policies                                                       |
 
 Files are numbered to control load order (tables must exist before functions that reference them).
 
@@ -110,4 +111,4 @@ Then copy the function's exact format from the dump output into `02_functions.sq
 
 From the frontend UI, users can import contacts and companies via a csv file.
 
-If you change the data structure for a contact, don't forget to modify the sample CSV file located at [`src/components/atomic-crm/contacts/contacts_export.csv`](https://github.com/marmelab/atomic-crm/blob/main/src/components/atomic-crm/contacts/contacts_export.csv). You'll also need to modify the import function found in [`src/components/atomic-crm/contacts/useContactImport.tsx`](https://github.com/marmelab/atomic-crm/blob/main/src/components/atomic-crm/contacts/useContactImport.tsx).
+If you change the data structure for a contact, don't forget to modify the sample CSV file located at [`src/components/hatch-crm/contacts/contacts_export.csv`](https://github.com/hatchtheory/hatch-crm/blob/main/src/components/hatch-crm/contacts/contacts_export.csv). You'll also need to modify the import function found in [`src/components/hatch-crm/contacts/useContactImport.tsx`](https://github.com/hatchtheory/hatch-crm/blob/main/src/components/hatch-crm/contacts/useContactImport.tsx).

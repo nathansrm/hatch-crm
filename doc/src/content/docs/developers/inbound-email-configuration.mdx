@@ -1,11 +1,11 @@
 ---
 title: Inbound Email Configuration
-description: This document explains how to configure inbound email processing in Atomic CRM.
+description: This document explains how to configure inbound email processing in Hatch CRM.
 ---
 
-Atomic CRM can receive inbound emails and automatically create or update contacts based on the email content. This feature is useful to keep your CRM up-to-date with the latest interactions with your contacts.
+Hatch CRM can receive inbound emails and automatically create or update contacts based on the email content. This feature is useful to keep your CRM up-to-date with the latest interactions with your contacts.
 
-Atomic CRM uses [Postmark](https://postmarkapp.com/) to receive and process inbound emails.
+Hatch CRM uses [Postmark](https://postmarkapp.com/) to receive and process inbound emails.
 
 ## Postmark Setup
 
@@ -22,6 +22,7 @@ To enable inbound email features, you need to create a webhook in Postmark.
 7. **Save changes**. That's it for the Postmark setup!
 
 > **Note**: The webhook URL includes 3 important pieces:
+>
 > - `<user>` and `<password>` are credentials you need to choose to secure the webhook. Please note them down as you will need them in the next step.
 > - `<project_id>` is the Supabase project's `SUPABASE_PROJECT_ID`
 
@@ -29,7 +30,7 @@ To enable inbound email features, you need to create a webhook in Postmark.
 
 ## Supabase Setup
 
-Atomic CRM uses a Supabase Edge Function to handle the webhook and process the received emails. You need to configure your Supabase project to handle the incoming requests.
+Hatch CRM uses a Supabase Edge Function to handle the webhook and process the received emails. You need to configure your Supabase project to handle the incoming requests.
 
 In a terminal, after [linking your Supabase project](../supabase-configuration#alternative-using-an-existing-supabase-instance), run the following commands:
 
@@ -64,7 +65,7 @@ VITE_INBOUND_EMAIL=xxxxxxxxxxx@inbound.postmarkapp.com
 
 :::tip
 You need to provide `VITE_INBOUND_EMAIL` at two places: as a Supabase Secret ([Supabase Setup](#supabase-setup)), and in the `.env` file used by the Vite app (this section).
-This is necessary because it is used both client-side, to display the Inbound Email in the Atomic CRM app, and server-side (by the Edge Function) to detect when an email is forwarded to Atomic CRM.
+This is necessary because it is used both client-side, to display the Inbound Email in the Hatch CRM app, and server-side (by the Edge Function) to detect when an email is forwarded to Hatch CRM.
 :::
 
 ## Testing locally

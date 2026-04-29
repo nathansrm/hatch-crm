@@ -1,13 +1,13 @@
 ---
 title: Data Providers
-description: This document explains the data providers used in the development of Atomic CRM.
+description: This document explains the data providers used in the development of Hatch CRM.
 ---
 
-By default, the Atomic CRM uses [Supabase](https://supabase.com) for the backend API. Supabase is an open-source alternative to Firebase, built on top of Postgres. It provides a REST API and a real-time subscription system. The generous free tier allows you to run a small CRM for free.
+By default, the Hatch CRM uses [Supabase](https://supabase.com) for the backend API. Supabase is an open-source alternative to Firebase, built on top of Postgres. It provides a REST API and a real-time subscription system. The generous free tier allows you to run a small CRM for free.
 
 ## Using Test Data
 
-Developing features with an empty database can be challenging. To help with this, Atomic CRM includes a CSV file with test data that can be imported into the application.
+Developing features with an empty database can be challenging. To help with this, Hatch CRM includes a CSV file with test data that can be imported into the application.
 
 To import the test data, follow these steps:
 
@@ -29,10 +29,10 @@ npm run dev:demo
 
 This will start the application on [http://localhost:5173/](http://localhost:5173/) using FakeRest as the data provider. You will be logged in as a demo user with admin rights. The CRM will be pre-filled with random test data. You can modify the data, but it will be reset when you reload the page.
 
-If you add custom fields and want them to be included in the FakeRest data, you can modify the data generator logic located in the [`src/components/atomic-crm/providers/fakerest/dataGenerator`](https://github.com/marmelab/atomic-crm/blob/main/src/components/atomic-crm/providers/fakerest/dataGenerator/) directory.
+If you add custom fields and want them to be included in the FakeRest data, you can modify the data generator logic located in the [`src/components/hatch-crm/providers/fakerest/dataGenerator`](https://github.com/hatchtheory/hatch-crm/blob/main/src/components/hatch-crm/providers/fakerest/dataGenerator/) directory.
 
 :::tip
-The [Atomic CRM demo](https://marmelab.com/atomic-crm-demo/) also uses FakeRest. Check it out to see how it works!
+The Hatch CRM demo data path also uses FakeRest, so it is the fastest way to test frontend changes before wiring a backend.
 :::
 
 ### Setting Up The FakeRest Data Provider
@@ -41,8 +41,8 @@ If you want to set up the FakeRest data provider manually, you need to change th
 
 ```diff
 // in App.tsx
-import { CRM } from "@/components/atomic-crm/root/CRM";
-+import { authProvider, dataProvider } from "@/components/atomic-crm/providers/fakerest";
+import { CRM } from "@/components/hatch-crm/root/CRM";
++import { authProvider, dataProvider } from "@/components/hatch-crm/providers/fakerest";
 
 const App = () => (
 -    <CRM />
@@ -59,4 +59,4 @@ export default App;
 
 The list filters used in this project MUST follow the [`ra-data-postgrest`](https://github.com/raphiniert-com/ra-data-postgrest) convention, where the filter operator is concatenated to the field name with an `@`. For example, to filter contacts by first name, you would use the `first_name@eq` filter.
 
-When using FakeRest, the filters are mapped at runtime to the FakeRest filter syntax by the the [`supabaseAdapter`](https://github.com/marmelab/atomic-crm/blob/main/src/components/atomic-crm/providers/fakerest/internal/supabaseAdapter.ts) file. If a filter is not yet supported by the adapter, you have to modify this file to add support for it.
+When using FakeRest, the filters are mapped at runtime to the FakeRest filter syntax by the the [`supabaseAdapter`](https://github.com/hatchtheory/hatch-crm/blob/main/src/components/hatch-crm/providers/fakerest/internal/supabaseAdapter.ts) file. If a filter is not yet supported by the adapter, you have to modify this file to add support for it.

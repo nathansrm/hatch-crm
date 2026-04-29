@@ -130,7 +130,7 @@ export const TaskSheetFormContent = ({
 }: {
   selectContact?: boolean;
 }) => {
-  const { control, register, watch, setValue } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const selectedType = watch("type") ?? "none";
 
   return (
@@ -166,12 +166,22 @@ export const TaskSheetFormContent = ({
       </HatchField>
 
       <HatchField label="Task" htmlFor="task-text">
-        <HatchTextareaInput
-          id="task-text"
-          autoFocus
-          placeholder="Follow up with Sarah at Acme..."
-          className="min-h-36 px-4 py-3 text-base"
-          {...register("text", { required: true })}
+        <Controller
+          name="text"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <HatchTextareaInput
+              id="task-text"
+              autoFocus
+              placeholder="Follow up with Sarah at Acme..."
+              className="min-h-36 px-4 py-3 text-base"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              name={field.name}
+            />
+          )}
         />
       </HatchField>
 

@@ -19,7 +19,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         display: "flex",
         height: "100vh",
         overflow: "hidden",
-        background: "#060A16",
+        background: "var(--ink-1)",
       }}
     >
       <AppSidebar />

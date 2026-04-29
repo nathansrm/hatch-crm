@@ -98,30 +98,28 @@ export const DealsChart = memo(() => {
         <div className="mr-3 flex">
           <TrendingUp className="text-muted-foreground w-6 h-6" />
         </div>
-        <h2
-          className="text-xl font-semibold text-muted-foreground font-heading"
-        >
+        <h2 className="text-xl font-semibold text-muted-foreground font-heading">
           {translate("crm.dashboard.deals_chart")}
         </h2>
         <div className="ml-auto flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#22C55E" }}
+              style={{ background: "var(--green-500)" }}
             />
             {wonLabel}
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#4AC1E0" }}
+              style={{ background: "var(--cyan-500)" }}
             />
             Pending
           </span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
               className="inline-block h-2.5 w-2.5 rounded-sm"
-              style={{ background: "#EF4444" }}
+              style={{ background: "var(--red-500)" }}
             />
             {lostLabel}
           </span>
@@ -132,7 +130,7 @@ export const DealsChart = memo(() => {
           data={months}
           indexBy="date"
           keys={["won", "pending", "lost"]}
-          colors={["#22C55E", "#4AC1E0", "#EF4444"]}
+          colors={["var(--green-500)", "var(--cyan-500)", "var(--red-500)"]}
           margin={{ top: 10, right: 10, bottom: 30, left: 55 }}
           padding={0.3}
           valueScale={{

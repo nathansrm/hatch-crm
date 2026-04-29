@@ -22,7 +22,7 @@ Build the outreach pipeline data layer, three edge functions (ingest, upsert, se
 ### In Scope
 - [ ] New migration: `outreach_steps` table with RLS policies
 - [ ] New migration: `intake_leads` rollup columns (`current_draft_status`, `outreach_subject`)
-- [ ] New TypeScript type: `OutreachStep` in `src/components/atomic-crm/types.ts`
+- [ ] New TypeScript type: `OutreachStep` in `src/components/hatch-crm/types.ts`
 - [ ] Updated `IntakeLead` type with new rollup fields
 - [ ] FakeRest data generator for `outreach_steps` collection
 - [ ] `Db` interface updated with `outreach_steps` collection
@@ -121,7 +121,7 @@ All three new functions go in `supabase/functions/[name]/index.ts`.
 - Add a count badge near the status tabs: "N ready for review" (count of leads where `current_draft_status = 'ai_reviewed'`)
 
 **FakeRest generator:**
-- New file: `src/components/atomic-crm/providers/fakerest/dataGenerator/outreachSteps.ts`
+- New file: `src/components/hatch-crm/providers/fakerest/dataGenerator/outreachSteps.ts`
 - Generate 2-4 outreach steps per intake lead that has status `in-sequence` or `engaged`
 - Mix of statuses: some `sent`, some `ai_reviewed`, some `action_needed`
 - Wire into `index.ts` generator and `types.ts` Db interface
@@ -160,7 +160,7 @@ All three new functions go in `supabase/functions/[name]/index.ts`.
 - [ ] `supabase/functions/postmark/index.ts` — existing inbound email handler for promoted contacts. Untouched.
 - [ ] `supabase/migrations/20260409100000_intake_leads.sql` — original table creation. New columns go in new migration files.
 - [ ] `supabase/migrations/20260411120000_intake_status_and_outreach.sql` — already written, adds status remap + 4 outreach columns. Do not duplicate these columns.
-- [ ] `src/components/atomic-crm/intake/IntakeStatusBadge.tsx` — already handles all status values. No changes needed.
+- [ ] `src/components/hatch-crm/intake/IntakeStatusBadge.tsx` — already handles all status values. No changes needed.
 - [ ] Response shapes of existing edge functions — other systems depend on them.
 
 ## Scope Gates
@@ -282,11 +282,11 @@ ALTER TABLE public.intake_leads ADD COLUMN IF NOT EXISTS outreach_subject TEXT;
 **Depends on:** none (uses types defined in SB-1 migration but doesn't run SQL)
 **Branch:** `feat/op-mvp-sb2-types-fakerest`
 **Files:**
-- `src/components/atomic-crm/types.ts` (EDIT — add `OutreachStep` type, add fields to `IntakeLead`)
-- `src/components/atomic-crm/providers/fakerest/dataGenerator/outreachSteps.ts` (NEW)
-- `src/components/atomic-crm/providers/fakerest/dataGenerator/types.ts` (EDIT — add `outreach_steps` to `Db`)
-- `src/components/atomic-crm/providers/fakerest/dataGenerator/index.ts` (EDIT — wire generator)
-- `src/components/atomic-crm/root/CRM.tsx` (EDIT — add Resource registration)
+- `src/components/hatch-crm/types.ts` (EDIT — add `OutreachStep` type, add fields to `IntakeLead`)
+- `src/components/hatch-crm/providers/fakerest/dataGenerator/outreachSteps.ts` (NEW)
+- `src/components/hatch-crm/providers/fakerest/dataGenerator/types.ts` (EDIT — add `outreach_steps` to `Db`)
+- `src/components/hatch-crm/providers/fakerest/dataGenerator/index.ts` (EDIT — wire generator)
+- `src/components/hatch-crm/root/CRM.tsx` (EDIT — add Resource registration)
 
 **Scope:**
 
@@ -489,8 +489,8 @@ Env vars needed (Supabase secrets): `POSTMARK_SERVER_TOKEN`, `POSTMARK_FROM_ADDR
 **Depends on:** SB-2 (types + fakerest data)
 **Branch:** `feat/op-mvp-sb6-frontend-timeline`
 **Files:**
-- `src/components/atomic-crm/intake/IntakeExpandedRow.tsx` (REWRITE)
-- `src/components/atomic-crm/intake/IntakeList.tsx` (EDIT)
+- `src/components/hatch-crm/intake/IntakeExpandedRow.tsx` (REWRITE)
+- `src/components/hatch-crm/intake/IntakeList.tsx` (EDIT)
 
 **Scope:**
 

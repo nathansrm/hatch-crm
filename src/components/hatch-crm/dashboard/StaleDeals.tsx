@@ -4,9 +4,7 @@ import { getDealDecayLevel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { isTerminalDealStage } from "../deals/dealFilters";
-import {
-  DASHBOARD_COLLECTION_PAGINATION,
-} from "./widgets/dashboardUtils";
+import { DASHBOARD_COLLECTION_PAGINATION } from "./widgets/dashboardUtils";
 
 export const StaleDeals = () => {
   const { dealStages, currency } = useConfigurationContext();
@@ -42,7 +40,8 @@ export const StaleDeals = () => {
         overflow: "hidden",
         borderRadius: 12,
         padding: "20px 22px",
-        background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+        background:
+          "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         display: "flex",
@@ -65,7 +64,7 @@ export const StaleDeals = () => {
               fontSize: 10,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#F5B84A",
+              color: "var(--warn)",
               fontWeight: 700,
               marginBottom: 4,
             }}
@@ -79,7 +78,7 @@ export const StaleDeals = () => {
               fontSize: 16,
               fontWeight: 700,
               letterSpacing: "-0.01em",
-              color: "#ECEEF5",
+              color: "var(--fg-1)",
             }}
           >
             Stale deals
@@ -89,7 +88,7 @@ export const StaleDeals = () => {
           style={{
             fontSize: 11,
             fontWeight: 700,
-            color: "#F5B84A",
+            color: "var(--warn)",
             background: "rgba(245,184,74,0.08)",
             border: "1px solid rgba(245,184,74,0.25)",
             padding: "3px 9px",
@@ -159,7 +158,7 @@ export const StaleDeals = () => {
                   style={{
                     fontSize: 13,
                     fontWeight: 600,
-                    color: "#ECEEF5",
+                    color: "var(--fg-1)",
                     marginBottom: 3,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -168,13 +167,13 @@ export const StaleDeals = () => {
                 >
                   {deal.name}
                 </div>
-                <div style={{ fontSize: 11, color: "#5C6784" }}>
+                <div style={{ fontSize: 11, color: "var(--fg-3)" }}>
                   {stageMeta?.label ?? deal.stage}
                   {" - "}
                   <span
                     className="font-mono"
                     style={{
-                      color: "#9AA3BE",
+                      color: "var(--fg-2)",
                     }}
                   >
                     {fmt(deal.amount ?? 0)}

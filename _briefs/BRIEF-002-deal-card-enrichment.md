@@ -21,17 +21,17 @@ Surface the five agency predictive signals on `DealCard` so the kanban shows rea
 
 ### In Scope
 - [ ] `supabase/migrations/{timestamp}_add_deal_predictive_fields.sql` — new migration adding the 5 predictive columns to the `deals` table
-- [ ] `src/components/atomic-crm/deals/stackInfo.ts` — new lookup map for software tool metadata (shared with BRIEF-003)
-- [ ] `src/components/atomic-crm/deals/bottleneckLabels.ts` — new short-label map for bottleneck display
-- [ ] `src/components/atomic-crm/deals/DealCard.tsx` — add 5 signal slots to `DealCardContent`
-- [ ] `src/components/atomic-crm/deals/index.ts` — export new files
+- [ ] `src/components/hatch-crm/deals/stackInfo.ts` — new lookup map for software tool metadata (shared with BRIEF-003)
+- [ ] `src/components/hatch-crm/deals/bottleneckLabels.ts` — new short-label map for bottleneck display
+- [ ] `src/components/hatch-crm/deals/DealCard.tsx` — add 5 signal slots to `DealCardContent`
+- [ ] `src/components/hatch-crm/deals/index.ts` — export new files
 - [ ] `demo/` — extend the deal generator to populate the 5 new fields with realistic values so demo mode renders them
 
 ### Out of Scope
 - [ ] DealShow page (covered by BRIEF-003)
 - [ ] DealInputs / DealEdit form fields (not needed — fields are set externally by lead gen or manually via Edit; keep scope tight)
 - [ ] Dashboard changes (BRIEF-004)
-- [ ] Any file in `src/components/admin/`, `src/components/ui/`, or `src/components/atomic-crm/providers/`
+- [ ] Any file in `src/components/admin/`, `src/components/ui/`, or `src/components/hatch-crm/providers/`
 
 ## Architecture Notes
 
@@ -85,9 +85,9 @@ All 4 slots are additive below the existing decay line. If none of the 4 fields 
 
 ## Must Not Change
 
-- [ ] `src/components/atomic-crm/types.ts` — Deal type already has the 5 fields correctly typed; do not modify the type, only use it
-- [ ] `src/components/atomic-crm/deals/dealUtils.ts` — decay logic is correct, do not touch
-- [ ] `src/components/atomic-crm/deals/stageColors.ts` — stage color map, leave as-is
+- [ ] `src/components/hatch-crm/types.ts` — Deal type already has the 5 fields correctly typed; do not modify the type, only use it
+- [ ] `src/components/hatch-crm/deals/dealUtils.ts` — decay logic is correct, do not touch
+- [ ] `src/components/hatch-crm/deals/stageColors.ts` — stage color map, leave as-is
 - [ ] `src/components/admin/` — RA primitive wrappers, out of scope entirely
 - [ ] Any existing migration file — append only, never edit past migrations
 - [ ] `DealCard`'s existing click handler, draggable wiring, and decay ring logic

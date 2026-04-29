@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { getSupabaseClient } from "@/components/hatch-crm/providers/supabase/supabase";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ALLOWED_RESOURCE_FILE_TYPES = [
   "application/pdf",
@@ -24,7 +25,12 @@ const ALLOWED_RESOURCE_FILE_TYPES = [
   "text/plain",
 ].join(",");
 
-type ResourceCategory = "all" | "sales" | "onboarding" | "templates" | "internal";
+type ResourceCategory =
+  | "all"
+  | "sales"
+  | "onboarding"
+  | "templates"
+  | "internal";
 type ResourceValueCategory = Exclude<ResourceCategory, "all">;
 
 type ResourceRecord = {
@@ -69,7 +75,7 @@ const DETAIL_INPUT_STYLE = {
   border: "1px solid rgba(255,255,255,0.06)",
   borderRadius: 7,
   padding: "9px 12px",
-  color: "#ECEEF5",
+  color: "var(--fg-1)",
   fontSize: 13,
   width: "100%",
   outline: "none",
@@ -99,9 +105,9 @@ const normalizeCategory = (
   category: string | null | undefined,
 ): ResourceValueCategory => {
   if (
-    category === "sales"
-    || category === "onboarding"
-    || category === "templates"
+    category === "sales" ||
+    category === "onboarding" ||
+    category === "templates"
   ) {
     return category;
   }
@@ -145,7 +151,9 @@ const mapResource = (raw: any): ResourceRecord => {
     size: formatSize(fileSize),
     updated: updatedAt,
     tags: Array.isArray(raw?.tags)
-      ? raw.tags.filter((tag: unknown): tag is string => typeof tag === "string")
+      ? raw.tags.filter(
+          (tag: unknown): tag is string => typeof tag === "string",
+        )
       : [],
     starred: Boolean(raw?.starred),
     preview: typeof raw?.preview === "string" ? raw.preview : "",
@@ -173,6 +181,7 @@ const getFunctionErrorMessage = async (error: any) => {
 export const ResourcesPage = () => {
   const notify = useNotify();
   const isDemo = import.meta.env.VITE_IS_DEMO === "true";
+  const isMobile = useIsMobile();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
   const [page, setPage] = useState(1);
@@ -182,7 +191,12 @@ export const ResourcesPage = () => {
   const [sendLoading, setSendLoading] = useState(false);
   const [sendError, setSendError] = useState("");
   const [toEmail, setToEmail] = useState("");
-  const [selectedContact, setSelectedContact] = useState<{ id: string | number; first_name: string; last_name: string; email: string } | null>(null);
+  const [selectedContact, setSelectedContact] = useState<{
+    id: string | number;
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null>(null);
   const [contactQuery, setContactQuery] = useState("");
   const [sendSubject, setSendSubject] = useState("");
   const [sendMessage, setSendMessage] = useState("");
@@ -226,7 +240,10 @@ export const ResourcesPage = () => {
   const resources = (rawResources ?? []).map(mapResource);
   const selected =
     resources.find((resource) => resource.id === selectedId) ?? null;
-  const totalPages = Math.max(1, Math.ceil(totalResources / RESOURCES_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalResources / RESOURCES_PER_PAGE),
+  );
   const starred = resources.filter((resource) => resource.starred);
   const rest = resources.filter((resource) => !resource.starred);
   const actionUnavailableTitle = isDemo ? "Not available in demo" : undefined;
@@ -258,7 +275,8 @@ export const ResourcesPage = () => {
     setUploading(true);
     try {
       const supabase = getSupabaseClient();
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
       const userId = userData.user?.id;
 
       if (userError || !userId) {
@@ -268,8 +286,8 @@ export const ResourcesPage = () => {
       }
 
       const storagePath = `${userId}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase
-        .storage.from("resources")
+      const { error: uploadError } = await supabase.storage
+        .from("resources")
         .upload(storagePath, file);
 
       if (uploadError) {
@@ -302,7 +320,10 @@ export const ResourcesPage = () => {
       }
     } catch (error) {
       console.error("resources.create.error", error);
-      notify(`Upload failed: ${error instanceof Error ? error.message : "unknown error"}`, { type: "error" });
+      notify(
+        `Upload failed: ${error instanceof Error ? error.message : "unknown error"}`,
+        { type: "error" },
+      );
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -439,10 +460,26 @@ export const ResourcesPage = () => {
   return (
     <>
       <div
-        style={{ display: "flex", flex: 1, minHeight: 0, background: "#060A16" }}
+        style={{
+          display: isMobile ? "block" : "flex",
+          flex: 1,
+          minHeight: 0,
+          background: "var(--ink-1)",
+          paddingBottom: isMobile
+            ? "calc(7rem + env(safe-area-inset-bottom))"
+            : 0,
+        }}
       >
-        <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
-          <div style={{ padding: "24px 28px 20px" }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: isMobile ? "visible" : "auto",
+            minHeight: 0,
+          }}
+        >
+          <div
+            style={{ padding: isMobile ? "20px 16px 16px" : "24px 28px 20px" }}
+          >
             <div
               style={{
                 display: "flex",
@@ -456,7 +493,7 @@ export const ResourcesPage = () => {
                   fontSize: 10.5,
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
-                  color: "#4DC8E8",
+                  color: "var(--hatch-cyan)",
                   fontWeight: 700,
                 }}
               >
@@ -473,8 +510,10 @@ export const ResourcesPage = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: "flex-end",
+                alignItems: isMobile ? "stretch" : "flex-end",
                 justifyContent: "space-between",
+                flexDirection: isMobile ? "column" : "row",
+                gap: isMobile ? 16 : 0,
               }}
             >
               <div>
@@ -485,19 +524,30 @@ export const ResourcesPage = () => {
                     fontSize: 26,
                     fontWeight: 700,
                     letterSpacing: "-0.02em",
-                    color: "#ECEEF5",
+                    color: "var(--fg-1)",
                   }}
                 >
                   Resources
                 </h1>
                 <p
-                  style={{ margin: "4px 0 0", color: "#6B7494", fontSize: 13 }}
+                  style={{
+                    margin: "4px 0 0",
+                    color: "var(--fg-2-muted)",
+                    fontSize: 13,
+                  }}
                 >
                   Sales scripts, onboarding packages, templates, and client
                   materials
                 </p>
               </div>
-              <div style={{ display: "flex", gap: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  alignItems: "stretch",
+                  width: isMobile ? "100%" : "auto",
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -507,10 +557,11 @@ export const ResourcesPage = () => {
                     border: "1px solid rgba(255,255,255,0.06)",
                     borderRadius: 8,
                     padding: "8px 12px",
-                    width: 220,
+                    width: isMobile ? "100%" : 220,
+                    minWidth: 0,
                   }}
                 >
-                  <Search size={14} color="#4A5270" />
+                  <Search size={14} color="var(--fg-4a)" />
                   <input
                     value={search}
                     onChange={(e) => {
@@ -522,7 +573,7 @@ export const ResourcesPage = () => {
                       background: "transparent",
                       border: "none",
                       outline: "none",
-                      color: "#ECEEF5",
+                      color: "var(--fg-1)",
                       fontSize: 13,
                       width: "100%",
                     }}
@@ -537,8 +588,8 @@ export const ResourcesPage = () => {
                     alignItems: "center",
                     gap: 6,
                     padding: "8px 14px",
-                    background: "#4DC8E8",
-                    color: "#061022",
+                    background: "var(--hatch-cyan)",
+                    color: "var(--hatch-ink)",
                     borderRadius: 7,
                     fontWeight: 700,
                     fontSize: 12.5,
@@ -553,7 +604,16 @@ export const ResourcesPage = () => {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 6, marginTop: 20 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                marginTop: 20,
+                overflowX: isMobile ? "auto" : "visible",
+                paddingBottom: isMobile ? 2 : 0,
+                scrollbarWidth: isMobile ? "none" : "auto",
+              }}
+            >
               {CATEGORIES.map((c) => (
                 <button
                   key={c.key}
@@ -566,7 +626,8 @@ export const ResourcesPage = () => {
                     borderRadius: 7,
                     fontSize: 12.5,
                     fontWeight: 600,
-                    color: category === c.key ? "#ECEEF5" : "#6B7494",
+                    color:
+                      category === c.key ? "var(--fg-1)" : "var(--fg-2-muted)",
                     background:
                       category === c.key
                         ? "rgba(255,255,255,0.06)"
@@ -583,7 +644,10 @@ export const ResourcesPage = () => {
                     className="font-mono"
                     style={{
                       fontSize: 10.5,
-                      color: category === c.key ? "#4DC8E8" : "#4A5270",
+                      color:
+                        category === c.key
+                          ? "var(--hatch-cyan)"
+                          : "var(--fg-4a)",
                     }}
                   >
                     {
@@ -600,7 +664,7 @@ export const ResourcesPage = () => {
 
           <div
             style={{
-              padding: "0 28px 40px",
+              padding: isMobile ? "0 16px 36px" : "0 28px 40px",
               display: "flex",
               flexDirection: "column",
               gap: 20,
@@ -611,7 +675,7 @@ export const ResourcesPage = () => {
                 style={{
                   padding: "60px 0",
                   textAlign: "center",
-                  color: "#4A5270",
+                  color: "var(--fg-4a)",
                   fontSize: 14,
                 }}
               >
@@ -629,13 +693,13 @@ export const ResourcesPage = () => {
                         marginBottom: 12,
                       }}
                     >
-                      <Star size={12} color="#F5B84A" fill="#F5B84A" />
+                      <Star size={12} color="var(--warn)" fill="var(--warn)" />
                       <span
                         style={{
                           fontSize: 10.5,
                           letterSpacing: "0.18em",
                           textTransform: "uppercase",
-                          color: "#4A5270",
+                          color: "var(--fg-4a)",
                           fontWeight: 700,
                         }}
                       >
@@ -670,7 +734,7 @@ export const ResourcesPage = () => {
                           fontSize: 10.5,
                           letterSpacing: "0.18em",
                           textTransform: "uppercase",
-                          color: "#4A5270",
+                          color: "var(--fg-4a)",
                           fontWeight: 700,
                           marginBottom: 12,
                         }}
@@ -703,7 +767,7 @@ export const ResourcesPage = () => {
                     style={{
                       padding: "60px 0",
                       textAlign: "center",
-                      color: "#4A5270",
+                      color: "var(--fg-4a)",
                       fontSize: 14,
                     }}
                   >
@@ -731,7 +795,7 @@ export const ResourcesPage = () => {
                         borderRadius: 8,
                         border: "1px solid rgba(255,255,255,0.06)",
                         background: "rgba(255,255,255,0.03)",
-                        color: "#6B7494",
+                        color: "var(--fg-2-muted)",
                         cursor: page === 1 ? "not-allowed" : "pointer",
                         opacity: page === 1 ? 0.6 : 1,
                       }}
@@ -742,7 +806,7 @@ export const ResourcesPage = () => {
                       className="font-mono"
                       style={{
                         fontSize: 12,
-                        color: "#6B7494",
+                        color: "var(--fg-2-muted)",
                       }}
                     >
                       Page {page} of {totalPages}
@@ -755,7 +819,7 @@ export const ResourcesPage = () => {
                         borderRadius: 8,
                         border: "1px solid rgba(255,255,255,0.06)",
                         background: "rgba(255,255,255,0.03)",
-                        color: "#6B7494",
+                        color: "var(--fg-2-muted)",
                         cursor: page === totalPages ? "not-allowed" : "pointer",
                         opacity: page === totalPages ? 0.6 : 1,
                       }}
@@ -772,13 +836,18 @@ export const ResourcesPage = () => {
         {selected && (
           <div
             style={{
-              width: 380,
+              width: isMobile ? "auto" : 380,
               flexShrink: 0,
-              background: "#0A0F1A",
-              borderLeft: "1px solid rgba(255,255,255,0.06)",
+              background: "var(--ink-2)",
+              borderLeft: isMobile
+                ? "none"
+                : "1px solid rgba(255,255,255,0.06)",
+              borderTop: isMobile ? "1px solid rgba(255,255,255,0.06)" : "none",
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
+              margin: isMobile ? "0 16px 24px" : 0,
+              borderRadius: isMobile ? 12 : 0,
             }}
           >
             <div
@@ -793,11 +862,18 @@ export const ResourcesPage = () => {
             >
               <div style={{ flex: 1, marginRight: 12 }}>
                 {editing ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
                     <select
                       value={editCategory}
                       onChange={(e) =>
-                        setEditCategory(normalizeCategory(e.target.value))}
+                        setEditCategory(normalizeCategory(e.target.value))
+                      }
                       style={DETAIL_INPUT_STYLE}
                     >
                       {CATEGORIES.filter((option) => option.key !== "all").map(
@@ -805,7 +881,7 @@ export const ResourcesPage = () => {
                           <option
                             key={option.key}
                             value={option.key}
-                            style={{ color: "#061022" }}
+                            style={{ color: "var(--hatch-ink)" }}
                           >
                             {option.label}
                           </option>
@@ -841,8 +917,8 @@ export const ResourcesPage = () => {
                           gap: 6,
                           padding: "9px 0",
                           borderRadius: 8,
-                          background: "#4DC8E8",
-                          color: "#061022",
+                          background: "var(--hatch-cyan)",
+                          color: "var(--hatch-ink)",
                           fontWeight: 700,
                           fontSize: 12.5,
                           border: "none",
@@ -858,7 +934,7 @@ export const ResourcesPage = () => {
                           borderRadius: 8,
                           border: "1px solid rgba(255,255,255,0.06)",
                           background: "rgba(255,255,255,0.03)",
-                          color: "#6B7494",
+                          color: "var(--fg-2-muted)",
                           cursor: "pointer",
                         }}
                       >
@@ -873,7 +949,7 @@ export const ResourcesPage = () => {
                         fontSize: 9.5,
                         letterSpacing: "0.18em",
                         textTransform: "uppercase",
-                        color: "#4DC8E8",
+                        color: "var(--hatch-cyan)",
                         fontWeight: 700,
                         marginBottom: 6,
                       }}
@@ -886,7 +962,7 @@ export const ResourcesPage = () => {
                         margin: 0,
                         fontSize: 17,
                         fontWeight: 700,
-                        color: "#ECEEF5",
+                        color: "var(--fg-1)",
                         letterSpacing: "-0.01em",
                         lineHeight: 1.3,
                       }}
@@ -894,7 +970,11 @@ export const ResourcesPage = () => {
                       {selected.title}
                     </h2>
                     <div
-                      style={{ fontSize: 12, color: "#6B7494", marginTop: 4 }}
+                      style={{
+                        fontSize: 12,
+                        color: "var(--fg-2-muted)",
+                        marginTop: 4,
+                      }}
                     >
                       {selected.desc}
                     </div>
@@ -907,7 +987,7 @@ export const ResourcesPage = () => {
                   setEditing(false);
                 }}
                 style={{
-                  color: "#6B7494",
+                  color: "var(--fg-2-muted)",
                   padding: 4,
                   background: "transparent",
                   border: "none",
@@ -939,7 +1019,7 @@ export const ResourcesPage = () => {
                       fontSize: 9.5,
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
-                      color: "#4A5270",
+                      color: "var(--fg-4a)",
                       fontWeight: 700,
                       marginBottom: 3,
                     }}
@@ -949,7 +1029,7 @@ export const ResourcesPage = () => {
                   <div
                     style={{
                       fontSize: 12.5,
-                      color: "#ECEEF5",
+                      color: "var(--fg-1)",
                       fontWeight: 500,
                     }}
                   >
@@ -980,8 +1060,8 @@ export const ResourcesPage = () => {
                   gap: 6,
                   padding: "9px 0",
                   borderRadius: 8,
-                  background: "#4DC8E8",
-                  color: "#061022",
+                  background: "var(--hatch-cyan)",
+                  color: "var(--hatch-ink)",
                   fontWeight: 700,
                   fontSize: 12.5,
                   border: "none",
@@ -1000,7 +1080,7 @@ export const ResourcesPage = () => {
                   borderRadius: 8,
                   border: "1px solid rgba(255,255,255,0.06)",
                   background: "rgba(255,255,255,0.03)",
-                  color: "#6B7494",
+                  color: "var(--fg-2-muted)",
                   cursor: isDemo ? "not-allowed" : "pointer",
                   opacity: isDemo ? 0.6 : 1,
                 }}
@@ -1014,7 +1094,7 @@ export const ResourcesPage = () => {
                   borderRadius: 8,
                   border: "1px solid rgba(255,255,255,0.06)",
                   background: "rgba(255,255,255,0.03)",
-                  color: "#6B7494",
+                  color: "var(--fg-2-muted)",
                   cursor: "pointer",
                 }}
               >
@@ -1028,7 +1108,7 @@ export const ResourcesPage = () => {
                   fontSize: 9.5,
                   letterSpacing: "0.16em",
                   textTransform: "uppercase",
-                  color: "#4A5270",
+                  color: "var(--fg-4a)",
                   fontWeight: 700,
                   marginBottom: 12,
                 }}
@@ -1041,7 +1121,7 @@ export const ResourcesPage = () => {
                   style={{
                     margin: 0,
                     fontSize: 11.5,
-                    color: "#6B7494",
+                    color: "var(--fg-2-muted)",
                     lineHeight: 1.7,
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
@@ -1054,7 +1134,7 @@ export const ResourcesPage = () => {
                   {selected.preview}
                 </pre>
               ) : selected.storage_path ? (
-                <div style={{ color: "#4A5270", fontSize: 12 }}>
+                <div style={{ color: "var(--fg-4a)", fontSize: 12 }}>
                   {isDemo
                     ? "No preview available. Download links are not available in demo."
                     : "No preview available. Use Copy to get a download link."}
@@ -1065,7 +1145,7 @@ export const ResourcesPage = () => {
                   style={{
                     margin: 0,
                     fontSize: 11.5,
-                    color: "#6B7494",
+                    color: "var(--fg-2-muted)",
                     lineHeight: 1.7,
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
@@ -1099,7 +1179,7 @@ export const ResourcesPage = () => {
           <div
             style={{
               width: 420,
-              background: "#0A0F1A",
+              background: "var(--ink-2)",
               border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 12,
               padding: 24,
@@ -1110,12 +1190,14 @@ export const ResourcesPage = () => {
               style={{
                 fontSize: 16,
                 fontWeight: 700,
-                color: "#ECEEF5",
+                color: "var(--fg-1)",
               }}
             >
               Send to Client
             </div>
-            <div style={{ fontSize: 12, color: "#6B7494", marginTop: 4 }}>
+            <div
+              style={{ fontSize: 12, color: "var(--fg-2-muted)", marginTop: 4 }}
+            >
               {selected.title}
             </div>
 
@@ -1133,7 +1215,7 @@ export const ResourcesPage = () => {
                     fontSize: 11,
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    color: "#4A5270",
+                    color: "var(--fg-4a)",
                     fontWeight: 700,
                   }}
                 >
@@ -1149,13 +1231,26 @@ export const ResourcesPage = () => {
                       gap: 8,
                     }}
                   >
-                    <span style={{ color: "#ECEEF5", fontSize: 13 }}>
+                    <span style={{ color: "var(--fg-1)", fontSize: 13 }}>
                       {selectedContact.first_name} {selectedContact.last_name}
-                      <span style={{ color: "#4A5270", marginLeft: 8 }}>{selectedContact.email}</span>
+                      <span style={{ color: "var(--fg-4a)", marginLeft: 8 }}>
+                        {selectedContact.email}
+                      </span>
                     </span>
                     <button
-                      onClick={() => { setSelectedContact(null); setToEmail(""); setContactQuery(""); }}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "#4A5270", padding: 0, display: "flex" }}
+                      onClick={() => {
+                        setSelectedContact(null);
+                        setToEmail("");
+                        setContactQuery("");
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--fg-4a)",
+                        padding: 0,
+                        display: "flex",
+                      }}
                     >
                       <X size={13} />
                     </button>
@@ -1169,60 +1264,76 @@ export const ResourcesPage = () => {
                       onChange={(e) => setContactQuery(e.target.value)}
                       style={DETAIL_INPUT_STYLE}
                     />
-                    {contactQuery.length >= 2 && Array.isArray(contactSuggestions) && contactSuggestions.length > 0 && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "calc(100% + 4px)",
-                          left: 0,
-                          right: 0,
-                          background: "#0F1627",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          borderRadius: 8,
-                          overflow: "hidden",
-                          zIndex: 10,
-                        }}
-                      >
-                        {contactSuggestions.map((c: any) => (
-                          <button
-                            key={c.id}
-                            onClick={() => {
-                              setSelectedContact({ id: c.id, first_name: c.first_name, last_name: c.last_name, email: c.email });
-                              setToEmail(c.email);
-                              setContactQuery("");
-                            }}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              width: "100%",
-                              padding: "10px 14px",
-                              background: "none",
-                              border: "none",
-                              borderBottom: "1px solid rgba(255,255,255,0.05)",
-                              cursor: "pointer",
-                              textAlign: "left",
-                            }}
-                          >
-                            <span style={{ color: "#ECEEF5", fontSize: 13 }}>
-                              {c.first_name} {c.last_name}
-                            </span>
-                            <span style={{ color: "#4A5270", fontSize: 12 }}>{c.email}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {contactQuery.length >= 2 &&
+                      Array.isArray(contactSuggestions) &&
+                      contactSuggestions.length > 0 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "calc(100% + 4px)",
+                            left: 0,
+                            right: 0,
+                            background: "var(--ink-3a)",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            borderRadius: 8,
+                            overflow: "hidden",
+                            zIndex: 10,
+                          }}
+                        >
+                          {contactSuggestions.map((c: any) => (
+                            <button
+                              key={c.id}
+                              onClick={() => {
+                                setSelectedContact({
+                                  id: c.id,
+                                  first_name: c.first_name,
+                                  last_name: c.last_name,
+                                  email: c.email,
+                                });
+                                setToEmail(c.email);
+                                setContactQuery("");
+                              }}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%",
+                                padding: "10px 14px",
+                                background: "none",
+                                border: "none",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.05)",
+                                cursor: "pointer",
+                                textAlign: "left",
+                              }}
+                            >
+                              <span
+                                style={{ color: "var(--fg-1)", fontSize: 13 }}
+                              >
+                                {c.first_name} {c.last_name}
+                              </span>
+                              <span
+                                style={{ color: "var(--fg-4a)", fontSize: 12 }}
+                              >
+                                {c.email}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
 
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label
+                style={{ display: "flex", flexDirection: "column", gap: 6 }}
+              >
                 <span
                   style={{
                     fontSize: 11,
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    color: "#4A5270",
+                    color: "var(--fg-4a)",
                     fontWeight: 700,
                   }}
                 >
@@ -1235,13 +1346,15 @@ export const ResourcesPage = () => {
                 />
               </label>
 
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label
+                style={{ display: "flex", flexDirection: "column", gap: 6 }}
+              >
                 <span
                   style={{
                     fontSize: 11,
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    color: "#4A5270",
+                    color: "var(--fg-4a)",
                     fontWeight: 700,
                   }}
                 >
@@ -1257,13 +1370,20 @@ export const ResourcesPage = () => {
             </div>
 
             {sendError ? (
-              <div style={{ marginTop: 14, fontSize: 12, color: "#F87171" }}>
+              <div
+                style={{ marginTop: 14, fontSize: 12, color: "var(--red-400)" }}
+              >
                 {sendError}
               </div>
             ) : null}
 
             <div
-              style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 8,
+                marginTop: 20,
+              }}
             >
               <button
                 onClick={() => {
@@ -1275,7 +1395,7 @@ export const ResourcesPage = () => {
                   borderRadius: 8,
                   border: "1px solid rgba(255,255,255,0.06)",
                   background: "rgba(255,255,255,0.03)",
-                  color: "#6B7494",
+                  color: "var(--fg-2-muted)",
                   cursor: "pointer",
                 }}
               >
@@ -1291,8 +1411,8 @@ export const ResourcesPage = () => {
                   justifyContent: "center",
                   gap: 6,
                   padding: "9px 14px",
-                  background: "#4DC8E8",
-                  color: "#061022",
+                  background: "var(--hatch-cyan)",
+                  color: "var(--hatch-ink)",
                   borderRadius: 7,
                   fontWeight: 700,
                   fontSize: 12.5,
@@ -1334,7 +1454,7 @@ const ResourceCard = ({
     resource: ResourceRecord,
   ) => void;
 }) => {
-  const color = EXT_COLORS[resource.ext] ?? "#9AA3BE";
+  const color = EXT_COLORS[resource.ext] ?? "var(--fg-2)";
   const isActive = selectedId === resource.id;
 
   return (
@@ -1346,7 +1466,7 @@ const ResourceCard = ({
         gap: 14,
         padding: "14px 16px",
         borderRadius: 10,
-        background: isActive ? "#131B2E" : "#0D1424",
+        background: isActive ? "var(--ink-4)" : "var(--ink-3)",
         border: isActive
           ? "1px solid rgba(77,200,232,0.3)"
           : "1px solid rgba(255,255,255,0.05)",
@@ -1400,7 +1520,7 @@ const ResourceCard = ({
             style={{
               fontSize: 13.5,
               fontWeight: 600,
-              color: "#ECEEF5",
+              color: "var(--fg-1)",
             }}
           >
             {resource.title}
@@ -1415,20 +1535,20 @@ const ResourceCard = ({
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: resource.starred ? "#F5B84A" : "#4A5270",
+              color: resource.starred ? "var(--warn)" : "var(--fg-4a)",
             }}
           >
             <Star
               size={12}
-              color={resource.starred ? "#F5B84A" : "#4A5270"}
-              fill={resource.starred ? "#F5B84A" : "none"}
+              color={resource.starred ? "var(--warn)" : "var(--fg-4a)"}
+              fill={resource.starred ? "var(--warn)" : "none"}
             />
           </button>
         </div>
         <div
           style={{
             fontSize: 12,
-            color: "#6B7494",
+            color: "var(--fg-2-muted)",
             marginBottom: 6,
             lineHeight: 1.4,
           }}
@@ -1451,7 +1571,7 @@ const ResourceCard = ({
                 fontWeight: 600,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "#4A5270",
+                color: "var(--fg-4a)",
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.05)",
                 padding: "2px 7px",
@@ -1465,7 +1585,7 @@ const ResourceCard = ({
             className="font-mono"
             style={{
               fontSize: 11,
-              color: "#4A5270",
+              color: "var(--fg-4a)",
               marginLeft: "auto",
             }}
           >

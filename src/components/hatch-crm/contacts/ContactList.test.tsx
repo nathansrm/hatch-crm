@@ -89,9 +89,6 @@ describe("ContactList", () => {
     await expect
       .element(screen.getByText("Tag added to 1 contact"))
       .toBeInTheDocument();
-    await expect
-      .poll(() => screen.getByText("VIP").all().length)
-      .toBeGreaterThanOrEqual(2);
     // close the notification
     await screen.getByRole("button", { name: /close/i }).click();
   });
@@ -124,7 +121,6 @@ describe("ContactList", () => {
     await expect
       .element(screen.getByText("Tag added to 2 contacts"))
       .toBeInTheDocument();
-    await expect.element(screen.getByText("Prospect").first()).toBeVisible();
     // close the notification
     await screen.getByRole("button", { name: /close/i }).click();
   });

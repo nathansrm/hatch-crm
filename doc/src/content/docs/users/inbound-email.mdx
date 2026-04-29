@@ -1,9 +1,9 @@
 ---
 title: Inbound Email
-description: This document explains how to use inbound email in Atomic CRM.
+description: This document explains how to use inbound email in Hatch CRM.
 ---
 
-Atomic CRM can receive inbound emails and automatically create or update contacts based on the email content. This feature is useful to keep your CRM up-to-date with the latest interactions with your contacts.
+Hatch CRM can receive inbound emails and automatically create or update contacts based on the email content. This feature is useful to keep your CRM up-to-date with the latest interactions with your contacts.
 
 ## Setup
 
@@ -11,16 +11,16 @@ You must setup Postmark and Supabase to use the inbound email feature. Check the
 
 ## Usage
 
-Copy or forward emails to Atomic CRM's inbound email address to automatically add notes to the corresponding contacts. You can find this email address in the user menu by clicking on the "My Info" menu item, in the "Inbound Email" section. It looks like `xxxxxxx@inbound.postmarkapp.com`.
+Copy or forward emails to Hatch CRM's inbound email address to automatically add notes to the corresponding contacts. You can find this email address in the user menu by clicking on the "My Info" menu item, in the "Inbound Email" section. It looks like `xxxxxxx@inbound.postmarkapp.com`.
 
 ![Inbound Email Address](../../images/inbound-email.jpg)
 
-When you write to a contact in your email client, add the inbound email address in the **Bcc** field. Postmark will receive a copy of your email, and forward it to Atomic CRM. Atomic CRM uses the sender's email address to identify the user, and the recipient's email address to identify the contact. If the contact does not yet exist, Atomic CRM creates it using the email's domain as company name. The content of the email is added as a note to the contact.
+When you write to a contact in your email client, add the inbound email address in the **Bcc** field. Postmark will receive a copy of your email, and forward it to Hatch CRM. Hatch CRM uses the sender's email address to identify the user, and the recipient's email address to identify the contact. If the contact does not yet exist, Hatch CRM creates it using the email's domain as company name. The content of the email is added as a note to the contact.
 
-**Tip**: Use the **Bcc** field to send emails to Atomic CRM without notifying the recipients.
+**Tip**: Use the **Bcc** field to send emails to Hatch CRM without notifying the recipients.
 
 You can also forward received emails to the inbound email address to add them as notes to the corresponding contacts.
-Atomic CRM will extract the original sender and recipient from the email content to identify the contact and sales.
+Hatch CRM will extract the original sender and recipient from the email content to identify the contact and sales.
 
 ## Example - Copying an email I sent to the CRM
 
@@ -36,7 +36,7 @@ Hi Kim,
 I would like to schedule a meeting with you next week. Please let me know your availability.
 ```
 
-When receiving this email, Atomic CRM will:
+When receiving this email, Hatch CRM will:
 
 - Create the _Acme_ company if it does not exist
 - Create the _Kim Hegmann_ contact if it does not exist
@@ -69,7 +69,8 @@ I am sorry but I will not be able to attend the meeting we scheduled.
 Can we reschedule it for the week after?
 ```
 
-When receiving this email, Atomic CRM will:
+When receiving this email, Hatch CRM will:
+
 - Identify the _Kim Hegmann_ contact based on the original sender's email address
 - Add a note to the _Kim Hegmann_ contact with the following content:
 

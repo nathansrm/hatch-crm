@@ -6,14 +6,14 @@ Redesign the Delivery tab's five widgets to match a richer, more polished layout
 
 ## Scope
 - Edit:
-  - src/components/atomic-crm/dashboard/DeliveryDashboard.tsx
-  - src/components/atomic-crm/dashboard/widgets/DeliveryKPIs.tsx
-  - src/components/atomic-crm/dashboard/widgets/HandoffQueue.tsx
-  - src/components/atomic-crm/dashboard/widgets/CapacityPanel.tsx
-  - src/components/atomic-crm/dashboard/widgets/ActiveProjectsGrid.tsx
+  - src/components/hatch-crm/dashboard/DeliveryDashboard.tsx
+  - src/components/hatch-crm/dashboard/widgets/DeliveryKPIs.tsx
+  - src/components/hatch-crm/dashboard/widgets/HandoffQueue.tsx
+  - src/components/hatch-crm/dashboard/widgets/CapacityPanel.tsx
+  - src/components/hatch-crm/dashboard/widgets/ActiveProjectsGrid.tsx
 - Reference only (do not edit):
-  - src/components/atomic-crm/dashboard/TasksList.tsx
-  - src/components/atomic-crm/types.ts
+  - src/components/hatch-crm/dashboard/TasksList.tsx
+  - src/components/hatch-crm/types.ts
 - Do not touch: everything else
 
 ## Requirements

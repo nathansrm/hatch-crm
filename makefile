@@ -1,13 +1,13 @@
 .PHONY: build help
 
 # Run silently, show output on failure
-run-silent = $1 >/tmp/atomic-crm-$2.log 2>&1 || (cat /tmp/atomic-crm-$2.log && false)
+run-silent = $1 >/tmp/hatch-crm-$2.log 2>&1 || (cat /tmp/hatch-crm-$2.log && false)
 
 # Same but captures TTY output (for docker/supabase)
 ifeq ($(shell uname),Darwin)
-run-silent-tty = script -q /tmp/atomic-crm-$2.log $1 >/dev/null 2>&1 || (cat /tmp/atomic-crm-$2.log && false)
+run-silent-tty = script -q /tmp/hatch-crm-$2.log $1 >/dev/null 2>&1 || (cat /tmp/hatch-crm-$2.log && false)
 else
-run-silent-tty = script -eq /dev/null -c "$1" >/tmp/atomic-crm-$2.log 2>&1 || (cat /tmp/atomic-crm-$2.log && false)
+run-silent-tty = script -eq /dev/null -c "$1" >/tmp/hatch-crm-$2.log 2>&1 || (cat /tmp/hatch-crm-$2.log && false)
 endif
 
 help:
@@ -143,7 +143,7 @@ registry-build: ## build the shadcn registry
 	npm run registry:build
 
 registry-deploy: registry-build ## Deploy the shadcn registry (Automatically done by CI/CD pipeline)
-	@(cd public/r && npx gh-pages -b gh-pages -d ./ -s atomic-crm.json -e r -m "Deploy registry" --remove r)
+	@(cd public/r && npx gh-pages -b gh-pages -d ./ -s hatch-crm-template.json -e r -m "Deploy registry" --remove r)
 
 registry-gen: ## Generate the shadcn registry (ran automatically by a pre-commit hook)
 	npm run registry:gen

@@ -10,7 +10,7 @@ export const DeliveryDashboard = () => {
         display: "flex",
         flexDirection: "column",
         gap: 20,
-        background: "#060A16",
+        background: "var(--ink-1)",
         flex: 1,
         overflowY: "auto",
         minHeight: 0,

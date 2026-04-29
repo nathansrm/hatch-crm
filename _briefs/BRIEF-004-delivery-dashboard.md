@@ -21,13 +21,13 @@ Add a second dashboard view ("Delivery") alongside the existing Pipeline view, s
 
 ### In Scope
 - [ ] `supabase/migrations/{timestamp}_add_delivery_fields.sql` — adds delivery columns to deals + creates agency_settings table
-- [ ] `src/components/atomic-crm/types.ts` — extend `Deal` type with 4 new delivery fields
-- [ ] `src/components/atomic-crm/dashboard/Dashboard.tsx` — add tab switcher (Pipeline / Delivery)
-- [ ] `src/components/atomic-crm/dashboard/DeliveryDashboard.tsx` — new top-level delivery view
-- [ ] `src/components/atomic-crm/dashboard/widgets/DeliveryKPIs.tsx` — 4 KPI cards
-- [ ] `src/components/atomic-crm/dashboard/widgets/HandoffQueue.tsx` — Won deals awaiting project kickoff
-- [ ] `src/components/atomic-crm/dashboard/widgets/CapacityPanel.tsx` — utilization warning
-- [ ] `src/components/atomic-crm/dashboard/widgets/ActiveProjectsGrid.tsx` — project cards with progress
+- [ ] `src/components/hatch-crm/types.ts` — extend `Deal` type with 4 new delivery fields
+- [ ] `src/components/hatch-crm/dashboard/Dashboard.tsx` — add tab switcher (Pipeline / Delivery)
+- [ ] `src/components/hatch-crm/dashboard/DeliveryDashboard.tsx` — new top-level delivery view
+- [ ] `src/components/hatch-crm/dashboard/widgets/DeliveryKPIs.tsx` — 4 KPI cards
+- [ ] `src/components/hatch-crm/dashboard/widgets/HandoffQueue.tsx` — Won deals awaiting project kickoff
+- [ ] `src/components/hatch-crm/dashboard/widgets/CapacityPanel.tsx` — utilization warning
+- [ ] `src/components/hatch-crm/dashboard/widgets/ActiveProjectsGrid.tsx` — project cards with progress
 - [ ] `demo/` — extend deal generator so some Won deals have delivery fields set (project_status, progress, projected_hours)
 
 ### Out of Scope
@@ -142,10 +142,10 @@ If no active projects: "No active projects. Won deals pending handoff will appea
 
 ## Must Not Change
 
-- [ ] `src/components/atomic-crm/dashboard/MobileDashboard.tsx` — mobile dashboard is separate, do not touch
-- [ ] `src/components/atomic-crm/dashboard/DashboardStepper.tsx` — onboarding stepper, leave as-is
-- [ ] `src/components/atomic-crm/dashboard/KPICards.tsx` — existing pipeline KPIs, do not modify
-- [ ] `src/components/atomic-crm/dashboard/TasksList.tsx` — reuse it, don't modify it
+- [ ] `src/components/hatch-crm/dashboard/MobileDashboard.tsx` — mobile dashboard is separate, do not touch
+- [ ] `src/components/hatch-crm/dashboard/DashboardStepper.tsx` — onboarding stepper, leave as-is
+- [ ] `src/components/hatch-crm/dashboard/KPICards.tsx` — existing pipeline KPIs, do not modify
+- [ ] `src/components/hatch-crm/dashboard/TasksList.tsx` — reuse it, don't modify it
 - [ ] All existing dashboard widgets (ActionQueue, StaleDeals, HotContacts, etc.) — Pipeline tab must render them identically to current behavior
 - [ ] Any existing migration file
 

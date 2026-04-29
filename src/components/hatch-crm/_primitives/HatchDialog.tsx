@@ -62,15 +62,15 @@ export const HatchDialog = ({
           <div className="flex items-start gap-4">
             <div className="flex-1 min-w-0">
               {eyebrow ? (
-                <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+                <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--fg-3)]">
                   {eyebrow}
                 </div>
               ) : null}
-              <DialogTitle className="font-heading text-lg font-bold text-[#ECEEF5]">
+              <DialogTitle className="font-heading text-lg font-bold text-[var(--fg-1)]">
                 {title}
               </DialogTitle>
               {subtitle ? (
-                <p className="text-sm text-[#B8C0D6]">{subtitle}</p>
+                <p className="text-sm text-[var(--fg-mid)]">{subtitle}</p>
               ) : null}
             </div>
             {headerActions ? (
@@ -95,12 +95,13 @@ export const HatchDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "flex flex-col gap-0 overflow-hidden border border-[rgba(255,255,255,0.07)] p-0 text-[#ECEEF5]",
+          "flex flex-col gap-0 overflow-hidden border border-[rgba(255,255,255,0.07)] p-0 text-[var(--fg-1)]",
           sizeMap[size],
           contentClassName,
         )}
         style={{
-          background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+          background:
+            "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
           boxShadow: "0 20px 40px rgba(0,0,0,0.45)",
         }}
       >

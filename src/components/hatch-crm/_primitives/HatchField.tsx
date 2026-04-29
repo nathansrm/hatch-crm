@@ -27,23 +27,19 @@ export const HatchField = ({
     {label ? (
       <label
         htmlFor={htmlFor}
-        className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-[#9AA3BE]"
+        className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-[var(--fg-2)]"
       >
         {label}
       </label>
     ) : null}
     {children}
-    {hint ? (
-      <p className="mt-1.5 text-xs text-[#9AA3BE]">{hint}</p>
-    ) : null}
-    {error ? (
-      <p className="mt-1.5 text-xs text-[#EF5A6F]">{error}</p>
-    ) : null}
+    {hint ? <p className="mt-1.5 text-xs text-[var(--fg-2)]">{hint}</p> : null}
+    {error ? <p className="mt-1.5 text-xs text-[var(--bad)]">{error}</p> : null}
   </div>
 );
 
 const fieldBase =
-  "w-full rounded-lg border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] text-[#ECEEF5] outline-none placeholder:text-[#5C6784] focus:border-[#4DC8E8]";
+  "w-full rounded-lg border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] text-[var(--fg-1)] outline-none placeholder:text-[var(--fg-3)] focus:border-[var(--hatch-cyan)]";
 
 export const HatchTextInput = ({
   className,
@@ -123,14 +119,14 @@ export function HatchPillGroup<V extends string>({
             className={cn(
               "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition-colors",
               !active &&
-                "border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] text-[#B8C0D6] hover:text-[#ECEEF5]",
+                "border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] text-[var(--fg-mid)] hover:text-[var(--fg-1)]",
             )}
             style={
               active
                 ? {
-                    borderColor: accent?.border ?? "#4DC8E8",
+                    borderColor: accent?.border ?? "var(--hatch-cyan)",
                     background: accent?.bg ?? "rgba(77,200,232,0.14)",
-                    color: accent?.fg ?? "#4DC8E8",
+                    color: accent?.fg ?? "var(--hatch-cyan)",
                   }
                 : undefined
             }

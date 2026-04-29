@@ -1,13 +1,13 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "atomic-crm",
-  "homepage": "https://marmelab.com/atomic-crm/",
+  "name": "hatch-crm-template",
+  "homepage": "https://hatchtheory.com/",
   "items": [
     {
-      "name": "atomic-crm",
+      "name": "hatch-crm-template",
       "type": "registry:block",
-      "title": "Atomic CRM",
-      "description": "A fully fledged CRM application built with Shadcn Admin Kit",
+      "title": "Hatch CRM Template",
+      "description": "A client-ready CRM template for trade and home service businesses.",
       "registryDependencies": [
         "item",
         "progress",

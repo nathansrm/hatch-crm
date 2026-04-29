@@ -16,10 +16,7 @@ import {
 export const ObsHeroPipeline = () => {
   const { currency, dealStages } = useConfigurationContext();
   const [range, setRange] = useState<HeroRange>("30d");
-  const { data: deals } = useGetList<Deal>(
-    "deals",
-    OPEN_DEALS_LIST_PARAMS,
-  );
+  const { data: deals } = useGetList<Deal>("deals", OPEN_DEALS_LIST_PARAMS);
 
   const { start, end, priorStart, priorEnd } = getRangeWindow(range);
   const pipelineStages = getStagePalette(dealStages);
@@ -73,7 +70,7 @@ export const ObsHeroPipeline = () => {
         borderRadius: 14,
         padding: "26px 28px",
         background:
-          "radial-gradient(ellipse at top right, rgba(77,200,232,0.18) 0%, transparent 55%), linear-gradient(180deg, #0F2554 0%, #0A1B3D 55%, #060D22 100%)",
+          "radial-gradient(ellipse at top right, rgba(77,200,232,0.18) 0%, transparent 55%), linear-gradient(180deg, var(--blue-950) 0%, var(--blue-975) 55%, var(--blue-990) 100%)",
         border: "1px solid rgba(77,200,232,0.22)",
         boxShadow:
           "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 40px rgba(0,0,0,0.4)",
@@ -92,7 +89,12 @@ export const ObsHeroPipeline = () => {
         preserveAspectRatio="none"
       >
         <defs>
-          <pattern id="bp-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <pattern
+            id="bp-grid"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse"
+          >
             <path
               d="M 40 0 L 0 0 0 40"
               fill="none"
@@ -106,15 +108,20 @@ export const ObsHeroPipeline = () => {
       <div style={{ position: "relative" }}>
         {/* Eyebrow + range toggle */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 16,
+          }}
         >
           <span
             style={{
               width: 6,
               height: 6,
               borderRadius: 999,
-              background: "#4DC8E8",
-              boxShadow: "0 0 12px #4DC8E8",
+              background: "var(--hatch-cyan)",
+              boxShadow: "0 0 12px var(--hatch-cyan)",
             }}
           />
           <span
@@ -122,7 +129,7 @@ export const ObsHeroPipeline = () => {
               fontSize: 10.5,
               letterSpacing: "0.24em",
               textTransform: "uppercase",
-              color: "#4DC8E8",
+              color: "var(--hatch-cyan)",
               fontWeight: 700,
             }}
           >
@@ -160,7 +167,7 @@ export const ObsHeroPipeline = () => {
                     fontWeight: 700,
                     letterSpacing: "0.04em",
                     textTransform: "uppercase",
-                    color: active ? "#ECEEF5" : "#5C6784",
+                    color: active ? "var(--fg-1)" : "var(--fg-3)",
                     background: active
                       ? "linear-gradient(180deg, rgba(77,200,232,0.25) 0%, rgba(77,200,232,0.05) 100%)"
                       : "transparent",
@@ -187,7 +194,7 @@ export const ObsHeroPipeline = () => {
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
                 lineHeight: 0.95,
-                color: "#FFFFFF",
+                color: "var(--white)",
                 textShadow: "0 2px 20px rgba(77,200,232,0.2)",
               }}
             >
@@ -209,9 +216,15 @@ export const ObsHeroPipeline = () => {
                     gap: 5,
                     padding: "4px 10px",
                     borderRadius: 6,
-                    background: growthPct >= 0 ? "rgba(52,211,153,0.15)" : "rgba(239,90,111,0.15)",
-                    border: growthPct >= 0 ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(239,90,111,0.35)",
-                    color: growthPct >= 0 ? "#34D399" : "#EF5A6F",
+                    background:
+                      growthPct >= 0
+                        ? "rgba(52,211,153,0.15)"
+                        : "rgba(239,90,111,0.15)",
+                    border:
+                      growthPct >= 0
+                        ? "1px solid rgba(52,211,153,0.35)"
+                        : "1px solid rgba(239,90,111,0.35)",
+                    color: growthPct >= 0 ? "var(--good)" : "var(--bad)",
                     fontSize: 12,
                     fontWeight: 700,
                   }}
@@ -221,7 +234,8 @@ export const ObsHeroPipeline = () => {
                   ) : (
                     <TrendingDown size={13} strokeWidth={2.5} />
                   )}
-                  {growthPct >= 0 ? "+" : ""}{growthPct}% vs prior period
+                  {growthPct >= 0 ? "+" : ""}
+                  {growthPct}% vs prior period
                 </span>
               ) : (
                 <span
@@ -232,7 +246,7 @@ export const ObsHeroPipeline = () => {
                     borderRadius: 6,
                     background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(255,255,255,0.1)",
-                    color: "#5C6784",
+                    color: "var(--fg-3)",
                     fontSize: 12,
                     fontWeight: 700,
                   }}
@@ -240,11 +254,11 @@ export const ObsHeroPipeline = () => {
                   No prior period data
                 </span>
               )}
-              <span style={{ fontSize: 12, color: "#9AA3BE" }}>
+              <span style={{ fontSize: 12, color: "var(--fg-2)" }}>
                 <span
                   className="font-mono"
                   style={{
-                    color: "#ECEEF5",
+                    color: "var(--fg-1)",
                     fontWeight: 600,
                   }}
                 >
@@ -254,10 +268,10 @@ export const ObsHeroPipeline = () => {
                 <span
                   className="font-mono"
                   style={{
-                  color: "#ECEEF5",
-                  fontWeight: 600,
-                }}
-              >
+                    color: "var(--fg-1)",
+                    fontWeight: 600,
+                  }}
+                >
                   {populatedStages || stageStrip.length}
                 </span>{" "}
                 stages
@@ -313,9 +327,7 @@ export const ObsHeroPipeline = () => {
                 minWidth: 0,
               }}
             >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: 5 }}
-              >
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <span
                   style={{
                     width: 4,
@@ -329,7 +341,7 @@ export const ObsHeroPipeline = () => {
                     fontSize: 10,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
-                    color: "#5C6784",
+                    color: "var(--fg-3)",
                     fontWeight: 600,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -344,7 +356,7 @@ export const ObsHeroPipeline = () => {
                 style={{
                   fontSize: 13,
                   fontWeight: 700,
-                  color: "#ECEEF5",
+                  color: "var(--fg-1)",
                 }}
               >
                 {stage.count}

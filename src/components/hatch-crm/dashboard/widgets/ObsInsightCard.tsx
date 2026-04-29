@@ -1,8 +1,8 @@
-import { ArrowRight, Flame } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 
 type ObsInsightCardProps = {
   accent: string;
-  icon: typeof Flame;
+  icon: LucideIcon;
   eyebrow: string;
   title: string;
   sub: string;
@@ -19,7 +19,8 @@ export const ObsInsightCard = ({
   cta,
   onClick,
 }: ObsInsightCardProps) => (
-  <div className="obs-action-btn"
+  <div
+    className="obs-action-btn"
     role={onClick ? "button" : undefined}
     tabIndex={onClick ? 0 : undefined}
     onClick={onClick}
@@ -69,7 +70,7 @@ export const ObsInsightCard = ({
           style={{
             fontSize: 14.5,
             fontWeight: 700,
-            color: "#ECEEF5",
+            color: "var(--fg-1)",
             letterSpacing: "-0.01em",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -80,7 +81,7 @@ export const ObsInsightCard = ({
         </div>
       </div>
     </div>
-    <div style={{ fontSize: 11.5, color: "#9AA3BE" }}>{sub}</div>
+    <div style={{ fontSize: 11.5, color: "var(--fg-2)" }}>{sub}</div>
     <div
       style={{
         display: "inline-flex",

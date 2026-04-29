@@ -257,7 +257,7 @@ async function executeQueryWithRLS(
 
 function createMcpServer(authInfo: AuthInfo): McpServer {
   const server = new McpServer({
-    name: "atomic-crm",
+    name: "hatch-crm",
     version: "1.0.0",
   });
 
@@ -266,7 +266,7 @@ function createMcpServer(authInfo: AuthInfo): McpServer {
     {
       title: "Get Database Schema",
       description:
-        "Retrieve the database schema for the user's Atomic CRM instance including all tables, views, columns, types, and foreign key relationships. Views (like contacts_summary, companies_summary) are read-only and provide pre-joined/aggregated data. Use them for search and list queries.",
+        "Retrieve the database schema for the user's Hatch CRM instance including all tables, views, columns, types, and foreign key relationships. Views (like contacts_summary, companies_summary) are read-only and provide pre-joined/aggregated data. Use them for search and list queries.",
       annotations: { readOnlyHint: true },
     },
     async () => {

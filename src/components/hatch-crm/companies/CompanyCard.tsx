@@ -17,7 +17,10 @@ export const CompanyCard = (props: { record?: Company }) => {
   const record = useRecordContext<Company>(props);
   const translate = useTranslate();
   const { companySectors } = useConfigurationContext();
-  const { referenceRecord, isLoading } = useReference<{ id: string; name: string }>({
+  const { referenceRecord, isLoading } = useReference<{
+    id: string;
+    name: string;
+  }>({
     reference: "trade_types",
     id: record?.trade_type_id ?? "",
   });
@@ -43,7 +46,7 @@ export const CompanyCard = (props: { record?: Company }) => {
         style={{
           borderRadius: 12,
           padding: "18px 20px",
-          background: "#0D1424",
+          background: "var(--ink-3)",
           border: "1px solid rgba(255,255,255,0.07)",
           display: "flex",
           flexDirection: "column",
@@ -53,10 +56,10 @@ export const CompanyCard = (props: { record?: Company }) => {
           textDecoration: "none",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#111A2E";
+          e.currentTarget.style.background = "var(--ink-4a)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "#0D1424";
+          e.currentTarget.style.background = "var(--ink-3)";
         }}
       >
         <div
@@ -80,7 +83,7 @@ export const CompanyCard = (props: { record?: Company }) => {
               justifyContent: "center",
               fontWeight: 800,
               fontSize: 14,
-              color: "#4DC8E8",
+              color: "var(--hatch-cyan)",
             }}
           >
             {record.name
@@ -96,7 +99,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                 fontWeight: 700,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "#34D399",
+                color: "var(--good)",
                 background: "rgba(52,211,153,0.1)",
                 border: "1px solid rgba(52,211,153,0.25)",
                 padding: "3px 8px",
@@ -112,14 +115,14 @@ export const CompanyCard = (props: { record?: Company }) => {
           style={{
             fontSize: 15,
             fontWeight: 700,
-            color: "#ECEEF5",
+            color: "var(--fg-1)",
             marginBottom: 3,
             letterSpacing: "-0.01em",
           }}
         >
           {record.name}
         </div>
-        <div style={{ fontSize: 12, color: "#5C6784", marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: "var(--fg-3)", marginBottom: 12 }}>
           {subtitle}
         </div>
         <div
@@ -141,7 +144,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                   fontSize: 9.5,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "#5C6784",
+                  color: "var(--fg-3)",
                   fontWeight: 700,
                 }}
               >
@@ -152,7 +155,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "#ECEEF5",
+                  color: "var(--fg-1)",
                 }}
               >
                 {record.nb_deals}
@@ -170,7 +173,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                   fontSize: 9.5,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "#5C6784",
+                  color: "var(--fg-3)",
                   fontWeight: 700,
                 }}
               >
@@ -181,7 +184,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "#ECEEF5",
+                  color: "var(--fg-1)",
                 }}
               >
                 {record.nb_contacts}

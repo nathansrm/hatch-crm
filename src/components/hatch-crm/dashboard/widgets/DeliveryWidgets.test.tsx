@@ -91,7 +91,7 @@ const createWidgetData = () =>
 
 describe("Delivery dashboard widgets", () => {
   it("exports calcUtilization for delivery capacity calculations", async () => {
-    const { calcUtilization } = await import("./DeliveryKPIs");
+    const { calcUtilization } = await import("./deliveryMath");
 
     expect(
       calcUtilization(

@@ -53,14 +53,20 @@ export const HatchSheet = ({
   ariaDescribedBy,
   wrap,
 }: HatchSheetProps) => {
+  const labelledBy = ariaLabelledBy ?? titleId;
+  const usesCustomLabel = Boolean(labelledBy);
   const inner = (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
+      {usesCustomLabel ? (
+        <SheetTitle className="sr-only">{title}</SheetTitle>
+      ) : null}
       <HatchSheetHeader
         eyebrow={eyebrow}
         title={title}
         titleId={titleId}
         subtitle={subtitle}
         actions={headerActions}
+        titleAsRadix={!usesCustomLabel}
       />
       <div className="flex-1 overflow-y-auto px-6 py-5">
         <div className="space-y-5">{children}</div>
@@ -78,14 +84,15 @@ export const HatchSheet = ({
         side={side}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={ariaLabelledBy ?? titleId}
         aria-describedby={ariaDescribedBy}
+        {...(labelledBy ? { "aria-labelledby": labelledBy } : {})}
         className={cn(
-          "flex h-dvh w-full flex-col border-l border-[rgba(255,255,255,0.07)] p-0 text-[#ECEEF5] sm:max-w-xl",
+          "flex h-dvh w-full flex-col border-l border-[rgba(255,255,255,0.07)] p-0 text-[var(--fg-1)] sm:max-w-xl",
           contentClassName,
         )}
         style={{
-          background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+          background:
+            "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
         }}
       >
@@ -101,32 +108,45 @@ export const HatchSheetHeader = ({
   titleId,
   subtitle,
   actions,
+  titleAsRadix = true,
 }: {
   eyebrow?: React.ReactNode;
   title: React.ReactNode;
   titleId?: string;
   subtitle?: React.ReactNode;
   actions?: React.ReactNode;
+  titleAsRadix?: boolean;
 }) => (
   <SheetHeader className="border-b border-[rgba(255,255,255,0.07)] px-6 py-5 text-left">
     <div className="flex items-start gap-4">
       <div className="flex-1 min-w-0">
         {eyebrow ? (
-          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
+          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--fg-3)]">
             {eyebrow}
           </div>
         ) : null}
-        <SheetTitle
-          id={titleId}
-          className="font-heading text-xl font-bold text-[#ECEEF5]"
-        >
-          {title}
-        </SheetTitle>
+        {titleAsRadix ? (
+          <SheetTitle
+            id={titleId}
+            className="font-heading text-xl font-bold text-[var(--fg-1)]"
+          >
+            {title}
+          </SheetTitle>
+        ) : (
+          <h2
+            id={titleId}
+            className="font-heading text-xl font-bold text-[var(--fg-1)]"
+          >
+            {title}
+          </h2>
+        )}
         {subtitle ? (
-          <p className="text-sm text-[#B8C0D6]">{subtitle}</p>
+          <p className="text-sm text-[var(--fg-mid)]">{subtitle}</p>
         ) : null}
       </div>
-      {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+      {actions ? (
+        <div className="flex items-center gap-2">{actions}</div>
+      ) : null}
     </div>
   </SheetHeader>
 );

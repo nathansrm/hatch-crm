@@ -19,7 +19,7 @@ export const Ready = () => (
       className="flex-1 flex flex-col text-white text-center justify-center items-center"
       style={{
         background:
-          "linear-gradient(135deg, #00023b 0%, #00023b 50%, #313264 100%)",
+          "linear-gradient(135deg, var(--navy-950) 0%, var(--navy-950) 50%, var(--navy-700) 100%)",
       }}
     >
       <ScanFace className="w-32 h-32 mb-4" />

@@ -11,20 +11,20 @@ The three tabs:
 
 ## Scope
 - Edit:
-  - src/components/atomic-crm/dashboard/Dashboard.tsx
-  - src/components/atomic-crm/dashboard/KPICards.tsx
-  - src/components/atomic-crm/dashboard/StaleDeals.tsx
-  - src/components/atomic-crm/dashboard/TasksList.tsx
-  - src/components/atomic-crm/dashboard/HotContacts.tsx
-  - src/components/atomic-crm/dashboard/PipelineSummary.tsx
+  - src/components/hatch-crm/dashboard/Dashboard.tsx
+  - src/components/hatch-crm/dashboard/KPICards.tsx
+  - src/components/hatch-crm/dashboard/StaleDeals.tsx
+  - src/components/hatch-crm/dashboard/TasksList.tsx
+  - src/components/hatch-crm/dashboard/HotContacts.tsx
+  - src/components/hatch-crm/dashboard/PipelineSummary.tsx
 - Reference only (do not edit):
-  - src/components/atomic-crm/dashboard/DealsChart.tsx
-  - src/components/atomic-crm/dashboard/DealsByTradeType.tsx
-  - src/components/atomic-crm/dashboard/DashboardActivityLog.tsx
-  - src/components/atomic-crm/dashboard/ActionQueue.tsx
-  - src/components/atomic-crm/dashboard/DeliveryDashboard.tsx
-  - src/components/atomic-crm/root/ConfigurationContext.tsx
-  - src/components/atomic-crm/types.ts
+  - src/components/hatch-crm/dashboard/DealsChart.tsx
+  - src/components/hatch-crm/dashboard/DealsByTradeType.tsx
+  - src/components/hatch-crm/dashboard/DashboardActivityLog.tsx
+  - src/components/hatch-crm/dashboard/ActionQueue.tsx
+  - src/components/hatch-crm/dashboard/DeliveryDashboard.tsx
+  - src/components/hatch-crm/root/ConfigurationContext.tsx
+  - src/components/hatch-crm/types.ts
 - Do not touch: everything else
 
 ## Requirements
@@ -88,8 +88,8 @@ The three tabs:
 - Follow existing Tailwind + shadcn/ui patterns throughout the dashboard components
 - Use Badge from @/components/ui/badge, Card from @/components/ui/card
 - Use lucide-react for icons
-- stageColorMap from src/components/atomic-crm/deals/stageColors.ts
-- getDealDecayLevel from src/components/atomic-crm/deals/dealUtils.ts
+- stageColorMap from src/components/hatch-crm/deals/stageColors.ts
+- getDealDecayLevel from src/components/hatch-crm/deals/dealUtils.ts
 
 ## Verification
 - Run: npx tsc --noEmit

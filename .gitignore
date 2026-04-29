@@ -11,6 +11,7 @@
 # testing
 /coverage
 __screenshots__
+/output/
 
 # production
 /build

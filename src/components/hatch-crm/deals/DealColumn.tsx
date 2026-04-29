@@ -25,7 +25,7 @@ export const DealColumn = ({
     <div style={{ flex: 1, paddingBottom: 32 }}>
       <div
         style={{
-          background: "#0D1424",
+          background: "var(--ink-3)",
           border: "1px solid rgba(255,255,255,0.07)",
           borderRadius: 12,
           padding: 14,
@@ -57,7 +57,7 @@ export const DealColumn = ({
                 style={{
                   fontSize: 11.5,
                   fontWeight: 700,
-                  color: "#ECEEF5",
+                  color: "var(--fg-1)",
                   letterSpacing: "0.02em",
                 }}
               >
@@ -79,7 +79,7 @@ export const DealColumn = ({
             className="font-mono"
             style={{
               fontSize: 11,
-              color: "#5C6784",
+              color: "var(--fg-3)",
             }}
           >
             {totalAmount.toLocaleString("en-US", {
@@ -122,7 +122,7 @@ export const DealColumn = ({
                   alignItems: "center",
                   justifyContent: "center",
                   height: 80,
-                  color: "#3A4362",
+                  color: "var(--fg-4)",
                   fontSize: 12,
                   border: `1px dashed ${colors.border}22`,
                   borderRadius: 8,

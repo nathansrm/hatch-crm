@@ -11,10 +11,17 @@ const DEFAULTS: AgencySettings = {
   won_goal: 10,
 };
 
+const isDemo = import.meta.env.VITE_IS_DEMO === "true";
+
 let _cache: AgencySettings | null = null;
 let _promise: Promise<AgencySettings> | null = null;
 
 async function fetchAgencySettings(): Promise<AgencySettings> {
+  if (isDemo) {
+    _cache = DEFAULTS;
+    return DEFAULTS;
+  }
+
   try {
     const { data } = await getSupabaseClient()
       .from("agency_settings")

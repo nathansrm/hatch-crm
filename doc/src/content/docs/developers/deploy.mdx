@@ -1,11 +1,11 @@
 ---
 title: Deploying to Production
-description: This document explains how to deploy Atomic CRM to production.
+description: This document explains how to deploy Hatch CRM to production.
 ---
 
 ## Deploying The Backend
 
-The entire backend of Atomic CRM is hosted on Supabase. The backend is composed of a Postgres database, a REST API, and edge functions. Check out the [Supabase Configuration](../supabase-configuration) section for details.
+The entire backend of Hatch CRM is hosted on Supabase. The backend is composed of a Postgres database, a REST API, and edge functions. Check out the [Supabase Configuration](../supabase-configuration) section for details.
 
 After [configuring your Supabase instance](../supabase-configuration), you can deploy the backend changes with the following command:
 
@@ -45,7 +45,7 @@ If you want to deploy it to GitHub pages, you can use the following command:
 npm run ghpages:deploy
 ```
 
-The CRM will be available at `https://<username>.github.io/atomic-crm/`.
+The CRM will be available at `https://<username>.github.io/hatch-crm/`.
 
 ## Deploying Updates
 
@@ -59,7 +59,7 @@ It will apply migrations, deploy edge functions and push the built applications 
 
 ## Automating Deployments With GitHub Actions
 
-Atomic CRM contains GitHub actions for continuous integration and delivery. To enable these actions, you will
+Hatch CRM contains GitHub actions for continuous integration and delivery. To enable these actions, you will
 have to create the following secrets on GitHub:
 
 ```bash
@@ -75,6 +75,6 @@ VITE_INBOUND_EMAIL: The email address configured in Postmark to receive inbound 
 VITE_ATTACHMENTS_BUCKET: The name of the bucket used to store attachments. Optional default to `attachments`
 ```
 
-> **Note:** The `POSTMARK_*` and `VITE_INBOUND_EMAIL` variables are required for Atomic CRM's inbound email features. Have a look at the the [inbound email configuration](../inbound-email-configuration) to learn more about their usage and setup.
+> **Note:** The `POSTMARK_*` and `VITE_INBOUND_EMAIL` variables are required for Hatch CRM's inbound email features. Have a look at the the [inbound email configuration](../inbound-email-configuration) to learn more about their usage and setup.
 
 The GitHub action will run the `prod-deploy` command on every push to the `main` branch, deploying the frontend to GitHub pages and updating the Supabase instance.

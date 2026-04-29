@@ -61,7 +61,8 @@ export const TasksList = ({ variant = "default" }: TasksListProps) => {
           overflow: "hidden",
           borderRadius: 12,
           padding: "20px 22px",
-          background: "linear-gradient(180deg, #0D1424 0%, #080C1A 100%)",
+          background:
+            "linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2-deep) 100%)",
           border: "1px solid rgba(255,255,255,0.07)",
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
           display: "flex",
@@ -84,7 +85,7 @@ export const TasksList = ({ variant = "default" }: TasksListProps) => {
                 fontSize: 10,
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#5C6784",
+                color: "var(--fg-3)",
                 fontWeight: 700,
                 marginBottom: 4,
               }}
@@ -98,7 +99,7 @@ export const TasksList = ({ variant = "default" }: TasksListProps) => {
                 fontSize: 16,
                 fontWeight: 700,
                 letterSpacing: "-0.01em",
-                color: "#ECEEF5",
+                color: "var(--fg-1)",
               }}
             >
               Up next

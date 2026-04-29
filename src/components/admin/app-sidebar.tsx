@@ -25,9 +25,9 @@ type NavItemConfig = {
 };
 
 const TRADE_FILTERS = [
-  { label: "All trades", dot: "#4DC8E8" },
-  { label: "HVAC", dot: "#F5B84A" },
-  { label: "Roofing", dot: "#EF5A6F" },
+  { label: "All trades", dot: "var(--hatch-cyan)" },
+  { label: "HVAC", dot: "var(--warn)" },
+  { label: "Roofing", dot: "var(--bad)" },
   { label: "Plumbing", dot: "#5EEAD4" },
 ];
 
@@ -52,7 +52,7 @@ const NavItem = ({
   return (
     <Link
       to={to}
-      className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4DC8E8]"
+      className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--hatch-cyan)]"
       style={{
         display: "flex",
         alignItems: "center",
@@ -66,12 +66,12 @@ const NavItem = ({
         border: active
           ? "1px solid rgba(77,200,232,0.22)"
           : "1px solid transparent",
-        color: active ? "#ECEEF5" : "#9AA3BE",
+        color: active ? "var(--fg-1)" : "var(--fg-2)",
       }}
     >
       <Icon
         size={16}
-        color={active ? "#4DC8E8" : "currentColor"}
+        color={active ? "var(--hatch-cyan)" : "currentColor"}
         strokeWidth={active ? 2.25 : 1.8}
       />
       <span style={{ flex: 1 }}>{label}</span>
@@ -83,8 +83,10 @@ const NavItem = ({
             padding: "1px 6px",
             borderRadius: 4,
             fontWeight: 600,
-            background: active ? "rgba(77,200,232,0.08)" : "rgba(255,255,255,0.04)",
-            color: active ? "#4DC8E8" : "#5C6784",
+            background: active
+              ? "rgba(77,200,232,0.08)"
+              : "rgba(255,255,255,0.04)",
+            color: active ? "var(--hatch-cyan)" : "var(--fg-3)",
           }}
         >
           {count}
@@ -99,8 +101,8 @@ const NavItem = ({
             fontWeight: 700,
             padding: "1px 5px",
             borderRadius: 3,
-            background: "#F5B84A",
-            color: "#1a1a1a",
+            background: "var(--warn)",
+            color: "var(--neutral-900)",
           }}
         >
           {badge}
@@ -131,7 +133,13 @@ export function AppSidebar() {
   const settingsMatch = useMatch({ path: "/settings", end: false });
   const settingsActive = Boolean(settingsMatch);
   const NAV_ITEMS: NavItemConfig[] = [
-    { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/", end: true },
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      to: "/",
+      end: true,
+    },
     { key: "deals", label: "Deals", icon: Briefcase, to: "/deals" },
     {
       key: "intake",
@@ -143,7 +151,13 @@ export function AppSidebar() {
     },
     { key: "contacts", label: "Contacts", icon: Users, to: "/contacts" },
     { key: "companies", label: "Companies", icon: Building2, to: "/companies" },
-    { key: "tasks", label: "Tasks", icon: CheckSquare, to: "/tasks", count: taskCount },
+    {
+      key: "tasks",
+      label: "Tasks",
+      icon: CheckSquare,
+      to: "/tasks",
+      count: taskCount,
+    },
     { key: "reports", label: "Reports", icon: BarChart3, to: "/reports" },
     { key: "resources", label: "Resources", icon: Layers, to: "/resources" },
   ];
@@ -155,7 +169,7 @@ export function AppSidebar() {
         flexShrink: 0,
         display: "flex",
         flexDirection: "column",
-        background: "#060A16",
+        background: "var(--ink-1)",
         borderRight: "1px solid rgba(255,255,255,0.07)",
         height: "100vh",
         overflowY: "auto",
@@ -167,7 +181,7 @@ export function AppSidebar() {
           fontSize: 9.5,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "#3A4362",
+          color: "var(--fg-4)",
           fontWeight: 700,
         }}
       >
@@ -193,7 +207,7 @@ export function AppSidebar() {
           fontSize: 9.5,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "#3A4362",
+          color: "var(--fg-4)",
           fontWeight: 700,
           marginTop: 24,
         }}
@@ -220,8 +234,9 @@ export function AppSidebar() {
               padding: "6px 12px",
               borderRadius: 6,
               fontSize: 12,
-              color: index === 0 ? "#ECEEF5" : "#9AA3BE",
-              background: index === 0 ? "rgba(255,255,255,0.04)" : "transparent",
+              color: index === 0 ? "var(--fg-1)" : "var(--fg-2)",
+              background:
+                index === 0 ? "rgba(255,255,255,0.04)" : "transparent",
               border: "none",
               cursor: "pointer",
               width: "100%",
@@ -260,16 +275,18 @@ export function AppSidebar() {
             fontSize: 13,
             fontWeight: 500,
             textDecoration: "none",
-            background: settingsActive ? "rgba(77,200,232,0.09)" : "transparent",
+            background: settingsActive
+              ? "rgba(77,200,232,0.09)"
+              : "transparent",
             border: settingsActive
               ? "1px solid rgba(77,200,232,0.22)"
               : "1px solid transparent",
-            color: settingsActive ? "#ECEEF5" : "#9AA3BE",
+            color: settingsActive ? "var(--fg-1)" : "var(--fg-2)",
           }}
         >
           <Settings
             size={16}
-            color={settingsActive ? "#4DC8E8" : "currentColor"}
+            color={settingsActive ? "var(--hatch-cyan)" : "currentColor"}
             strokeWidth={settingsActive ? 2.25 : 1.8}
           />
           <span>Settings</span>
@@ -290,7 +307,7 @@ export function AppSidebar() {
               height: 30,
               borderRadius: "50%",
               background: "oklch(0.55 0.13 220)",
-              color: "#FFFFFF",
+              color: "var(--white)",
               display: "grid",
               placeItems: "center",
               fontWeight: 700,
@@ -312,7 +329,7 @@ export function AppSidebar() {
               style={{
                 fontSize: 12.5,
                 fontWeight: 600,
-                color: "#ECEEF5",
+                color: "var(--fg-1)",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -320,7 +337,7 @@ export function AppSidebar() {
             >
               {identity?.fullName ?? "User"}
             </span>
-            <span style={{ fontSize: 10.5, color: "#5C6784" }}>
+            <span style={{ fontSize: 10.5, color: "var(--fg-3)" }}>
               {"Owner \u00B7 Hatch Theory"}
             </span>
           </div>

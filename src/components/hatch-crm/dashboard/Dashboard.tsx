@@ -111,7 +111,7 @@ export const Dashboard = () => {
         flexDirection: "column",
         flex: 1,
         minHeight: 0,
-        background: "#060A16",
+        background: "var(--ink-1)",
       }}
     >
       <div
@@ -121,7 +121,7 @@ export const Dashboard = () => {
           alignItems: "center",
           gap: 2,
           borderBottom: "1px solid rgba(255,255,255,0.07)",
-          background: "#060A16",
+          background: "var(--ink-1)",
           position: "sticky" as const,
           top: 0,
           zIndex: 10,
@@ -138,10 +138,10 @@ export const Dashboard = () => {
               fontSize: 13,
               fontWeight: 600,
               textTransform: "capitalize",
-              color: activeTab === tab ? "#ECEEF5" : "#5C6784",
+              color: activeTab === tab ? "var(--fg-1)" : "var(--fg-3)",
               borderBottom:
                 activeTab === tab
-                  ? "2px solid #4DC8E8"
+                  ? "2px solid var(--hatch-cyan)"
                   : "2px solid transparent",
               marginBottom: -1,
               background: "transparent",
@@ -149,7 +149,7 @@ export const Dashboard = () => {
               borderBottomWidth: 2,
               borderBottomStyle: "solid",
               borderBottomColor:
-                activeTab === tab ? "#4DC8E8" : "transparent",
+                activeTab === tab ? "var(--hatch-cyan)" : "transparent",
               cursor: "pointer",
               transition: "all 0.15s",
             }}

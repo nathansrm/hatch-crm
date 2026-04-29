@@ -6,7 +6,7 @@ import path from "node:path";
 
 const registryPath = "registry.json";
 const basePath = "src";
-const atomicCrmComponentsPath = path.join(basePath, "components", "atomic-crm");
+const hatchCrmComponentsPath = path.join(basePath, "components", "hatch-crm");
 const supabaseComponentsPath = path.join(basePath, "components", "supabase");
 const hooksPath = path.join(basePath, "hooks");
 const libPath = path.join(basePath, "lib");
@@ -29,8 +29,8 @@ const excludedLibFiles = [
 const testFilePattern = "**/*.{test,spec}.*";
 const storyFilePattern = "**/*.stories.*";
 
-const atomicCrmComponents = globSync(
-  path.join(atomicCrmComponentsPath, "**", "*.ts*"),
+const hatchCrmComponents = globSync(
+  path.join(hatchCrmComponentsPath, "**", "*.ts*"),
   { ignore: [testFilePattern, storyFilePattern] },
 );
 const supabaseComponents = globSync(
@@ -47,7 +47,7 @@ const libFiles = globSync(path.join(libPath, "**", "*.ts*")).filter((file) => {
 const registryContent = JSON.parse(fs.readFileSync(registryPath, "utf-8"));
 
 const files = [
-  ...atomicCrmComponents.map((path) => {
+  ...hatchCrmComponents.map((path) => {
     return {
       path,
       type: "registry:component",
@@ -76,7 +76,7 @@ const files = [
 const newRegistryContent = {
   ...registryContent,
   items: registryContent.items.map((item) => {
-    if (item.name === "atomic-crm") {
+    if (item.name === "hatch-crm-template") {
       return {
         ...item,
         files,

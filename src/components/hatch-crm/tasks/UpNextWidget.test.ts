@@ -4,7 +4,7 @@ import { AlertCircle } from "lucide-react";
 
 import type { Task } from "../types";
 import { FALLBACK_TASK_META, getTaskMeta } from "./taskTypeMeta";
-import { getTaskGroup, getVisibleTasks } from "./UpNextWidget";
+import { getTaskGroup, getVisibleTasks } from "./upNextWidgetUtils";
 
 describe("UpNextWidget task derivation", () => {
   afterEach(() => {

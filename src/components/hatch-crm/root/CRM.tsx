@@ -30,12 +30,8 @@ import {
   getAuthProvider as supabaseAuthProviderBuilder,
   getDataProvider as supabaseDataProviderBuilder,
 } from "../providers/supabase";
-import {
-  createDataProvider as createFakeRestDataProvider,
-} from "../providers/fakerest";
-import {
-  authProvider as fakeRestAuthProvider,
-} from "../providers/fakerest/authProvider";
+import { createDataProvider as createFakeRestDataProvider } from "../providers/fakerest";
+import { authProvider as fakeRestAuthProvider } from "../providers/fakerest/authProvider";
 
 const isDemo = import.meta.env.VITE_IS_DEMO === "true";
 
@@ -271,6 +267,10 @@ const DesktopAdmin = (
         <Route path={ImportPage.path} element={<ImportPage />} />
         <Route path={ReportsPage.path} element={<ReportsPage />} />
         <Route path={ResourcesPage.path} element={<ResourcesPage />} />
+        <Route
+          path="/intake"
+          element={<Navigate to="/intake_leads" replace />}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </CustomRoutes>
       <Resource name="deals" {...deals} />
@@ -314,7 +314,6 @@ const MobileAdmin = (
     layout?: LayoutComponent;
   },
 ) => {
-
   return (
     <PersistQueryClientProvider
       client={mobileQueryClient}
@@ -343,6 +342,11 @@ const MobileAdmin = (
           <Route
             path={SettingsPageMobile.path}
             element={<SettingsPageMobile />}
+          />
+          <Route path={ResourcesPage.path} element={<ResourcesPage />} />
+          <Route
+            path="/intake"
+            element={<Navigate to="/intake_leads" replace />}
           />
         </CustomRoutes>
         <Resource

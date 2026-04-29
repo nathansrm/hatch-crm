@@ -103,7 +103,7 @@ describe("UpNextWidget interactions", () => {
   });
 
   it("sends done_date null when reopening a completed task", async () => {
-    testState.tasks = [buildTask({ done_date: "2026-04-27T12:00:00.000Z" })];
+    testState.tasks = [buildTask({ done_date: new Date().toISOString() })];
     const screen = await render(<UpNextWidget />);
 
     await screen.getByLabelText(/mark "call ada" incomplete/i).click();

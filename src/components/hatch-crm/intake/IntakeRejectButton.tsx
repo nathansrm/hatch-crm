@@ -10,7 +10,7 @@ import {
 
 import type { IntakeLead } from "../types";
 
-export const INTAKE_REJECTION_REASONS = [
+const INTAKE_REJECTION_REASONS = [
   "Not a fit",
   "Duplicate",
   "No contact info",
@@ -20,10 +20,10 @@ export const INTAKE_REJECTION_REASONS = [
 
 const REJECTION_REASON_KEYS: Record<string, string> = {
   "Not a fit": "not_a_fit",
-  "Duplicate": "duplicate",
+  Duplicate: "duplicate",
   "No contact info": "no_contact_info",
   "Out of area": "out_of_area",
-  "Other": "other",
+  Other: "other",
 };
 
 export const IntakeRejectButton = ({ record }: { record: IntakeLead }) => {
@@ -57,9 +57,10 @@ export const IntakeRejectButton = ({ record }: { record: IntakeLead }) => {
           notify("resources.intake_leads.notify.reject_failed", {
             type: "error",
             messageArgs: {
-              _: error instanceof Error
-                ? error.message
-                : "Failed to reject intake lead",
+              _:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to reject intake lead",
             },
           });
         },
@@ -82,7 +83,10 @@ export const IntakeRejectButton = ({ record }: { record: IntakeLead }) => {
           {translate("resources.intake_leads.action.reject", { _: "Reject" })}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" onClick={(event) => event.stopPropagation()}>
+      <DropdownMenuContent
+        align="end"
+        onClick={(event) => event.stopPropagation()}
+      >
         {INTAKE_REJECTION_REASONS.map((reason) => (
           <DropdownMenuItem
             key={reason}

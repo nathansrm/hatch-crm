@@ -12,7 +12,7 @@ const LoadingGridList = () => (
       <div
         className="h-[200px] w-[230px] flex flex-col"
         key={key}
-        style={{ background: "#1E2842" }}
+        style={{ background: "var(--ink-5)" }}
       />
     ))}
   </div>
@@ -44,7 +44,7 @@ const LoadedGridList = () => {
           style={{
             padding: "40px 20px",
             textAlign: "center",
-            color: "#5C6784",
+            color: "var(--fg-3)",
             fontSize: 13,
           }}
         >

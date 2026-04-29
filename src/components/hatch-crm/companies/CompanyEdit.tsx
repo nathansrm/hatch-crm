@@ -1,6 +1,6 @@
 import { EditBase, Form } from "ra-core";
 
-import { HatchCard, HatchPageHeader } from "../_primitives";
+import { HatchCard, HatchPageHeader, HATCH } from "../_primitives";
 import { CompanyInputs } from "./CompanyInputs";
 import { CompanyAside } from "./CompanyAside";
 import { FormToolbar } from "../layout/FormToolbar";
@@ -17,16 +17,24 @@ export const CompanyEdit = () => (
       return values;
     }}
   >
-    <div className="mt-2 flex gap-8">
-      <Form className="flex flex-1 flex-col gap-4 pb-2">
-        <HatchPageHeader eyebrow="COMPANIES" title="Edit company" />
-        <HatchCard padding="lg">
-          <CompanyInputs />
-          <FormToolbar />
-        </HatchCard>
-      </Form>
+    <div
+      style={{
+        minHeight: "100%",
+        padding: "24px 28px 28px",
+        background: HATCH.surfaceDeep,
+      }}
+    >
+      <div className="flex gap-4">
+        <Form className="flex flex-1 flex-col gap-4 pb-2">
+          <HatchPageHeader eyebrow="COMPANIES" title="Edit company" />
+          <HatchCard padding="lg">
+            <CompanyInputs />
+            <FormToolbar />
+          </HatchCard>
+        </Form>
 
-      <CompanyAside link="show" />
+        <CompanyAside link="show" />
+      </div>
     </div>
   </EditBase>
 );

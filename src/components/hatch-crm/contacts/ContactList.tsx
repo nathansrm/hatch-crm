@@ -34,8 +34,14 @@ import { InfinitePagination } from "../misc/InfinitePagination";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { HatchPageHeader, HatchPanel } from "../_primitives";
+import { ContactCreateDialog } from "./ContactCreateDialog";
+import { matchPath, useLocation } from "react-router";
 
-export const ContactList = () => {
+export const ContactList = ({
+  showCreateDialog = true,
+}: {
+  showCreateDialog?: boolean;
+}) => {
   const { identity } = useGetIdentity();
 
   if (!identity) return null;
@@ -48,19 +54,31 @@ export const ContactList = () => {
       sort={{ field: "last_seen", order: "DESC" }}
       exporter={exporter}
     >
-      <ContactListLayoutDesktop />
+      <ContactListLayoutDesktop showCreateDialog={showCreateDialog} />
     </List>
   );
 };
 
-const ContactListLayoutDesktop = () => {
+const ContactListLayoutDesktop = ({
+  showCreateDialog,
+}: {
+  showCreateDialog: boolean;
+}) => {
   const { data, isPending, filterValues, total } = useListContext();
+  const location = useLocation();
+  const matchCreate = matchPath("/contacts/create", location.pathname);
 
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
 
   if (isPending) return <ContactListSkeleton />;
 
-  if (!data?.length && !hasFilters) return <ContactEmpty />;
+  if (!data?.length && !hasFilters)
+    return (
+      <>
+        <ContactEmpty />
+        {showCreateDialog ? <ContactCreateDialog open={!!matchCreate} /> : null}
+      </>
+    );
 
   return (
     <div
@@ -86,6 +104,7 @@ const ContactListLayoutDesktop = () => {
           <ContactBulkActionButtons />
         </BulkActionsToolbar>
       </div>
+      {showCreateDialog ? <ContactCreateDialog open={!!matchCreate} /> : null}
     </div>
   );
 };

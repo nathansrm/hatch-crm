@@ -23,6 +23,7 @@ import { ActivityLog } from "../activity/ActivityLog";
 import {
   HatchCard,
   HatchGhostButton,
+  HATCH,
   HatchTabs,
   HatchTabsContent,
   HatchTabsList,
@@ -116,85 +117,96 @@ const CompanyShowContent = () => {
   if (isPending || !record) return null;
 
   return (
-    <div className="mt-2 flex pb-2 gap-8">
-      <div className="flex-1">
-        <HatchCard padding="lg">
-          <div className="flex mb-4 items-center gap-3">
-            <CompanyAvatar />
-            <div className="min-w-0">
-              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]">
-                COMPANY
+    <div
+      style={{
+        minHeight: "100%",
+        padding: "24px 28px 28px",
+        background: HATCH.surfaceDeep,
+      }}
+    >
+      <div className="flex gap-4">
+        <div className="min-w-0 flex-1">
+          <HatchCard padding="lg">
+            <div className="flex mb-5 items-center gap-3">
+              <CompanyAvatar />
+              <div className="min-w-0">
+                <div className="text-[10.5px] font-bold uppercase tracking-[0.22em] text-[#4DC8E8]">
+                  COMPANY
+                </div>
+                <h1 className="font-heading text-[26px] font-bold text-[#ECEEF5] truncate">
+                  {record.name}
+                </h1>
               </div>
-              <h5 className="font-heading text-xl font-bold text-[#ECEEF5] truncate">
-                {record.name}
-              </h5>
             </div>
-          </div>
-          <HatchTabs defaultValue={currentTab} onValueChange={handleTabChange}>
-            <HatchTabsList>
-              <HatchTabsTrigger value="activity">
-                {translate("crm.common.activity")}
-              </HatchTabsTrigger>
-              <HatchTabsTrigger value="contacts">
-                {record.nb_contacts === 0
-                  ? translate("resources.companies.no_contacts")
-                  : translate("resources.companies.nb_contacts", {
-                      smart_count: record.nb_contacts ?? 0,
-                    })}
-              </HatchTabsTrigger>
-              {record.nb_deals ? (
-                <HatchTabsTrigger value="deals">
-                  {translate("resources.companies.nb_deals", {
-                    smart_count: record.nb_deals ?? 0,
-                  })}
+            <HatchTabs
+              defaultValue={currentTab}
+              onValueChange={handleTabChange}
+            >
+              <HatchTabsList>
+                <HatchTabsTrigger value="activity">
+                  {translate("crm.common.activity")}
                 </HatchTabsTrigger>
-              ) : null}
-            </HatchTabsList>
-            <HatchTabsContent value="activity" className="pt-4">
-              <ActivityLog companyId={record.id} context="company" />
-            </HatchTabsContent>
-            <HatchTabsContent value="contacts" className="pt-4">
-              {record.nb_contacts ? (
-                <ReferenceManyField
-                  reference="contacts_summary"
-                  target="company_id"
-                  sort={{ field: "last_name", order: "ASC" }}
-                >
+                <HatchTabsTrigger value="contacts">
+                  {record.nb_contacts === 0
+                    ? translate("resources.companies.no_contacts")
+                    : translate("resources.companies.nb_contacts", {
+                        smart_count: record.nb_contacts ?? 0,
+                      })}
+                </HatchTabsTrigger>
+                {record.nb_deals ? (
+                  <HatchTabsTrigger value="deals">
+                    {translate("resources.companies.nb_deals", {
+                      smart_count: record.nb_deals ?? 0,
+                    })}
+                  </HatchTabsTrigger>
+                ) : null}
+              </HatchTabsList>
+              <HatchTabsContent value="activity" className="pt-4">
+                <ActivityLog companyId={record.id} context="company" />
+              </HatchTabsContent>
+              <HatchTabsContent value="contacts" className="pt-4">
+                {record.nb_contacts ? (
+                  <ReferenceManyField
+                    reference="contacts_summary"
+                    target="company_id"
+                    sort={{ field: "last_name", order: "ASC" }}
+                  >
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-row justify-end space-x-2 mt-1">
+                        {!!record.nb_contacts && (
+                          <SortButton
+                            fields={["last_name", "first_name", "last_seen"]}
+                          />
+                        )}
+                        <CreateRelatedContactButton />
+                      </div>
+                      <ContactsIterator />
+                    </div>
+                  </ReferenceManyField>
+                ) : (
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-row justify-end space-x-2 mt-1">
-                      {!!record.nb_contacts && (
-                        <SortButton
-                          fields={["last_name", "first_name", "last_seen"]}
-                        />
-                      )}
                       <CreateRelatedContactButton />
                     </div>
-                    <ContactsIterator />
                   </div>
-                </ReferenceManyField>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-row justify-end space-x-2 mt-1">
-                    <CreateRelatedContactButton />
-                  </div>
-                </div>
-              )}
-            </HatchTabsContent>
-            <HatchTabsContent value="deals" className="pt-4">
-              {record.nb_deals ? (
-                <ReferenceManyField
-                  reference="deals"
-                  target="company_id"
-                  sort={{ field: "name", order: "ASC" }}
-                >
-                  <DealsIterator />
-                </ReferenceManyField>
-              ) : null}
-            </HatchTabsContent>
-          </HatchTabs>
-        </HatchCard>
+                )}
+              </HatchTabsContent>
+              <HatchTabsContent value="deals" className="pt-4">
+                {record.nb_deals ? (
+                  <ReferenceManyField
+                    reference="deals"
+                    target="company_id"
+                    sort={{ field: "name", order: "ASC" }}
+                  >
+                    <DealsIterator />
+                  </ReferenceManyField>
+                ) : null}
+              </HatchTabsContent>
+            </HatchTabs>
+          </HatchCard>
+        </div>
+        <CompanyAside />
       </div>
-      <CompanyAside />
     </div>
   );
 };
@@ -215,16 +227,16 @@ const ContactsIterator = () => {
             <RouterLink
               to={`/contacts/${contact.id}/show`}
               state={{ from: location.pathname }}
-              className="flex items-center justify-between hover:bg-muted py-2 transition-colors"
+              className="flex items-center justify-between rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] px-3 py-2 transition-colors hover:bg-[rgba(255,255,255,0.04)]"
             >
               <div className="mr-4">
                 <Avatar />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium">
+                <div className="font-heading text-[13px] font-bold text-[#ECEEF5]">
                   {`${contact.first_name} ${contact.last_name}`}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-[12px] text-[#9AA3BE]">
                   {contact.title}
                   {contact.nb_tasks
                     ? ` - ${translate("crm.common.task_count", {
@@ -237,7 +249,7 @@ const ContactsIterator = () => {
               </div>
               {contact.last_seen && (
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-[12px] text-[#9AA3BE]">
                     {translate("crm.common.last_activity_with_date", {
                       date: formatRelativeDate(contact.last_seen, locale),
                     })}{" "}
@@ -278,16 +290,18 @@ const DealsIterator = () => {
   if (isPending || error) return null;
   return (
     <div>
-      <div>
+      <div className="flex flex-col gap-2">
         {deals.map((deal) => (
           <div key={deal.id} className="p-0 text-sm">
             <RouterLink
               to={`/deals/${deal.id}/show`}
-              className="flex items-center justify-between hover:bg-muted py-2 px-4 transition-colors"
+              className="flex items-center justify-between rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] px-3 py-2 transition-colors hover:bg-[rgba(255,255,255,0.04)]"
             >
               <div className="flex-1 min-w-0">
-                <div className="font-medium">{deal.name}</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="font-heading text-[13px] font-bold text-[#ECEEF5]">
+                  {deal.name}
+                </div>
+                <div className="text-[12px] text-[#9AA3BE]">
                   {findDealLabel(dealStages, deal.stage)},{" "}
                   {deal.amount.toLocaleString("en-US", {
                     notation: "compact",
@@ -302,7 +316,7 @@ const DealsIterator = () => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-[12px] text-[#9AA3BE]">
                   {translate("crm.common.last_activity_with_date", {
                     date: formatRelativeDate(deal.updated_at, locale),
                   })}{" "}

@@ -13,6 +13,7 @@ import { TextField } from "@/components/admin/text-field";
 import { UrlField } from "@/components/admin/url-field";
 import { SelectField } from "@/components/admin/select-field";
 
+import { HATCH } from "../_primitives";
 import { formatLocalizedDate } from "../misc/RelativeDate";
 import { AsideSection } from "../misc/AsideSection";
 import { useConfigurationContext } from "../root/ConfigurationContext";
@@ -32,7 +33,11 @@ export const CompanyAside = ({ link = "edit" }: CompanyAsideProps) => {
 
   return (
     // HatchAside defaults (sm:flex, gap-6, no width) don't match CompanyAside layout — primitive reconciliation deferred to follow-up brief.
-    <div className="hidden sm:block w-92 min-w-92 space-y-4">
+    <div
+      className="company-aside-rail hidden sm:block w-92 min-w-92 space-y-3"
+      style={{ color: HATCH.textMd }}
+    >
+      <style>{COMPANY_ASIDE_STYLES}</style>
       <div className="flex flex-row space-x-1">
         {link === "edit" ? (
           <EditButton label={translate("resources.companies.action.edit")} />
@@ -62,6 +67,54 @@ export const CompanyAside = ({ link = "edit" }: CompanyAsideProps) => {
     </div>
   );
 };
+
+const COMPANY_ASIDE_STYLES = `
+  .company-aside-rail > div:not(:first-child) {
+    margin-bottom: 0;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    background: #0D1424;
+    padding: 16px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+  }
+
+  .company-aside-rail > div:first-child a,
+  .company-aside-rail > div:first-child button {
+    height: 36px;
+    border-radius: 8px;
+    border-color: rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.03);
+    color: #ECEEF5;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .company-aside-rail h3 {
+    padding-bottom: 0;
+    color: #4DC8E8;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+  }
+
+  .company-aside-rail [data-slot="separator"] {
+    display: none;
+  }
+
+  .company-aside-rail p,
+  .company-aside-rail span,
+  .company-aside-rail a {
+    color: #B8C0D6;
+  }
+
+  .company-aside-rail a {
+    text-underline-offset: 3px;
+  }
+
+  .company-aside-rail svg {
+    color: #5C6784;
+  }
+`;
 
 export const CompanyInfo = ({ record }: { record: Company }) => {
   const translate = useTranslate();

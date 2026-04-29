@@ -2,6 +2,7 @@ import type * as React from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -40,6 +41,9 @@ const sizeMap: Record<NonNullable<HatchDialogProps["size"]>, string> = {
   xl: "sm:max-w-4xl",
 };
 
+const getFallbackDescription = (title: React.ReactNode) =>
+  typeof title === "string" ? title : "Dialog content";
+
 export const HatchDialog = ({
   open,
   onOpenChange,
@@ -70,8 +74,14 @@ export const HatchDialog = ({
                 {title}
               </DialogTitle>
               {subtitle ? (
-                <p className="text-sm text-[var(--fg-mid)]">{subtitle}</p>
-              ) : null}
+                <DialogDescription className="text-sm text-[var(--fg-mid)]">
+                  {subtitle}
+                </DialogDescription>
+              ) : (
+                <DialogDescription className="sr-only">
+                  {getFallbackDescription(title)}
+                </DialogDescription>
+              )}
             </div>
             {headerActions ? (
               <div className="flex items-center gap-2">{headerActions}</div>
@@ -81,7 +91,12 @@ export const HatchDialog = ({
       ) : (
         // Radix requires a DialogTitle for accessibility — render it
         // visually-hidden when the caller suppresses the header.
-        <DialogTitle className="sr-only">{title}</DialogTitle>
+        <>
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {getFallbackDescription(title)}
+          </DialogDescription>
+        </>
       )}
       <div className={cn("px-6 py-5", className)}>{children}</div>
       {footer ? (

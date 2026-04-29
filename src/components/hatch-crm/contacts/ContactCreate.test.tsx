@@ -35,7 +35,7 @@ describe("ContactCreate", () => {
     await screen.getByLabelText(/first name/i).fill("Ada");
     await screen.getByLabelText(/last name/i).fill("Lovelace");
 
-    await screen.getByRole("button", { name: /^save$/i }).click();
+    await screen.getByRole("button", { name: /^create contact$/i }).click();
 
     await expect
       .poll(() => screen.getByText("Element created"))
@@ -75,7 +75,7 @@ describe("ContactCreate", () => {
     // Fill email but leave phone empty
     await screen.getByPlaceholder("Email").fill("ada@example.com");
 
-    await screen.getByRole("button", { name: /^save$/i }).click();
+    await screen.getByRole("button", { name: /^create contact$/i }).click();
 
     await expect.poll(() => createMock).toBeCalledTimes(1);
 
@@ -112,7 +112,7 @@ describe("ContactCreate", () => {
     await screen.getByPlaceholder("Email").fill("ada@example.com");
     await screen.getByPlaceholder("Phone number").fill("+1234567890");
 
-    await screen.getByRole("button", { name: /^save$/i }).click();
+    await screen.getByRole("button", { name: /^create contact$/i }).click();
 
     await expect.poll(() => createMock).toBeCalledTimes(1);
 

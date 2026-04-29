@@ -1,6 +1,6 @@
 import type { Meta } from "@storybook/react-vite";
 
-import { ContactCreate } from "./ContactCreate";
+import { ContactCreateDialog } from "./ContactCreateDialog";
 import { buildContact, StoryWrapper } from "@/test/StoryWrapper";
 import type { DataProvider } from "ra-core";
 
@@ -24,7 +24,7 @@ export const ContactCreateBasic = ({
   silent?: boolean;
 }) => (
   <StoryWrapper
-    initialEntries={["/contacts/create"]}
+    initialEntries={["/"]}
     data={{
       contacts: [
         buildContact({
@@ -37,13 +37,13 @@ export const ContactCreateBasic = ({
     dataProvider={dataProvider}
     silent={silent}
   >
-    <ContactCreate />
+    <ContactCreateDialog />
   </StoryWrapper>
 );
 
 export const ContactCreateBasicWithError = () => (
   <StoryWrapper
-    initialEntries={["/contacts/create"]}
+    initialEntries={["/"]}
     data={{
       contacts: [
         buildContact({
@@ -62,6 +62,6 @@ export const ContactCreateBasicWithError = () => (
       },
     }}
   >
-    <ContactCreate />
+    <ContactCreateDialog />
   </StoryWrapper>
 );

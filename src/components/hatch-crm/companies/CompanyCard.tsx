@@ -8,6 +8,7 @@ import {
 } from "ra-core";
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
 
+import { HATCH } from "../_primitives";
 import { Avatar as ContactAvatar } from "../contacts/Avatar";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Company } from "../types";
@@ -44,10 +45,10 @@ export const CompanyCard = (props: { record?: Company }) => {
     >
       <div
         style={{
-          borderRadius: 12,
+          borderRadius: 8,
           padding: "18px 20px",
-          background: "var(--ink-3)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          background: HATCH.surface,
+          border: `1px solid ${HATCH.border}`,
           display: "flex",
           flexDirection: "column",
           gap: 0,
@@ -56,10 +57,12 @@ export const CompanyCard = (props: { record?: Company }) => {
           textDecoration: "none",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "var(--ink-4a)";
+          e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+          e.currentTarget.style.borderColor = HATCH.borderStrong;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "var(--ink-3)";
+          e.currentTarget.style.background = HATCH.surface;
+          e.currentTarget.style.borderColor = HATCH.border;
         }}
       >
         <div
@@ -83,7 +86,7 @@ export const CompanyCard = (props: { record?: Company }) => {
               justifyContent: "center",
               fontWeight: 800,
               fontSize: 14,
-              color: "var(--hatch-cyan)",
+              color: HATCH.cyan,
             }}
           >
             {record.name
@@ -122,13 +125,13 @@ export const CompanyCard = (props: { record?: Company }) => {
         >
           {record.name}
         </div>
-        <div style={{ fontSize: 12, color: "var(--fg-3)", marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: HATCH.textLo, marginBottom: 12 }}>
           {subtitle}
         </div>
         <div
           style={{
             height: 1,
-            background: "rgba(255,255,255,0.07)",
+            background: HATCH.border,
             marginBottom: 12,
           }}
         />
@@ -144,7 +147,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                   fontSize: 9.5,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "var(--fg-3)",
+                  color: HATCH.textMuted,
                   fontWeight: 700,
                 }}
               >
@@ -155,7 +158,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "var(--fg-1)",
+                  color: HATCH.textHi,
                 }}
               >
                 {record.nb_deals}
@@ -173,7 +176,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                   fontSize: 9.5,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "var(--fg-3)",
+                  color: HATCH.textMuted,
                   fontWeight: 700,
                 }}
               >
@@ -184,7 +187,7 @@ export const CompanyCard = (props: { record?: Company }) => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "var(--fg-1)",
+                  color: HATCH.textHi,
                 }}
               >
                 {record.nb_contacts}

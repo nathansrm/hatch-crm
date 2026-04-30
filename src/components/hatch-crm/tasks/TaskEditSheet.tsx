@@ -1,8 +1,16 @@
 import { SaveButton } from "@/components/admin/form";
 import type { Identifier } from "ra-core";
-import { EditBase, Form, useTranslate } from "ra-core";
+import {
+  EditBase,
+  Form,
+  useEditContext,
+  useNotify,
+  useTranslate,
+} from "ra-core";
+import type { ReactNode } from "react";
 import { HatchGhostButton, HatchSheet } from "../_primitives";
 import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
+import type { Task } from "../types";
 import { TaskSheetFormContent } from "./TaskCreateSheet";
 
 export interface TaskEditSheetProps {
@@ -17,6 +25,7 @@ export const TaskEditSheet = ({
   taskId,
 }: TaskEditSheetProps) => {
   const translate = useTranslate();
+  const notify = useNotify();
   return (
     <HatchSheet
       open={open}
@@ -40,14 +49,39 @@ export const TaskEditSheet = ({
           id={taskId}
           redirect={false}
           mutationMode="undoable"
+          mutationOptions={{
+            onSuccess: () => {
+              onOpenChange(false);
+              notify("resources.tasks.updated", {
+                type: "info",
+                undoable: true,
+              });
+            },
+          }}
         >
-          <Form className="flex min-h-0 flex-1 flex-col">
-            {node}
-          </Form>
+          <TaskEditSheetForm>{node}</TaskEditSheetForm>
         </EditBase>
       )}
     >
       <TaskSheetFormContent />
     </HatchSheet>
+  );
+};
+
+const TaskEditSheetForm = ({ children }: { children: ReactNode }) => {
+  const { isPending, record } = useEditContext<Task>();
+
+  if (isPending || record == null) {
+    return null;
+  }
+
+  return (
+    <Form
+      key={String(record.id)}
+      defaultValues={record}
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      {children}
+    </Form>
   );
 };

@@ -362,15 +362,21 @@ async function seed() {
     }
 
     // Update the array column for dual-write
-    await supabase
+    const { error: updateTagsError } = await supabase
       .from("contacts")
       .update({ tags: tagIds })
       .eq("id", contactId);
+
+    if (updateTagsError) {
+      throw new Error(
+        `Failed to update tags for contact ${contactId}: ${updateTagsError.message}`,
+      );
+    }
   }
 
   if (contactTagInserts.length > 0) {
     const { error: ctError } = await supabase.from("contact_tags").insert(contactTagInserts);
-    if (ctError) console.warn(`  Warning on contact_tags: ${ctError.message}`);
+    if (ctError) throw new Error(`Failed to seed contact_tags: ${ctError.message}`);
   }
   console.log(`  ${contactTagInserts.length} contact-tag links created\n`);
 
@@ -422,7 +428,7 @@ async function seed() {
 
   if (dealContactInserts.length > 0) {
     const { error: dcError } = await supabase.from("deal_contacts").insert(dealContactInserts);
-    if (dcError) console.warn(`  Warning on deal_contacts: ${dcError.message}`);
+    if (dcError) throw new Error(`Failed to seed deal_contacts: ${dcError.message}`);
   }
   console.log(`  ${dealContactInserts.length} deal-contact links created\n`);
 

@@ -69,7 +69,14 @@ Deno.serve(async (req: Request) => {
   // Validate API key
   const apiKey = req.headers.get("x-api-key");
   if (!INGEST_API_KEY || apiKey !== INGEST_API_KEY) {
-    await logEvent("ingest-lead", "auth_failed", null, null, {}, { error: "invalid_api_key" });
+    await logEvent(
+      "ingest-lead",
+      "auth_failed",
+      null,
+      null,
+      {},
+      { error: "invalid_api_key" },
+    );
     return jsonResponse({ error: "Unauthorized" }, 401);
   }
 
@@ -77,27 +84,59 @@ Deno.serve(async (req: Request) => {
   try {
     rawBody = await req.json();
   } catch {
-    await logEvent("ingest-lead", "validation_failed", null, null, {}, { error: "invalid_json" });
+    await logEvent(
+      "ingest-lead",
+      "validation_failed",
+      null,
+      null,
+      {},
+      { error: "invalid_json" },
+    );
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
 
   // Runtime type validation
   const body = rawBody as Record<string, unknown>;
   if (typeof body.company_name !== "string" || !body.company_name.trim()) {
-    await logEvent("ingest-lead", "validation_failed", null, null, body, { error: "missing_company_name" });
-    return jsonResponse({ error: "company_name must be a non-empty string" }, 400);
+    await logEvent("ingest-lead", "validation_failed", null, null, body, {
+      error: "missing_company_name",
+    });
+    return jsonResponse(
+      { error: "company_name must be a non-empty string" },
+      400,
+    );
   }
 
   const payload: IngestLeadPayload = {
     company_name: body.company_name.trim(),
-    contact_first_name: typeof body.contact_first_name === "string" ? body.contact_first_name : undefined,
-    contact_last_name: typeof body.contact_last_name === "string" ? body.contact_last_name : undefined,
-    contact_email: typeof body.contact_email === "string" ? body.contact_email.trim().toLowerCase() : undefined,
-    contact_phone: typeof body.contact_phone === "string" ? body.contact_phone.trim() : undefined,
-    trade_type: typeof body.trade_type === "string" ? body.trade_type : undefined,
-    lead_source: typeof body.lead_source === "string" ? body.lead_source : undefined,
-    metadata: typeof body.metadata === "object" && body.metadata !== null ? body.metadata as Record<string, unknown> : {},
-    idempotency_key: typeof body.idempotency_key === "string" ? body.idempotency_key : undefined,
+    contact_first_name:
+      typeof body.contact_first_name === "string"
+        ? body.contact_first_name
+        : undefined,
+    contact_last_name:
+      typeof body.contact_last_name === "string"
+        ? body.contact_last_name
+        : undefined,
+    contact_email:
+      typeof body.contact_email === "string"
+        ? body.contact_email.trim().toLowerCase()
+        : undefined,
+    contact_phone:
+      typeof body.contact_phone === "string"
+        ? body.contact_phone.trim()
+        : undefined,
+    trade_type:
+      typeof body.trade_type === "string" ? body.trade_type : undefined,
+    lead_source:
+      typeof body.lead_source === "string" ? body.lead_source : undefined,
+    metadata:
+      typeof body.metadata === "object" && body.metadata !== null
+        ? (body.metadata as Record<string, unknown>)
+        : {},
+    idempotency_key:
+      typeof body.idempotency_key === "string"
+        ? body.idempotency_key
+        : undefined,
   };
 
   try {
@@ -136,17 +175,20 @@ Deno.serve(async (req: Request) => {
         .select("id")
         .ilike("name", escapeIlike(payload.lead_source))
         .maybeSingle();
-      if (lsErr) throw new Error(`lead_sources lookup failed: ${lsErr.message}`);
+      if (lsErr)
+        throw new Error(`lead_sources lookup failed: ${lsErr.message}`);
       leadSourceId = ls?.id ?? null;
     }
 
     // 3. Upsert company (match on name, case-insensitive, wildcard-safe)
-    const { data: existingCompany, error: companyLookupErr } = await supabaseAdmin
-      .from("companies")
-      .select("id")
-      .ilike("name", escapeIlike(payload.company_name))
-      .maybeSingle();
-    if (companyLookupErr) throw new Error(`company lookup failed: ${companyLookupErr.message}`);
+    const { data: existingCompany, error: companyLookupErr } =
+      await supabaseAdmin
+        .from("companies")
+        .select("id")
+        .ilike("name", escapeIlike(payload.company_name))
+        .maybeSingle();
+    if (companyLookupErr)
+      throw new Error(`company lookup failed: ${companyLookupErr.message}`);
 
     let companyId: number;
     const companyExisted = !!existingCompany;
@@ -163,7 +205,8 @@ Deno.serve(async (req: Request) => {
         })
         .select("id")
         .single();
-      if (companyErr) throw new Error(`company insert failed: ${companyErr.message}`);
+      if (companyErr)
+        throw new Error(`company insert failed: ${companyErr.message}`);
       companyId = newCompany.id;
     }
 
@@ -184,9 +227,13 @@ Deno.serve(async (req: Request) => {
           .from("contacts")
           .select("id")
           .eq("company_id", companyId)
-          .contains("email_jsonb", [{ email: payload.contact_email }])
+          .contains(
+            "email_jsonb",
+            JSON.stringify([{ email: payload.contact_email }]),
+          )
           .maybeSingle();
-        if (emailErr) throw new Error(`contact email lookup failed: ${emailErr.message}`);
+        if (emailErr)
+          throw new Error(`contact email lookup failed: ${emailErr.message}`);
         existingContact = data;
       }
 
@@ -196,9 +243,13 @@ Deno.serve(async (req: Request) => {
           .from("contacts")
           .select("id")
           .eq("company_id", companyId)
-          .contains("phone_jsonb", [{ number: payload.contact_phone }])
+          .contains(
+            "phone_jsonb",
+            JSON.stringify([{ number: payload.contact_phone }]),
+          )
           .maybeSingle();
-        if (phoneErr) throw new Error(`contact phone lookup failed: ${phoneErr.message}`);
+        if (phoneErr)
+          throw new Error(`contact phone lookup failed: ${phoneErr.message}`);
         existingContact = data;
       }
 
@@ -206,9 +257,16 @@ Deno.serve(async (req: Request) => {
         contactId = existingContact.id;
         // Log dedup event per Architecture.md deduplication strategy
         await logEvent(
-          "ingest-lead", "lead_deduplicated", "contact", String(existingContact.id),
+          "ingest-lead",
+          "lead_deduplicated",
+          "contact",
+          String(existingContact.id),
           payload as unknown as Record<string, unknown>,
-          { company_id: companyId, contact_id: existingContact.id, reason: "existing_contact" },
+          {
+            company_id: companyId,
+            contact_id: existingContact.id,
+            reason: "existing_contact",
+          },
           payload.idempotency_key,
         );
       } else {
@@ -236,7 +294,8 @@ Deno.serve(async (req: Request) => {
           })
           .select("id")
           .single();
-        if (contactErr) throw new Error(`contact insert failed: ${contactErr.message}`);
+        if (contactErr)
+          throw new Error(`contact insert failed: ${contactErr.message}`);
         contactId = newContact.id;
       }
     }
@@ -262,7 +321,8 @@ Deno.serve(async (req: Request) => {
       const { error: dcErr } = await supabaseAdmin
         .from("deal_contacts")
         .insert({ deal_id: newDeal.id, contact_id: contactId });
-      if (dcErr) throw new Error(`deal_contacts insert failed: ${dcErr.message}`);
+      if (dcErr)
+        throw new Error(`deal_contacts insert failed: ${dcErr.message}`);
     }
 
     // 6. Log success to integration_log
@@ -274,7 +334,10 @@ Deno.serve(async (req: Request) => {
     };
 
     await logEvent(
-      "ingest-lead", "create_lead", "deal", String(newDeal.id),
+      "ingest-lead",
+      "create_lead",
+      "deal",
+      String(newDeal.id),
       payload as unknown as Record<string, unknown>,
       resultPayload,
       payload.idempotency_key,
@@ -285,7 +348,10 @@ Deno.serve(async (req: Request) => {
     console.error("Lead ingestion failed:", err);
 
     await logEvent(
-      "ingest-lead", "create_lead_failed", "deal", null,
+      "ingest-lead",
+      "create_lead_failed",
+      "deal",
+      null,
       payload as unknown as Record<string, unknown>,
       { error: String(err) },
       payload.idempotency_key,

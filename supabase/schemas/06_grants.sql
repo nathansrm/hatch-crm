@@ -95,6 +95,9 @@ grant all on table public.favicons_excluded_domains to service_role;
 grant all on table public.resources to authenticated;
 grant all on table public.resources to service_role;
 
+grant all on table public.agency_settings to authenticated;
+grant all on table public.agency_settings to service_role;
+
 -- Construction lookup tables
 grant all on table public.trade_types to authenticated;
 grant all on table public.trade_types to service_role;
@@ -112,6 +115,9 @@ grant all on table public.deal_contacts to service_role;
 -- Intake
 grant all on table public.intake_leads to authenticated;
 grant all on table public.intake_leads to service_role;
+
+grant all on table public.outreach_steps to authenticated;
+grant all on table public.outreach_steps to service_role;
 
 -- Audit & System tables
 grant all on table public.audit_results to authenticated;

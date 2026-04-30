@@ -1,30 +1,72 @@
 import { test as base, expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import { existsSync } from "node:fs";
+import path from "node:path";
 
-const adminSupabase = createClient(
-  process.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54341",
-  process.env.SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } },
+const supabaseUrl = process.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54341";
+const serviceRoleKey = process.env.SERVICE_ROLE_KEY;
+const LOCAL_E2E_SUPABASE_URL_PATTERN =
+  /^https?:\/\/(127\.0\.0\.1|localhost):54341\b/;
+const LOCAL_E2E_CONFIG_PATH = path.resolve(
+  process.cwd(),
+  ".supabase-e2e",
+  "supabase",
+  "config.toml",
 );
+
+if (!serviceRoleKey) {
+  throw new Error(
+    "SERVICE_ROLE_KEY is required for e2e tests. Set it in .env.e2e",
+  );
+}
+
+const adminSupabase = createClient(supabaseUrl, serviceRoleKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
+
+function assertSafeE2eTarget() {
+  if (
+    LOCAL_E2E_SUPABASE_URL_PATTERN.test(supabaseUrl) &&
+    !existsSync(LOCAL_E2E_CONFIG_PATH) &&
+    process.env.ALLOW_EXTERNAL_TEST_SUPABASE !== "1"
+  ) {
+    throw new Error(
+      [
+        `Refusing e2e reset against ${supabaseUrl} because ${LOCAL_E2E_CONFIG_PATH} is missing.`,
+        "Start the repo-local e2e stack first, or set ALLOW_EXTERNAL_TEST_SUPABASE=1 when intentionally targeting an external test instance.",
+      ].join(" "),
+    );
+  }
+}
 
 // Tables in FK-safe deletion order (children before parents)
 const TABLES = [
-  "tasks",
-  "contact_notes",
-  "deal_notes",
-  "deals",
-  "contacts",
-  "companies",
-  "tags",
-  "favicons_excluded_domains",
-  "configuration",
-  "sales",
-];
+  ["deal_contacts", "deal_id"],
+  ["contact_tags", "contact_id"],
+  ["tasks", "id"],
+  ["contact_notes", "id"],
+  ["deal_notes", "id"],
+  ["deals", "id"],
+  ["contacts", "id"],
+  ["companies", "id"],
+  ["tags", "id"],
+  ["favicons_excluded_domains", "id"],
+  ["configuration", "id"],
+  ["sales", "id"],
+] as const;
 
 async function resetDb() {
-  for (const table of TABLES) {
+  assertSafeE2eTarget();
+
+  for (const [table, column] of TABLES) {
     // Supabase client delete need a where clause to get executed, so we use one that will match on all rows (id is not null)
-    await adminSupabase.from(table).delete().not("id", "is", null);
+    const { error } = await adminSupabase
+      .from(table)
+      .delete()
+      .not(column, "is", null);
+    if (error) {
+      throw new Error(`Failed to reset ${table}: ${error.message}`);
+    }
   }
 
   // Delete all auth users (cascades to sales via DB trigger)
@@ -205,7 +247,8 @@ const getMenuMethod = ({ page }: { page: Page; isMobile: boolean }) => ({
 });
 
 const dismissToast = async (page: Page, content: string) => {
-  await expect(page.getByText(content)).toBeVisible();
+  const notifications = page.getByLabel("Notifications alt+T");
+  await expect(notifications.getByText(content)).toBeVisible();
   await page.getByLabel("Close toast").click();
   // Since we are in optimistic UI, dismissing the toast trigger the request to the api linked to the toast message
   await page.waitForLoadState("networkidle");

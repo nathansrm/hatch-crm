@@ -1,4 +1,18 @@
 import { test, expect } from "./fixtures";
+import type { Page } from "@playwright/test";
+
+const openNoteComposer = async (page: Page) => {
+  await page.getByRole("button", { name: "Add note" }).first().click();
+  await page.waitForLoadState("networkidle");
+
+  const noteInput = page.getByRole("textbox", { name: "Add a note" });
+  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+    await page.getByRole("button", { name: "Add note" }).first().click();
+  }
+
+  await expect(noteInput).toBeVisible();
+  return noteInput;
+};
 
 test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
   await page.goto("http://localhost:5175/");
@@ -64,7 +78,9 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await dismissToast("Element created");
 
-  await expect(page.locator(isMobile ? "h2" : "h5")).toHaveText("Jane Smith");
+  await expect(
+    page.getByRole("heading", { name: "Jane Smith" }).first(),
+  ).toBeVisible();
   await expect(page.getByText("CEO at Smith Corp")).toBeVisible();
 
   await menu.goToDashboard();
@@ -72,21 +88,18 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("2/3 done")).toBeVisible();
 
-  await page.getByRole("button", { name: "Add note" }).click();
-
-  await page.waitForLoadState("networkidle");
-
-  await page.getByPlaceholder("Add a note").fill("This is a note about Jane.");
-  await page
-    .getByRole("button", { name: isMobile ? "Save" : "Add this note" })
-    .click();
+  const noteInput = await openNoteComposer(page);
+  await noteInput.fill("This is a note about Jane.");
+  await page.getByRole("button", { name: "Save" }).click();
 
   await dismissToast("Note added");
 
   await expect(
-    page.getByText(isMobile ? "Me" : "You added a note", { exact: false }),
+    page.getByText(isMobile ? "Me" : "Note added", { exact: false }).first(),
   ).toBeVisible();
-  await expect(page.getByText("This is a note about Jane.")).toBeVisible();
+  await expect(
+    page.getByText("This is a note about Jane.").first(),
+  ).toBeVisible();
 
   await menu.goToDashboard();
 
@@ -94,7 +107,9 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("Team activity")).toBeVisible();
   await expect(page.getByText(/You added company Smith Corp/)).toBeVisible();
-  await expect(page.getByText(/You added Jane Smith to Smith Corp/)).toBeVisible();
+  await expect(
+    page.getByText(/You added Jane Smith to Smith Corp/),
+  ).toBeVisible();
   await expect(
     page.getByText(/You added a note about Jane Smith/),
   ).toBeVisible();

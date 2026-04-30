@@ -66,10 +66,11 @@ test.describe("user adding a task", () => {
         .fill("Follow up with Jane");
       await page.getByLabel("Due date").fill("2026-04-11");
     } else {
-      await page.getByLabel("Description *").fill("Follow up with Jane");
-      await page.getByLabel("Due date").fill("2026-04-11T21:00");
-      await page.getByLabel("Type").click();
-      await page.getByRole("option", { name: "Call", exact: true }).click();
+      await page
+        .getByRole("textbox", { name: "Task" })
+        .fill("Follow up with Jane");
+      await page.getByLabel("Due date").fill("2026-04-11");
+      await page.getByRole("button", { name: "Call", exact: true }).click();
     }
 
     await page.getByRole("button", { name: "Save" }).click();

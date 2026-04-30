@@ -137,6 +137,7 @@ const lazyRouteElement = (component: ReactNode) => (
 );
 
 const defaultStore = localStorageStore(undefined, "CRM");
+const MOBILE_QUERY_CACHE_STORAGE_KEY = "HATCH_CRM_MOBILE_QUERY_CACHE";
 
 export type CRMProps = {
   dataProvider?: CrmDataProvider;
@@ -198,8 +199,8 @@ export const CRM = ({
   noteStatuses = defaultNoteStatuses,
   taskTypes = defaultTaskTypes,
   title = defaultTitle,
-  dataProvider = defaultDataProviderBuilder(),
-  authProvider = defaultAuthProviderBuilder(),
+  dataProvider: dataProviderProp,
+  authProvider: authProviderProp,
   i18nProvider = defaulti18nProvider,
   store = defaultStore,
   googleWorkplaceDomain = import.meta.env.VITE_GOOGLE_WORKPLACE_DOMAIN,
@@ -207,6 +208,15 @@ export const CRM = ({
     .VITE_DISABLE_EMAIL_PASSWORD_AUTHENTICATION === "true",
   ...rest
 }: CRMProps) => {
+  const dataProvider = useMemo(
+    () => dataProviderProp ?? defaultDataProviderBuilder(),
+    [dataProviderProp],
+  );
+  const authProvider = useMemo(
+    () => authProviderProp ?? defaultAuthProviderBuilder(),
+    [authProviderProp],
+  );
+
   // Seed the store with CRM prop values if not already stored
   // (backwards compatibility for prop-based config)
   useEffect(() => {
@@ -382,10 +392,25 @@ const MobileAdmin = (
   const mobileAsyncStoragePersister = useMemo(
     () =>
       createAsyncStoragePersister({
+        key: MOBILE_QUERY_CACHE_STORAGE_KEY,
         storage: localStorage,
       }),
     [],
   );
+  const mobileAuthProvider = useMemo<AuthProvider | undefined>(() => {
+    const authProvider = props.authProvider as AuthProvider | undefined;
+    if (!authProvider) {
+      return undefined;
+    }
+    return {
+      ...authProvider,
+      logout: async (params: any) => {
+        mobileQueryClient.clear();
+        await mobileAsyncStoragePersister.removeClient();
+        return authProvider.logout(params);
+      },
+    };
+  }, [mobileAsyncStoragePersister, mobileQueryClient, props.authProvider]);
 
   return (
     <PersistQueryClientProvider
@@ -397,6 +422,7 @@ const MobileAdmin = (
         layout={props.layout ?? MobileLayout}
         dashboard={props.dashboard ?? MobileDashboard}
         {...props}
+        authProvider={mobileAuthProvider}
       >
         <CustomRoutes noLayout>
           <Route path={SignupPage.path} element={<SignupPage />} />

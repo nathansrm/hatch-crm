@@ -416,7 +416,11 @@ const SettingsFormFields = () => {
           </SettingsSubheading>
           <ArrayInput source="companySectors" label={false} helperText={false}>
             <SimpleFormIterator disableReordering disableClear>
-              <TextInput source="label" label={false} />
+              <TextInput
+                source="label"
+                label={false}
+                aria-label={translate("crm.settings.companies.sectors")}
+              />
             </SimpleFormIterator>
           </ArrayInput>
         </SettingsPanel>
@@ -433,6 +437,7 @@ const SettingsFormFields = () => {
           <AutocompleteInput
             source="currency"
             label={false}
+            aria-label={translate("crm.settings.deals.currency")}
             choices={currencyChoices}
             inputText={(choice) => choice?.id}
             modal
@@ -450,7 +455,11 @@ const SettingsFormFields = () => {
             validate={validateDealStages}
           >
             <SimpleFormIterator disableClear>
-              <TextInput source="label" label={false} />
+              <TextInput
+                source="label"
+                label={false}
+                aria-label={translate("crm.settings.deals.stages")}
+              />
             </SimpleFormIterator>
           </ArrayInput>
 
@@ -523,7 +532,11 @@ const SettingsFormFields = () => {
             validate={validateDealCategories}
           >
             <SimpleFormIterator disableReordering disableClear>
-              <TextInput source="label" label={false} />
+              <TextInput
+                source="label"
+                label={false}
+                aria-label={translate("crm.settings.deals.categories")}
+              />
             </SimpleFormIterator>
           </ArrayInput>
         </SettingsPanel>
@@ -539,7 +552,12 @@ const SettingsFormFields = () => {
           </SettingsSubheading>
           <ArrayInput source="noteStatuses" label={false} helperText={false}>
             <SimpleFormIterator inline disableReordering disableClear>
-              <TextInput source="label" label={false} className="flex-1" />
+              <TextInput
+                source="label"
+                label={false}
+                aria-label={translate("crm.settings.notes.statuses")}
+                className="flex-1"
+              />
               <ColorInput source="color" />
             </SimpleFormIterator>
           </ArrayInput>
@@ -556,7 +574,11 @@ const SettingsFormFields = () => {
           </SettingsSubheading>
           <ArrayInput source="taskTypes" label={false} helperText={false}>
             <SimpleFormIterator disableReordering disableClear>
-              <TextInput source="label" label={false} />
+              <TextInput
+                source="label"
+                label={false}
+                aria-label={translate("crm.settings.tasks.types")}
+              />
             </SimpleFormIterator>
           </ArrayInput>
         </SettingsPanel>
@@ -739,9 +761,13 @@ const SettingsDivider = () => (
 /** A minimal color picker input compatible with ra-core's useInput. */
 const ColorInput = ({ source }: { source: string }) => {
   const { field } = useInput({ source });
+  const translate = useTranslate();
   return (
     <input
       type="color"
+      aria-label={translate("crm.settings.notes.status_color", {
+        _: "Note status color",
+      })}
       {...field}
       value={field.value || "#000000"}
       className="w-9 h-9 shrink-0 cursor-pointer appearance-none rounded border bg-transparent p-0.5 [&::-webkit-color-swatch-wrapper]:cursor-pointer [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:cursor-pointer [&::-webkit-color-swatch]:rounded-sm [&::-webkit-color-swatch]:border-none [&::-moz-color-swatch]:cursor-pointer [&::-moz-color-swatch]:rounded-sm [&::-moz-color-swatch]:border-none"

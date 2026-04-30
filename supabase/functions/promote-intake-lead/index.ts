@@ -56,7 +56,9 @@ const logEvent = async (
 };
 
 const isUuid = (value: string): boolean =>
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value,
+  );
 
 const extractFirstName = (businessName: string): string | null => {
   const firstToken = businessName.trim().split(/\s+/)[0];
@@ -70,7 +72,8 @@ Deno.serve(async (req: Request) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey, x-client-info",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, apikey, x-client-info",
       },
     });
   }
@@ -148,7 +151,10 @@ Deno.serve(async (req: Request) => {
       body,
       { error: "missing_intake_lead_id" },
     );
-    return jsonResponse({ error: "intake_lead_id must be a non-empty string" }, 400);
+    return jsonResponse(
+      { error: "intake_lead_id must be a non-empty string" },
+      400,
+    );
   }
 
   if (!isUuid(body.intake_lead_id.trim())) {
@@ -177,7 +183,8 @@ Deno.serve(async (req: Request) => {
 
   const payload: PromoteIntakeLeadPayload = {
     intake_lead_id: body.intake_lead_id.trim(),
-    create_deal: typeof body.create_deal === "boolean" ? body.create_deal : true,
+    create_deal:
+      typeof body.create_deal === "boolean" ? body.create_deal : true,
   };
 
   // TODO: Wrap company/contact/deal inserts + intake_lead status update in a
@@ -235,11 +242,12 @@ Deno.serve(async (req: Request) => {
     const normalizedEmail = intakeLead.email?.trim().toLowerCase() ?? null;
     const normalizedPhone = intakeLead.phone?.trim() ?? null;
 
-    const { data: existingCompany, error: companyLookupErr } = await supabaseAdmin
-      .from("companies")
-      .select("id")
-      .ilike("name", escapeIlike(intakeLead.business_name))
-      .maybeSingle();
+    const { data: existingCompany, error: companyLookupErr } =
+      await supabaseAdmin
+        .from("companies")
+        .select("id")
+        .ilike("name", escapeIlike(intakeLead.business_name))
+        .maybeSingle();
     if (companyLookupErr) {
       throw new Error(`company lookup failed: ${companyLookupErr.message}`);
     }
@@ -259,7 +267,8 @@ Deno.serve(async (req: Request) => {
         })
         .select("id")
         .single();
-      if (companyErr) throw new Error(`company insert failed: ${companyErr.message}`);
+      if (companyErr)
+        throw new Error(`company insert failed: ${companyErr.message}`);
       companyId = newCompany.id;
     }
 
@@ -270,10 +279,11 @@ Deno.serve(async (req: Request) => {
         .from("contacts")
         .select("id")
         .eq("company_id", companyId)
-        .contains("email_jsonb", [{ email: normalizedEmail }])
+        .contains("email_jsonb", JSON.stringify([{ email: normalizedEmail }]))
         .limit(1)
         .maybeSingle();
-      if (emailErr) throw new Error(`contact email lookup failed: ${emailErr.message}`);
+      if (emailErr)
+        throw new Error(`contact email lookup failed: ${emailErr.message}`);
       existingContact = data;
     }
 
@@ -282,10 +292,11 @@ Deno.serve(async (req: Request) => {
         .from("contacts")
         .select("id")
         .eq("company_id", companyId)
-        .contains("phone_jsonb", [{ number: normalizedPhone }])
+        .contains("phone_jsonb", JSON.stringify([{ number: normalizedPhone }]))
         .limit(1)
         .maybeSingle();
-      if (phoneErr) throw new Error(`contact phone lookup failed: ${phoneErr.message}`);
+      if (phoneErr)
+        throw new Error(`contact phone lookup failed: ${phoneErr.message}`);
       existingContact = data;
     }
 
@@ -313,7 +324,8 @@ Deno.serve(async (req: Request) => {
         })
         .select("id")
         .single();
-      if (contactErr) throw new Error(`contact insert failed: ${contactErr.message}`);
+      if (contactErr)
+        throw new Error(`contact insert failed: ${contactErr.message}`);
       contactId = newContact.id;
     }
 
@@ -341,7 +353,9 @@ Deno.serve(async (req: Request) => {
         .from("deal_contacts")
         .insert({ deal_id: dealId, contact_id: contactId });
       if (dealContactErr) {
-        throw new Error(`deal_contacts insert failed: ${dealContactErr.message}`);
+        throw new Error(
+          `deal_contacts insert failed: ${dealContactErr.message}`,
+        );
       }
     }
 

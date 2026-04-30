@@ -1,10 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { supabase, cleanupTestData } from "./supabase-client";
 
-const SUPABASE_URL =
-  process.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54341";
-const INGEST_API_KEY =
-  process.env.INGEST_API_KEY ?? process.env.SERVICE_ROLE_KEY!;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54341";
+const INGEST_API_KEY = process.env.INGEST_API_KEY;
+
+if (!INGEST_API_KEY) {
+  throw new Error(
+    "INGEST_API_KEY is required for lead ingestion integration tests and must match the Supabase function environment.",
+  );
+}
 
 describe("Lead ingestion edge function", () => {
   beforeAll(async () => {
@@ -65,7 +69,7 @@ describe("Lead ingestion edge function", () => {
       .eq("id", result.deal_id)
       .single();
 
-    expect(deal?.stage).toBe("lead");
+    expect(deal?.stage).toBe("discovery");
     expect(deal?.name).toBe("Sunrise Roofing - Inbound Lead");
   });
 

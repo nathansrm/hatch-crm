@@ -1,6 +1,20 @@
 import { test, expect } from "./fixtures";
+import type { Page } from "@playwright/test";
 
 const APP_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:5175";
+
+const openNoteComposer = async (page: Page) => {
+  await page.getByRole("button", { name: "Add note" }).first().click();
+  await page.waitForLoadState("networkidle");
+
+  const noteInput = page.getByRole("textbox", { name: "Add a note" });
+  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+    await page.getByRole("button", { name: "Add note" }).first().click();
+  }
+
+  await expect(noteInput).toBeVisible();
+  return noteInput;
+};
 
 test("synthetic flow: sign in, create company, contact, note, then verify dashboard", async ({
   page,
@@ -56,13 +70,9 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
   await page.waitForLoadState("networkidle");
   await expect(page.getByText("2/3 done")).toBeVisible();
 
-  await page.getByRole("button", { name: "Add note" }).click();
-  await page.waitForLoadState("networkidle");
-
-  await page
-    .getByPlaceholder("Add a note")
-    .fill("Initial discovery call completed.");
-  await page.getByRole("button", { name: "Add this note" }).click();
+  const noteInput = await openNoteComposer(page);
+  await noteInput.fill("Initial discovery call completed.");
+  await page.getByRole("button", { name: "Save" }).click();
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("link", { name: "Dashboard" }).click();

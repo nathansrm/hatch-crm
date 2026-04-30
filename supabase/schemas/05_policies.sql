@@ -16,6 +16,7 @@ alter table public.tasks enable row level security;
 alter table public.configuration enable row level security;
 alter table public.favicons_excluded_domains enable row level security;
 alter table public.resources enable row level security;
+alter table public.agency_settings enable row level security;
 
 -- Companies
 create policy "authenticated_select_companies" on public.companies for select to authenticated using (auth.uid() is not null);
@@ -74,6 +75,10 @@ create policy "authenticated_all_favicons_excluded_domains" on public.favicons_e
 create policy "users_own_resources" on public.resources
     for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- Agency Settings (read = authenticated, write = admin only)
+create policy "authenticated_select_agency_settings" on public.agency_settings for select to authenticated using (auth.uid() is not null);
+create policy "admin_write_agency_settings" on public.agency_settings for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
 -- Trade Types (read = authenticated, write = admin)
 alter table public.trade_types enable row level security;
 create policy "authenticated_select_trade_types" on public.trade_types for select to authenticated using (auth.uid() is not null);
@@ -125,3 +130,10 @@ create policy "authenticated_select_intake_leads" on public.intake_leads for sel
 create policy "authenticated_insert_intake_leads" on public.intake_leads for insert to authenticated with check (auth.uid() is not null);
 create policy "authenticated_update_intake_leads" on public.intake_leads for update to authenticated using (auth.uid() is not null) with check (auth.uid() is not null);
 create policy "authenticated_delete_intake_leads" on public.intake_leads for delete to authenticated using (auth.uid() is not null);
+
+-- Outreach Steps (full CRUD for authenticated)
+alter table public.outreach_steps enable row level security;
+create policy "authenticated_read_outreach_steps" on public.outreach_steps for select to authenticated using (true);
+create policy "authenticated_insert_outreach_steps" on public.outreach_steps for insert to authenticated with check (true);
+create policy "authenticated_update_outreach_steps" on public.outreach_steps for update to authenticated using (true) with check (true);
+create policy "authenticated_delete_outreach_steps" on public.outreach_steps for delete to authenticated using (true);

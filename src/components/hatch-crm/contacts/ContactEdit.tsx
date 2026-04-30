@@ -7,8 +7,7 @@ import { ContactInputs } from "./ContactInputs";
 import { FormToolbar } from "../layout/FormToolbar";
 import {
   cleanupContactForEdit,
-  defaultEmailJsonb,
-  defaultPhoneJsonb,
+  normalizeContactArrayFields,
 } from "./contactModel";
 
 export const ContactEdit = ({
@@ -24,18 +23,6 @@ export const ContactEdit = ({
     <ContactEditContent />
   </EditBase>
 );
-
-const normalizeContactArrayFields = (record: Contact) => ({
-  ...record,
-  email_jsonb:
-    record.email_jsonb && record.email_jsonb.length > 0
-      ? record.email_jsonb
-      : defaultEmailJsonb,
-  phone_jsonb:
-    record.phone_jsonb && record.phone_jsonb.length > 0
-      ? record.phone_jsonb
-      : defaultPhoneJsonb,
-});
 
 const ContactEditContent = () => {
   const { isPending, record } = useEditContext<Contact>();

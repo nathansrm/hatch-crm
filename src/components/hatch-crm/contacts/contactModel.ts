@@ -5,6 +5,18 @@ import type { Company, Contact, ContactGender } from "../types";
 export const defaultEmailJsonb = [{ email: null, type: null }];
 export const defaultPhoneJsonb = [{ number: null, type: null }];
 
+export const normalizeContactArrayFields = (record: Contact) => ({
+  ...record,
+  email_jsonb:
+    record.email_jsonb && record.email_jsonb.length > 0
+      ? record.email_jsonb
+      : defaultEmailJsonb,
+  phone_jsonb:
+    record.phone_jsonb && record.phone_jsonb.length > 0
+      ? record.phone_jsonb
+      : defaultPhoneJsonb,
+});
+
 const cleanContactArrayFields = (data: Contact) => {
   const cleanedEmailJsonb =
     data.email_jsonb?.filter((e) => e.email != null) || [];

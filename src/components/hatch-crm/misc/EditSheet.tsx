@@ -56,6 +56,12 @@ export interface EditSheetProps extends EditBaseProps {
    * Optional actions to render in the sheet header, next to the title
    */
   headerActions?: ReactNode;
+
+  /**
+   * Optional edit-record normalizer for fields that need form-safe shapes
+   * after the record is fetched.
+   */
+  normalizeRecord?: (record: any) => any;
 }
 
 /**
@@ -100,6 +106,7 @@ export const EditSheet = ({
   mutationMode = "undoable",
   defaultValues,
   headerActions,
+  normalizeRecord,
   ...editBaseProps
 }: EditSheetProps) => {
   const resource = useResourceContext(editBaseProps);
@@ -135,7 +142,9 @@ export const EditSheet = ({
 
   const resolvedEyebrow =
     eyebrow ??
-    (resource ? `EDIT ${String(resource).replace(/_/g, " ").toUpperCase()}` : undefined);
+    (resource
+      ? `EDIT ${String(resource).replace(/_/g, " ").toUpperCase()}`
+      : undefined);
 
   return (
     <HatchSheet
@@ -156,17 +165,45 @@ export const EditSheet = ({
           mutationOptions={enhancedMutationOptions}
           mutationMode={mutationMode}
         >
-          <Form
+          <EditSheetForm
             defaultValues={defaultValues}
-            className="flex min-h-0 flex-1 flex-col"
+            normalizeRecord={normalizeRecord}
           >
             {node}
-          </Form>
+          </EditSheetForm>
         </EditBase>
       )}
     >
       {children}
     </HatchSheet>
+  );
+};
+
+const EditSheetForm = ({
+  children,
+  defaultValues,
+  normalizeRecord,
+}: {
+  children: ReactNode;
+  defaultValues?: FormProps["defaultValues"];
+  normalizeRecord?: (record: any) => any;
+}) => {
+  const { isPending, record } = useEditContext();
+
+  if (isPending || !record) {
+    return null;
+  }
+
+  const formRecord = normalizeRecord ? normalizeRecord(record) : record;
+
+  return (
+    <Form
+      record={formRecord}
+      defaultValues={defaultValues}
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      {children}
+    </Form>
   );
 };
 

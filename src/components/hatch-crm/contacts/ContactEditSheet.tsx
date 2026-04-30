@@ -13,8 +13,7 @@ import { EditSheet } from "../misc/EditSheet";
 import { ContactInputs } from "./ContactInputs";
 import {
   cleanupContactForEdit,
-  defaultEmailJsonb,
-  defaultPhoneJsonb,
+  normalizeContactArrayFields,
 } from "./contactModel";
 
 export interface ContactEditSheetProps {
@@ -35,10 +34,7 @@ export const ContactEditSheet = ({
       open={open}
       onOpenChange={onOpenChange}
       transform={cleanupContactForEdit}
-      defaultValues={{
-        email_jsonb: defaultEmailJsonb,
-        phone_jsonb: defaultPhoneJsonb,
-      }}
+      normalizeRecord={normalizeContactArrayFields}
       headerActions={<ContactEditMenuButton onOpenChange={onOpenChange} />}
     >
       <ContactInputs />

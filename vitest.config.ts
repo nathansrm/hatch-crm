@@ -35,6 +35,7 @@ export default defineConfig({
       ".supabase-e2e/**",
       "e2e/**/*.spec.{ts,tsx}",
       "src/test/integration/**",
+      "tools/**",
     ],
     server: {
       deps: {

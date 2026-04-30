@@ -358,27 +358,35 @@ const DesktopAdmin = (
   );
 };
 
-const mobileQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
-      networkMode: "offlineFirst",
-    },
-    mutations: {
-      networkMode: "offlineFirst",
-    },
-  },
-});
-const mobileAsyncStoragePersister = createAsyncStoragePersister({
-  storage: localStorage,
-});
-
 const MobileAdmin = (
   props: CoreAdminProps & {
     dashboard?: DashboardComponent;
     layout?: LayoutComponent;
   },
 ) => {
+  const mobileQueryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            gcTime: 1000 * 60 * 60 * 24, // 24 hours
+            networkMode: "offlineFirst",
+          },
+          mutations: {
+            networkMode: "offlineFirst",
+          },
+        },
+      }),
+    [],
+  );
+  const mobileAsyncStoragePersister = useMemo(
+    () =>
+      createAsyncStoragePersister({
+        storage: localStorage,
+      }),
+    [],
+  );
+
   return (
     <PersistQueryClientProvider
       client={mobileQueryClient}

@@ -1,4 +1,11 @@
 export const englishCrmMessages = {
+  ra: {
+    notification: {
+      created: "%{resource} added",
+      updated: "%{resource} updated",
+      deleted: "%{resource} deleted",
+    },
+  },
   resources: {
     companies: {
       name: "Company |||| Companies",
@@ -38,6 +45,11 @@ export const englishCrmMessages = {
         edit: "Edit company",
         new: "New Company",
         show: "Show company",
+      },
+      notifications: {
+        created: "Company added",
+        updated: "Company updated",
+        deleted: "Company deleted",
       },
       added_on: "Added on %{date}",
       followed_by: "Followed by %{name}",
@@ -94,6 +106,11 @@ export const englishCrmMessages = {
         export_vcard: "Export to vCard",
         new: "New Contact",
         show: "Show contact",
+      },
+      notifications: {
+        created: "Contact added",
+        updated: "Contact updated",
+        deleted: "Contact deleted",
       },
       background: {
         last_activity_on: "Last activity on %{date}",
@@ -206,6 +223,11 @@ export const englishCrmMessages = {
         back_to_deal: "Back to deal",
         create: "Create deal",
         new: "New Deal",
+      },
+      notifications: {
+        created: "Deal added",
+        updated: "Deal updated",
+        deleted: "Deal deleted",
       },
       field_categories: {
         misc: "Misc",

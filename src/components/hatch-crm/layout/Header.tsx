@@ -10,7 +10,10 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { HATCH } from "@/components/hatch-crm/_primitives";
+import {
+  HatchPrimaryButton,
+  HATCH,
+} from "@/components/hatch-crm/_primitives";
 import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext";
 import type { Deal } from "@/components/hatch-crm/types";
 import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
@@ -268,27 +271,15 @@ const Header = () => {
           )}
         </div>
       </div>
-      <Link
-        to="/deals/create"
-        className="font-heading"
-        style={{
-          zIndex: 1,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "8px 14px",
-          background: HATCH.cyan,
-          color: HATCH.cyanInk,
-          borderRadius: 7,
-          fontWeight: 700,
-          fontSize: 12.5,
-          textDecoration: "none",
-          boxShadow: "0 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(77,200,232,0.25)",
-        }}
+      <HatchPrimaryButton
+        asChild
+        className="z-[1] h-auto gap-1.5 rounded-[7px] px-3.5 py-2 text-[12.5px] font-bold no-underline"
       >
-        <Plus size={15} strokeWidth={2.5} />
-        New Deal
-      </Link>
+        <Link to="/deals/create" className="font-heading">
+          <Plus size={15} strokeWidth={2.5} />
+          New Deal
+        </Link>
+      </HatchPrimaryButton>
       <div
         className="obsidian-user-menu"
         style={{ position: "relative", zIndex: 1, width: 32, height: 32 }}

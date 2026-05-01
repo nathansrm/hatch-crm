@@ -106,7 +106,7 @@ export const Notification = (props: ToasterProps) => {
         richColors
         theme={theme}
         closeButton
-        position="bottom-center"
+        position="top-right"
         {...props}
       />
     </CloseNotificationContext.Provider>

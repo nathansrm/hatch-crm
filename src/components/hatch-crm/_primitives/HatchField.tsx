@@ -1,4 +1,6 @@
 import type * as React from "react";
+import { forwardRef } from "react";
+import { SelectTrigger } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 /**
@@ -65,14 +67,30 @@ export const HatchTextareaInput = ({
   />
 );
 
-export const HatchDateInput = ({
-  className,
-  ...rest
-}: React.InputHTMLAttributes<HTMLInputElement>) => (
+export const HatchDateInput = forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...rest }, ref) => (
   <input
+    ref={ref}
     type="date"
     {...rest}
     className={cn(fieldBase, "h-11 px-3 text-sm", className)}
+  />
+));
+HatchDateInput.displayName = "HatchDateInput";
+
+export const HatchSelectTrigger = ({
+  className,
+  ...rest
+}: React.ComponentProps<typeof SelectTrigger>) => (
+  <SelectTrigger
+    {...rest}
+    className={cn(
+      fieldBase,
+      "!h-11 !bg-[rgba(255,255,255,0.03)] px-3 text-sm",
+      className,
+    )}
   />
 );
 
@@ -148,16 +166,9 @@ export function HatchPillGroup<V extends string>({
 export const HatchAutocompleteShell = ({
   children,
   className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div
-    className={cn(
-      "rounded-lg border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] p-3",
-      className,
-    )}
-  >
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...rest} className={cn(fieldBase, "p-3", className)}>
     {children}
   </div>
 );

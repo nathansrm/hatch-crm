@@ -1,14 +1,9 @@
 import * as React from "react";
 import type { InputProps } from "ra-core";
 import { useInput, FieldTitle, useEvent, useResourceContext } from "ra-core";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
-import { Input } from "@/components/ui/input";
+import { FormControl, FormError, FormField } from "@/components/admin/form";
 import { InputHelperText } from "@/components/admin/input-helper-text";
+import { HatchDateInput, HatchField } from "@/components/hatch-crm/_primitives";
 import { cn } from "@/lib/utils";
 
 /**
@@ -207,36 +202,39 @@ export const DateInput = (props: DateInputProps) => {
 
   return (
     <FormField id={id} className={className} name={name}>
-      {label !== false && (
-        <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
+      <HatchField
+        htmlFor={id}
+        label={
+          label !== false ? (
+            <FieldTitle
+              label={label}
+              source={source}
+              resource={resource}
+              isRequired={isRequired}
+            />
+          ) : undefined
+        }
+      >
+        <FormControl>
+          <HatchDateInput
+            ref={inputRef}
+            defaultValue={format(initialDefaultValueRef.current) ?? ""}
+            key={inputKey}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            className={cn(
+              "ra-input",
+              `ra-input-${source}`,
+              "scheme-light dark:scheme-dark relative [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:opacity-100 appearance-none",
+              inputClassName,
+            )}
+            disabled={disabled || readOnly}
+            readOnly={readOnly}
+            {...rest}
           />
-        </FormLabel>
-      )}
-      <FormControl>
-        <Input
-          ref={inputRef}
-          defaultValue={format(initialDefaultValueRef.current) ?? ""}
-          key={inputKey}
-          type="date"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className={cn(
-            "ra-input",
-            `ra-input-${source}`,
-            "scheme-light dark:scheme-dark relative [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:opacity-100 appearance-none",
-            inputClassName,
-          )}
-          disabled={disabled || readOnly}
-          readOnly={readOnly}
-          {...rest}
-        />
-      </FormControl>
+        </FormControl>
+      </HatchField>
       <InputHelperText helperText={helperText} />
       <FormError />
     </FormField>

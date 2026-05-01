@@ -2,10 +2,10 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import type { InputProps } from "ra-core";
 import { FieldTitle, useInput, useResourceContext } from "ra-core";
-import { FormControl, FormField, FormLabel } from "@/components/admin/form";
-import { Input } from "@/components/ui/input";
+import { FormControl, FormField } from "@/components/admin/form";
 import { FormError } from "@/components/admin/form";
 import { InputHelperText } from "@/components/admin/input-helper-text";
+import { HatchField, HatchTextInput } from "@/components/hatch-crm/_primitives";
 
 /**
  * Input component for numeric values (integers and floats) with parsing and formatting support.
@@ -79,27 +79,31 @@ export const NumberInput = (props: NumberInputProps) => {
 
   return (
     <FormField id={id} className={className} name={field.name}>
-      {label !== false && (
-        <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
+      <HatchField
+        htmlFor={id}
+        label={
+          label !== false ? (
+            <FieldTitle
+              label={label}
+              source={source}
+              resource={resource}
+              isRequired={isRequired}
+            />
+          ) : undefined
+        }
+      >
+        <FormControl>
+          <HatchTextInput
+            {...rest}
+            {...field}
+            type="number"
+            value={value}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
-        </FormLabel>
-      )}
-      <FormControl>
-        <Input
-          {...rest}
-          {...field}
-          type="number"
-          value={value}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-      </FormControl>
+        </FormControl>
+      </HatchField>
       <InputHelperText helperText={helperText} />
       <FormError />
     </FormField>
@@ -107,7 +111,8 @@ export const NumberInput = (props: NumberInputProps) => {
 };
 
 export interface NumberInputProps
-  extends InputProps,
+  extends
+    InputProps,
     Omit<
       React.ComponentProps<"input">,
       "defaultValue" | "onBlur" | "onChange" | "type"

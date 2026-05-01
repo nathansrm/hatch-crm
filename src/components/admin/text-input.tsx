@@ -1,14 +1,12 @@
 import type { InputProps } from "ra-core";
 import { useInput, useResourceContext, FieldTitle } from "ra-core";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { FormControl, FormError, FormField } from "@/components/admin/form";
 import { InputHelperText } from "@/components/admin/input-helper-text";
+import {
+  HatchField,
+  HatchTextInput,
+  HatchTextareaInput,
+} from "@/components/hatch-crm/_primitives";
 
 export type TextInputProps = InputProps & {
   multiline?: boolean;
@@ -54,23 +52,31 @@ export const TextInput = (props: TextInputProps) => {
 
   return (
     <FormField id={id} className={className} name={field.name}>
-      {label !== false && (
-        <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
-          />
-        </FormLabel>
-      )}
-      <FormControl>
-        {multiline ? (
-          <Textarea {...rest} {...field} className={inputClassName} />
-        ) : (
-          <Input {...rest} {...field} className={inputClassName} />
-        )}
-      </FormControl>
+      <HatchField
+        htmlFor={id}
+        label={
+          label !== false ? (
+            <FieldTitle
+              label={label}
+              source={source}
+              resource={resource}
+              isRequired={isRequired}
+            />
+          ) : undefined
+        }
+      >
+        <FormControl>
+          {multiline ? (
+            <HatchTextareaInput
+              {...rest}
+              {...field}
+              className={inputClassName}
+            />
+          ) : (
+            <HatchTextInput {...rest} {...field} className={inputClassName} />
+          )}
+        </FormControl>
+      </HatchField>
       <InputHelperText helperText={helperText} />
       <FormError />
     </FormField>

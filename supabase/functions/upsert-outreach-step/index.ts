@@ -259,7 +259,10 @@ Deno.serve(async (req: Request) => {
   }
 
   const rawSequenceStep = body.sequence_step;
-  if (typeof rawSequenceStep !== "number" || !Number.isInteger(rawSequenceStep)) {
+  if (
+    typeof rawSequenceStep !== "number" ||
+    !Number.isInteger(rawSequenceStep)
+  ) {
     await logEvent(
       "upsert-outreach-step",
       "validation_failed",
@@ -281,7 +284,10 @@ Deno.serve(async (req: Request) => {
       body,
       { error: "invalid_sequence_step" },
     );
-    return jsonResponse({ error: "sequence_step must be between 1 and 7" }, 400);
+    return jsonResponse(
+      { error: "sequence_step must be between 1 and 7" },
+      400,
+    );
   }
 
   const channel = body.channel ?? "email";
@@ -327,10 +333,7 @@ Deno.serve(async (req: Request) => {
       { error: validationError },
     );
 
-    return jsonResponse(
-      { error: validationError.replace(/_/g, " ") },
-      400,
-    );
+    return jsonResponse({ error: validationError.replace(/_/g, " ") }, 400);
   }
 
   try {
@@ -368,13 +371,16 @@ Deno.serve(async (req: Request) => {
       throw new Error(`outreach_steps upsert failed: ${upsertError.message}`);
     }
 
-    const { data: outreachSteps, error: outreachStepsError } = await supabaseAdmin
-      .from("outreach_steps")
-      .select("sequence_step, status, sent_at, subject, body")
-      .eq("intake_lead_id", intakeLeadId);
+    const { data: outreachSteps, error: outreachStepsError } =
+      await supabaseAdmin
+        .from("outreach_steps")
+        .select("sequence_step, status, sent_at, subject, body")
+        .eq("intake_lead_id", intakeLeadId);
 
     if (outreachStepsError) {
-      throw new Error(`outreach_steps rollup query failed: ${outreachStepsError.message}`);
+      throw new Error(
+        `outreach_steps rollup query failed: ${outreachStepsError.message}`,
+      );
     }
 
     const rollups = computeRollups(
@@ -387,7 +393,9 @@ Deno.serve(async (req: Request) => {
       .eq("id", intakeLeadId);
 
     if (intakeLeadUpdateError) {
-      throw new Error(`intake_leads rollup update failed: ${intakeLeadUpdateError.message}`);
+      throw new Error(
+        `intake_leads rollup update failed: ${intakeLeadUpdateError.message}`,
+      );
     }
 
     const result = {

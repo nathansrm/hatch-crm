@@ -181,7 +181,6 @@ const getFunctionErrorMessage = async (error: any) => {
 
 export const ResourcesPage = () => {
   const notify = useNotify();
-  const isDemo = import.meta.env.VITE_IS_DEMO === "true";
   const isMobile = useIsMobile();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ResourceCategory>("all");
@@ -247,9 +246,6 @@ export const ResourcesPage = () => {
   );
   const starred = resources.filter((resource) => resource.starred);
   const rest = resources.filter((resource) => !resource.starred);
-  const externalActionUnavailableTitle = isDemo
-    ? "Not available in demo"
-    : undefined;
 
   const handleSelect = (resource: ResourceRecord) => {
     setSelectedId(resource.id);
@@ -271,41 +267,6 @@ export const ResourcesPage = () => {
 
     setUploading(true);
     try {
-      if (isDemo) {
-        const uploadedAt = new Date().toISOString();
-        const createdResource = await create(
-          "resources",
-          {
-            data: {
-              id: `demo-upload-${Date.now()}`,
-              user_id: "demo",
-              title: file.name,
-              description: "Uploaded during this demo session.",
-              category: "internal",
-              storage_path: null,
-              file_name: file.name,
-              file_size: file.size,
-              file_type: file.type,
-              ext: file.name.split(".").pop() || "",
-              tags: ["uploaded"],
-              starred: false,
-              created_at: uploadedAt,
-              updated_at: uploadedAt,
-              preview:
-                file.type === "text/plain"
-                  ? (await file.text()).slice(0, 4000)
-                  : "Preview is not available for this uploaded file.",
-            },
-          },
-          { returnPromise: true },
-        );
-
-        if (createdResource?.id) {
-          setSelectedId(String(createdResource.id));
-        }
-        return;
-      }
-
       const supabase = getSupabaseClient();
       const { data: userData, error: userError } =
         await supabase.auth.getUser();
@@ -387,7 +348,7 @@ export const ResourcesPage = () => {
   };
 
   const handleOpenSend = () => {
-    if (isDemo || !selected) return;
+    if (!selected) return;
     setSendOpen(true);
     setSendLoading(false);
     setSendError("");
@@ -399,7 +360,7 @@ export const ResourcesPage = () => {
   };
 
   const handleSend = async () => {
-    if (isDemo || !selected) return;
+    if (!selected) return;
 
     setSendLoading(true);
     setSendError("");
@@ -432,7 +393,7 @@ export const ResourcesPage = () => {
   };
 
   const handleCopy = async () => {
-    if (isDemo || !selected?.storage_path) return;
+    if (!selected?.storage_path) return;
 
     try {
       const { data } = await getSupabaseClient()
@@ -1035,8 +996,6 @@ export const ResourcesPage = () => {
             >
               <button
                 onClick={handleOpenSend}
-                disabled={isDemo}
-                title={externalActionUnavailableTitle}
                 style={{
                   flex: 1,
                   display: "flex",
@@ -1050,25 +1009,21 @@ export const ResourcesPage = () => {
                   fontWeight: 700,
                   fontSize: 12.5,
                   border: "none",
-                  cursor: isDemo ? "not-allowed" : "pointer",
-                  opacity: isDemo ? 0.6 : 1,
+                  cursor: "pointer",
                 }}
               >
                 <Send size={13} strokeWidth={2.5} /> Send to client
               </button>
               <button
                 onClick={handleCopy}
-                disabled={isDemo}
                 aria-label="Copy resource link"
-                title={externalActionUnavailableTitle}
                 style={{
                   padding: "9px 12px",
                   borderRadius: 8,
                   border: "1px solid rgba(255,255,255,0.06)",
                   background: "rgba(255,255,255,0.03)",
                   color: "var(--fg-2-muted)",
-                  cursor: isDemo ? "not-allowed" : "pointer",
-                  opacity: isDemo ? 0.6 : 1,
+                  cursor: "pointer",
                 }}
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -1125,9 +1080,7 @@ export const ResourcesPage = () => {
                 </pre>
               ) : selected.storage_path ? (
                 <div style={{ color: "var(--fg-4a)", fontSize: 12 }}>
-                  {isDemo
-                    ? "No preview available. Download links are not available in demo."
-                    : "No preview available. Use Copy to get a download link."}
+                  No preview available. Use Copy to get a download link.
                 </div>
               ) : (
                 <div style={{ color: "var(--fg-4a)", fontSize: 12 }}>
@@ -1380,8 +1333,7 @@ export const ResourcesPage = () => {
               </button>
               <button
                 onClick={handleSend}
-                disabled={sendLoading || isDemo}
-                title={externalActionUnavailableTitle}
+                disabled={sendLoading}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -1394,8 +1346,8 @@ export const ResourcesPage = () => {
                   fontWeight: 700,
                   fontSize: 12.5,
                   border: "none",
-                  cursor: sendLoading || isDemo ? "not-allowed" : "pointer",
-                  opacity: sendLoading || isDemo ? 0.75 : 1,
+                  cursor: sendLoading ? "not-allowed" : "pointer",
+                  opacity: sendLoading ? 0.75 : 1,
                 }}
               >
                 {sendLoading ? "Sending…" : "Send"}

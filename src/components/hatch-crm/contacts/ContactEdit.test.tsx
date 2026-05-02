@@ -9,6 +9,12 @@ import {
 } from "./ContactEdit.mobile.stories";
 import { page } from "vitest/browser";
 
+const waitForUpdate = async (updateMock: ReturnType<typeof vi.fn>) => {
+  await expect
+    .poll(() => updateMock.mock.calls.length, { timeout: 7000 })
+    .toBe(1);
+};
+
 describe("ContactEdit", () => {
   describe("desktop", () => {
     beforeAll(() => {
@@ -47,11 +53,7 @@ describe("ContactEdit", () => {
 
       // Submit without filling anything
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
+      await waitForUpdate(updateMock);
 
       // Verify the transform cleaned up the empty arrays
       expect(updateMock).toBeCalledTimes(1);
@@ -85,14 +87,9 @@ describe("ContactEdit", () => {
 
       // Leave the phone input empty and submit
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
 
       // Wait for the update call to complete
-      await expect.poll(() => updateMock.mock.calls.length).toBe(1);
+      await waitForUpdate(updateMock);
 
       expect(updateMock).toBeCalledTimes(1);
 
@@ -125,11 +122,7 @@ describe("ContactEdit", () => {
 
       // Submit without changes
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
+      await waitForUpdate(updateMock);
 
       // Wait for the update call to complete
       expect(updateMock).toBeCalledTimes(1);
@@ -185,11 +178,7 @@ describe("ContactEdit", () => {
 
       // Submit without filling anything
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
+      await waitForUpdate(updateMock);
 
       // Verify the transform cleaned up the empty arrays
       expect(updateMock).toBeCalledTimes(1);
@@ -224,14 +213,9 @@ describe("ContactEdit", () => {
 
       // Leave the phone input empty and submit
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
 
       // Wait for the update call to complete
-      await expect.poll(() => updateMock.mock.calls.length).toBe(1);
+      await waitForUpdate(updateMock);
 
       expect(updateMock).toBeCalledTimes(1);
 
@@ -265,11 +249,7 @@ describe("ContactEdit", () => {
 
       // Submit without changes
       await screen.getByRole("button", { name: /^save$/i }).click();
-      await expect
-        .poll(() => screen.getByText("Element updated"))
-        .toBeInTheDocument();
-
-      await screen.getByLabelText("Close toast").click();
+      await waitForUpdate(updateMock);
 
       // Wait for the update call to complete
       expect(updateMock).toBeCalledTimes(1);

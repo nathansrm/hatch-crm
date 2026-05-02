@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import jsonExport from "jsonexport/dist";
 import {
   downloadCSV,

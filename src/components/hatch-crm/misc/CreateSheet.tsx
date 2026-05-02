@@ -134,7 +134,9 @@ export const CreateSheet = ({
   // Resolve a sensible eyebrow default from the resource name when not given.
   const resolvedEyebrow =
     eyebrow ??
-    (resource ? `NEW ${String(resource).replace(/_/g, " ").toUpperCase()}` : undefined);
+    (resource
+      ? `NEW ${String(resource).replace(/_/g, " ").toUpperCase()}`
+      : undefined);
 
   return (
     <HatchSheet

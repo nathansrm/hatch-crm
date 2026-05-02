@@ -117,8 +117,7 @@ Deno.serve((req) =>
         const status = resourceError.code === "PGRST116" ? 403 : 500;
         return jsonResponse(
           {
-            error:
-              status === 403 ? "Forbidden" : resourceError.message,
+            error: status === 403 ? "Forbidden" : resourceError.message,
           },
           status,
         );
@@ -130,7 +129,10 @@ Deno.serve((req) =>
         | undefined;
 
       if (resource.storage_path) {
-        if (!resource.file_type || !ALLOWED_FILE_TYPES.has(resource.file_type)) {
+        if (
+          !resource.file_type ||
+          !ALLOWED_FILE_TYPES.has(resource.file_type)
+        ) {
           return jsonResponse({ error: "Unsupported file type" }, 400);
         }
 
@@ -142,16 +144,17 @@ Deno.serve((req) =>
               : null;
 
         if (
-          typeof storedFileSize === "number"
-          && Number.isFinite(storedFileSize)
-          && storedFileSize > MAX_ATTACHMENT_BYTES
+          typeof storedFileSize === "number" &&
+          Number.isFinite(storedFileSize) &&
+          storedFileSize > MAX_ATTACHMENT_BYTES
         ) {
           return jsonResponse({ error: "Attachment too large" }, 400);
         }
 
-        const { data: fileData, error: downloadError } = await supabaseAdmin
-          .storage.from("resources")
-          .download(resource.storage_path);
+        const { data: fileData, error: downloadError } =
+          await supabaseAdmin.storage
+            .from("resources")
+            .download(resource.storage_path);
 
         if (downloadError || !fileData) {
           return jsonResponse(
@@ -176,24 +179,27 @@ Deno.serve((req) =>
         ];
       }
 
-      const postmarkResponse = await fetch("https://api.postmarkapp.com/email", {
-        method: "POST",
-        headers: {
-          "X-Postmark-Server-Token":
-            Deno.env.get("POSTMARK_SERVER_TOKEN") ?? "",
-          "Content-Type": "application/json",
-          Accept: "application/json",
+      const postmarkResponse = await fetch(
+        "https://api.postmarkapp.com/email",
+        {
+          method: "POST",
+          headers: {
+            "X-Postmark-Server-Token":
+              Deno.env.get("POSTMARK_SERVER_TOKEN") ?? "",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            From: Deno.env.get("POSTMARK_FROM_ADDRESS") ?? "",
+            To: toEmail,
+            Subject: body.subject ?? resource.title,
+            TextBody: body.message ?? "",
+            MessageStream:
+              Deno.env.get("POSTMARK_OUTREACH_STREAM") ?? "outbound",
+            ...(attachments ? { Attachments: attachments } : {}),
+          }),
         },
-        body: JSON.stringify({
-          From: Deno.env.get("POSTMARK_FROM_ADDRESS") ?? "",
-          To: toEmail,
-          Subject: body.subject ?? resource.title,
-          TextBody: body.message ?? "",
-          MessageStream:
-            Deno.env.get("POSTMARK_OUTREACH_STREAM") ?? "outbound",
-          ...(attachments ? { Attachments: attachments } : {}),
-        }),
-      });
+      );
 
       if (!postmarkResponse.ok) {
         return jsonResponse(
@@ -206,9 +212,12 @@ Deno.serve((req) =>
     } catch (error) {
       console.error("send-resource failed", error);
       return jsonResponse(
-        { error: error instanceof Error ? error.message : "Internal server error" },
+        {
+          error:
+            error instanceof Error ? error.message : "Internal server error",
+        },
         500,
       );
     }
-  })
+  }),
 );

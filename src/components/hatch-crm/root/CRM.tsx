@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type {
   CoreAdminProps,
   AuthProvider,
@@ -28,18 +29,6 @@ import {
   getAuthProvider as supabaseAuthProviderBuilder,
   getDataProvider as supabaseDataProviderBuilder,
 } from "../providers/supabase";
-import { createDataProvider as createFakeRestDataProvider } from "../providers/fakerest";
-import { authProvider as fakeRestAuthProvider } from "../providers/fakerest/authProvider";
-
-const isDemo = import.meta.env.VITE_IS_DEMO === "true";
-
-const defaultDataProviderBuilder = isDemo
-  ? () => createFakeRestDataProvider()
-  : supabaseDataProviderBuilder;
-
-const defaultAuthProviderBuilder = isDemo
-  ? () => fakeRestAuthProvider
-  : supabaseAuthProviderBuilder;
 import integrationLog from "../integration-log";
 import sales from "../sales";
 import {
@@ -209,11 +198,11 @@ export const CRM = ({
   ...rest
 }: CRMProps) => {
   const dataProvider = useMemo(
-    () => dataProviderProp ?? defaultDataProviderBuilder(),
+    () => dataProviderProp ?? supabaseDataProviderBuilder(),
     [dataProviderProp],
   );
   const authProvider = useMemo(
-    () => authProviderProp ?? defaultAuthProviderBuilder(),
+    () => authProviderProp ?? supabaseAuthProviderBuilder(),
     [authProviderProp],
   );
 
@@ -295,8 +284,8 @@ export const CRM = ({
       authProvider={wrappedAuthProvider}
       i18nProvider={i18nProvider}
       store={store}
-      loginPage={isDemo ? false : StartPage}
-      requireAuth={!isDemo}
+      loginPage={StartPage}
+      requireAuth
       disableTelemetry
       {...rest}
     />

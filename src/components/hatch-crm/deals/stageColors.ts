@@ -2,7 +2,11 @@ export const stageColorMap: Record<
   string,
   { border: string; bg: string; text: string }
 > = {
-  discovery: { border: "#4DC8E8", bg: "rgba(77,200,232,0.08)", text: "#4DC8E8" },
+  discovery: {
+    border: "#4DC8E8",
+    bg: "rgba(77,200,232,0.08)",
+    text: "#4DC8E8",
+  },
   "solutions-mapping": {
     border: "#A78BFA",
     bg: "rgba(167,139,250,0.08)",

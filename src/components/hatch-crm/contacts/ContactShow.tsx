@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { useState } from "react";
 import {
   InfiniteListBase,
@@ -361,7 +362,11 @@ const ContactShowContent = () => {
           <span>
             {record.title ? `${record.title} at ` : ""}
             {record.company_id != null ? (
-              <ReferenceField source="company_id" reference="companies" link="show">
+              <ReferenceField
+                source="company_id"
+                reference="companies"
+                link="show"
+              >
                 <TextField source="name" />
               </ReferenceField>
             ) : (
@@ -371,11 +376,15 @@ const ContactShowContent = () => {
         }
         actions={
           <>
-            <ProfileActionButton href={primaryEmail ? `mailto:${primaryEmail}` : undefined}>
+            <ProfileActionButton
+              href={primaryEmail ? `mailto:${primaryEmail}` : undefined}
+            >
               <Mail style={{ width: 15, height: 15 }} />
               Email
             </ProfileActionButton>
-            <ProfileActionButton href={primaryPhone ? `tel:${primaryPhone}` : undefined}>
+            <ProfileActionButton
+              href={primaryPhone ? `tel:${primaryPhone}` : undefined}
+            >
               <Phone style={{ width: 15, height: 15 }} />
               Call
             </ProfileActionButton>
@@ -418,101 +427,117 @@ const ContactShowContent = () => {
             alignItems: "stretch",
           }}
         >
-        <HatchCard
-          padding="md"
-          className="space-y-4"
-          style={{ gridColumn: 1 }}
-        >
-          <div className="flex items-start gap-3">
-            <Avatar />
-            <div className="min-w-0 flex-1">
-              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#4DC8E8]">
-                Contact card
+          <HatchCard
+            padding="md"
+            className="space-y-4"
+            style={{ gridColumn: 1 }}
+          >
+            <div className="flex items-start gap-3">
+              <Avatar />
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#4DC8E8]">
+                  Contact card
+                </div>
+                <h2 className="font-heading m-0 text-lg font-bold text-[#ECEEF5]">
+                  <RecordRepresentation />
+                </h2>
+                <div className="mt-1">
+                  <Status status={record.status} />
+                </div>
               </div>
-              <h2 className="font-heading m-0 text-lg font-bold text-[#ECEEF5]">
-                <RecordRepresentation />
-              </h2>
-              <div className="mt-1">
-                <Status status={record.status} />
+            </div>
+            <div className="grid gap-2">
+              <ProfileField
+                icon={Mail}
+                label="Email"
+                value={primaryEmail}
+                href={primaryEmail ? `mailto:${primaryEmail}` : undefined}
+              />
+              <ProfileField
+                icon={Phone}
+                label="Phone"
+                value={primaryPhone}
+                href={primaryPhone ? `tel:${primaryPhone}` : undefined}
+              />
+              <ProfileField
+                icon={MapPin}
+                label="Location"
+                value="Contact location"
+                muted
+              />
+              <ProfileField
+                icon={UserRound}
+                label="Lead source"
+                value={
+                  record.lead_source_id != null ? (
+                    <ReferenceField
+                      source="lead_source_id"
+                      reference="lead_sources"
+                      link={false}
+                    >
+                      <TextField source="name" />
+                    </ReferenceField>
+                  ) : (
+                    "Not set"
+                  )
+                }
+                muted={record.lead_source_id == null}
+              />
+            </div>
+            <Separator className="bg-[rgba(255,255,255,0.07)]" />
+            <div>
+              <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5C6784]">
+                Relationship details
+              </div>
+              <div className="space-y-3">
+                <ContactStatusSelector />
+                <TagsListEdit />
               </div>
             </div>
-          </div>
-          <div className="grid gap-2">
-            <ProfileField icon={Mail} label="Email" value={primaryEmail} href={primaryEmail ? `mailto:${primaryEmail}` : undefined} />
-            <ProfileField icon={Phone} label="Phone" value={primaryPhone} href={primaryPhone ? `tel:${primaryPhone}` : undefined} />
-            <ProfileField icon={MapPin} label="Location" value="Contact location" muted />
-            <ProfileField
-              icon={UserRound}
-              label="Lead source"
-              value={
-                record.lead_source_id != null ? (
-                  <ReferenceField source="lead_source_id" reference="lead_sources" link={false}>
-                    <TextField source="name" />
-                  </ReferenceField>
-                ) : (
-                  "Not set"
-                )
-              }
-              muted={record.lead_source_id == null}
-            />
-          </div>
-          <Separator className="bg-[rgba(255,255,255,0.07)]" />
-          <div>
-            <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5C6784]">
-              Relationship details
-            </div>
-            <div className="space-y-3">
-              <ContactStatusSelector />
-              <TagsListEdit />
-            </div>
-          </div>
-        </HatchCard>
+          </HatchCard>
 
-        <HatchCard
-          padding="md"
-          className="min-w-0"
-          style={{ gridColumn: 2, height: "100%" }}
-        >
-          <SectionHeader
-            eyebrow="Relationship timeline"
-            title="Activity, notes, and email context"
-          />
-          <ActivityFeed notes={recentNotes} contact={record} />
-        </HatchCard>
-
-        <HatchCard
-          id="contact-notes"
-          padding="md"
-          className="overflow-hidden"
-          style={{ gridColumn: "1 / 3" }}
-        >
-          <div className="flex items-start justify-between gap-3">
+          <HatchCard
+            padding="md"
+            className="min-w-0"
+            style={{ gridColumn: 2, height: "100%" }}
+          >
             <SectionHeader
-              eyebrow="Relationship notes"
-              title={`${recentNotes.length} note${recentNotes.length === 1 ? "" : "s"}`}
+              eyebrow="Relationship timeline"
+              title="Activity, notes, and email context"
             />
-            <HatchGhostButton
-              type="button"
-              size="sm"
-              className="h-8"
-              onClick={() => setNoteCreateOpen(true)}
-            >
-              <Plus className="h-4 w-4" />
-              Add note
-            </HatchGhostButton>
-          </div>
-          <ContactNotesBoard
-            notes={recentNotes}
-            onAddNote={() => setNoteCreateOpen(true)}
-            onEditNote={setEditingNoteId}
-          />
-        </HatchCard>
+            <ActivityFeed notes={recentNotes} contact={record} />
+          </HatchCard>
+
+          <HatchCard
+            id="contact-notes"
+            padding="md"
+            className="overflow-hidden"
+            style={{ gridColumn: "1 / 3" }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <SectionHeader
+                eyebrow="Relationship notes"
+                title={`${recentNotes.length} note${recentNotes.length === 1 ? "" : "s"}`}
+              />
+              <HatchGhostButton
+                type="button"
+                size="sm"
+                className="h-8"
+                onClick={() => setNoteCreateOpen(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Add note
+              </HatchGhostButton>
+            </div>
+            <ContactNotesBoard
+              notes={recentNotes}
+              onAddNote={() => setNoteCreateOpen(true)}
+              onEditNote={setEditingNoteId}
+            />
+          </HatchCard>
         </div>
 
-        <div
-          className="grid gap-3"
-          style={{ gridColumn: 2 }}
-        >
+        <div className="grid gap-3" style={{ gridColumn: 2 }}>
           <HatchCard padding="md">
             <SectionHeader eyebrow="Company" title="Connected account" />
             {record.company_id != null ? (
@@ -520,16 +545,26 @@ const ContactShowContent = () => {
                 to={`/companies/${record.company_id}/show`}
                 className="mt-3 flex items-center gap-3 rounded-lg border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-3 no-underline hover:bg-[rgba(255,255,255,0.04)]"
               >
-                <ReferenceField source="company_id" reference="companies" link={false}>
+                <ReferenceField
+                  source="company_id"
+                  reference="companies"
+                  link={false}
+                >
                   <CompanyAvatar />
                 </ReferenceField>
                 <div className="min-w-0">
                   <div className="truncate text-sm font-bold text-[#ECEEF5]">
-                    <ReferenceField source="company_id" reference="companies" link={false}>
+                    <ReferenceField
+                      source="company_id"
+                      reference="companies"
+                      link={false}
+                    >
                       <TextField source="name" />
                     </ReferenceField>
                   </div>
-                  <div className="text-xs text-[#9AA3BE]">Open company record</div>
+                  <div className="text-xs text-[#9AA3BE]">
+                    Open company record
+                  </div>
                 </div>
               </Link>
             ) : (
@@ -541,7 +576,9 @@ const ContactShowContent = () => {
             <SectionHeader eyebrow="Deals" title="Related opportunities" />
             <div className="mt-3 grid gap-2">
               {deals.length ? (
-                deals.map((deal) => <RelatedDealCard key={deal.id} deal={deal} />)
+                deals.map((deal) => (
+                  <RelatedDealCard key={deal.id} deal={deal} />
+                ))
               ) : (
                 <EmptyPanelLine>No related deals yet.</EmptyPanelLine>
               )}
@@ -576,7 +613,9 @@ const ContactShowContent = () => {
                   </div>
                 ))
               ) : (
-                <EmptyPanelLine>No files attached to this relationship yet.</EmptyPanelLine>
+                <EmptyPanelLine>
+                  No files attached to this relationship yet.
+                </EmptyPanelLine>
               )}
             </div>
           </HatchCard>
@@ -617,7 +656,13 @@ const ProfileActionButton = ({
   );
 };
 
-const SectionHeader = ({ eyebrow, title }: { eyebrow: string; title: string }) => (
+const SectionHeader = ({
+  eyebrow,
+  title,
+}: {
+  eyebrow: string;
+  title: string;
+}) => (
   <div>
     <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4DC8E8]">
       {eyebrow}
@@ -719,7 +764,10 @@ const ContactNotesBoard = ({
           style={{
             gridAutoColumns: "minmax(218px, 246px)",
             gridAutoFlow: "column",
-            gridTemplateRows: notes.length > 3 ? "repeat(2, minmax(178px, auto))" : "minmax(178px, auto)",
+            gridTemplateRows:
+              notes.length > 3
+                ? "repeat(2, minmax(178px, auto))"
+                : "minmax(178px, auto)",
           }}
         >
           {notes.map((note) => (
@@ -850,7 +898,9 @@ const ActivityFeed = ({
           </div>
         ))
       ) : (
-        <EmptyPanelLine>No activity yet. Add the first relationship note below.</EmptyPanelLine>
+        <EmptyPanelLine>
+          No activity yet. Add the first relationship note below.
+        </EmptyPanelLine>
       )}
     </div>
   );
@@ -870,7 +920,9 @@ const RelatedDealCard = ({ deal }: { deal: Deal }) => (
     <div className="flex items-center gap-2 text-xs text-[#9AA3BE]">
       <Building2 className="h-3.5 w-3.5" />
       <span>{deal.stage}</span>
-      {deal.amount > 0 ? <span className="font-mono">${deal.amount.toLocaleString()}</span> : null}
+      {deal.amount > 0 ? (
+        <span className="font-mono">${deal.amount.toLocaleString()}</span>
+      ) : null}
     </div>
   </Link>
 );

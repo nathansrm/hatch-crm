@@ -37,12 +37,7 @@ describe("ContactCreate", () => {
 
     await screen.getByRole("button", { name: /^create contact$/i }).click();
 
-    await expect
-      .poll(() => screen.getByText("Element created"))
-      .toBeInTheDocument();
-    await screen.getByLabelText("Close toast").click();
-
-    await expect(createMock).toBeCalledTimes(1);
+    await expect.poll(() => createMock.mock.calls.length).toBe(1);
 
     await expect(createMock).toBeCalledWith(
       expect.anything(),

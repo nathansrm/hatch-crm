@@ -32,8 +32,7 @@ export const HATCH = {
   shadowSheet: "0 20px 40px rgba(0,0,0,0.3)",
   shadowDialog: "0 20px 40px rgba(0,0,0,0.45)",
   // Eyebrow type
-  eyebrow:
-    "text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]",
+  eyebrow: "text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]",
 } as const;
 
 export const HATCH_CLASS = {
@@ -41,8 +40,7 @@ export const HATCH_CLASS = {
     "rounded-xl border border-[rgba(255,255,255,0.07)] bg-[#0D1424] text-[#ECEEF5]",
   field:
     "w-full rounded-lg border border-[rgba(255,255,255,0.09)] bg-[rgba(255,255,255,0.03)] text-[#ECEEF5] outline-none placeholder:text-[#5C6784] focus:border-[#4DC8E8]",
-  eyebrow:
-    "text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]",
+  eyebrow: "text-[10px] font-bold uppercase tracking-[0.22em] text-[#5C6784]",
   eyebrowAccent:
     "text-[10.5px] font-bold uppercase tracking-[0.22em] text-[#4DC8E8]",
   fieldLabel:

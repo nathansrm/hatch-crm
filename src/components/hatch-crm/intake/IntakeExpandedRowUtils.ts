@@ -39,10 +39,7 @@ export const intakeExpandedPanelStyle = {
   borderRadius: 10,
 } as const;
 
-export const getCadenceStyles = (
-  isCompleted: boolean,
-  isCurrent: boolean,
-) => {
+export const getCadenceStyles = (isCompleted: boolean, isCurrent: boolean) => {
   if (isCompleted) {
     return {
       background: "rgba(52,211,153,0.08)",

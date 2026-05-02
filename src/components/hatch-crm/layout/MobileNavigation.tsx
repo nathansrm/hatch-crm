@@ -133,10 +133,7 @@ const CreateButton = () => {
         open={contactCreateOpen}
         onOpenChange={setContactCreateOpen}
       />
-      <DealCreateSheet
-        open={dealCreateOpen}
-        onOpenChange={setDealCreateOpen}
-      />
+      <DealCreateSheet open={dealCreateOpen} onOpenChange={setDealCreateOpen} />
       <NoteCreateSheet
         open={noteCreateOpen}
         onOpenChange={setNoteCreateOpen}
@@ -196,4 +193,3 @@ const CreateButton = () => {
     </>
   );
 };
-

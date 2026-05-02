@@ -361,7 +361,8 @@ export const englishCrmMessages = {
         edit_for: "Edit task for %{name}",
       },
       empty: "No tasks yet",
-      empty_list_hint: "No tasks yet. Add a task from any contact or deal to get started.",
+      empty_list_hint:
+        "No tasks yet. Add a task from any contact or deal to get started.",
       filters: {
         later: "Later",
         overdue: "Overdue",
@@ -479,7 +480,7 @@ export const englishCrmMessages = {
         creating: "Creating...",
         initial_user_created: "Initial user successfully created",
       },
-      welcome_title: "Welcome to Hatch CRM",
+      welcome_title: "Welcome to Hatch Theory Solutions",
     },
     common: {
       activity: "Activity",
@@ -521,7 +522,7 @@ export const englishCrmMessages = {
       latest_notes: "My Latest Notes",
       latest_notes_added_ago: "added %{timeAgo}",
       stepper: {
-        install: "Install Hatch CRM",
+        install: "Install Hatch Theory Solutions",
         progress: "%{step}/3 done",
         whats_next: "What's next?",
       },
@@ -618,7 +619,7 @@ export const englishCrmMessages = {
     profile: {
       inbound: {
         description:
-          "You can start sending emails to your server's inbound email address, e.g. by adding it to the %{field} field. Hatch CRM will process the emails and add notes to the corresponding contacts.",
+          "You can start sending emails to your server's inbound email address, e.g. by adding it to the %{field} field. The CRM will process the emails and add notes to the corresponding contacts.",
         title: "Inbound email",
       },
       mcp: {

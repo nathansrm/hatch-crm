@@ -113,9 +113,7 @@ export const DealColumn = ({
               gap: 10,
               marginTop: 10,
               minHeight: 80,
-              background: snapshot.isDraggingOver
-                ? colors.bg
-                : "transparent",
+              background: snapshot.isDraggingOver ? colors.bg : "transparent",
             }}
           >
             {deals.length === 0 && (

@@ -23,7 +23,7 @@ import { getSupabaseClient } from "./supabase";
 const getBaseDataProvider = () =>
   supabaseDataProvider({
     instanceUrl: import.meta.env.VITE_SUPABASE_URL,
-    apiKey: import.meta.env.VITE_SB_PUBLISHABLE_KEY,
+    apiKey: String(import.meta.env.VITE_SB_PUBLISHABLE_KEY),
     supabaseClient: getSupabaseClient(),
     sortOrder: "asc,desc.nullslast" as any,
   });
@@ -238,7 +238,9 @@ const getDataProviderWithCustomMethods = () => {
         console.error("promote-intake-lead.error", error);
         // Preserve structured error from edge function (e.g. 409 already-qualified)
         const message =
-          typeof data?.error === "string" ? data.error : "Failed to promote intake lead";
+          typeof data?.error === "string"
+            ? data.error
+            : "Failed to promote intake lead";
         throw new Error(message);
       }
 
@@ -451,7 +453,9 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
       return result;
     },
     afterGetList: async (result) => {
-      const dealIds = result.data.map((deal: Deal) => deal.id).filter((id): id is number => !!id);
+      const dealIds = result.data
+        .map((deal: Deal) => deal.id)
+        .filter((id): id is number => !!id);
       if (dealIds.length > 0) {
         const { data: dealContacts } = await getSupabaseClient()
           .from("deal_contacts")
@@ -568,9 +572,7 @@ const syncContactTags = async (
   if (tags.length > 0) {
     const { error: insertError } = await getSupabaseClient()
       .from("contact_tags")
-      .insert(
-        tags.map((tagId) => ({ contact_id: contactId, tag_id: tagId })),
-      );
+      .insert(tags.map((tagId) => ({ contact_id: contactId, tag_id: tagId })));
 
     if (insertError) {
       console.error("Failed to insert contact_tags:", insertError);

@@ -13,7 +13,7 @@ Surface the five agency predictive signals on `DealCard` so the kanban shows rea
 ## Environment
 
 **Branch:** `feat/deal-card-enrichment` (create from `main`)
-**Setup:** `npm install` (already done), `npm run dev:demo` to validate in demo mode
+**Setup:** `npm install`, `npm run dev` against the configured Supabase-backed runtime
 **Test command:** `npm run test:unit:app`
 **When done:** Push to origin and open a PR against `main`
 
@@ -25,7 +25,7 @@ Surface the five agency predictive signals on `DealCard` so the kanban shows rea
 - [ ] `src/components/hatch-crm/deals/bottleneckLabels.ts` — new short-label map for bottleneck display
 - [ ] `src/components/hatch-crm/deals/DealCard.tsx` — add 5 signal slots to `DealCardContent`
 - [ ] `src/components/hatch-crm/deals/index.ts` — export new files
-- [ ] `demo/` — extend the deal generator to populate the 5 new fields with realistic values so demo mode renders them
+- [ ] Story/test fixtures — extend deal fixture data to populate the 5 new fields with realistic values
 
 ### Out of Scope
 - [ ] DealShow page (covered by BRIEF-003)
@@ -72,12 +72,12 @@ export const bottleneckLabels: Record<string, string> = {
 
 All 4 slots are additive below the existing decay line. If none of the 4 fields are set, nothing renders (no empty space). Wrap them in a single `div` that only renders when at least one field is present.
 
-**Demo generator:** The fakerest generator in `demo/` needs to produce realistic values for the 5 fields on a subset of deals (not all — make ~60% have enrichment data so the card shows both enriched and bare states). Check the existing generator pattern in `demo/` for how deals are currently generated.
+**Fixture data:** The fakerest/story fixtures need to produce realistic values for the 5 fields on a subset of deals (not all — make ~60% have enrichment data so the card shows both enriched and bare states).
 
 ## Acceptance Criteria
 
 - [ ] `npm run test:unit:app` passes with 0 failures
-- [ ] `npm run dev:demo` renders DealCard with bottleneck badge, stack chips, owner icon, and hours label on deals that have enrichment data
+- [ ] `npm run dev` renders DealCard with bottleneck badge, stack chips, owner icon, and hours label on deals that have enrichment data
 - [ ] Cards without enrichment data show no blank space — absent fields hide cleanly
 - [ ] Stack chips show tool name from `stackInfo`; unknown slugs show slug as-is (no crash)
 - [ ] On mobile viewport (375px), enrichment signals are readable and don't overflow the card
@@ -95,7 +95,7 @@ All 4 slots are additive below the existing decay line. If none of the 4 fields 
 ## Scope Gates
 
 - [ ] If `software_stack` field is missing from the Deal type when you go to use it — STOP and comment on PR. (It should be there, but verify first.)
-- [ ] If the demo generator file structure is significantly different from what's described here — STOP and comment with what you found.
+- [ ] If the fixture generator file structure is significantly different from what's described here — STOP and comment with what you found.
 
 ## Deviation Rules
 
@@ -118,7 +118,7 @@ All 4 slots are additive below the existing decay line. If none of the 4 fields 
 
 ## Manual Test Checklist
 
-- [ ] Open demo mode (`npm run dev:demo`), navigate to pipeline kanban. Verify enriched deals show bottleneck badge, stack chips, owner icon, and hours — and un-enriched deals show none of those elements (no blank gap)
+- [ ] Open the app (`npm run dev`), navigate to pipeline kanban. Verify enriched deals show bottleneck badge, stack chips, owner icon, and hours — and un-enriched deals show none of those elements (no blank gap)
 - [ ] On a mobile viewport (375px wide), verify cards don't overflow horizontally and enrichment signals are legible
 - [ ] Drag a deal card from one column to another — verify drag still works with new content added
 - [ ] Click a deal card — verify DealShow dialog still opens

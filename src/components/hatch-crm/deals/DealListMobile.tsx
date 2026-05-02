@@ -1,8 +1,4 @@
-import {
-  InfiniteListBase,
-  useGetIdentity,
-  useListContext,
-} from "ra-core";
+import { InfiniteListBase, useGetIdentity, useListContext } from "ra-core";
 import { matchPath, useLocation } from "react-router";
 
 import MobileHeader from "../layout/MobileHeader";

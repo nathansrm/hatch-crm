@@ -1,4 +1,12 @@
-import { company, address, internet, phone, lorem, random, datatype } from "faker/locale/en_US";
+import {
+  company,
+  address,
+  internet,
+  phone,
+  lorem,
+  random,
+  datatype,
+} from "faker/locale/en_US";
 
 import { randomDate } from "./utils";
 import type { IntakeLead } from "../../../types";
@@ -30,8 +38,26 @@ const LEAD_SOURCES = [
 
 export const generateLeadSources = () => LEAD_SOURCES;
 
-const statuses = ["uncontacted", "uncontacted", "uncontacted", "in-sequence", "in-sequence", "engaged", "not-interested", "unresponsive", "qualified", "rejected"];
-const sources = ["Google Places", "Referral", "Website Form", "Cold Outreach", "Trade Show", "Yelp"];
+const statuses = [
+  "uncontacted",
+  "uncontacted",
+  "uncontacted",
+  "in-sequence",
+  "in-sequence",
+  "engaged",
+  "not-interested",
+  "unresponsive",
+  "qualified",
+  "rejected",
+];
+const sources = [
+  "Google Places",
+  "Referral",
+  "Website Form",
+  "Cold Outreach",
+  "Trade Show",
+  "Yelp",
+];
 
 const enrichmentSamples = [
   "Established roofing company with 15+ years in residential and commercial projects. Strong Google reviews (4.6★, 230 reviews). Active on social media with regular project showcases. Owner-operated, 8-12 crew members.",
@@ -55,14 +81,31 @@ const outreachSubjects = [
   "Worth a quick look: fewer admin bottlenecks this season",
 ];
 
-const rejectionReasons = ["Not a fit", "Duplicate", "No contact info", "Out of area", "Other"];
+const rejectionReasons = [
+  "Not a fit",
+  "Duplicate",
+  "No contact info",
+  "Out of area",
+  "Other",
+];
 
 export const generateIntakeLeads = (_db: Db, size = 12): IntakeLead[] => {
   return Array.from(Array(size).keys()).map((id) => {
     const status = random.arrayElement(statuses);
     const tradeType = random.arrayElement(TRADE_TYPES);
-    const city = random.arrayElement(["Toronto", "Mississauga", "Brampton", "Vaughan", "Markham", "Oakville", "Hamilton", "Oshawa"]);
-    const createdAt = randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+    const city = random.arrayElement([
+      "Toronto",
+      "Mississauga",
+      "Brampton",
+      "Vaughan",
+      "Markham",
+      "Oakville",
+      "Hamilton",
+      "Oshawa",
+    ]);
+    const createdAt = randomDate(
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    );
 
     // Outreach tracking: sequence step depends on status
     const sequenceStep =
@@ -70,20 +113,27 @@ export const generateIntakeLeads = (_db: Db, size = 12): IntakeLead[] => {
         ? 0
         : status === "in-sequence"
           ? datatype.number({ min: 1, max: 5 })
-          : status === "engaged" || status === "not-interested" || status === "unresponsive"
+          : status === "engaged" ||
+              status === "not-interested" ||
+              status === "unresponsive"
             ? datatype.number({ min: 2, max: 7 })
             : 0;
     const outreachCount = sequenceStep;
     const lastOutreachDate =
       outreachCount > 0
-        ? new Date(createdAt.getTime() + OUTREACH_CADENCE_DAYS[Math.min(sequenceStep - 1, 6)] * 86400000).toISOString()
+        ? new Date(
+            createdAt.getTime() +
+              OUTREACH_CADENCE_DAYS[Math.min(sequenceStep - 1, 6)] * 86400000,
+          ).toISOString()
         : null;
     const nextOutreachDate =
       status === "in-sequence" && sequenceStep < 7
-        ? new Date(createdAt.getTime() + OUTREACH_CADENCE_DAYS[Math.min(sequenceStep, 6)] * 86400000).toISOString()
+        ? new Date(
+            createdAt.getTime() +
+              OUTREACH_CADENCE_DAYS[Math.min(sequenceStep, 6)] * 86400000,
+          ).toISOString()
         : null;
-    const hasActiveOutreach =
-      status === "in-sequence" || status === "engaged";
+    const hasActiveOutreach = status === "in-sequence" || status === "engaged";
     const currentDraftStatus = hasActiveOutreach
       ? random.arrayElement(["ai_reviewed", "sent", "none"] as const)
       : "none";
@@ -106,9 +156,16 @@ export const generateIntakeLeads = (_db: Db, size = 12): IntakeLead[] => {
       outreach_draft: random.arrayElement(outreachSamples),
       source: random.arrayElement(sources),
       status,
-      rejection_reason: status === "rejected" ? random.arrayElement(rejectionReasons) : null,
-      promoted_contact_id: status === "qualified" ? random.arrayElement([100, 101, 102]) : null,
-      notes: random.arrayElement([lorem.sentence(), lorem.sentences(2), null, null]),
+      rejection_reason:
+        status === "rejected" ? random.arrayElement(rejectionReasons) : null,
+      promoted_contact_id:
+        status === "qualified" ? random.arrayElement([100, 101, 102]) : null,
+      notes: random.arrayElement([
+        lorem.sentence(),
+        lorem.sentences(2),
+        null,
+        null,
+      ]),
       last_outreach_at: lastOutreachDate,
       outreach_count: outreachCount,
       next_outreach_date: nextOutreachDate,

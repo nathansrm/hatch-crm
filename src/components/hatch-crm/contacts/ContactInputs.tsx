@@ -214,11 +214,7 @@ const ContactMiscInputs = () => {
       <TextInput source="background" multiline helperText={false} />
       <BooleanInput source="has_newsletter" helperText={false} />
       <ReferenceInput reference="lead_sources" source="lead_source_id">
-        <SelectInput
-          helperText={false}
-          optionText="name"
-          label="Lead Source"
-        />
+        <SelectInput helperText={false} optionText="name" label="Lead Source" />
       </ReferenceInput>
       <ReferenceInput
         reference="sales"

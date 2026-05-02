@@ -33,14 +33,14 @@ Impact: Real uploads are broken on the live backend. Storage writes will fail RL
 
 Fix: Use the authenticated Supabase user id for both the DB row and storage path, or expose both `sales.id` and `auth.users.id` separately in identity/meta and use the UUID for resource ownership.
 
-#### R-02 [P2] Resources actions bypass the data provider and break the advertised FakeRest/demo workflow
-Files: `src/components/hatch-crm/resources/ResourcesPage.tsx:15`, `src/components/hatch-crm/resources/ResourcesPage.tsx:233-235`, `src/components/hatch-crm/resources/ResourcesPage.tsx:315-347`, `src/components/hatch-crm/root/CRM.tsx:40-48`, `vite.demo.config.ts:27-33`
+#### R-02 [P2] Resources actions bypass the data provider and can break non-Supabase test workflows
+Files: `src/components/hatch-crm/resources/ResourcesPage.tsx:15`, `src/components/hatch-crm/resources/ResourcesPage.tsx:233-235`, `src/components/hatch-crm/resources/ResourcesPage.tsx:315-347`, `src/components/hatch-crm/root/CRM.tsx:40-48`
 
-Issue: The app explicitly supports demo mode via FakeRest, but `ResourcesPage` calls `getSupabaseClient()` directly for storage uploads, signed URLs, and `send-resource` invocations instead of going through the current data provider or a demo-safe abstraction.
+Issue: Historical FakeRest workflows used to exercise this page, but `ResourcesPage` calls `getSupabaseClient()` directly for storage uploads, signed URLs, and `send-resource` invocations instead of going through the current data provider or a test-safe abstraction.
 
-Impact: In `make start-demo`, the page renders but upload/copy/send still target the dummy Supabase URL/key from `vite.demo.config.ts`, so core actions fail instead of behaving like the rest of the demo app.
+Impact: In non-Supabase harnesses, upload/copy/send can still target unavailable Supabase configuration, so core actions fail instead of behaving like the rest of the test app.
 
-Fix: Route resource mutations through the provider layer with demo stubs, or gate/disable the page actions when `VITE_IS_DEMO === "true"`.
+Fix: Route resource mutations through the provider layer and keep test/story fakerest helpers out of the default runtime path.
 
 #### R-03 [P2] The page silently drops any resources after the first 200 records
 Files: `src/components/hatch-crm/resources/ResourcesPage.tsx:182-185`, `src/components/hatch-crm/resources/ResourcesPage.tsx:194-205`, `src/components/hatch-crm/resources/ResourcesPage.tsx:605-649`

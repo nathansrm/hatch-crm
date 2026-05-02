@@ -15,8 +15,8 @@ interface FormData {
 export const SetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
 
-  const access_token = useSupabaseAccessToken();
-  const refresh_token = useSupabaseAccessToken({
+  const supabaseAccess = useSupabaseAccessToken();
+  const supabaseRefresh = useSupabaseAccessToken({
     parameterName: "refresh_token",
   });
 
@@ -34,7 +34,7 @@ export const SetPasswordPage = () => {
     return {};
   };
 
-  if (!access_token || !refresh_token) {
+  if (!supabaseAccess || !supabaseRefresh) {
     if (process.env.NODE_ENV === "development") {
       console.error("Missing access_token or refresh_token for set password");
     }
@@ -49,8 +49,8 @@ export const SetPasswordPage = () => {
     try {
       setLoading(true);
       await setPassword({
-        access_token,
-        refresh_token,
+        access_token: supabaseAccess,
+        refresh_token: supabaseRefresh,
         password: values.password,
       });
     } catch (error: any) {

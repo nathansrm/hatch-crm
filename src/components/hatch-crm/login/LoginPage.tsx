@@ -113,12 +113,16 @@ export const LoginPage = (props: { redirectTo?: string }) => {
           {/* Glow */}
           <div className="absolute -left-32 top-1/3 h-[480px] w-[480px] rounded-full bg-[#4DC8E8] opacity-[0.08] blur-3xl" />
           <div className="relative z-20 flex items-center text-lg font-medium">
-            <img className="mr-2 h-6" src={darkModeLogo} alt={title} />
+            <img
+              className="h-12 w-auto max-w-[260px] object-contain"
+              src={darkModeLogo}
+              alt={title}
+            />
           </div>
           <div className="relative z-20 mt-auto space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(77,200,232,0.3)] bg-[rgba(77,200,232,0.08)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#7DDCF0]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#4DC8E8] shadow-[0_0_8px_#4DC8E8]" />
-              Hatch CRM
+              Hatch Theory Solutions
             </div>
             <blockquote className="space-y-3">
               <p className="font-heading text-3xl font-bold leading-tight tracking-[-0.02em] text-[#ECEEF5]">
@@ -147,7 +151,11 @@ export const LoginPage = (props: { redirectTo?: string }) => {
                   </h1>
                 </div>
                 {disableEmailPasswordAuthentication ? null : (
-                  <Form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                  <Form
+                    className="space-y-6"
+                    onSubmit={handleSubmit}
+                    noValidate
+                  >
                     {errorMessage && (
                       <div
                         role="alert"

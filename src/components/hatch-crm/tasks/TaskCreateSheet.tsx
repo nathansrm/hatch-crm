@@ -114,9 +114,7 @@ export const TaskCreateSheet = ({
             onSuccess: handleSuccess,
           }}
         >
-          <Form className="flex min-h-0 flex-1 flex-col">
-            {node}
-          </Form>
+          <Form className="flex min-h-0 flex-1 flex-col">{node}</Form>
         </CreateBase>
       )}
     >

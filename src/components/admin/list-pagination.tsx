@@ -134,7 +134,7 @@ export const ListPagination = ({
       </div>
       <div className="text-sm text-muted-foreground">
         {total != null
-          ? translate('ra.navigation.page_range_info', {
+          ? translate("ra.navigation.page_range_info", {
               offsetBegin: pageStart,
               offsetEnd: pageEnd,
               total: total === -1 ? pageEnd : total,

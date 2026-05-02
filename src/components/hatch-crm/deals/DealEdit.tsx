@@ -42,7 +42,13 @@ export const DealEdit = ({ open, id }: { open: boolean; id?: string }) => {
   }
 
   return (
-    <HatchDialogEditBody id={id} open={open} onClose={handleClose} notify={notify} redirect={redirect} />
+    <HatchDialogEditBody
+      id={id}
+      open={open}
+      onClose={handleClose}
+      notify={notify}
+      redirect={redirect}
+    />
   );
 };
 
@@ -74,13 +80,9 @@ function HatchDialogEditBody({
           mutationOptions={{
             onSuccess: () => {
               notify("resources.deals.updated", {});
-              redirect(
-                `/deals/${id}/show`,
-                undefined,
-                undefined,
-                undefined,
-                { _scrollToTop: false },
-              );
+              redirect(`/deals/${id}/show`, undefined, undefined, undefined, {
+                _scrollToTop: false,
+              });
             },
           }}
         >

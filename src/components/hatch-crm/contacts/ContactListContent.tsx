@@ -8,7 +8,13 @@ import {
   useTimeout,
   useTranslate,
 } from "ra-core";
-import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useRef } from "react";
+import {
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+  useRef,
+} from "react";
 import { Link, useNavigate } from "react-router";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
@@ -219,7 +225,9 @@ const ContactItemContent = ({
           )}
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+      <div
+        style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}
+      >
         <Link
           to={contactPath}
           onClick={(event) => event.stopPropagation()}
@@ -381,7 +389,10 @@ const ContactItemContent = ({
   );
 };
 
-const statusAccent: Record<string, { bg: string; border: string; text: string }> = {
+const statusAccent: Record<
+  string,
+  { bg: string; border: string; text: string }
+> = {
   cold: {
     bg: "rgba(125,189,232,0.08)",
     border: "rgba(125,189,232,0.24)",

@@ -21,7 +21,8 @@ const followUpTemplates = [
 
 const reviewTemplates = [
   {
-    subject: "Could {{business}} use faster follow-up on incoming quote requests?",
+    subject:
+      "Could {{business}} use faster follow-up on incoming quote requests?",
     body: "Hi {{business}} team,\n\nI put together a few ideas specifically for {{trade}} companies in {{city}} that want tighter response times without adding another admin hire. Happy to share a concise breakdown if that would be useful.\n\nBest,\nNathan",
   },
   {
@@ -49,7 +50,9 @@ export const generateOutreachSteps = (db: Db): OutreachStep[] => {
   let id = 1;
 
   return db.intake_leads
-    .filter((lead) => lead.status === "in-sequence" || lead.status === "engaged")
+    .filter(
+      (lead) => lead.status === "in-sequence" || lead.status === "engaged",
+    )
     .flatMap((lead) => {
       const tradeName =
         db.trade_types.find((trade) => trade.id === lead.trade_type_id)?.name ??
@@ -143,14 +146,15 @@ export const generateOutreachSteps = (db: Db): OutreachStep[] => {
             tradeName,
           ),
           review_status: "failed",
-          review_feedback:
-            "Needs personalization before sending on LinkedIn.",
+          review_feedback: "Needs personalization before sending on LinkedIn.",
           status: "action_needed",
           provider_message_id: null,
           reply_body: null,
           reply_received_at: null,
           run_id: `run-${lead.id}`,
-          created_at: new Date(reviewCreatedAt.getTime() + 3600000).toISOString(),
+          created_at: new Date(
+            reviewCreatedAt.getTime() + 3600000,
+          ).toISOString(),
           sent_at: null,
         });
       }

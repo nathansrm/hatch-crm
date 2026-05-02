@@ -111,8 +111,7 @@ export const NumberInput = (props: NumberInputProps) => {
 };
 
 export interface NumberInputProps
-  extends
-    InputProps,
+  extends InputProps,
     Omit<
       React.ComponentProps<"input">,
       "defaultValue" | "onBlur" | "onChange" | "type"

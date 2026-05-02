@@ -47,10 +47,8 @@ const SourceBadge = (_props: { label?: string | boolean }) => {
 
   const colorMap: Record<string, string> = {
     n8n: "border-orange-400 text-orange-700 dark:text-orange-300",
-    edge_function:
-      "border-purple-400 text-purple-700 dark:text-purple-300",
-    "ingest-lead":
-      "border-emerald-400 text-emerald-700 dark:text-emerald-300",
+    edge_function: "border-purple-400 text-purple-700 dark:text-purple-300",
+    "ingest-lead": "border-emerald-400 text-emerald-700 dark:text-emerald-300",
     crm: "border-blue-400 text-blue-700 dark:text-blue-300",
   };
 

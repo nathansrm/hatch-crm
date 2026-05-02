@@ -297,7 +297,10 @@ export const createDataProvider = ({
     mergeContacts: async (sourceId: Identifier, targetId: Identifier) => {
       return mergeContacts(sourceId, targetId, baseDataProvider);
     },
-    promoteIntakeLead: async (_intakeLeadId: Identifier, _createDeal = true) => {
+    promoteIntakeLead: async (
+      _intakeLeadId: Identifier,
+      _createDeal = true,
+    ) => {
       // Demo mode stub — no real edge function available
       throw new Error(
         "Promote is not available in demo mode. Please use a live Supabase backend.",

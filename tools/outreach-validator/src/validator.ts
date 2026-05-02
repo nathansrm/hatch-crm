@@ -1,4 +1,4 @@
-import { BANNED_WORDS } from './banned-words.js';
+import { BANNED_WORDS } from "./banned-words.js";
 
 export type MinimalLead = {
   business_name: string;
@@ -11,7 +11,7 @@ export type ValidationResult = { pass: boolean; reasons: string[] };
 
 export function validate(
   draft: { subject: string; body: string },
-  lead: MinimalLead
+  lead: MinimalLead,
 ): ValidationResult {
   const reasons: string[] = [];
   const wordCount = draft.body.trim().split(/\s+/).filter(Boolean).length;
@@ -21,16 +21,16 @@ export function validate(
     reasons.push(`word count: ${wordCount} (must be 80–110)`);
   }
 
-  if (combined.includes('—')) {
-    reasons.push('em dash not allowed');
+  if (combined.includes("—")) {
+    reasons.push("em dash not allowed");
   }
 
-  if (combined.includes('–')) {
-    reasons.push('en dash not allowed');
+  if (combined.includes("–")) {
+    reasons.push("en dash not allowed");
   }
 
   for (const word of BANNED_WORDS) {
-    const pattern = new RegExp(`\\b${escapeRegExp(word)}\\b`, 'gi');
+    const pattern = new RegExp(`\\b${escapeRegExp(word)}\\b`, "gi");
     const hits = combined.match(pattern);
 
     for (let index = 0; index < (hits?.length ?? 0); index += 1) {
@@ -40,13 +40,16 @@ export function validate(
 
   const expectedSubject = `Operations audit for ${lead.business_name}`;
 
-  if (draft.subject !== expectedSubject || !/^Operations audit for .+$/.test(draft.subject)) {
+  if (
+    draft.subject !== expectedSubject ||
+    !/^Operations audit for .+$/.test(draft.subject)
+  ) {
     reasons.push(`subject must be exactly '${expectedSubject}'`);
   }
 
   if (!hasPersonalization(draft.body, lead)) {
     reasons.push(
-      'personalization: body must reference business_name, city, owner_name, or trade_type'
+      "personalization: body must reference business_name, city, owner_name, or trade_type",
     );
   }
 
@@ -65,7 +68,7 @@ export function validateRaw(jsonString: string): ValidationResult {
       lead: MinimalLead;
     };
   } catch {
-    return { pass: false, reasons: ['invalid JSON'] };
+    return { pass: false, reasons: ["invalid JSON"] };
   }
 
   return validate(parsed.draft, parsed.lead);
@@ -73,7 +76,12 @@ export function validateRaw(jsonString: string): ValidationResult {
 
 function hasPersonalization(body: string, lead: MinimalLead): boolean {
   const normalizedBody = body.toLowerCase();
-  const fields = [lead.business_name, lead.city, lead.owner_name, lead.trade_type];
+  const fields = [
+    lead.business_name,
+    lead.city,
+    lead.owner_name,
+    lead.trade_type,
+  ];
 
   return fields.some((field) => {
     if (field === null || field === undefined || field.length < 4) {
@@ -85,5 +93,5 @@ function hasPersonalization(body: string, lead: MinimalLead): boolean {
 }
 
 function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -13,7 +13,7 @@ Reorganize the Deal Show dialog into a command center for proposal prep — Deci
 ## Environment
 
 **Branch:** `feat/deal-show-redesign` (create from `feat/deal-card-enrichment` after BRIEF-002 merges, OR from `main` with `stackInfo.ts` copied in)
-**Setup:** `npm install`, `npm run dev:demo`
+**Setup:** `npm install`, `npm run dev`
 **Test command:** `npm run test:unit:app`
 **When done:** Push to origin and open a PR against `main`
 
@@ -125,7 +125,7 @@ Empty state when array is empty/null: `<p className="text-sm text-muted-foregrou
 
 ## Manual Test Checklist
 
-- [ ] Open demo mode, click a deal card that has enrichment data. Verify `DecisionContextBlock` and `StackBlock` render with real values.
+- [ ] Open the app, click a deal card that has enrichment data. Verify `DecisionContextBlock` and `StackBlock` render with real values.
 - [ ] Click a deal card with no enrichment data. Verify both blocks show their empty states (not blank space, not a crash).
 - [ ] On mobile viewport (375px): verify sidebar content stacks below DecisionContext + Stack, dialog scrolls, no overflow.
 - [ ] Edit button still opens the edit form. Archive button still archives. Notes still load.

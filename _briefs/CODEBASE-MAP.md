@@ -9,14 +9,14 @@
 ## Stack
 
 - **Runtime:** Node.js, React 19
-- **Framework:** React Admin (ra-core / fakerest for demo mode)
+- **Framework:** React Admin (ra-core / fakerest for tests and stories)
 - **UI:** Radix UI primitives + shadcn/ui components, Tailwind CSS v4
 - **State:** React Admin's data provider pattern (`useGetList`, `useRecordContext`, `useUpdate`)
 - **DnD:** `@hello-pangea/dnd` (kanban drag)
 - **Backend:** Supabase (PostgreSQL + RLS + Edge Functions)
 - **Build:** Vite 7, TypeScript 5.8, `tsc && vite build`
 - **Test:** Vitest (unit: `vitest.config.ts`, integration: `vitest.integration.config.ts`), Playwright (E2E)
-- **Demo mode:** `vite.demo.config.ts` + `VITE_IS_DEMO=true` → fakerest data provider
+- **Demo mode:** removed from the default internal launch runtime; historical fakerest helpers remain test/story fixtures.
 
 ---
 
@@ -52,9 +52,8 @@ hatch-crm/
 │   ├── migrations/                    — all schema migrations
 │   └── functions/                     — edge functions (ingest-intake-lead, upsert-outreach-step, send-outreach)
 ├── _briefs/                           — task briefs + this map
-├── scripts/                           — seed-demo-data.mjs, supabase-remote-init.mjs
-├── demo/                              — fakerest generators for demo mode
-└── vite.demo.config.ts                — demo mode build config
+├── scripts/                           — operational scripts, including supabase-remote-init.mjs
+└── test/story fixtures                — fakerest helpers used outside the default runtime
 ```
 
 ---
@@ -103,7 +102,7 @@ hatch-crm/
 ## Data Flow
 
 ```
-Demo mode:   fakerest generators (demo/) → useGetList → components
+Fixture mode: fakerest test/story data → useGetList → components
 Live mode:   Supabase (PostgreSQL + RLS) → useGetList → components
 Mutations:   useUpdate → dataProvider → Supabase REST or Edge Functions
 ```
@@ -137,4 +136,4 @@ Copy-ready directives for any brief targeting this project:
 - **All new types** go in `src/components/hatch-crm/types.ts`, not in component files
 - **Barrel exports:** Add new component exports to the `index.ts` in the relevant domain folder
 - **Must not touch:** `src/components/admin/` wrappers, `src/components/ui/` shadcn library, auth/provider files, existing migrations
-- **Demo data:** Extend `demo/` generators when a new field needs to render in demo mode — fakerest won't know about new fields otherwise
+- **Fixture data:** Extend fakerest test/story fixtures when a new field needs to render in isolated component harnesses — fakerest won't know about new fields otherwise

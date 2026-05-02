@@ -39,10 +39,7 @@ export const HatchGhostButton = ({
   />
 );
 
-export const HatchDangerButton = ({
-  className,
-  ...rest
-}: HatchButtonProps) => (
+export const HatchDangerButton = ({ className, ...rest }: HatchButtonProps) => (
   <Button
     {...rest}
     className={cn(

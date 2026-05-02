@@ -1,16 +1,7 @@
-import {
-  ArrowRight,
-  Check,
-  ExternalLink,
-  Mail,
-} from "lucide-react";
+import { ArrowRight, Check, ExternalLink, Mail } from "lucide-react";
 import { toast } from "sonner";
 
-import {
-  HatchGhostButton,
-  HATCH,
-  HATCH_CLASS,
-} from "../_primitives";
+import { HatchGhostButton, HATCH, HATCH_CLASS } from "../_primitives";
 import type { IntakeLead } from "../types";
 import { SnapshotItem, SnapshotTagList } from "./IntakeExpandedRowParts";
 import { OutreachStepsTimeline } from "./OutreachStepsTimeline";
@@ -66,7 +57,10 @@ export const IntakeExpandedRow = ({ record }: { record: IntakeLead }) => {
 
         <div style={{ display: "grid", gap: 10, marginTop: 18 }}>
           <SnapshotItem label="Source" value={record.source || "Unknown"} />
-          <SnapshotItem label="Website" value={record.website || "Not captured"} />
+          <SnapshotItem
+            label="Website"
+            value={record.website || "Not captured"}
+          />
           <SnapshotItem
             label="Email"
             value={record.email || "Missing email"}

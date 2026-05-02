@@ -32,9 +32,10 @@ export const IntakePromoteButton = ({ record }: { record: IntakeLead }) => {
       notify("resources.intake_leads.notify.promote_failed", {
         type: "error",
         messageArgs: {
-          _: error instanceof Error
-            ? error.message
-            : "Failed to promote intake lead",
+          _:
+            error instanceof Error
+              ? error.message
+              : "Failed to promote intake lead",
         },
       });
     } finally {
@@ -53,9 +54,15 @@ export const IntakePromoteButton = ({ record }: { record: IntakeLead }) => {
         void handlePromote();
       }}
     >
-      {isPending ? <Loader2 className="size-4 animate-spin" /> : <ArrowUpRight className="size-4" />}
+      {isPending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <ArrowUpRight className="size-4" />
+      )}
       {isPending
-        ? translate("resources.intake_leads.action.promoting", { _: "Promoting..." })
+        ? translate("resources.intake_leads.action.promoting", {
+            _: "Promoting...",
+          })
         : translate("resources.intake_leads.action.promote", { _: "Promote" })}
     </HatchPrimaryButton>
   );

@@ -10,10 +10,7 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { UserMenu } from "@/components/admin/user-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import {
-  HatchPrimaryButton,
-  HATCH,
-} from "@/components/hatch-crm/_primitives";
+import { HatchPrimaryButton, HATCH } from "@/components/hatch-crm/_primitives";
 import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext";
 import type { Deal } from "@/components/hatch-crm/types";
 import { OPEN_DEALS_LIST_PARAMS } from "../deals/dealFilters";
@@ -102,66 +99,21 @@ const Header = () => {
           zIndex: 1,
           display: "flex",
           alignItems: "center",
-          gap: 12,
           textDecoration: "none",
+          minWidth: 0,
         }}
       >
-        <div
+        <img
+          src={darkModeLogo}
+          alt={title}
           style={{
-            width: 34,
-            height: 34,
-            borderRadius: 8,
-            background:
-              "linear-gradient(180deg, rgb(19 36 70) 0%, rgb(9 18 39) 100%)",
-            border: "1px solid rgba(77,200,232,0.25)",
-            overflow: "hidden",
-            display: "grid",
-            placeItems: "center",
-            flexShrink: 0,
+            display: "block",
+            width: "min(230px, 34vw)",
+            height: 32,
+            objectFit: "contain",
+            objectPosition: "left center",
           }}
-        >
-          <img
-            src={darkModeLogo}
-            alt={title}
-            style={{
-              width: "130%",
-              height: "130%",
-              objectFit: "cover",
-              objectPosition: "center 34%",
-            }}
-          />
-        </div>
-        <div
-          style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}
-        >
-          <div
-            className="font-heading"
-            style={{
-              fontWeight: 800,
-              fontSize: 15,
-              color: HATCH.textHi,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            HATCH
-            <span style={{ color: HATCH.cyan, margin: "0 3px" }}>
-              {"\u00B7"}
-            </span>
-            CRM
-          </div>
-          <div
-            style={{
-              fontSize: 9.5,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: HATCH.textMuted,
-              marginTop: 4,
-              fontWeight: 600,
-            }}
-          >
-            Operations Console
-          </div>
-        </div>
+        />
       </Link>
       <div
         style={{

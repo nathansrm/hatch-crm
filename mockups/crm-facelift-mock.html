@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -53,7 +53,11 @@
         flex-direction: column;
         padding: 24px 18px 18px;
         background:
-          radial-gradient(circle at top left, rgba(74, 193, 224, 0.12), transparent 32%),
+          radial-gradient(
+            circle at top left,
+            rgba(74, 193, 224, 0.12),
+            transparent 32%
+          ),
           linear-gradient(180deg, #1c1c32 0%, #151526 100%);
         color: var(--sidebar-text);
         border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -421,8 +425,13 @@
         padding: 18px 8px 8px;
         border-radius: 12px;
         background:
-          linear-gradient(to top, rgba(229, 229, 227, 0.5) 1px, transparent 1px) 0 100% / 100% 25%,
-          linear-gradient(180deg, rgba(74, 193, 224, 0.03), rgba(74, 193, 224, 0));
+          linear-gradient(to top, rgba(229, 229, 227, 0.5) 1px, transparent 1px)
+            0 100% / 100% 25%,
+          linear-gradient(
+            180deg,
+            rgba(74, 193, 224, 0.03),
+            rgba(74, 193, 224, 0)
+          );
       }
 
       .bar-group {
@@ -690,7 +699,9 @@
           <div class="page-header">
             <div>
               <h1>Dashboard</h1>
-              <p>Pipeline health, deal momentum, and team execution in one view.</p>
+              <p>
+                Pipeline health, deal momentum, and team execution in one view.
+              </p>
             </div>
             <div class="header-chip">
               <span>●</span>
@@ -834,8 +845,14 @@
                   <div class="activity-item">
                     <div class="avatar-mini">NH</div>
                     <div class="activity-copy">
-                      <strong>Nathan moved BuildRight Contracting to Proposal Sent</strong>
-                      <span>Updated deal value to $36,000 and set follow-up for Friday.</span>
+                      <strong
+                        >Nathan moved BuildRight Contracting to Proposal
+                        Sent</strong
+                      >
+                      <span
+                        >Updated deal value to $36,000 and set follow-up for
+                        Friday.</span
+                      >
                     </div>
                     <div class="timestamp">10m ago</div>
                   </div>
@@ -844,7 +861,10 @@
                     <div class="avatar-mini">LC</div>
                     <div class="activity-copy">
                       <strong>Luca added note on Northern Plumbing</strong>
-                      <span>Client requested revised pricing with phased install options.</span>
+                      <span
+                        >Client requested revised pricing with phased install
+                        options.</span
+                      >
                     </div>
                     <div class="timestamp">32m ago</div>
                   </div>
@@ -852,8 +872,13 @@
                   <div class="activity-item">
                     <div class="avatar-mini">AM</div>
                     <div class="activity-copy">
-                      <strong>Avery created a new deal for Summit Roofing</strong>
-                      <span>Inbound referral from website form, estimated value $18,500.</span>
+                      <strong
+                        >Avery created a new deal for Summit Roofing</strong
+                      >
+                      <span
+                        >Inbound referral from website form, estimated value
+                        $18,500.</span
+                      >
                     </div>
                     <div class="timestamp">1h ago</div>
                   </div>
@@ -870,8 +895,13 @@
                   <div class="activity-item">
                     <div class="avatar-mini">SR</div>
                     <div class="activity-copy">
-                      <strong>Sofia assigned permit checklist to operations</strong>
-                      <span>Linked to Greenfield Mechanical onboarding workflow.</span>
+                      <strong
+                        >Sofia assigned permit checklist to operations</strong
+                      >
+                      <span
+                        >Linked to Greenfield Mechanical onboarding
+                        workflow.</span
+                      >
                     </div>
                     <div class="timestamp">4h ago</div>
                   </div>
@@ -889,10 +919,19 @@
                     <div class="checkbox" aria-hidden="true"></div>
                     <div class="task-copy">
                       <strong>Send revised proposal to BuildRight</strong>
-                      <span>Proposal revision with updated labor and material assumptions.</span>
+                      <span
+                        >Proposal revision with updated labor and material
+                        assumptions.</span
+                      >
                       <div class="task-row-meta">
                         <span class="subtle-stat">Due Today</span>
-                        <span><span class="assignee-dot" style="background: #4ac1e0"></span> Nathan</span>
+                        <span
+                          ><span
+                            class="assignee-dot"
+                            style="background: #4ac1e0"
+                          ></span>
+                          Nathan</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -900,11 +939,22 @@
                   <div class="task-item">
                     <div class="checkbox" aria-hidden="true"></div>
                     <div class="task-copy">
-                      <strong>Call Northern Plumbing about scope changes</strong>
-                      <span>Confirm phased scheduling and revised start window.</span>
+                      <strong
+                        >Call Northern Plumbing about scope changes</strong
+                      >
+                      <span
+                        >Confirm phased scheduling and revised start
+                        window.</span
+                      >
                       <div class="task-row-meta">
                         <span class="subtle-stat">Apr 9</span>
-                        <span><span class="assignee-dot" style="background: #22c55e"></span> Luca</span>
+                        <span
+                          ><span
+                            class="assignee-dot"
+                            style="background: #22c55e"
+                          ></span>
+                          Luca</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -913,10 +963,19 @@
                     <div class="checkbox" aria-hidden="true"></div>
                     <div class="task-copy">
                       <strong>Prepare close plan for Eastline handoff</strong>
-                      <span>Review contract docs and kickoff sequence with ops.</span>
+                      <span
+                        >Review contract docs and kickoff sequence with
+                        ops.</span
+                      >
                       <div class="task-row-meta">
                         <span class="subtle-stat">Apr 10</span>
-                        <span><span class="assignee-dot" style="background: #8b5cf6"></span> Sofia</span>
+                        <span
+                          ><span
+                            class="assignee-dot"
+                            style="background: #8b5cf6"
+                          ></span>
+                          Sofia</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -925,10 +984,19 @@
                     <div class="checkbox" aria-hidden="true"></div>
                     <div class="task-copy">
                       <strong>Review inbound lead list from trade show</strong>
-                      <span>Prioritize roofing and HVAC opportunities for qualification.</span>
+                      <span
+                        >Prioritize roofing and HVAC opportunities for
+                        qualification.</span
+                      >
                       <div class="task-row-meta">
                         <span class="subtle-stat">Apr 12</span>
-                        <span><span class="assignee-dot" style="background: #f59e0b"></span> Avery</span>
+                        <span
+                          ><span
+                            class="assignee-dot"
+                            style="background: #f59e0b"
+                          ></span>
+                          Avery</span
+                        >
                       </div>
                     </div>
                   </div>

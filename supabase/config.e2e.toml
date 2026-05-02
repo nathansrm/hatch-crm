@@ -170,3 +170,11 @@ verify_jwt = false
 verify_jwt = false
 [functions.ingest-lead]
 verify_jwt = false
+[functions.gmail-oauth-start]
+verify_jwt = false
+[functions.gmail-oauth-callback]
+verify_jwt = false
+[functions.gmail-oauth-status]
+verify_jwt = false
+[functions.gmail-oauth-disconnect]
+verify_jwt = false

@@ -599,6 +599,7 @@ export const frenchCrmMessages = {
       title: "Paramètres",
       app_title: "Titre de l'application",
       sections: {
+        gmail: "Gmail",
         branding: "Image de marque",
       },
       validation: {

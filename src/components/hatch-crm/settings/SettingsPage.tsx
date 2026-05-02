@@ -20,6 +20,7 @@ import { TextInput } from "@/components/admin/text-input";
 
 import ImageEditorField from "../misc/ImageEditorField";
 import { HatchPageHeader } from "../_primitives";
+import { GmailConnectionPanel } from "./GmailConnectionPanel";
 import {
   useConfigurationContext,
   useConfigurationUpdater,
@@ -28,6 +29,11 @@ import {
 import { defaultConfiguration } from "../root/defaultConfiguration";
 
 const SECTIONS = [
+  {
+    id: "gmail",
+    label: "crm.settings.sections.gmail",
+    fallback: "Gmail",
+  },
   {
     id: "branding",
     label: "crm.settings.sections.branding",
@@ -352,6 +358,8 @@ const SettingsFormFields = () => {
           padding: "28px 40px 120px",
         }}
       >
+        <GmailConnectionPanel />
+
         {/* Branding */}
         <SettingsPanel
           id="branding"

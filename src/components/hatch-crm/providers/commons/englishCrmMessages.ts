@@ -593,6 +593,7 @@ export const englishCrmMessages = {
       title: "Settings",
       app_title: "App Title",
       sections: {
+        gmail: "Gmail",
         branding: "Branding",
       },
       validation: {

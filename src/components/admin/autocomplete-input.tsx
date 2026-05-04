@@ -12,12 +12,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { FormControl, FormError, FormField } from "@/components/admin/form";
 import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
+  HatchAutocompleteShell,
+  HatchField,
+} from "@/components/hatch-crm/_primitives";
 import {
   Popover,
   PopoverContent,
@@ -205,38 +204,43 @@ export const AutocompleteInput = (
   if (createItem) {
     finalChoices = [...finalChoices, createItem];
   }
+  const fieldLabel =
+    props.label !== false ? (
+      <span id={uniqueId}>
+        <FieldTitle
+          label={props.label}
+          source={props.source ?? source}
+          resource={resource}
+          isRequired={isRequired}
+        />
+      </span>
+    ) : undefined;
 
   return (
     <>
       <FormField className={props.className} id={id} name={source}>
-        {props.label !== false && (
-          <FormLabel id={uniqueId}>
-            <FieldTitle
-              label={props.label}
-              source={props.source ?? source}
-              resource={resource}
-              isRequired={isRequired}
-            />
-          </FormLabel>
-        )}
-        <FormControl>
+        <HatchField label={fieldLabel}>
           <Popover open={open} onOpenChange={handleOpenChange} modal={modal}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                aria-labelledby={uniqueId}
-                className="w-full justify-between h-auto py-1.75 font-normal"
-              >
-                {selectedChoice ? (
-                  getInputText(selectedChoice)
-                ) : (
-                  <span className="text-muted-foreground">{placeholder}</span>
-                )}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
+            <FormControl>
+              <HatchAutocompleteShell className="p-0 focus-within:border-[var(--hatch-cyan)]">
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    role="combobox"
+                    aria-expanded={open}
+                    aria-labelledby={fieldLabel ? uniqueId : undefined}
+                    className="h-auto min-h-11 w-full justify-between rounded-lg border-0 bg-transparent px-3 py-2 text-left font-normal text-[var(--fg-1)] shadow-none hover:bg-transparent hover:text-[var(--fg-1)] focus-visible:ring-0 focus-visible:ring-offset-0"
+                  >
+                    {selectedChoice ? (
+                      getInputText(selectedChoice)
+                    ) : (
+                      <span className="text-[var(--fg-3)]">{placeholder}</span>
+                    )}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+              </HatchAutocompleteShell>
+            </FormControl>
             <PopoverContent className="w-full max-w-(--radix-popover-trigger-width) p-0">
               {/* We handle the filtering ourselves */}
               <Command shouldFilter={!isFromReference}>
@@ -303,7 +307,7 @@ export const AutocompleteInput = (
               </Command>
             </PopoverContent>
           </Popover>
-        </FormControl>
+        </HatchField>
         <InputHelperText helperText={props.helperText} />
         <FormError />
       </FormField>

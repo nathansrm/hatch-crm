@@ -2,7 +2,7 @@
 brief_id: BRIEF-026
 project: Hatch CRM
 created: 2026-05-01
-status: ready
+status: shipped
 scope: large
 ---
 
@@ -250,6 +250,6 @@ Swap the visual chrome in `src/components/admin/` text, number, date, select, an
 
 - [x] Spec drafted
 - [x] Brief approved (Claude) — Option A locked, A2 (HatchSelectTrigger) locked
-- [ ] Built (Codex)
+- [x] Built (Codex)
 - [ ] Reviewed (Claude)
 - **Revision count:** 0

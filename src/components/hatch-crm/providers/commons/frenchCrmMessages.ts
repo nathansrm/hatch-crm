@@ -1,6 +1,13 @@
 import type { CrmMessages } from "./englishCrmMessages";
 
 export const frenchCrmMessages = {
+  ra: {
+    notification: {
+      created: "%{resource} ajouté",
+      updated: "%{resource} mis à jour",
+      deleted: "%{resource} supprimé",
+    },
+  },
   resources: {
     companies: {
       name: "Entreprise |||| Entreprises",
@@ -40,6 +47,11 @@ export const frenchCrmMessages = {
         edit: "Modifier l'entreprise",
         new: "Nouvelle entreprise",
         show: "Afficher l'entreprise",
+      },
+      notifications: {
+        created: "Entreprise ajoutée",
+        updated: "Entreprise mise à jour",
+        deleted: "Entreprise supprimée",
       },
       added_on: "Ajoutée le %{date}",
       followed_by: "Suivie par %{name}",
@@ -97,6 +109,11 @@ export const frenchCrmMessages = {
         export_vcard: "Exporter en vCard",
         new: "Nouveau contact",
         show: "Afficher le contact",
+      },
+      notifications: {
+        created: "Contact ajouté",
+        updated: "Contact mis à jour",
+        deleted: "Contact supprimé",
       },
       background: {
         last_activity_on: "Dernière activité le %{date}",
@@ -211,6 +228,11 @@ export const frenchCrmMessages = {
         back_to_deal: "Retour à l'affaire",
         create: "Créer une affaire",
         new: "Nouvelle affaire",
+      },
+      notifications: {
+        created: "Affaire ajoutée",
+        updated: "Affaire mise à jour",
+        deleted: "Affaire supprimée",
       },
       field_categories: {
         misc: "Divers",

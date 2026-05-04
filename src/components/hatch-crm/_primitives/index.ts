@@ -19,6 +19,7 @@ export {
   HatchTextInput,
   HatchTextareaInput,
   HatchDateInput,
+  HatchSelectTrigger,
   HatchPillGroup,
   HatchAutocompleteShell,
 } from "./HatchField";

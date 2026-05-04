@@ -16,13 +16,16 @@ import {
 import type { ComponentProps, ReactElement } from "react";
 import { useCallback, useEffect, useId } from "react";
 
-import { FormError, FormField, FormLabel } from "@/components/admin/form";
+import { FormError, FormField } from "@/components/admin/form";
 import { InputHelperText } from "@/components/admin/input-helper-text";
+import {
+  HatchField,
+  HatchSelectTrigger,
+} from "@/components/hatch-crm/_primitives";
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -206,25 +209,29 @@ export const SelectInput = (props: SelectInputProps) => {
   });
 
   if (isPending) {
+    const pendingLabel =
+      label !== "" && label !== false ? (
+        <span id={labelId}>
+          <FieldTitle
+            label={label}
+            source={source}
+            resource={resourceProp}
+            isRequired={isRequired}
+          />
+        </span>
+      ) : undefined;
+
     return (
       <FormField
         id={id}
         name={field.name}
         className={cn("w-full min-w-20", className)}
       >
-        {label !== "" && label !== false && (
-          <FormLabel id={labelId}>
-            <FieldTitle
-              label={label}
-              source={source}
-              resource={resourceProp}
-              isRequired={isRequired}
-            />
-          </FormLabel>
-        )}
-        <div className="relative">
-          <Skeleton className="w-full h-9" />
-        </div>
+        <HatchField htmlFor={id} label={pendingLabel}>
+          <div className="relative">
+            <Skeleton className="w-full h-9" />
+          </div>
+        </HatchField>
         <InputHelperText helperText={helperText} />
         <FormError />
       </FormField>
@@ -236,6 +243,17 @@ export const SelectInput = (props: SelectInputProps) => {
   if (create || onCreate) {
     finalChoices = [...finalChoices, createItem];
   }
+  const fieldLabel =
+    label !== "" && label !== false ? (
+      <span id={labelId}>
+        <FieldTitle
+          label={label}
+          source={source}
+          resource={resourceProp}
+          isRequired={isRequired}
+        />
+      </span>
+    ) : undefined;
 
   // Handle reset functionality
   const handleReset = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -251,66 +269,59 @@ export const SelectInput = (props: SelectInputProps) => {
         className={cn("w-full min-w-20", className)}
         {...rest}
       >
-        {label !== "" && label !== false && (
-          <FormLabel id={labelId}>
-            <FieldTitle
-              label={label}
-              source={source}
-              resource={resourceProp}
-              isRequired={isRequired}
-            />
-          </FormLabel>
-        )}
-        <div className="relative">
-          <Select
-            //FIXME https://github.com/radix-ui/primitives/issues/3135
-            // Setting a key based on the value fixes an issue where onValueChange
-            // was called with an empty string when the controlled value was changed.
-            // See: https://github.com/radix-ui/primitives/issues/3135#issuecomment-2916908248
-            key={`select:${field.value?.toString() ?? emptyValue}`}
-            value={field.value?.toString() || emptyValue}
-            onValueChange={handleChangeWithCreateSupport}
-          >
-            <SelectTrigger
-              className={cn("w-full transition-all hover:bg-accent")}
-              disabled={field.disabled}
-              aria-labelledby={labelId}
+        <HatchField htmlFor={id} label={fieldLabel}>
+          <div className="relative">
+            <Select
+              //FIXME https://github.com/radix-ui/primitives/issues/3135
+              // Setting a key based on the value fixes an issue where onValueChange
+              // was called with an empty string when the controlled value was changed.
+              // See: https://github.com/radix-ui/primitives/issues/3135#issuecomment-2916908248
+              key={`select:${field.value?.toString() ?? emptyValue}`}
+              value={field.value?.toString() || emptyValue}
+              onValueChange={handleChangeWithCreateSupport}
             >
-              <SelectValue placeholder={renderEmptyItemOption()} />
+              <HatchSelectTrigger
+                id={id}
+                className="w-full transition-all"
+                disabled={field.disabled}
+                aria-labelledby={fieldLabel ? labelId : undefined}
+              >
+                <SelectValue placeholder={renderEmptyItemOption()} />
 
-              {field.value && field.value !== emptyValue ? (
-                <div
-                  role="button"
-                  className="p-0 ml-auto pointer-events-auto hover:bg-transparent text-muted-foreground opacity-50 hover:opacity-100"
-                  onClick={handleReset}
-                >
-                  <X className="h-4 w-4" />
-                </div>
-              ) : null}
-            </SelectTrigger>
-            <SelectContent>
-              {finalChoices?.map((choice) => {
-                if (!choice) return null;
-                const value = getChoiceValue(choice);
-                const isDisabled = getDisableValue(choice);
-
-                return (
-                  <SelectItem
-                    key={value}
-                    value={value?.toString()}
-                    disabled={isDisabled}
+                {field.value && field.value !== emptyValue ? (
+                  <div
+                    role="button"
+                    className="p-0 ml-auto pointer-events-auto hover:bg-transparent text-muted-foreground opacity-50 hover:opacity-100"
+                    onClick={handleReset}
                   >
-                    {renderMenuItemOption(
-                      !!createItem && choice?.id === createItem.id
-                        ? createItem
-                        : choice,
-                    )}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
+                    <X className="h-4 w-4" />
+                  </div>
+                ) : null}
+              </HatchSelectTrigger>
+              <SelectContent>
+                {finalChoices?.map((choice) => {
+                  if (!choice) return null;
+                  const value = getChoiceValue(choice);
+                  const isDisabled = getDisableValue(choice);
+
+                  return (
+                    <SelectItem
+                      key={value}
+                      value={value?.toString()}
+                      disabled={isDisabled}
+                    >
+                      {renderMenuItemOption(
+                        !!createItem && choice?.id === createItem.id
+                          ? createItem
+                          : choice,
+                      )}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </HatchField>
         <InputHelperText helperText={helperText} />
       </FormField>
       {createElement}

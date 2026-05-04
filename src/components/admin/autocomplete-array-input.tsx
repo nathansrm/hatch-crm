@@ -8,12 +8,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { FormControl, FormError, FormField } from "@/components/admin/form";
 import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
+  HatchAutocompleteShell,
+  HatchField,
+} from "@/components/hatch-crm/_primitives";
 import { Command as CommandPrimitive } from "cmdk";
 import type { ChoicesProps, InputProps } from "ra-core";
 import {
@@ -100,6 +99,7 @@ export const AutocompleteArrayInput = (
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
+  const uniqueId = React.useId();
 
   const handleUnselect = useEvent((choice: any) => {
     field.onChange(
@@ -142,110 +142,114 @@ export const AutocompleteArrayInput = (
     },
     [inputText, getChoiceText],
   );
+  const fieldLabel =
+    props.label !== false ? (
+      <span id={uniqueId}>
+        <FieldTitle
+          label={props.label}
+          source={props.source ?? source}
+          resource={resource}
+          isRequired={isRequired}
+        />
+      </span>
+    ) : undefined;
 
   return (
     <FormField className={props.className} id={id} name={field.name}>
-      {props.label !== false && (
-        <FormLabel>
-          <FieldTitle
-            label={props.label}
-            source={props.source ?? source}
-            resource={resource}
-            isRequired={isRequired}
-          />
-        </FormLabel>
-      )}
-      <FormControl>
-        <Command
-          onKeyDown={handleKeyDown}
-          shouldFilter={!isFromReference}
-          className="overflow-visible bg-transparent"
-        >
-          <div className="group rounded-md bg-transparent dark:bg-input/30 border border-input px-3 py-1.75 text-sm transition-all ring-offset-background focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]">
-            <div className="flex flex-wrap gap-1">
-              {selectedChoices.map((choice) => (
-                <Badge key={getChoiceValue(choice)} variant="outline">
-                  {getInputText(choice)}
-                  <button
-                    className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+      <HatchField label={fieldLabel}>
+        <FormControl>
+          <Command
+            onKeyDown={handleKeyDown}
+            shouldFilter={!isFromReference}
+            className="overflow-visible bg-transparent"
+          >
+            <HatchAutocompleteShell className="min-h-11 p-2 text-sm focus-within:border-[var(--hatch-cyan)]">
+              <div className="flex flex-wrap gap-1">
+                {selectedChoices.map((choice) => (
+                  <Badge key={getChoiceValue(choice)} variant="outline">
+                    {getInputText(choice)}
+                    <button
+                      className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleUnselect(choice);
+                        }
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
                         handleUnselect(choice);
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleUnselect(choice);
-                    }}
-                  >
-                    <span className="sr-only">
-                      {translate("ra.action.remove", {
-                        _: "Remove",
+                      }}
+                    >
+                      <span className="sr-only">
+                        {translate("ra.action.remove", {
+                          _: "Remove",
+                        })}
+                      </span>
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+                {/* Avoid having the "Search" Icon by not using CommandInput */}
+                <CommandPrimitive.Input
+                  ref={inputRef}
+                  value={filterValue}
+                  onValueChange={(filter) => {
+                    setFilterValue(filter);
+                    // We don't want the ChoicesContext to filter the choices if the input
+                    // is not from a reference as it would also filter out the selected values
+                    if (isFromReference) {
+                      setFilters(filterToQuery(filter), undefined, true);
+                    }
+                  }}
+                  onBlur={() => setOpen(false)}
+                  onFocus={() => setOpen(true)}
+                  placeholder={placeholder}
+                  aria-labelledby={fieldLabel ? uniqueId : undefined}
+                  className="ml-2 flex-1 bg-transparent text-[var(--fg-1)] outline-none placeholder:text-[var(--fg-3)]"
+                />
+              </div>
+            </HatchAutocompleteShell>
+            <div className="relative">
+              <CommandList>
+                {open && availableChoices.length > 0 ? (
+                  <div className="absolute top-2 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+                    <CommandGroup className="h-full overflow-auto">
+                      {availableChoices.map((choice) => {
+                        return (
+                          <CommandItem
+                            key={getChoiceValue(choice)}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onSelect={() => {
+                              setFilterValue("");
+                              if (isFromReference) {
+                                setFilters(filterToQuery(""));
+                              }
+                              field.onChange([
+                                ...field.value,
+                                getChoiceValue(choice),
+                              ]);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            {getChoiceText(choice)}
+                          </CommandItem>
+                        );
                       })}
-                    </span>
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-              {/* Avoid having the "Search" Icon by not using CommandInput */}
-              <CommandPrimitive.Input
-                ref={inputRef}
-                value={filterValue}
-                onValueChange={(filter) => {
-                  setFilterValue(filter);
-                  // We don't want the ChoicesContext to filter the choices if the input
-                  // is not from a reference as it would also filter out the selected values
-                  if (isFromReference) {
-                    setFilters(filterToQuery(filter), undefined, true);
-                  }
-                }}
-                onBlur={() => setOpen(false)}
-                onFocus={() => setOpen(true)}
-                placeholder={placeholder}
-                className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
-              />
+                    </CommandGroup>
+                  </div>
+                ) : null}
+              </CommandList>
             </div>
-          </div>
-          <div className="relative">
-            <CommandList>
-              {open && availableChoices.length > 0 ? (
-                <div className="absolute top-2 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                  <CommandGroup className="h-full overflow-auto">
-                    {availableChoices.map((choice) => {
-                      return (
-                        <CommandItem
-                          key={getChoiceValue(choice)}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                          onSelect={() => {
-                            setFilterValue("");
-                            if (isFromReference) {
-                              setFilters(filterToQuery(""));
-                            }
-                            field.onChange([
-                              ...field.value,
-                              getChoiceValue(choice),
-                            ]);
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {getChoiceText(choice)}
-                        </CommandItem>
-                      );
-                    })}
-                  </CommandGroup>
-                </div>
-              ) : null}
-            </CommandList>
-          </div>
-        </Command>
-      </FormControl>
+          </Command>
+        </FormControl>
+      </HatchField>
       <InputHelperText helperText={props.helperText} />
       <FormError />
     </FormField>

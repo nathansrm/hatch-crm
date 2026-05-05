@@ -81,8 +81,22 @@ const INTAKE_PROMOTE_BUTTON_STYLES = `
     }
 
     .intake-summary-tile {
+      grid-template-columns: minmax(0, 1fr) !important;
+      align-items: start !important;
+      gap: 8px !important;
+      min-height: 112px !important;
       padding: 12px !important;
       min-width: 0;
+    }
+
+    .intake-summary-tile > div:first-child {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 8px !important;
+    }
+
+    .intake-summary-tile svg {
+      display: none !important;
     }
 
     .intake-desktop-table {
@@ -91,8 +105,13 @@ const INTAKE_PROMOTE_BUTTON_STYLES = `
 
     .intake-mobile-cards {
       display: grid;
-      gap: 12px;
+      gap: 10px;
       margin: 0 16px;
+    }
+
+    .intake-mobile-cards button,
+    .intake-mobile-cards a {
+      min-height: 44px;
     }
 
     .intake-pagination {
@@ -170,9 +189,9 @@ const IntakeListLayout = () => {
   ).length;
   const hasFilters = Boolean(
     filterValues &&
-      Object.entries(filterValues).some(([, value]) => {
-        return value !== undefined && value !== null && value !== "";
-      }),
+    Object.entries(filterValues).some(([, value]) => {
+      return value !== undefined && value !== null && value !== "";
+    }),
   );
 
   if (isPending) {

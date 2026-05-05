@@ -7,6 +7,7 @@ import {
 
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
+import { MobileAppHeader, MobileAvatar } from "../layout/MobileChrome";
 import { InfinitePagination } from "../misc/InfinitePagination";
 import type { Company } from "../types";
 import { CompanyCard } from "./CompanyCard";
@@ -31,12 +32,16 @@ export const CompanyListMobile = () => {
 };
 
 const CompanyListLayoutMobile = () => {
-  const { isPending, data, error } = useListContext<Company>();
+  const { isPending, data, error, total } = useListContext<Company>();
 
   return (
     <div>
       <MobileHeader>
-        <h1 className="text-xl font-semibold">Companies</h1>
+        <MobileAppHeader
+          title="Companies"
+          subtitle={`${total ?? 0} accounts`}
+          actions={<MobileAvatar label="N" />}
+        />
       </MobileHeader>
       <MobileContent>
         {!isPending && !data?.length ? (

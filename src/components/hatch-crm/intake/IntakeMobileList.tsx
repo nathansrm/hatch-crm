@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Identifier } from "ra-core";
 import { RecordContextProvider, useListContext } from "ra-core";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Mail, Phone } from "lucide-react";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
 
@@ -31,94 +31,88 @@ export const IntakeMobileList = () => {
           <RecordContextProvider key={record.id} value={record}>
             <article
               onClick={() => toggleExpanded(record.id)}
-              style={{
-                display: "grid",
-                gap: 14,
-                padding: 16,
-                background: HATCH.surface,
-                border: `1px solid ${HATCH.border}`,
-                borderRadius: 12,
-                cursor: "pointer",
-              }}
+              className="grid cursor-pointer gap-3 rounded-xl border border-white/[0.07] bg-[linear-gradient(180deg,#0D1424_0%,#080C1A_100%)] p-3.5 shadow-[0_12px_24px_rgba(0,0,0,0.2)]"
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  gap: 12,
-                }}
-              >
-                <div style={{ minWidth: 0 }}>
-                  <h3
-                    className="font-heading"
-                    style={{
-                      margin: 0,
-                      fontSize: 16,
-                      fontWeight: 700,
-                      color: HATCH.textHi,
-                      overflowWrap: "anywhere",
-                    }}
-                  >
-                    {record.business_name}
-                  </h3>
-                  <div
-                    style={{
-                      marginTop: 8,
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 8,
-                      color: HATCH.textLo,
-                      fontSize: 12,
-                    }}
-                  >
-                    <ReferenceField
-                      source="trade_type_id"
-                      reference="trade_types"
-                      link={false}
-                      empty={
-                        <span style={{ color: HATCH.textMuted }}>No trade</span>
-                      }
-                    >
-                      <TextField source="name" />
-                    </ReferenceField>
-                    <span style={{ color: HATCH.textMuted }}>|</span>
-                    <span>{record.city || "No city"}</span>
-                    {record.source ? (
-                      <>
-                        <span style={{ color: HATCH.textMuted }}>|</span>
-                        <span>{record.source}</span>
-                      </>
-                    ) : null}
+              <div className="grid gap-3">
+                <div className="flex min-w-0 items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="font-heading break-words text-[15px] font-bold leading-snug text-[#ECEEF5]">
+                      {record.business_name}
+                    </h3>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px] font-medium text-[#9AA3BE]">
+                      <ReferenceField
+                        source="trade_type_id"
+                        reference="trade_types"
+                        link={false}
+                        empty={<span className="text-[#5C6784]">No trade</span>}
+                      >
+                        <TextField source="name" />
+                      </ReferenceField>
+                      <span className="text-[#5C6784]">/</span>
+                      <span>{record.city || "No city"}</span>
+                      {record.source ? (
+                        <>
+                          <span className="text-[#5C6784]">/</span>
+                          <span>{record.source}</span>
+                        </>
+                      ) : null}
+                    </div>
                   </div>
+                  <IntakeStatusBadge status={record.status} />
                 </div>
-                <IntakeStatusBadge status={record.status} />
-              </div>
 
-              <OutreachProgress record={record} />
+                <OutreachProgress record={record} />
+
+                <div className="grid grid-cols-2 gap-2">
+                  {record.phone ? (
+                    <a
+                      href={`tel:${record.phone}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="inline-flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-2 text-[11px] font-semibold text-[#B8C0D6]"
+                    >
+                      <Phone className="h-3.5 w-3.5 shrink-0 text-[#4DC8E8]" />
+                      <span className="truncate">{record.phone}</span>
+                    </a>
+                  ) : null}
+                  {record.email ? (
+                    <a
+                      href={`mailto:${record.email}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="inline-flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-2 text-[11px] font-semibold text-[#B8C0D6]"
+                    >
+                      <Mail className="h-3.5 w-3.5 shrink-0 text-[#4DC8E8]" />
+                      <span className="truncate">Email</span>
+                    </a>
+                  ) : null}
+                </div>
+              </div>
 
               <div
                 onClick={(event) => event.stopPropagation()}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 10,
-                }}
+                className="grid grid-cols-[minmax(0,1fr)_44px] gap-2"
               >
                 <IntakeActionButton
                   record={record}
                   onToggleExpanded={toggleExpanded}
                 />
-                <ChevronDown
-                  style={{
-                    color: HATCH.textMuted,
-                    width: 18,
-                    height: 18,
-                    transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.15s",
-                  }}
-                />
+                <button
+                  type="button"
+                  aria-label={
+                    expanded ? "Collapse intake lead" : "Expand intake lead"
+                  }
+                  onClick={() => toggleExpanded(record.id)}
+                  className="grid min-h-11 place-items-center rounded-lg border border-white/[0.08] bg-white/[0.03]"
+                >
+                  <ChevronDown
+                    style={{
+                      color: HATCH.textMuted,
+                      width: 18,
+                      height: 18,
+                      transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.15s",
+                    }}
+                  />
+                </button>
               </div>
 
               {expanded ? <MobileIntakeDetails record={record} /> : null}

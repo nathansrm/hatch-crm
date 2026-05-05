@@ -1,5 +1,6 @@
 import { MobileContent } from "../layout/MobileContent";
 import MobileHeader from "../layout/MobileHeader";
+import { MobileAppHeader, MobileAvatar } from "../layout/MobileChrome";
 import { TasksListContent } from "./TasksListContent";
 import { useTranslate } from "ra-core";
 
@@ -8,9 +9,11 @@ export const MobileTasksList = () => {
   return (
     <>
       <MobileHeader>
-        <h1 className="text-xl font-semibold">
-          {translate("resources.tasks.name", { smart_count: 2 })}
-        </h1>
+        <MobileAppHeader
+          title={translate("resources.tasks.name", { smart_count: 2 })}
+          subtitle="Mine, sales, delivery"
+          actions={<MobileAvatar label="N" />}
+        />
       </MobileHeader>
       <MobileContent>
         <TasksListContent />

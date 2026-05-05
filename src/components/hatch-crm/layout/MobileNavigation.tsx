@@ -3,10 +3,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Home, Inbox, ListTodo, Plus, Users } from "lucide-react";
+import {
+  BarChart3,
+  BriefcaseBusiness,
+  CircleDollarSign,
+  FileText,
+  Home,
+  Inbox,
+  ListTodo,
+  MoreHorizontal,
+  Plus,
+  Settings,
+  Users,
+} from "lucide-react";
 import { useTranslate } from "ra-core";
 import { Link, matchPath, useLocation, useMatch } from "react-router";
 import { ContactCreateSheet } from "../contacts/ContactCreateSheet";
@@ -32,6 +45,13 @@ export const MobileNavigation = () => {
     currentPath = "/deals";
   } else if (matchPath("/intake_leads/*", location.pathname)) {
     currentPath = "/intake_leads";
+  } else if (
+    matchPath("/reports/*", location.pathname) ||
+    matchPath("/delivery/*", location.pathname) ||
+    matchPath("/resources/*", location.pathname) ||
+    matchPath("/settings/*", location.pathname)
+  ) {
+    currentPath = "/more";
   } else {
     currentPath = false;
   }
@@ -44,50 +64,49 @@ export const MobileNavigation = () => {
   return (
     <nav
       aria-label={translate("crm.navigation.label")}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-secondary h-14"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.07] bg-[#0A0F1E]/95 shadow-[0_-16px_34px_rgba(0,0,0,0.3)] backdrop-blur-xl"
       style={{
         // iOS bug: even though viewport is set correctly, the bottom safe area inset is not accounted for
         // So we manually add some padding to avoid the navigation being too close to the home bar
         paddingBottom: isPwa && isWebiOS ? 15 : undefined,
         // We use box-sizing: border-box, so the height contains the padding.
         // To actually increase the padding, we need to increase the height as well
-        height:
-          "calc(var(--spacing)) * 6" + (isPwa && isWebiOS ? " + 15px" : ""),
+        height: isPwa && isWebiOS ? "calc(72px + 15px)" : "72px",
       }}
     >
-      <div className="flex justify-center">
-        <>
-          <NavigationButton
-            href="/"
-            Icon={Home}
-            label={translate("ra.page.dashboard")}
-            isActive={currentPath === "/"}
-          />
-          <NavigationButton
-            href="/contacts"
-            Icon={Users}
-            label={translate("resources.contacts.name", {
-              smart_count: 2,
-            })}
-            isActive={currentPath === "/contacts"}
-          />
-          <CreateButton />
-          <NavigationButton
-            href="/tasks"
-            Icon={ListTodo}
-            label={translate("resources.tasks.name", { smart_count: 2 })}
-            isActive={currentPath === "/tasks"}
-          />
-          <NavigationButton
-            href="/intake_leads"
-            Icon={Inbox}
-            label={translate("resources.intake_leads.name", {
-              smart_count: 2,
-              _: "Intake",
-            })}
-            isActive={currentPath === "/intake_leads"}
-          />
-        </>
+      <div className="relative mx-auto grid h-full max-w-md grid-cols-5 items-start px-1 pt-1.5">
+        <NavigationButton
+          href="/"
+          Icon={Home}
+          label={translate("ra.page.dashboard")}
+          isActive={currentPath === "/"}
+        />
+        <NavigationButton
+          href="/contacts"
+          Icon={Users}
+          label={translate("resources.contacts.name", {
+            smart_count: 2,
+          })}
+          isActive={currentPath === "/contacts"}
+        />
+        <NavigationButton
+          href="/deals"
+          Icon={CircleDollarSign}
+          label={translate("resources.deals.name", {
+            smart_count: 2,
+            _: "Deals",
+          })}
+          isActive={currentPath === "/deals"}
+        />
+        <NavigationButton
+          href="/tasks"
+          Icon={ListTodo}
+          label={translate("resources.tasks.name", { smart_count: 2 })}
+          isActive={currentPath === "/tasks"}
+        />
+        <MoreButton
+          isActive={currentPath === "/more" || currentPath === "/intake_leads"}
+        />
       </div>
     </nav>
   );
@@ -108,18 +127,20 @@ const NavigationButton = ({
     asChild
     variant="ghost"
     className={cn(
-      "flex-col gap-1 h-auto py-2 px-1 rounded-md w-16",
-      isActive ? null : "text-muted-foreground",
+      "mx-auto h-auto w-full max-w-[4.25rem] flex-col gap-1 rounded-lg px-1 py-1.5 text-[0.62rem] font-semibold",
+      isActive
+        ? "text-[#4DC8E8]"
+        : "text-[#7f8ba8] hover:bg-white/[0.04] hover:text-[#eceef5]",
     )}
   >
     <Link to={href}>
-      <Icon className="size-6" />
-      <span className="text-[0.6rem] font-medium">{label}</span>
+      <Icon className="size-5" />
+      <span className="max-w-full truncate">{label}</span>
     </Link>
   </Button>
 );
 
-const CreateButton = () => {
+const MoreButton = ({ isActive }: { isActive: boolean }) => {
   const translate = useTranslate();
   const contact_id = useMatch("/contacts/:id/*")?.params.id;
   const [contactCreateOpen, setContactCreateOpen] = useState(false);
@@ -147,21 +168,26 @@ const CreateButton = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="default"
-            size="icon"
-            className="h-16 w-16 rounded-full -mt-3"
-            aria-label={translate("ra.action.create")}
+            variant="ghost"
+            className={cn(
+              "mx-auto h-auto w-full max-w-[4.25rem] flex-col gap-1 rounded-lg px-1 py-1.5 text-[0.62rem] font-semibold",
+              isActive
+                ? "text-[#4DC8E8]"
+                : "text-[#7f8ba8] hover:bg-white/[0.04] hover:text-[#eceef5]",
+            )}
           >
-            <Plus className="size-10" />
+            <MoreHorizontal className="size-5" />
+            <span>More</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="end" sideOffset={10} className="min-w-56">
           <DropdownMenuItem
             className="h-12 px-4 text-base font-medium"
             onSelect={() => {
               setDealCreateOpen(true);
             }}
           >
+            <Plus className="mr-2 size-4 text-[#4DC8E8]" />
             New Lead
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -170,6 +196,7 @@ const CreateButton = () => {
               setContactCreateOpen(true);
             }}
           >
+            <Plus className="mr-2 size-4 text-[#4DC8E8]" />
             {translate("resources.contacts.forcedCaseName")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -178,6 +205,7 @@ const CreateButton = () => {
               setNoteCreateOpen(true);
             }}
           >
+            <Plus className="mr-2 size-4 text-[#4DC8E8]" />
             {translate("resources.notes.forcedCaseName")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -186,7 +214,39 @@ const CreateButton = () => {
               setTaskCreateOpen(true);
             }}
           >
+            <Plus className="mr-2 size-4 text-[#4DC8E8]" />
             {translate("resources.tasks.forcedCaseName")}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/intake_leads" className="flex h-11 items-center gap-2">
+              <Inbox className="size-4" />
+              Intake
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/reports" className="flex h-11 items-center gap-2">
+              <BarChart3 className="size-4" />
+              Reports
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/delivery" className="flex h-11 items-center gap-2">
+              <BriefcaseBusiness className="size-4" />
+              Delivery
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/resources" className="flex h-11 items-center gap-2">
+              <FileText className="size-4" />
+              Resources
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/settings" className="flex h-11 items-center gap-2">
+              <Settings className="size-4" />
+              Settings
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

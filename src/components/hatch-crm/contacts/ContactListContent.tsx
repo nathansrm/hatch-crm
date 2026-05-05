@@ -471,7 +471,12 @@ const QuickAction = ({
 
   if (!href || disabled) {
     return (
-      <span aria-label={label} aria-disabled style={baseStyle}>
+      <span
+        aria-label={label}
+        aria-disabled
+        style={baseStyle}
+        onClick={(event) => event.stopPropagation()}
+      >
         {children}
       </span>
     );
@@ -479,14 +484,24 @@ const QuickAction = ({
 
   if (href.startsWith("/")) {
     return (
-      <Link to={href} aria-label={label} style={baseStyle}>
+      <Link
+        to={href}
+        aria-label={label}
+        style={baseStyle}
+        onClick={(event) => event.stopPropagation()}
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <a href={href} aria-label={label} style={baseStyle}>
+    <a
+      href={href}
+      aria-label={label}
+      style={baseStyle}
+      onClick={(event) => event.stopPropagation()}
+    >
       {children}
     </a>
   );
@@ -547,7 +562,7 @@ export const ContactListContentMobile = () => {
   }
 
   return (
-    <div className="md:divide-y">
+    <div className="space-y-2.5">
       {contacts.map((contact) => (
         <RecordContextProvider key={contact.id} value={contact}>
           <ContactItemContentMobile contact={contact} />
@@ -566,23 +581,29 @@ export const ContactListContentMobile = () => {
 
 const ContactItemContentMobile = ({ contact }: { contact: Contact }) => {
   const translate = useTranslate();
+  const navigate = useNavigate();
+  const primaryEmail =
+    contact.email_jsonb?.find((email) => email.type === "Work")?.email ??
+    contact.email_jsonb?.[0]?.email;
+  const primaryPhone =
+    contact.phone_jsonb?.find((phone) => phone.type === "Work")?.number ??
+    contact.phone_jsonb?.[0]?.number;
+  const hasTasks = (contact.nb_tasks ?? 0) > 0;
+
   return (
-    <Link
-      to={`/contacts/${contact.id}/show`}
-      className="flex flex-row gap-4 items-center py-2 hover:bg-muted transition-colors"
+    <article
+      onClick={() => navigate(`/contacts/${contact.id}/show`)}
+      className="block rounded-xl border border-white/[0.07] bg-[#0d1424] p-3 shadow-[0_12px_24px_rgba(0,0,0,0.2)] transition-colors active:bg-white/[0.04]"
     >
-      <Avatar />
-      <div className="flex flex-col grow justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between">
-            <div className="font-medium">
-              <RecordRepresentation />
-            </div>
-            <Status status={contact.status} />
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <div className="flex flex-col gap-1">
-              <span>
+      <div className="flex items-start gap-3">
+        <Avatar />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-bold text-[#eceef5]">
+                <RecordRepresentation />
+              </div>
+              <div className="mt-1 truncate text-xs text-[#9aa3be]">
                 {contact.title && contact.company_id != null
                   ? `${translate("resources.contacts.position_at", {
                       title: contact.title,
@@ -597,30 +618,111 @@ const ContactItemContentMobile = ({ contact }: { contact: Contact }) => {
                     <TextField source="name" />
                   </ReferenceField>
                 )}
-              </span>
-              {contact.nb_tasks ? (
-                <span>
-                  {translate("crm.common.task_count", {
-                    smart_count: contact.nb_tasks,
-                  })}
-                </span>
-              ) : null}
-              {contact.lead_source_id != null && (
-                <span>
-                  Lead Source:{" "}
-                  <ReferenceField
-                    source="lead_source_id"
-                    reference="lead_sources"
-                    link={false}
-                  >
-                    <TextField source="name" />
-                  </ReferenceField>
-                </span>
-              )}
+              </div>
             </div>
+            <Status status={contact.status} />
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {hasTasks ? (
+              <span className="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[11px] font-bold text-amber-200">
+                {translate("crm.common.task_count", {
+                  smart_count: contact.nb_tasks,
+                })}
+              </span>
+            ) : null}
+            {contact.lead_source_id != null && (
+              <span className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-1 text-[11px] font-semibold text-[#9aa3be]">
+                <ReferenceField
+                  source="lead_source_id"
+                  reference="lead_sources"
+                  link={false}
+                >
+                  <TextField source="name" />
+                </ReferenceField>
+              </span>
+            )}
+          </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/[0.07] pt-3">
+            <MobileContactAction
+              href={primaryPhone ? `tel:${primaryPhone}` : undefined}
+              label="Call contact"
+              disabled={!primaryPhone}
+            >
+              <Phone style={{ width: 14, height: 14 }} />
+              Call
+            </MobileContactAction>
+            <MobileContactAction
+              href={primaryEmail ? `mailto:${primaryEmail}` : undefined}
+              label="Email contact"
+              disabled={!primaryEmail}
+            >
+              <Mail style={{ width: 14, height: 14 }} />
+              Email
+            </MobileContactAction>
+            <MobileContactAction
+              href={`/contacts/${contact.id}/show`}
+              label="Open contact profile"
+            >
+              <ExternalLink style={{ width: 14, height: 14 }} />
+              Profile
+            </MobileContactAction>
           </div>
         </div>
       </div>
-    </Link>
+    </article>
+  );
+};
+
+const MobileContactAction = ({
+  href,
+  label,
+  disabled,
+  children,
+}: {
+  href?: string;
+  label: string;
+  disabled?: boolean;
+  children: ReactNode;
+}) => {
+  const className =
+    "flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] text-[11px] font-bold text-[#b8c0d6]";
+
+  if (!href || disabled) {
+    return (
+      <span
+        aria-label={label}
+        aria-disabled
+        className={`${className} opacity-40`}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </span>
+    );
+  }
+
+  if (href.startsWith("/")) {
+    return (
+      <Link
+        to={href}
+        aria-label={label}
+        className={className}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      className={className}
+      onClick={(event) => event.stopPropagation()}
+    >
+      {children}
+    </a>
   );
 };

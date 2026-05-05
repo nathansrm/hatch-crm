@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useDataProvider, useLogin, useNotify, useTranslate } from "ra-core";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -259,6 +259,13 @@ export const SignupPage = () => {
                   })}
                 </SSOAuthButton>
               ) : null}
+              <Button
+                asChild
+                variant="outline"
+                className="min-h-11 w-full border-[rgba(77,200,232,0.35)] bg-transparent font-semibold text-[#ECEEF5] hover:border-[#7DDCF0] hover:bg-[rgba(77,200,232,0.08)] hover:text-[#7DDCF0]"
+              >
+                <Link to="/login">Log in</Link>
+              </Button>
             </div>
           </form>
         </HatchCard>

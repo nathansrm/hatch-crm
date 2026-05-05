@@ -34,6 +34,7 @@ import { TopToolbar } from "../layout/TopToolbar";
 import { InfinitePagination } from "../misc/InfinitePagination";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
+import { MobileAppHeader, MobileAvatar } from "../layout/MobileChrome";
 import { HatchPageHeader, HatchPanel } from "../_primitives";
 import { ContactCreateDialog } from "./ContactCreateDialog";
 import { matchPath, useLocation } from "react-router";
@@ -448,7 +449,8 @@ export const ContactListMobile = () => {
 };
 
 const ContactListLayoutMobile = () => {
-  const { isPending, data, error, filterValues } = useListContext();
+  const { isPending, data, error, filterValues, total } =
+    useListContext<Contact>();
 
   const hasFilters = filterValues && Object.keys(filterValues).length > 0;
 
@@ -457,9 +459,16 @@ const ContactListLayoutMobile = () => {
   return (
     <div>
       <MobileHeader>
-        <ContactListFilter />
+        <MobileAppHeader
+          title="Contacts"
+          subtitle={`${total ?? 0} records`}
+          actions={<MobileAvatar label="N" />}
+        />
       </MobileHeader>
       <MobileContent>
+        <div className="mb-3">
+          <ContactListFilter />
+        </div>
         <ContactListFilterSummary />
         <ContactListContentMobile />
         {!error && (

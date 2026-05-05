@@ -36,6 +36,8 @@ dist/
 /lib/
 .env
 *storybook.log
+vite-dev*.log
+supabase-functions*.log
 
 # Shadcn Registry
 public/r/

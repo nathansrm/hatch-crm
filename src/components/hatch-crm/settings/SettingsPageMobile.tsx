@@ -45,6 +45,7 @@ import MobileHeader from "../layout/MobileHeader";
 import ImageEditorField from "../misc/ImageEditorField";
 import type { CrmDataProvider } from "../providers/types";
 import type { SalesFormData } from "../types";
+import { GmailConnectionPanel } from "./GmailConnectionPanel";
 
 const ChangePasswordButton = () => {
   const translate = useTranslate();
@@ -106,6 +107,7 @@ export const SettingsPageMobile = () => {
         <div className="flex flex-col min-h-[calc(100dvh-3.5rem-4.5rem)]">
           <div className="space-y-6">
             <ProfileSection />
+            <GmailConnectionPanel surface="mobile" />
             <PreferencesSection />
             <InboundEmailSection />
             <McpServerSection />

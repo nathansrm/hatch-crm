@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
+import { sendGmailMessageForUser } from "../_shared/gmailClient.ts";
 import { supabaseAdmin } from "../_shared/supabaseAdmin.ts";
 
 const RESPONSE_CORS_HEADERS = {
@@ -42,10 +43,6 @@ interface OutreachStepRollupRow {
   sent_at: string | null;
   subject: string | null;
   body: string | null;
-}
-
-interface PostmarkSuccessResponse {
-  MessageID: string;
 }
 
 const DRAFT_STATUS_MAP: Record<string, CurrentDraftStatus> = {
@@ -261,27 +258,20 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Lead must have an email address" }, 400);
     }
 
-    const postmarkRes = await fetch("https://api.postmarkapp.com/email", {
-      method: "POST",
-      headers: {
-        "X-Postmark-Server-Token": Deno.env.get("POSTMARK_SERVER_TOKEN") ?? "",
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        From: Deno.env.get("POSTMARK_FROM_ADDRESS") ?? "",
-        To: recipientEmail,
-        Subject: step.subject ?? "(no subject)",
-        HtmlBody: `<div>${(step.body ?? "").replace(/\n/g, "<br>")}</div>`,
-        TextBody: step.body ?? "",
-        MessageStream: Deno.env.get("POSTMARK_OUTREACH_STREAM") ?? "outbound",
-        ReplyTo: Deno.env.get("POSTMARK_FROM_ADDRESS") ?? "",
-      }),
-    });
+    let gmailSendResult: {
+      messageId: string;
+      threadId: string | null;
+      from: string;
+    } | null = null;
 
-    if (!postmarkRes.ok) {
-      const postmarkErrorText = await postmarkRes.text();
-
+    try {
+      gmailSendResult = await sendGmailMessageForUser({
+        userId: authData.user.id,
+        to: recipientEmail,
+        subject: step.subject ?? "(no subject)",
+        body: step.body ?? "",
+      });
+    } catch (sendError) {
       const { error: failedUpdateError } = await supabaseAdmin
         .from("outreach_steps")
         .update({ status: "failed" })
@@ -347,25 +337,30 @@ Deno.serve(async (req: Request) => {
 
       await logEvent(
         "send-outreach",
-        "postmark_send_failed",
+        "gmail_send_failed",
         "outreach_step",
         String(step.id),
         payload as unknown as Record<string, unknown>,
         {
-          status: postmarkRes.status,
-          status_text: postmarkRes.statusText,
-          body: postmarkErrorText,
+          error:
+            sendError instanceof Error ? sendError.message : String(sendError),
         },
       );
 
-      return jsonResponse({ error: "Postmark send failed" }, 502);
+      return jsonResponse(
+        {
+          error:
+            sendError instanceof Error
+              ? sendError.message
+              : "Gmail send failed",
+        },
+        502,
+      );
     }
-
-    const postmarkData = (await postmarkRes.json()) as PostmarkSuccessResponse;
 
     const { error: providerMessageUpdateError } = await supabaseAdmin
       .from("outreach_steps")
-      .update({ provider_message_id: postmarkData.MessageID })
+      .update({ provider_message_id: gmailSendResult.messageId })
       .eq("id", step.id);
 
     if (providerMessageUpdateError) {
@@ -463,7 +458,10 @@ Deno.serve(async (req: Request) => {
     }
 
     const result = {
-      message_id: postmarkData.MessageID,
+      message_id: gmailSendResult.messageId,
+      thread_id: gmailSendResult.threadId,
+      provider: "gmail",
+      from: gmailSendResult.from,
       step_id: step.id,
       status: "sent",
     };

@@ -60,7 +60,8 @@ export const OutreachStepCard = ({
     "completed",
     "replied",
   ].includes(step.status);
-  const canEdit = step.status === "ai_reviewed" || step.status === "action_needed";
+  const canEdit =
+    step.status === "ai_reviewed" || step.status === "action_needed";
   const canApprove =
     step.status === "ai_reviewed" || step.status === "action_needed";
   const canSend = step.status === "ai_reviewed" || step.status === "approved";

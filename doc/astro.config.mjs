@@ -19,8 +19,8 @@ export default defineConfig({
       favicon: "./favicon.svg",
       customCss: ["./src/styles/global.css"],
       logo: {
-        dark: "./public/logo_hatch_crm_dark.svg",
-        light: "./public/logo_hatch_crm_light.svg",
+        dark: "./public/hatch-theory-horizontal-dark.png",
+        light: "./public/hatch-theory-horizontal-light.png",
       },
       head: [
         {

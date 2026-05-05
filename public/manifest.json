@@ -1,6 +1,6 @@
 {
-  "short_name": "Hatch CRM",
-  "name": "Hatch CRM",
+  "short_name": "Hatch Theory",
+  "name": "Hatch Theory Solutions",
   "icons": [
     {
       "src": "favicon.ico",
@@ -69,6 +69,6 @@
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#4DC8E8",
-  "background_color": "#ffffff"
+  "theme_color": "#1E40AF",
+  "background_color": "#0A0F1E"
 }

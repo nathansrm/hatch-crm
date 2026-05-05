@@ -93,9 +93,13 @@ async function inviteUser(req: Request, currentUserSale: any) {
 
   const parsed = InviteUserSchema.safeParse(await req.json());
   if (!parsed.success) {
-    return createErrorResponse(400, parsed.error.issues[0]?.message ?? "Invalid input");
+    return createErrorResponse(
+      400,
+      parsed.error.issues[0]?.message ?? "Invalid input",
+    );
   }
-  const { email, password, first_name, last_name, disabled, administrator } = parsed.data;
+  const { email, password, first_name, last_name, disabled, administrator } =
+    parsed.data;
 
   const { data, error: userError } = await supabaseAdmin.auth.admin.createUser({
     email,
@@ -204,9 +208,20 @@ async function inviteUser(req: Request, currentUserSale: any) {
 async function patchUser(req: Request, currentUserSale: any) {
   const parsed = PatchUserSchema.safeParse(await req.json());
   if (!parsed.success) {
-    return createErrorResponse(400, parsed.error.issues[0]?.message ?? "Invalid input");
+    return createErrorResponse(
+      400,
+      parsed.error.issues[0]?.message ?? "Invalid input",
+    );
   }
-  const { sales_id, email, first_name, last_name, avatar, administrator, disabled } = parsed.data;
+  const {
+    sales_id,
+    email,
+    first_name,
+    last_name,
+    avatar,
+    administrator,
+    disabled,
+  } = parsed.data;
 
   const { data: sale } = await supabaseAdmin
     .from("sales")

@@ -149,7 +149,11 @@ const CompanyConstructionInputs = () => {
       <ReferenceInput reference="trade_types" source="trade_type_id">
         <SelectInput helperText={false} optionText="name" label="Trade Type" />
       </ReferenceInput>
-      <TextInput source="service_area" helperText={false} label="Service Area" />
+      <TextInput
+        source="service_area"
+        helperText={false}
+        label="Service Area"
+      />
       <SelectInput
         source="company_size"
         helperText={false}

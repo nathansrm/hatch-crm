@@ -133,14 +133,17 @@ Deno.serve(async (req: Request) => {
       body,
       { error: "missing_business_name" },
     );
-    return jsonResponse({ error: "business_name must be a non-empty string" }, 400);
+    return jsonResponse(
+      { error: "business_name must be a non-empty string" },
+      400,
+    );
   }
 
   const metadata =
     typeof body.metadata === "object" &&
-      body.metadata !== null &&
-      !Array.isArray(body.metadata)
-      ? body.metadata as Record<string, unknown>
+    body.metadata !== null &&
+    !Array.isArray(body.metadata)
+      ? (body.metadata as Record<string, unknown>)
       : {};
 
   const payload: IngestIntakeLeadPayload = {
@@ -167,7 +170,9 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
 
       if (existingLeadErr) {
-        throw new Error(`idempotency lookup failed: ${existingLeadErr.message}`);
+        throw new Error(
+          `idempotency lookup failed: ${existingLeadErr.message}`,
+        );
       }
 
       if (existingLead) {

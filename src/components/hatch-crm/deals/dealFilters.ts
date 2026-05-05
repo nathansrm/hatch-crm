@@ -14,7 +14,9 @@ export const OPEN_DEALS_LIST_PARAMS = {
   filter: OPEN_DEALS_FILTER,
 } as const;
 
-export const isOpenDeal = (deal: { archived_at?: string | null; stage?: string | null }) =>
-  deal.archived_at == null && !isTerminalDealStage(deal.stage);
+export const isOpenDeal = (deal: {
+  archived_at?: string | null;
+  stage?: string | null;
+}) => deal.archived_at == null && !isTerminalDealStage(deal.stage);
 
 export { isTerminalDealStage, UNARCHIVED_DEALS_LIST_PARAMS };

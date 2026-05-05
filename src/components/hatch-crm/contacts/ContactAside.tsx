@@ -87,7 +87,9 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
       </HatchAsideSection>
 
       {!isPending && !!deals?.length && (
-        <HatchAsideSection title={translate("resources.deals.name", { smart_count: 2 })}>
+        <HatchAsideSection
+          title={translate("resources.deals.name", { smart_count: 2 })}
+        >
           <div className="flex flex-col gap-1">
             {deals.map((deal) => (
               <Link
@@ -112,7 +114,9 @@ export const ContactAside = ({ link = "edit" }: { link?: "edit" | "show" }) => {
                       {findDealLabel(dealStages, deal.stage)}
                     </Badge>
                     {deal.amount > 0 ? (
-                      <span>{formatCompactCurrency(deal.amount, currency)}</span>
+                      <span>
+                        {formatCompactCurrency(deal.amount, currency)}
+                      </span>
                     ) : null}
                   </div>
                 </div>

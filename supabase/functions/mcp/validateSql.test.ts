@@ -59,14 +59,8 @@ describe("validateReadOnly", () => {
       "SELECT set_config('role', 'postgres', true)",
     ],
     ["pg_sleep DoS", "SELECT pg_sleep(100)"],
-    [
-      "pg_read_file file access",
-      "SELECT pg_read_file('/etc/passwd')",
-    ],
-    [
-      "lo_import large object",
-      "SELECT lo_import('/etc/passwd')",
-    ],
+    ["pg_read_file file access", "SELECT pg_read_file('/etc/passwd')"],
+    ["lo_import large object", "SELECT lo_import('/etc/passwd')"],
     ["dblink remote exec", "SELECT dblink('host=evil', 'SELECT 1')"],
     [
       "writable CTE (DELETE)",

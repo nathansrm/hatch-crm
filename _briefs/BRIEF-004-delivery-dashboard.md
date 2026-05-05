@@ -13,7 +13,7 @@ Add a second dashboard view ("Delivery") alongside the existing Pipeline view, s
 ## Environment
 
 **Branch:** `feat/delivery-dashboard` (create from `main`)
-**Setup:** `npm install`, `npm run dev:demo`
+**Setup:** `npm install`, `npm run dev`
 **Test command:** `npm run test:unit:app`
 **When done:** Push to origin and open a PR against `main`
 
@@ -28,7 +28,7 @@ Add a second dashboard view ("Delivery") alongside the existing Pipeline view, s
 - [ ] `src/components/hatch-crm/dashboard/widgets/HandoffQueue.tsx` — Won deals awaiting project kickoff
 - [ ] `src/components/hatch-crm/dashboard/widgets/CapacityPanel.tsx` — utilization warning
 - [ ] `src/components/hatch-crm/dashboard/widgets/ActiveProjectsGrid.tsx` — project cards with progress
-- [ ] `demo/` — extend deal generator so some Won deals have delivery fields set (project_status, progress, projected_hours)
+- [ ] Story/test fixtures — extend deal fixture data so some Won deals have delivery fields set (project_status, progress, projected_hours)
 
 ### Out of Scope
 - [ ] `DealCard.tsx` (BRIEF-002), `DealShow.tsx` (BRIEF-003) — different branch, no overlap
@@ -94,7 +94,7 @@ project_started_at?: string;
 3. **Capacity Utilization** — `Math.round(activeProjects.reduce((s, d) => s + (d.projected_hours ?? 0), 0) / weeklyCapacity * 100)` — fetch `weekly_capacity_hours` from `agency_settings` (single GET). Show as `{N}%` with color: green < 80, amber 80-95, red > 95.
 4. **Pending Handoff Value** — sum of amount on Won deals without project_status (motivates moving them through)
 
-For demo mode: `agency_settings` won't exist in fakerest — hardcode `weeklyCapacity = 40` as a fallback with a comment.
+For fixture mode: `agency_settings` may not exist in fakerest — hardcode `weeklyCapacity = 40` as a fallback with a comment.
 
 **HandoffQueue.tsx** — list of Won deals without `project_status`. Each row:
 ```
@@ -177,7 +177,7 @@ If no active projects: "No active projects. Won deals pending handoff will appea
 
 ## Manual Test Checklist
 
-- [ ] In demo mode, click "Delivery" tab — full dashboard renders without crash, all 4 KPI cards show
+- [ ] In the app, click "Delivery" tab — full dashboard renders without crash, all 4 KPI cards show
 - [ ] Refresh the page with `?view=delivery` in URL — Delivery tab is active on load
 - [ ] Click "Start Onboarding" on a HandoffQueue item — deal disappears from queue and appears in ActiveProjectsGrid
 - [ ] Verify Pipeline tab is completely unchanged after switching back from Delivery

@@ -28,12 +28,7 @@ const techMaturityChoices = ["Paper", "Basic Digital", "Automated"] as const;
 export const generateCompanies = (db: Db, size = 55): Required<Company>[] => {
   return Array.from(Array(size).keys()).map((id) => {
     const name = company.companyName();
-    const generatedSize = random.arrayElement(sizes) as
-      | 1
-      | 10
-      | 50
-      | 250
-      | 500;
+    const generatedSize = random.arrayElement(sizes) as 1 | 10 | 50 | 250 | 500;
     const city = address.city();
     const generatedCompany: Required<Company> = {
       id,

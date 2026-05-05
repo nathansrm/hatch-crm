@@ -6,7 +6,8 @@ export const getTodayDateKey = () => {
   return `${date.getFullYear()}-${month}-${day}`;
 };
 
-export const getDateKey = (value?: string | null) => value?.slice(0, 10) ?? null;
+export const getDateKey = (value?: string | null) =>
+  value?.slice(0, 10) ?? null;
 
 export const getValidDate = (value?: string | null) => {
   if (!value) return null;
@@ -21,7 +22,13 @@ type DealStageLike = {
 };
 
 const TERMINAL_DEAL_STAGE_VALUES = new Set(["won", "lost"]);
-const PIPELINE_STAGE_COLORS = ["#4DC8E8", "#A78BFA", "#5EEAD4", "#F5B84A", "#EF5A6F"];
+const PIPELINE_STAGE_COLORS = [
+  "#4DC8E8",
+  "#A78BFA",
+  "#5EEAD4",
+  "#F5B84A",
+  "#EF5A6F",
+];
 
 // TODO: Replace the large per-page fetches with server-side dashboard aggregates.
 export const DASHBOARD_COLLECTION_PAGINATION = {
@@ -39,8 +46,9 @@ export const UNARCHIVED_DEALS_LIST_PARAMS = {
 export const isTerminalDealStage = (stageValue?: string | null) =>
   stageValue != null && TERMINAL_DEAL_STAGE_VALUES.has(stageValue);
 
-export const getNonTerminalDealStages = <T extends DealStageLike>(dealStages: T[]) =>
-  dealStages.filter((stage) => !isTerminalDealStage(stage.value));
+export const getNonTerminalDealStages = <T extends DealStageLike>(
+  dealStages: T[],
+) => dealStages.filter((stage) => !isTerminalDealStage(stage.value));
 
 export const getNonTerminalDealStageValues = (dealStages: DealStageLike[]) =>
   getNonTerminalDealStages(dealStages).map((stage) => stage.value);
@@ -123,9 +131,16 @@ export const getRangeWindow = (range: HeroRange) => {
 export const getHeroEyebrow = (range: HeroRange) => {
   const now = new Date();
   if (range === "30d") return "Pipeline Value · Created in Last 30 Days";
-  if (range === "ytd") return `Pipeline Value · Created YTD ${now.getFullYear()}`;
+  if (range === "ytd")
+    return `Pipeline Value · Created YTD ${now.getFullYear()}`;
   const q = Math.floor(now.getMonth() / 3) + 1;
   return `Pipeline Value · Created in Q${q} ${now.getFullYear()}`;
 };
 
-export const AVATAR_COLORS = ["#4DC8E8", "#A78BFA", "#F5B84A", "#34D399", "#EF5A6F"];
+export const AVATAR_COLORS = [
+  "#4DC8E8",
+  "#A78BFA",
+  "#F5B84A",
+  "#34D399",
+  "#EF5A6F",
+];

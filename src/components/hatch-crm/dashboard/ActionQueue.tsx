@@ -55,9 +55,15 @@ export const ActionQueue = () => {
       urgency: daysOverdue >= 3 ? "red" : "amber",
       days: daysOverdue,
       onClick: () =>
-        redirect(`/contacts/${task.contact_id}/show`, undefined, undefined, undefined, {
-          _scrollToTop: false,
-        }),
+        redirect(
+          `/contacts/${task.contact_id}/show`,
+          undefined,
+          undefined,
+          undefined,
+          {
+            _scrollToTop: false,
+          },
+        ),
     });
   });
 
@@ -100,9 +106,7 @@ export const ActionQueue = () => {
         <div className="mr-3 flex">
           <Zap className="text-primary w-6 h-6" />
         </div>
-        <h2
-          className="text-xl font-semibold text-muted-foreground font-heading"
-        >
+        <h2 className="text-xl font-semibold text-muted-foreground font-heading">
           Action Queue
         </h2>
         <Badge variant="secondary" className="ml-2">

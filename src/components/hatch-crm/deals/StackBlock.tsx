@@ -28,7 +28,9 @@ export const StackBlock = ({ record }: { record: Deal }) => {
                 key={slug}
                 className="flex flex-col gap-2 rounded-md border p-2 sm:flex-row sm:items-center"
               >
-                <span className="text-sm font-medium">{tool?.name ?? slug}</span>
+                <span className="text-sm font-medium">
+                  {tool?.name ?? slug}
+                </span>
                 <Badge variant="outline" className="w-fit text-xs">
                   {tool?.category ?? "Other"}
                 </Badge>

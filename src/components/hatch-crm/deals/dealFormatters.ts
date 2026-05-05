@@ -1,4 +1,7 @@
-import { defaultDealStages, defaultDealCategories } from "../root/defaultConfiguration";
+import {
+  defaultDealStages,
+  defaultDealCategories,
+} from "../root/defaultConfiguration";
 
 const stageLabels: Record<string, string> = Object.fromEntries(
   defaultDealStages.map((s) => [s.value, s.label]),

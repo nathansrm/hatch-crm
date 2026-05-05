@@ -122,7 +122,12 @@ export const Task = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <div
-          style={{ display: "flex", alignItems: "flex-start", gap: 14, flex: 1 }}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 14,
+            flex: 1,
+          }}
           onClick={isMobile ? handleCheck() : undefined}
         >
           <button

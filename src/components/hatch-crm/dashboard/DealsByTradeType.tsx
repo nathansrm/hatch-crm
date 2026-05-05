@@ -40,22 +40,36 @@ export const DealsByTradeType = memo(() => {
     for (const c of companies) {
       if (c.trade_type_id) {
         const tt = tradeTypes.find((t) => t.id === c.trade_type_id);
-        if (tt) companyTradeMap.set(c.id as number, { name: tt.name, id: tt.id });
+        if (tt)
+          companyTradeMap.set(c.id as number, { name: tt.name, id: tt.id });
       }
     }
 
-    const counts: Record<string, { count: number; amount: number; tradeTypeId: string | null }> = {};
+    const counts: Record<
+      string,
+      { count: number; amount: number; tradeTypeId: string | null }
+    > = {};
     for (const deal of deals) {
       const trade = companyTradeMap.get(deal.company_id as number);
       const tradeName = trade?.name ?? "Unassigned";
-      if (!counts[tradeName]) counts[tradeName] = { count: 0, amount: 0, tradeTypeId: trade?.id ?? null };
+      if (!counts[tradeName])
+        counts[tradeName] = {
+          count: 0,
+          amount: 0,
+          tradeTypeId: trade?.id ?? null,
+        };
       counts[tradeName].count++;
       counts[tradeName].amount += deal.amount ?? 0;
     }
 
     return Object.entries(counts)
       .sort((a, b) => b[1].count - a[1].count)
-      .map(([name, { count, amount, tradeTypeId }]) => ({ name, count, amount, tradeTypeId }));
+      .map(([name, { count, amount, tradeTypeId }]) => ({
+        name,
+        count,
+        amount,
+        tradeTypeId,
+      }));
   }, [deals, companies, tradeTypes]);
 
   if (dealsPending || companiesPending || tradeTypesPending) return null;
@@ -67,18 +81,14 @@ export const DealsByTradeType = memo(() => {
         <div className="mr-3 flex">
           <Briefcase className="text-muted-foreground w-5 h-5" />
         </div>
-        <h2
-          className="text-lg font-semibold text-muted-foreground font-heading"
-        >
+        <h2 className="text-lg font-semibold text-muted-foreground font-heading">
           Deals by Trade Type
         </h2>
       </div>
       <div className="space-y-2">
         {grouped.map(({ name, count, amount, tradeTypeId }) => {
           const content = (
-            <div
-              className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/50"
-            >
+            <div className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/50">
               <span className="text-sm font-medium">{name}</span>
               <div className="flex items-center gap-3">
                 <span className="text-xs text-muted-foreground">

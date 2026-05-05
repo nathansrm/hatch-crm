@@ -5,8 +5,7 @@ import { supabaseAdmin } from "../_shared/supabaseAdmin.ts";
 
 const RESPONSE_CORS_HEADERS = {
   ...corsHeaders,
-  "Access-Control-Allow-Headers":
-    `${corsHeaders["Access-Control-Allow-Headers"]}, x-api-key`,
+  "Access-Control-Allow-Headers": `${corsHeaders["Access-Control-Allow-Headers"]}, x-api-key`,
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -168,14 +167,9 @@ Deno.serve(async (req: Request) => {
     !Number.isFinite(outreachStepId) ||
     !Number.isInteger(outreachStepId)
   ) {
-    await logEvent(
-      "send-outreach",
-      "validation_failed",
-      null,
-      null,
-      body,
-      { error: "invalid_outreach_step_id" },
-    );
+    await logEvent("send-outreach", "validation_failed", null, null, body, {
+      error: "invalid_outreach_step_id",
+    });
     return jsonResponse({ error: "outreach_step_id must be a number" }, 400);
   }
 
@@ -248,7 +242,10 @@ Deno.serve(async (req: Request) => {
         payload as unknown as Record<string, unknown>,
         { error: "invalid_channel", channel: step.channel },
       );
-      return jsonResponse({ error: "Outreach step channel must be email" }, 400);
+      return jsonResponse(
+        { error: "Outreach step channel must be email" },
+        400,
+      );
     }
 
     const recipientEmail = lead.email?.trim() ?? "";
@@ -364,7 +361,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Postmark send failed" }, 502);
     }
 
-    const postmarkData = await postmarkRes.json() as PostmarkSuccessResponse;
+    const postmarkData = (await postmarkRes.json()) as PostmarkSuccessResponse;
 
     const { error: providerMessageUpdateError } = await supabaseAdmin
       .from("outreach_steps")
@@ -384,7 +381,9 @@ Deno.serve(async (req: Request) => {
       .eq("id", step.id);
 
     if (statusUpdateError) {
-      throw new Error(`outreach_step sent update failed: ${statusUpdateError.message}`);
+      throw new Error(
+        `outreach_step sent update failed: ${statusUpdateError.message}`,
+      );
     }
 
     const { data: allStepsData, error: allStepsError } = await supabaseAdmin
@@ -393,7 +392,9 @@ Deno.serve(async (req: Request) => {
       .eq("intake_lead_id", step.intake_lead_id);
 
     if (allStepsError) {
-      throw new Error(`outreach_steps rollup query failed: ${allStepsError.message}`);
+      throw new Error(
+        `outreach_steps rollup query failed: ${allStepsError.message}`,
+      );
     }
 
     const steps = (allStepsData ?? []) as OutreachStepRollupRow[];
@@ -443,7 +444,9 @@ Deno.serve(async (req: Request) => {
       .eq("id", step.intake_lead_id);
 
     if (rollupUpdateError) {
-      throw new Error(`intake_leads rollup update failed: ${rollupUpdateError.message}`);
+      throw new Error(
+        `intake_leads rollup update failed: ${rollupUpdateError.message}`,
+      );
     }
 
     if (lead.status === "uncontacted") {

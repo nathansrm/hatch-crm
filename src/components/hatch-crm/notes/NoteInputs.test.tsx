@@ -86,17 +86,24 @@ describe("NoteInputs", () => {
   });
 
   it("should have the current date as default value for the date input", async () => {
-    const screen = await render(<Default />);
+    const fixedDate = new Date("2026-05-01T12:34:00");
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(fixedDate);
 
-    await screen.getByRole("button", { name: "Show options" }).click();
+    try {
+      const screen = await render(<Default />);
 
-    const dateInput = screen.getByLabelText("Date");
-    const currentDate = new Date();
-    const offset = currentDate.getTimezoneOffset();
-    const localDate = new Date(currentDate.getTime() - offset * 60 * 1000);
-    const expectedValue = localDate.toISOString().slice(0, 16);
+      await screen.getByRole("button", { name: "Show options" }).click();
 
-    await expect(dateInput).toHaveValue(expectedValue);
+      const dateInput = screen.getByLabelText("Date");
+      const offset = fixedDate.getTimezoneOffset();
+      const localDate = new Date(fixedDate.getTime() - offset * 60 * 1000);
+      const expectedValue = localDate.toISOString().slice(0, 16);
+
+      await expect(dateInput).toHaveValue(expectedValue);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("should use the note date instead of the current date when it is set", async () => {

@@ -36,8 +36,8 @@ export const TaskListFilter = ({
       ? "rgb(245 184 74)"
       : titleLower.includes("tomorrow") ||
           titleLower.includes("week") ||
-            titleLower.includes("upcoming") ||
-              titleLower.includes("later")
+          titleLower.includes("upcoming") ||
+          titleLower.includes("later")
         ? HATCH.cyan
         : HATCH.textMuted;
 

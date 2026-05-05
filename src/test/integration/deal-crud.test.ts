@@ -79,12 +79,10 @@ describe("Deal CRUD with contacts", () => {
     expect(deal).toBeDefined();
 
     // Link contacts via deal_contacts join table
-    const { error: linkError } = await supabase
-      .from("deal_contacts")
-      .insert([
-        { deal_id: deal!.id, contact_id: contact1Id },
-        { deal_id: deal!.id, contact_id: contact2Id },
-      ]);
+    const { error: linkError } = await supabase.from("deal_contacts").insert([
+      { deal_id: deal!.id, contact_id: contact1Id },
+      { deal_id: deal!.id, contact_id: contact2Id },
+    ]);
 
     expect(linkError).toBeNull();
 
@@ -134,10 +132,7 @@ describe("Deal CRUD with contacts", () => {
 
     const dealId = deal!.id;
 
-    const { error } = await supabase
-      .from("deals")
-      .delete()
-      .eq("id", dealId);
+    const { error } = await supabase.from("deals").delete().eq("id", dealId);
 
     expect(error).toBeNull();
 

@@ -45,13 +45,13 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       <MobileHeader>
         <div className="flex items-center gap-2 text-secondary-foreground no-underline py-3">
           <img
-            className="[.light_&]:hidden h-6"
+            className="[.light_&]:hidden h-8 w-auto max-w-[200px] object-contain"
             src={darkModeLogo}
             alt=""
             aria-hidden="true"
           />
           <img
-            className="[.dark_&]:hidden h-6"
+            className="[.dark_&]:hidden h-8 w-auto max-w-[200px] object-contain"
             src={lightModeLogo}
             alt=""
             aria-hidden="true"
@@ -226,9 +226,7 @@ const DashboardView = () => {
 const DeliveryView = () => (
   <div className="flex flex-col gap-6">
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight">
-        Delivery Dashboard
-      </h1>
+      <h1 className="text-2xl font-bold tracking-tight">Delivery Dashboard</h1>
       <p className="text-sm text-muted-foreground">
         Handoff queue, active project load, and capacity.
       </p>

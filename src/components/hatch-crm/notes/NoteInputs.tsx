@@ -134,7 +134,8 @@ export const NoteInputs = ({
       {!displayMore && (
         <div className="flex justify-end items-center gap-2">
           {/* link-variant — no Hatch primitive yet, keep as-is */}
-          <Button variant="link"
+          <Button
+            variant="link"
             size="sm"
             onClick={() => {
               setDisplayMore(!displayMore);

@@ -121,7 +121,12 @@ export const IntakeActionButton = ({
 
   if (record.status === "qualified") {
     return (
-      <HatchGhostButton type="button" size="sm" disabled className={disabledClass}>
+      <HatchGhostButton
+        type="button"
+        size="sm"
+        disabled
+        className={disabledClass}
+      >
         Promoted
       </HatchGhostButton>
     );
@@ -129,7 +134,12 @@ export const IntakeActionButton = ({
 
   if (record.status === "rejected") {
     return (
-      <HatchGhostButton type="button" size="sm" disabled className={disabledClass}>
+      <HatchGhostButton
+        type="button"
+        size="sm"
+        disabled
+        className={disabledClass}
+      >
         Rejected
       </HatchGhostButton>
     );

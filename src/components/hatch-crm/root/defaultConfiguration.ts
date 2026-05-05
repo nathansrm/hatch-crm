@@ -1,11 +1,11 @@
 import type { ConfigurationContextValue } from "./ConfigurationContext";
 
-export const defaultDarkModeLogo = "./logos/logo_hatch_crm_dark.svg";
-export const defaultLightModeLogo = "./logos/logo_hatch_crm_light.svg";
+export const defaultDarkModeLogo = "./logos/hatch-theory-horizontal-dark.png";
+export const defaultLightModeLogo = "./logos/hatch-theory-horizontal-light.png";
 
 export const defaultCurrency = "CAD";
 
-export const defaultTitle = "Hatch CRM";
+export const defaultTitle = "Hatch Theory Solutions";
 
 export const defaultCompanySectors = [
   { value: "roofing", label: "Roofing" },

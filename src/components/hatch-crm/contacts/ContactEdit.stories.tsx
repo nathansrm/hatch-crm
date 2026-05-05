@@ -3,7 +3,7 @@ import type { Meta } from "@storybook/react-vite";
 import { ContactEdit } from "./ContactEdit";
 import { Route, Routes } from "react-router";
 import { buildContact, StoryWrapper } from "@/test/StoryWrapper";
-import type { DataProvider } from "ra-core";
+import type { DataProvider, MutationMode } from "ra-core";
 
 const meta = {
   title: "Hatch CRM/Contacts/Contact Edit",
@@ -19,9 +19,11 @@ export default meta;
 
 export const ContactEditBasic = ({
   dataProvider = {},
+  mutationMode = "pessimistic",
   silent,
 }: {
   dataProvider?: Partial<DataProvider>;
+  mutationMode?: MutationMode;
   silent?: boolean;
 }) => (
   <StoryWrapper
@@ -39,16 +41,21 @@ export const ContactEditBasic = ({
     silent={silent}
   >
     <Routes>
-      <Route path="/contacts/:id" element={<ContactEdit />} />
+      <Route
+        path="/contacts/:id"
+        element={<ContactEdit mutationMode={mutationMode} />}
+      />
     </Routes>
   </StoryWrapper>
 );
 
 export const ContactEditWithEmailsAndPhones = ({
   dataProvider = {},
+  mutationMode = "pessimistic",
   silent,
 }: {
   dataProvider?: Partial<DataProvider>;
+  mutationMode?: MutationMode;
   silent?: boolean;
 }) => (
   <StoryWrapper
@@ -66,7 +73,10 @@ export const ContactEditWithEmailsAndPhones = ({
     silent={silent}
   >
     <Routes>
-      <Route path="/contacts/:id" element={<ContactEdit />} />
+      <Route
+        path="/contacts/:id"
+        element={<ContactEdit mutationMode={mutationMode} />}
+      />
     </Routes>
   </StoryWrapper>
 );

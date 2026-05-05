@@ -66,7 +66,8 @@ export const DealCardContent = ({
     : [];
   const visibleStackSlugs = stackSlugs.slice(0, 2);
   const remainingStackCount = stackSlugs.length - visibleStackSlugs.length;
-  const hasOwnerSignal = deal.dm_present !== undefined && deal.dm_present !== null;
+  const hasOwnerSignal =
+    deal.dm_present !== undefined && deal.dm_present !== null;
   const hasHoursWasted =
     deal.hours_wasted_per_week !== undefined &&
     deal.hours_wasted_per_week !== null;
@@ -101,9 +102,7 @@ export const DealCardContent = ({
             transition: "all 0.15s",
           }}
         >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <div
               style={{
                 display: "flex",

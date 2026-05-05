@@ -86,9 +86,7 @@ export const KPICards = ({
         <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <DollarSign className="h-5 w-5 text-emerald-500" />
           <div className="space-y-1">
-            <p
-              className="text-sm font-medium text-muted-foreground font-heading"
-            >
+            <p className="text-sm font-medium text-muted-foreground font-heading">
               Pipeline Value
             </p>
             <p className="text-2xl font-bold">
@@ -108,9 +106,7 @@ export const KPICards = ({
         <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <Trophy className="h-5 w-5 text-cyan-500" />
           <div className="space-y-1">
-            <p
-              className="text-sm font-medium text-muted-foreground font-heading"
-            >
+            <p className="text-sm font-medium text-muted-foreground font-heading">
               Deals Won
             </p>
             <p className="text-2xl font-bold">{dealsWon}</p>
@@ -124,9 +120,7 @@ export const KPICards = ({
         <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <Percent className="h-5 w-5 text-violet-500" />
           <div className="space-y-1">
-            <p
-              className="text-sm font-medium text-muted-foreground font-heading"
-            >
+            <p className="text-sm font-medium text-muted-foreground font-heading">
               Win Rate
             </p>
             <p className="text-2xl font-bold">
@@ -146,9 +140,7 @@ export const KPICards = ({
         <Card className="cursor-pointer gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
           <AlertCircle className="h-5 w-5 text-amber-500" />
           <div className="space-y-1">
-            <p
-              className="text-sm font-medium text-muted-foreground font-heading"
-            >
+            <p className="text-sm font-medium text-muted-foreground font-heading">
               Overdue Tasks
             </p>
             <p

@@ -128,9 +128,7 @@ const DealShowContent = () => {
                 : translate("resources.deals.invalid_date")}
             </span>
             {new Date(record.expected_closing_date) < new Date() ? (
-              <Badge
-                className="border border-[rgba(239,90,111,0.28)] bg-[rgba(239,90,111,0.08)] text-[10.5px] font-bold uppercase tracking-[0.04em] text-[#EF5A6F]"
-              >
+              <Badge className="border border-[rgba(239,90,111,0.28)] bg-[rgba(239,90,111,0.08)] text-[10.5px] font-bold uppercase tracking-[0.04em] text-[#EF5A6F]">
                 {translate("crm.common.past")}
               </Badge>
             ) : null}

@@ -11,8 +11,11 @@ export const Layout = ({ children }: React.PropsWithChildren) => {
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
           <div className="relative z-20 flex items-center text-lg font-medium">
-            <img className="h-6 mr-2" src={darkModeLogo} alt={title} />
-            {title}
+            <img
+              className="h-12 w-auto max-w-[260px] object-contain"
+              src={darkModeLogo}
+              alt={title}
+            />
           </div>
         </div>
         <div className="lg:p-8">

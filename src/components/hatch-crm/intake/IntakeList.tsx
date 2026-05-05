@@ -145,15 +145,12 @@ export const IntakeList = () => {
 const IntakeListLayout = () => {
   const translate = useTranslate();
   const { data, isPending, error, filterValues } = useListContext<IntakeLead>();
-  const { data: allIntakeLeads = [] } = useGetList<IntakeLead>(
-    "intake_leads",
-    {
-      filter: {},
-      pagination: { page: 1, perPage: 1000 },
-      sort: { field: "created_at", order: "DESC" },
-    },
-  );
-  const metricLeads = allIntakeLeads.length ? allIntakeLeads : data ?? [];
+  const { data: allIntakeLeads = [] } = useGetList<IntakeLead>("intake_leads", {
+    filter: {},
+    pagination: { page: 1, perPage: 1000 },
+    sort: { field: "created_at", order: "DESC" },
+  });
+  const metricLeads = allIntakeLeads.length ? allIntakeLeads : (data ?? []);
   const intakeMetricLeads = metricLeads.filter((lead) =>
     INTAKE_QUEUE_STATUSES.includes(
       lead.status as (typeof INTAKE_QUEUE_STATUSES)[number],
@@ -162,8 +159,8 @@ const IntakeListLayout = () => {
   const firstTouchCount = intakeMetricLeads.filter(
     (lead) => lead.status === "uncontacted",
   ).length;
-  const reviewReadyCount = intakeMetricLeads.filter((lead) =>
-    lead.current_draft_status === READY_REVIEW_STATUS,
+  const reviewReadyCount = intakeMetricLeads.filter(
+    (lead) => lead.current_draft_status === READY_REVIEW_STATUS,
   ).length;
   const inSequenceCount = intakeMetricLeads.filter(
     (lead) => lead.status === "in-sequence",
@@ -173,9 +170,9 @@ const IntakeListLayout = () => {
   ).length;
   const hasFilters = Boolean(
     filterValues &&
-    Object.entries(filterValues).some(([, value]) => {
-      return value !== undefined && value !== null && value !== "";
-    }),
+      Object.entries(filterValues).some(([, value]) => {
+        return value !== undefined && value !== null && value !== "";
+      }),
   );
 
   if (isPending) {
@@ -312,7 +309,9 @@ const IntakeListLayout = () => {
               series: [2, 4, 3, 7, 5, 6, 8, 6],
             },
           ] as const
-        ).map(({ key, ...tile }) => <IntakeMetricTile key={key} {...tile} />)}
+        ).map(({ key, ...tile }) => (
+          <IntakeMetricTile key={key} {...tile} />
+        ))}
       </div>
       {!data?.length ? (
         <IntakeEmpty hasFilters={hasFilters} />

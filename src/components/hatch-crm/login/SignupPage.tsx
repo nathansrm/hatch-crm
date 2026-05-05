@@ -119,10 +119,11 @@ export const SignupPage = () => {
       />
 
       <div className="relative flex items-center gap-3">
-        <img src={logo} alt={title} width={24} />
-        <h1 className="font-heading text-xl font-bold text-[#ECEEF5]">
-          {title}
-        </h1>
+        <img
+          src={logo}
+          alt={title}
+          className="h-10 w-auto max-w-[240px] object-contain"
+        />
       </div>
 
       <div className="relative mx-auto mt-12 max-w-md">
@@ -132,7 +133,9 @@ export const SignupPage = () => {
             Get started
           </div>
           <h2 className="font-heading text-3xl font-bold tracking-[-0.02em] text-[#ECEEF5]">
-            {translate("crm.auth.welcome_title", { _: "Welcome to Hatch CRM" })}
+            {translate("crm.auth.welcome_title", {
+              _: "Welcome to Hatch Theory Solutions",
+            })}
           </h2>
           <p className="text-sm text-[rgba(236,238,245,0.6)]">
             {translate("crm.auth.signup.create_first_user", {
@@ -236,7 +239,9 @@ export const SignupPage = () => {
                 {isSignUpPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {translate("crm.auth.signup.creating", { _: "Creating..." })}
+                    {translate("crm.auth.signup.creating", {
+                      _: "Creating...",
+                    })}
                   </>
                 ) : (
                   translate("crm.auth.signup.create_account", {

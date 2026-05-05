@@ -4,7 +4,11 @@ import { generateContacts } from "./contacts";
 import { generateDealNotes } from "./dealNotes";
 import { generateDeals } from "./deals";
 import { finalize } from "./finalize";
-import { generateIntakeLeads, generateLeadSources, generateTradeTypes } from "./intakeLeads";
+import {
+  generateIntakeLeads,
+  generateLeadSources,
+  generateTradeTypes,
+} from "./intakeLeads";
 import { generateOutreachSteps } from "./outreachSteps";
 import { generateSales } from "./sales";
 import { generateTags } from "./tags";
@@ -32,7 +36,8 @@ export default (): Db => {
       id: "r1",
       user_id: "demo",
       title: "Hatch Onboarding Package",
-      description: "Full onboarding deck for new construction clients. Covers audit process, deliverables, and next steps.",
+      description:
+        "Full onboarding deck for new construction clients. Covers audit process, deliverables, and next steps.",
       category: "onboarding",
       storage_path: null,
       file_name: "hatch-onboarding-v3.pdf",
@@ -49,12 +54,14 @@ export default (): Db => {
       id: "r2",
       user_id: "demo",
       title: "Discovery Call Script",
-      description: "15-question discovery script. Qualification gates, pain points, and budget probing.",
+      description:
+        "15-question discovery script. Qualification gates, pain points, and budget probing.",
       category: "sales",
       storage_path: null,
       file_name: "discovery-script.docx",
       file_size: 48_000,
-      file_type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      file_type:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ext: "docx",
       tags: ["sales", "scripts"],
       starred: true,
@@ -66,12 +73,14 @@ export default (): Db => {
       id: "r3",
       user_id: "demo",
       title: "Proposal Template - Roofing",
-      description: "Scope of work template pre-filled for roofing contractors. Swap in client name and figures.",
+      description:
+        "Scope of work template pre-filled for roofing contractors. Swap in client name and figures.",
       category: "templates",
       storage_path: null,
       file_name: "proposal-roofing.docx",
       file_size: 62_000,
-      file_type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      file_type:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ext: "docx",
       tags: ["roofing", "proposal"],
       starred: false,
@@ -83,7 +92,8 @@ export default (): Db => {
       id: "r4",
       user_id: "demo",
       title: "Audit Data Request Checklist",
-      description: "What to ask the client before the audit call. CRM export, spreadsheet fields, job volume.",
+      description:
+        "What to ask the client before the audit call. CRM export, spreadsheet fields, job volume.",
       category: "internal",
       storage_path: null,
       file_name: "audit-checklist.md",
@@ -100,7 +110,8 @@ export default (): Db => {
       id: "r5",
       user_id: "demo",
       title: "Follow-Up Email Templates",
-      description: "3-touch follow-up sequence post-discovery call. Tone: direct, value-focused, no fluff.",
+      description:
+        "3-touch follow-up sequence post-discovery call. Tone: direct, value-focused, no fluff.",
       category: "sales",
       storage_path: null,
       file_name: "followup-emails.md",

@@ -83,11 +83,7 @@ const DealMiscInputs = () => {
         optionValue="value"
         helperText={false}
       />
-      <NumberInput
-        source="amount"
-        helperText={false}
-        validate={required()}
-      />
+      <NumberInput source="amount" helperText={false} validate={required()} />
       <DateInput
         validate={required()}
         source="expected_closing_date"

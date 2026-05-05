@@ -35,9 +35,7 @@ export const HatchCard = ({
         className,
       )}
       style={{
-        ...(accent
-          ? { borderLeft: `3px solid ${accent}` }
-          : null),
+        ...(accent ? { borderLeft: `3px solid ${accent}` } : null),
         ...style,
       }}
       {...rest}

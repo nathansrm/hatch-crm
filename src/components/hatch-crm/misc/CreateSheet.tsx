@@ -10,7 +10,7 @@ import {
   type FormProps,
 } from "ra-core";
 import { type ReactNode } from "react";
-import { HatchSheet } from "../_primitives";
+import { HatchGhostButton, HatchSheet } from "../_primitives";
 import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 
 export interface CreateSheetProps extends CreateBaseProps {
@@ -54,6 +54,16 @@ export interface CreateSheetProps extends CreateBaseProps {
    * Optional actions to render in the sheet header, next to the title
    */
   headerActions?: ReactNode;
+
+  /**
+   * Translation key or literal text for the primary submit action.
+   */
+  submitLabel?: string;
+
+  /**
+   * Translation key or literal text for the secondary cancel action.
+   */
+  cancelLabel?: string;
 }
 
 /**
@@ -97,6 +107,8 @@ export const CreateSheet = ({
   mutationOptions,
   defaultValues,
   headerActions,
+  submitLabel = "ra.action.save",
+  cancelLabel = "ra.action.cancel",
   ...createBaseProps
 }: CreateSheetProps) => {
   const resource = useResourceContext(createBaseProps);
@@ -154,7 +166,15 @@ export const CreateSheet = ({
       headerActions={headerActions}
       contentClassName="sm:max-w-xl"
       footer={
-        <SaveButton className={`h-11 px-5 ${HATCH_PRIMARY_BUTTON_CLASS}`} />
+        <>
+          <HatchGhostButton type="button" onClick={() => onOpenChange(false)}>
+            {translate(cancelLabel, { _: cancelLabel })}
+          </HatchGhostButton>
+          <SaveButton
+            label={submitLabel}
+            className={`h-11 px-5 ${HATCH_PRIMARY_BUTTON_CLASS}`}
+          />
+        </>
       }
       wrap={(node) => (
         <CreateBase

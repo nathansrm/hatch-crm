@@ -44,7 +44,9 @@ export const NoteCreateSheet = ({
   if (!identity) return null;
 
   const handleSuccess = async (data: any) => {
-    const referenceRecordId = data[foreignKeyMapping["contacts"]];
+    const createdNote = data?.data ?? data;
+    const referenceRecordId =
+      createdNote?.[foreignKeyMapping["contacts"]] ?? contact_id;
     if (!referenceRecordId) return;
     const { data: contact } = await dataProvider.getOne("contacts", {
       id: referenceRecordId,
@@ -52,7 +54,10 @@ export const NoteCreateSheet = ({
     if (!contact) return;
     update("contacts", {
       id: referenceRecordId as unknown as Identifier,
-      data: { last_seen: new Date().toISOString(), status: data.status },
+      data: {
+        last_seen: new Date().toISOString(),
+        status: createdNote?.status ?? defaultStatus,
+      },
       previousData: contact,
     });
     notify("resources.notes.added", {
@@ -60,8 +65,8 @@ export const NoteCreateSheet = ({
         _: "Note added",
       },
     });
-    redirect("show", "contacts", referenceRecordId);
     onOpenChange(false);
+    redirect("show", "contacts", referenceRecordId);
   };
 
   return (
@@ -92,6 +97,7 @@ export const NoteCreateSheet = ({
       mutationOptions={{ onSuccess: handleSuccess }}
       open={open}
       onOpenChange={onOpenChange}
+      submitLabel="resources.notes.action.add"
     >
       <NoteInputsMobile selectContact={selectContact} />
     </CreateSheet>

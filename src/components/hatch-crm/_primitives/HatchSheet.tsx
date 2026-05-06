@@ -65,11 +65,11 @@ export const HatchSheet = ({
         actions={headerActions}
         titleAsRadix={false}
       />
-      <div className="hatch-scrollbar-none flex-1 overflow-y-auto px-6 py-5">
+      <div className="hatch-scrollbar-none min-h-0 flex-1 overflow-y-auto px-6 py-5">
         <div className="space-y-5">{children}</div>
       </div>
       {footer ? (
-        <SheetFooter className="flex-row justify-end gap-3 border-t border-[rgba(255,255,255,0.07)] px-6 py-4">
+        <SheetFooter className="shrink-0 flex-row justify-end gap-3 border-t border-[rgba(255,255,255,0.07)] px-6 py-4">
           {footer}
         </SheetFooter>
       ) : null}
@@ -115,7 +115,7 @@ export const HatchSheetHeader = ({
   actions?: React.ReactNode;
   titleAsRadix?: boolean;
 }) => (
-  <SheetHeader className="border-b border-[rgba(255,255,255,0.07)] px-6 py-5 text-left">
+  <SheetHeader className="shrink-0 border-b border-[rgba(255,255,255,0.07)] px-6 py-5 text-left">
     <div className="flex items-start gap-4">
       <div className="flex-1 min-w-0">
         {eyebrow ? (

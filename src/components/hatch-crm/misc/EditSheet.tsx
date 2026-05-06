@@ -11,7 +11,7 @@ import {
   type FormProps,
 } from "ra-core";
 import { type ReactNode } from "react";
-import { HatchSheet } from "../_primitives";
+import { HatchGhostButton, HatchSheet } from "../_primitives";
 import { HATCH_PRIMARY_BUTTON_CLASS } from "../layout/FormToolbar";
 
 export interface EditSheetProps extends EditBaseProps {
@@ -62,6 +62,16 @@ export interface EditSheetProps extends EditBaseProps {
    * after the record is fetched.
    */
   normalizeRecord?: (record: any) => any;
+
+  /**
+   * Translation key or literal text for the primary submit action.
+   */
+  submitLabel?: string;
+
+  /**
+   * Translation key or literal text for the secondary cancel action.
+   */
+  cancelLabel?: string;
 }
 
 /**
@@ -107,6 +117,8 @@ export const EditSheet = ({
   defaultValues,
   headerActions,
   normalizeRecord,
+  submitLabel = "ra.action.save",
+  cancelLabel = "ra.action.cancel",
   ...editBaseProps
 }: EditSheetProps) => {
   const resource = useResourceContext(editBaseProps);
@@ -156,7 +168,15 @@ export const EditSheet = ({
       headerActions={headerActions}
       contentClassName="sm:max-w-xl"
       footer={
-        <SaveButton className={`h-11 px-5 ${HATCH_PRIMARY_BUTTON_CLASS}`} />
+        <>
+          <HatchGhostButton type="button" onClick={() => onOpenChange(false)}>
+            {translate(cancelLabel, { _: cancelLabel })}
+          </HatchGhostButton>
+          <SaveButton
+            label={submitLabel}
+            className={`h-11 px-5 ${HATCH_PRIMARY_BUTTON_CLASS}`}
+          />
+        </>
       }
       wrap={(node) => (
         <EditBase

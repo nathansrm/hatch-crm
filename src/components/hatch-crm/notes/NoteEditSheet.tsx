@@ -64,6 +64,7 @@ export const NoteEditSheet = ({
       redirect={(_resource, _id, record) => getRedirectTo(record)}
       open={open}
       onOpenChange={onOpenChange}
+      submitLabel="resources.notes.action.update"
       headerActions={
         <NoteEditMenuButton
           onOpenChange={onOpenChange}

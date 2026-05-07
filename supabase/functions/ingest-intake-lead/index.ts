@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { supabaseAdmin } from "../_shared/supabaseAdmin.ts";
+import { classifyEmail } from "../_shared/emailQuality.ts";
 
 const INGEST_API_KEY = Deno.env.get("INGEST_API_KEY");
 
@@ -161,6 +162,38 @@ Deno.serve(async (req: Request) => {
     idempotency_key: getOptionalString(body.idempotency_key),
   };
 
+  const phone = (payload.phone ?? "").trim() === "" || payload.phone === "null"
+    ? null
+    : payload.phone;
+  const classification = classifyEmail(payload.email, payload.owner_name, payload.business_name);
+
+  let leadStatus: "uncontacted" | "phone-only";
+  if (["generic", "invalid", "missing"].includes(classification.tier)) {
+    if (!phone) {
+      return new Response(
+        JSON.stringify({ error: "lead_unreachable", reason: classification.reason }),
+        { status: 422, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    leadStatus = "phone-only";
+    payload.email = undefined;
+    payload.phone = phone;
+  } else {
+    leadStatus = "uncontacted";
+    payload.email = classification.cleanedEmail !== null ? classification.cleanedEmail : undefined;
+    payload.phone = phone;
+  }
+  payload.metadata = { ...payload.metadata, email_quality_tier: classification.tier };
+
+  logEvent(
+    "ingest-intake-lead",
+    "email_classified",
+    "intake_lead",
+    null,
+    { idempotency_key: payload.idempotency_key, tier: classification.tier, reason: classification.reason },
+    {},
+  ).then();
+
   try {
     if (payload.idempotency_key) {
       const { data: existingLead, error: existingLeadErr } = await supabaseAdmin
@@ -226,7 +259,7 @@ Deno.serve(async (req: Request) => {
         metadata: leadMetadata,
         idempotency_key: payload.idempotency_key ?? null,
         source: "lead-engine",
-        status: "uncontacted",
+        status: leadStatus,
       })
       .select("id")
       .single();

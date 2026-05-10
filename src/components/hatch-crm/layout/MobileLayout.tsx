@@ -5,6 +5,7 @@ import { Suspense, type ReactNode } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { useConfigurationLoader } from "../root/useConfigurationLoader";
+import { InstallPrompt } from "./InstallPrompt";
 import { MobileNavigation } from "./MobileNavigation";
 
 export const MobileLayout = ({ children }: { children: ReactNode }) => {
@@ -18,6 +19,7 @@ export const MobileLayout = ({ children }: { children: ReactNode }) => {
       </ErrorBoundary>
       <MobileNavigation />
       <Notification mobileOffset={{ bottom: "72px" }} />
+      <InstallPrompt />
     </div>
   );
 };

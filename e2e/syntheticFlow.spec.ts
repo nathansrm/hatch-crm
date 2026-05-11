@@ -7,13 +7,18 @@ const openNoteComposer = async (page: Page) => {
   await page.getByRole("button", { name: "Add note" }).first().click();
   await page.waitForLoadState("networkidle");
 
-  const noteInput = page.getByRole("textbox", { name: "Add a note" });
-  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+  const noteDialog = page.getByRole("dialog", { name: "Sheet" });
+  if (!(await noteDialog.isVisible({ timeout: 1000 }).catch(() => false))) {
     await page.getByRole("button", { name: "Add note" }).first().click();
   }
 
+  await expect(noteDialog).toBeVisible();
+  const noteInput = noteDialog.getByRole("textbox", { name: "Add a note" });
   await expect(noteInput).toBeVisible();
-  return noteInput;
+  return {
+    noteInput,
+    submitButton: noteDialog.getByRole("button", { name: "Add note" }),
+  };
 };
 
 test("synthetic flow: sign in, create company, contact, note, then verify dashboard", async ({
@@ -68,9 +73,9 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
     page.getByRole("heading", { name: "Dave Martinez", level: 1 }),
   ).toBeVisible();
 
-  const noteInput = await openNoteComposer(page);
+  const { noteInput, submitButton } = await openNoteComposer(page);
   await noteInput.fill("Initial discovery call completed.");
-  await page.getByRole("button", { name: "Add this note" }).click();
+  await submitButton.click();
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("link", { name: "Dashboard" }).click();

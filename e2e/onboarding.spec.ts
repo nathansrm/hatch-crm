@@ -5,13 +5,18 @@ const openNoteComposer = async (page: Page) => {
   await page.getByRole("button", { name: "Add note" }).first().click();
   await page.waitForLoadState("networkidle");
 
-  const noteInput = page.getByRole("textbox", { name: "Add a note" });
-  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+  const noteDialog = page.getByRole("dialog", { name: "Sheet" });
+  if (!(await noteDialog.isVisible({ timeout: 1000 }).catch(() => false))) {
     await page.getByRole("button", { name: "Add note" }).first().click();
   }
 
+  await expect(noteDialog).toBeVisible();
+  const noteInput = noteDialog.getByRole("textbox", { name: "Add a note" });
   await expect(noteInput).toBeVisible();
-  return noteInput;
+  return {
+    noteInput,
+    submitButton: noteDialog.getByRole("button", { name: "Add note" }),
+  };
 };
 
 test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
@@ -91,9 +96,9 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("2/3 done")).toBeVisible();
 
-  const noteInput = await openNoteComposer(page);
+  const { noteInput, submitButton } = await openNoteComposer(page);
   await noteInput.fill("This is a note about Jane.");
-  await page.getByRole("button", { name: "Save" }).click();
+  await submitButton.click();
 
   await dismissToast("Note added");
 

@@ -28,7 +28,7 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
   await createUser({ email, password });
 
   await page.goto(APP_URL);
-  await expect(page).toHaveTitle(/Hatch CRM/);
+  await expect(page).toHaveTitle(/Hatch Theory Solutions/);
 
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);

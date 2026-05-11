@@ -45,7 +45,7 @@ test.describe("user adding a task", () => {
     await page.getByLabel("Password").fill("password");
     await page.getByRole("button", { name: "Sign in" }).click();
 
-    await expect(page).toHaveTitle(/Hatch CRM/);
+    await expect(page).toHaveTitle(/Hatch Theory Solutions/);
     await expect(page.getByText("Team activity")).toBeVisible();
 
     await menu.goToContacts();

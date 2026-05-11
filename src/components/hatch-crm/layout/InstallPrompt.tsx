@@ -108,3 +108,5 @@ export const InstallPrompt = () => {
     </div>
   );
 };
+
+export default InstallPrompt;

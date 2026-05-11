@@ -10,6 +10,11 @@ else
 run-silent-tty = script -eq /dev/null -c "$1" >/tmp/hatch-crm-$2.log 2>&1 || (cat /tmp/hatch-crm-$2.log && false)
 endif
 
+E2E_ANON_KEY := $(shell node scripts/generate-e2e-jwt.mjs anon 2>/dev/null)
+E2E_SERVICE_ROLE_KEY := $(shell node scripts/generate-e2e-jwt.mjs service_role 2>/dev/null)
+export VITE_SB_PUBLISHABLE_KEY ?= $(E2E_ANON_KEY)
+export SERVICE_ROLE_KEY ?= $(E2E_SERVICE_ROLE_KEY)
+
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 

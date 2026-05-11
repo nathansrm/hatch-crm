@@ -7,13 +7,18 @@ const openNoteComposer = async (page: Page) => {
   await page.getByRole("button", { name: "Add note" }).first().click();
   await page.waitForLoadState("networkidle");
 
-  const noteInput = page.getByRole("textbox", { name: "Add a note" });
-  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+  const noteDialog = page.getByRole("dialog", { name: "Sheet" });
+  if (!(await noteDialog.isVisible({ timeout: 1000 }).catch(() => false))) {
     await page.getByRole("button", { name: "Add note" }).first().click();
   }
 
+  await expect(noteDialog).toBeVisible();
+  const noteInput = noteDialog.getByRole("textbox", { name: "Add a note" });
   await expect(noteInput).toBeVisible();
-  return noteInput;
+  return {
+    noteInput,
+    submitButton: noteDialog.getByRole("button", { name: "Add note" }),
+  };
 };
 
 test("synthetic flow: sign in, create company, contact, note, then verify dashboard", async ({
@@ -28,7 +33,7 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
   await createUser({ email, password });
 
   await page.goto(APP_URL);
-  await expect(page).toHaveTitle(/Hatch CRM/);
+  await expect(page).toHaveTitle(/Hatch Theory Solutions/);
 
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
@@ -64,15 +69,13 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
 
   await page.getByRole("button", { name: "Create Contact" }).click();
   await page.waitForLoadState("networkidle");
-  await expect(page.getByText("Dave Martinez")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Dave Martinez", level: 1 }),
+  ).toBeVisible();
 
-  await page.getByRole("link", { name: "Dashboard" }).click();
-  await page.waitForLoadState("networkidle");
-  await expect(page.getByText("2/3 done")).toBeVisible();
-
-  const noteInput = await openNoteComposer(page);
+  const { noteInput, submitButton } = await openNoteComposer(page);
   await noteInput.fill("Initial discovery call completed.");
-  await page.getByRole("button", { name: "Save" }).click();
+  await submitButton.click();
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("link", { name: "Dashboard" }).click();

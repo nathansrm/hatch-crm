@@ -189,9 +189,9 @@ const IntakeListLayout = () => {
   ).length;
   const hasFilters = Boolean(
     filterValues &&
-    Object.entries(filterValues).some(([, value]) => {
-      return value !== undefined && value !== null && value !== "";
-    }),
+      Object.entries(filterValues).some(([, value]) => {
+        return value !== undefined && value !== null && value !== "";
+      }),
   );
 
   if (isPending) {

@@ -5,21 +5,29 @@ const openNoteComposer = async (page: Page) => {
   await page.getByRole("button", { name: "Add note" }).first().click();
   await page.waitForLoadState("networkidle");
 
-  const noteInput = page.getByRole("textbox", { name: "Add a note" });
-  if (!(await noteInput.isVisible({ timeout: 1000 }).catch(() => false))) {
+  const noteDialog = page.getByRole("dialog", { name: "Sheet" });
+  if (!(await noteDialog.isVisible({ timeout: 1000 }).catch(() => false))) {
     await page.getByRole("button", { name: "Add note" }).first().click();
   }
 
+  await expect(noteDialog).toBeVisible();
+  const noteInput = noteDialog.getByRole("textbox", { name: "Add a note" });
   await expect(noteInput).toBeVisible();
-  return noteInput;
+  return {
+    noteInput,
+    submitButton: noteDialog.getByRole("button", { name: "Add note" }),
+  };
 };
 
 test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
-  await page.goto("http://localhost:5175/");
+  await page.goto("http://localhost:5175/#/sign-up");
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Hatch CRM/);
-  await expect(page.getByText("Welcome to Hatch CRM")).toBeVisible();
+  await expect(page).toHaveTitle(/Hatch Theory Solutions/);
+  await expect(page.getByLabel("First name")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Create account" }),
+  ).toBeVisible();
 
   await page.getByLabel("First name").fill("John");
   await page.getByLabel("Last name").fill("Doe");
@@ -29,7 +37,7 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("What's next?")).toBeVisible();
   await expect(page.getByText("1/3 done")).toBeVisible();
-  await expect(page.getByText("Install Hatch CRM")).toBeVisible();
+  await expect(page.getByText(/Install Hatch/)).toBeVisible();
   await expect(page.getByText("Add your first contact")).toBeVisible();
   await expect(page.getByText("Add your first note")).toBeVisible();
 
@@ -76,7 +84,7 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
     .getByRole("button", { name: isMobile ? "Save" : "Create Contact" })
     .click();
 
-  await dismissToast("Element created");
+  await dismissToast("Contact added");
 
   await expect(
     page.getByRole("heading", { name: "Jane Smith" }).first(),
@@ -88,9 +96,9 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("2/3 done")).toBeVisible();
 
-  const noteInput = await openNoteComposer(page);
+  const { noteInput, submitButton } = await openNoteComposer(page);
   await noteInput.fill("This is a note about Jane.");
-  await page.getByRole("button", { name: "Save" }).click();
+  await submitButton.click();
 
   await dismissToast("Note added");
 

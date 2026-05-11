@@ -79,7 +79,7 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
     .getByRole("button", { name: isMobile ? "Save" : "Create Contact" })
     .click();
 
-  await dismissToast("Element created");
+  await dismissToast("Contact added");
 
   await expect(
     page.getByRole("heading", { name: "Jane Smith" }).first(),

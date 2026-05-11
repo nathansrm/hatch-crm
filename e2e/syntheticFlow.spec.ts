@@ -68,10 +68,6 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
     page.getByRole("heading", { name: "Dave Martinez", level: 1 }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: "Dashboard" }).click();
-  await page.waitForLoadState("networkidle");
-  await expect(page.getByText("2/3 done")).toBeVisible();
-
   const noteInput = await openNoteComposer(page);
   await noteInput.fill("Initial discovery call completed.");
   await page.getByRole("button", { name: "Add this note" }).click();

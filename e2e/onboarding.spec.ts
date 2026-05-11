@@ -19,8 +19,9 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Hatch Theory Solutions/);
+  await expect(page.getByLabel("First name")).toBeVisible();
   await expect(
-    page.getByText("Welcome to Hatch Theory Solutions"),
+    page.getByRole("button", { name: "Create account" }),
   ).toBeVisible();
 
   await page.getByLabel("First name").fill("John");
@@ -31,7 +32,7 @@ test("user onboarding", async ({ page, isMobile, menu, dismissToast }) => {
 
   await expect(page.getByText("What's next?")).toBeVisible();
   await expect(page.getByText("1/3 done")).toBeVisible();
-  await expect(page.getByText("Install Hatch Theory Solutions")).toBeVisible();
+  await expect(page.getByText(/Install Hatch/)).toBeVisible();
   await expect(page.getByText("Add your first contact")).toBeVisible();
   await expect(page.getByText("Add your first note")).toBeVisible();
 

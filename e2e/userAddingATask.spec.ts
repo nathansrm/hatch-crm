@@ -55,7 +55,7 @@ test.describe("user adding a task", () => {
     await page.waitForLoadState("networkidle");
 
     if (isMobile) {
-      await page.getByRole("button", { name: "Create" }).click();
+      await page.getByRole("button", { name: "More" }).click();
       await page.getByRole("menuitem", { name: "Task" }).click();
     } else {
       await page.getByRole("button", { name: "Add Task" }).click();

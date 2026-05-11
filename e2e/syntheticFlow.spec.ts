@@ -64,7 +64,9 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
 
   await page.getByRole("button", { name: "Create Contact" }).click();
   await page.waitForLoadState("networkidle");
-  await expect(page.getByText("Dave Martinez")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Dave Martinez", level: 1 }),
+  ).toBeVisible();
 
   await page.getByRole("link", { name: "Dashboard" }).click();
   await page.waitForLoadState("networkidle");

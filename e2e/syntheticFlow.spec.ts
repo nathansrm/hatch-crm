@@ -74,7 +74,7 @@ test("synthetic flow: sign in, create company, contact, note, then verify dashbo
 
   const noteInput = await openNoteComposer(page);
   await noteInput.fill("Initial discovery call completed.");
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Add this note" }).click();
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("link", { name: "Dashboard" }).click();

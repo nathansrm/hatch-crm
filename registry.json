@@ -32,7 +32,1100 @@
         "@streamparser/json-whatwg@^0.0.22",
         "mime@^4.1.0"
       ],
-      "files": []
+      "files": [
+        {
+          "path": "src/components/hatch-crm/types.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/consts.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/upNextWidgetUtils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/tasksPredicate.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/taskTypeMeta.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/UpNextWidget.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TasksPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TasksListFilter.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TasksListContent.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TasksListByDueDate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TasksIterator.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskFormContent.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskEditSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskEditDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskCreateSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/TaskCreateDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/Task.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/MobileTasksList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tasks/AddTask.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/useTags.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/useCreateTag.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/colors.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/TagForm.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/TagEditModal.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/TagDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/TagCreateModal.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/TagChip.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/tags/RoundButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/simple-list/SimpleListLoading.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/simple-list/SimpleListItem.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/simple-list/SimpleList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/simple-list/ListPlaceholder.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/simple-list/ListNoResults.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/settings/SettingsPageMobile.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/settings/SettingsPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/settings/ProfilePage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/settings/GmailConnectionPanel.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/useGetSalesName.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/SalesList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/SalesInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/SalesEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/sales/SalesCreate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/root/useConfigurationLoader.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/root/defaultConfiguration.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/root/ConfigurationContext.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/root/CRM.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/resources/ResourcesPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/reports/ReportsPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/types.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/supabase/supabase.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/supabase/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/supabase/dataProvider.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/supabase/authProvider.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataProvider.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/authProvider.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/transformOrFilter.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/transformInFilter.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/transformFilter.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/transformContainsFilter.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/supabaseAdapter.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/internal/listParser.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/utils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/types.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/tasks.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/tags.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/sales.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/outreachSteps.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/intakeLeads.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/finalize.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/deals.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/dealNotes.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/contacts.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/contactNotes.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/fakerest/dataGenerator/companies.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/mergeContacts.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/i18nProvider.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/getContactAvatar.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/getCompanyAvatar.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/frenchCrmMessages.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/englishCrmMessages.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/canAccess.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/attachments.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/providers/commons/activity.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/utils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/noteModel.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/foreignKeyMapping.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/StatusSelector.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NotesIteratorMobile.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NotesIterator.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteShowPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteInputsMobile.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteEditSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteCreateSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteCreate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/NoteAttachments.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/Note.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/notes/AttachmentField.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/usePapaParse.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/useImportFromJson.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/useAppBarHeight.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/unsupportedDomains.const.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/isLinkedInUrl.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/fetchWithTimeout.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/Status.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/ResponsiveFilters.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/RelativeDate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/MobileBackButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/Markdown.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/InfinitePagination.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/ImportPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/ImageEditorField.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/EditSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/CreateSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/ContactOption.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/AsideSection.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/misc/ActiveFilterButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/startPageState.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/StartPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/SignupPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/SSOAuthButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/LoginSkeleton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/LoginPage.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/login/ConfirmationRequired.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/TopToolbar.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/MobileNavigation.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/MobileLayout.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/MobileHeader.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/MobileContent.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/MobileChrome.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/Layout.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/InstallPrompt.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/Header.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/layout/FormToolbar.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/integration-log/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/integration-log/IntegrationLogList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/OutreachStepsTimeline.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/OutreachStepCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeStatusBadge.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeRejectButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakePromoteButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeMobileList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeListShared.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeExpandedRowUtils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeExpandedRowParts.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/intake/IntakeExpandedRow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/filters/FilterCategory.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/stages.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/stageColors.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/stackInfo.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/dealUtils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/dealFormatters.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/dealFilters.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/bottleneckLabels.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/StackBlock.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/OnlyMineInput.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DecisionContextBlock.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealShow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealListMobile.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealListContent.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealEmpty.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealCreateSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealCreate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealColumn.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/DealArchivedList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/deals/ContactList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/TasksList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/StaleDeals.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/PipelineSummary.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/MobileDashboard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/KPICards.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/HotContacts.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/DeliveryDashboard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/DealsChart.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/DealsByTradeType.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/DashboardStepper.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/DashboardActivityLog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/Dashboard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/ActionQueue.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/deliveryMath.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/dashboardUtils.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsKPIWon.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsKPIWinRate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsInsightCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsHotDealsPanel.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsHeroPipeline.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ObsAttentionRow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/HandoffQueue.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/DeliveryKPIs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/DashboardOverview.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/dashboard/widgets/ActiveProjectsGrid.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/useContactImport.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/index.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/contactModel.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/TagsListEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/TagsList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ExportVCardButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactTasksList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactShow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactPersonalInfo.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactMergeButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactListFilter.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactListContent.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactImportButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactEmpty.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactEditSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactCreateSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactCreateDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactCreate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactBackgroundInfo.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/ContactAside.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/BulkTagButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/contacts/Avatar.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/sizes.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/getTranslatedCompanySizeLabel.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/GridList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyShow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyListMobile.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyListFilter.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyEmpty.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyCreateDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyCreate.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyAvatar.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/CompanyAside.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/companies/AutocompleteCompanyInput.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogNote.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogIterator.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogDealNoteCreated.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogDealCreated.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogContext.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogContactNoteCreated.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogContactCreated.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLogCompanyCreated.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/activity/ActivityLog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/tokens.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchTabs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchStagePill.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchPanel.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchPageHeader.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchField.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchDialog.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/hatch-crm/_primitives/HatchAside.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/supabase/set-password-page.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/supabase/oauth-consent-page.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/supabase/layout.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/supabase/forgot-password-page.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/hooks/user-menu-context.tsx",
+          "type": "registry:hook"
+        },
+        {
+          "path": "src/hooks/useAgencySettings.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "src/lib/toSlug.ts",
+          "type": "registry:lib"
+        }
+      ]
     }
   ]
 }

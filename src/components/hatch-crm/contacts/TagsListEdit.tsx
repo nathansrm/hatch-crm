@@ -1,4 +1,5 @@
 import { Edit, Plus } from "lucide-react";
+import { getContrastText } from "../tags/colors";
 import {
   useGetMany,
   useRecordContext,
@@ -126,9 +127,10 @@ export const TagsListEdit = () => {
               >
                 <Badge
                   variant="secondary"
-                  className="text-sm md:text-xs font-normal text-black"
+                  className="text-sm md:text-xs font-normal"
                   style={{
                     backgroundColor: tag.color,
+                    color: getContrastText(tag.color),
                   }}
                 >
                   {tag.name}

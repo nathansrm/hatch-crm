@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 
 import type { Tag } from "../types";
+import { getContrastText } from "./colors";
 import { TagEditModal } from "./TagEditModal";
 
 type TagChipProps = {
@@ -24,8 +25,11 @@ export function TagChip({ tag, onUnlink }: TagChipProps) {
   return (
     <>
       <div
-        className="text-black inline-flex items-center gap-1 px-4 md:px-2 py-2 md:py-1 text-sm md:text-xs rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-        style={{ backgroundColor: tag.color }}
+        className="inline-flex items-center gap-1 px-4 md:px-2 py-2 md:py-1 text-sm md:text-xs rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+        style={{
+          backgroundColor: tag.color,
+          color: getContrastText(tag.color),
+        }}
         onClick={handleClick}
       >
         {tag.name}

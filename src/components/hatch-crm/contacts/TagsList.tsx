@@ -3,6 +3,7 @@ import { ReferenceArrayField } from "@/components/admin/reference-array-field";
 import { SingleFieldList } from "@/components/admin/single-field-list";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getContrastText } from "../tags/colors";
 
 const ColoredBadge = (props: any) => {
   const record = useRecordContext();
@@ -10,9 +11,13 @@ const ColoredBadge = (props: any) => {
   return (
     <Badge
       {...props}
-      style={{ backgroundColor: record.color, border: 0 }}
+      style={{
+        backgroundColor: record.color,
+        border: 0,
+        color: getContrastText(record.color),
+      }}
       variant="outline"
-      className={cn("text-black font-normal", props.className)}
+      className={cn("font-normal", props.className)}
     >
       {record.name}
     </Badge>

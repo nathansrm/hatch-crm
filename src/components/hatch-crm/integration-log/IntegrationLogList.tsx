@@ -55,7 +55,7 @@ const SourceBadge = (_props: { label?: string | boolean }) => {
   return (
     <Badge
       variant="outline"
-      className={colorMap[record.source] ?? "border-gray-400"}
+      className={colorMap[record.source] ?? "border-border"}
     >
       {record.source}
     </Badge>

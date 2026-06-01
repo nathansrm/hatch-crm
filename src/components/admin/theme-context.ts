@@ -1,6 +1,10 @@
 import { createContext } from "react";
 
-export type Theme = "dark" | "light" | "system";
+/**
+ * The app ships a single canonical theme: Obsidian dark chrome.
+ * The legacy light theme has been removed, so "dark" is the only value.
+ */
+export type Theme = "dark";
 
 export type ThemeProviderState = {
   theme: Theme;
@@ -8,7 +12,7 @@ export type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "dark",
   setTheme: () => null,
 };
 

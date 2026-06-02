@@ -1,4 +1,5 @@
 import { endOfYesterday, startOfMonth, startOfWeek, subMonths } from "date-fns";
+import { getContrastText } from "../tags/colors";
 import { CheckSquare, Clock, Tag, TrendingUp, Users } from "lucide-react";
 import {
   useGetIdentity,
@@ -114,9 +115,10 @@ export const ContactListFilter = () => {
               label={
                 <Badge
                   variant="secondary"
-                  className="text-black text-sm md:text-xs font-normal cursor-pointer"
+                  className="text-sm md:text-xs font-normal cursor-pointer"
                   style={{
                     backgroundColor: record?.color,
+                    color: getContrastText(record?.color),
                   }}
                 >
                   {record?.name}
@@ -235,9 +237,10 @@ export const ContactListFilterSummary = () => {
             label={
               <Badge
                 variant="secondary"
-                className="text-black text-sm md:text-xs font-normal cursor-pointer"
+                className="text-sm md:text-xs font-normal cursor-pointer"
                 style={{
                   backgroundColor: record?.color,
+                  color: getContrastText(record?.color),
                 }}
               >
                 {record?.name}

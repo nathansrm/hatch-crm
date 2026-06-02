@@ -1,4 +1,5 @@
 import { Plus, Tag as TagIcon } from "lucide-react";
+import { getContrastText } from "../tags/colors";
 import { useCallback, useEffect, useState } from "react";
 import {
   useGetMany,
@@ -163,8 +164,11 @@ export function BulkTagButton() {
                     >
                       <Badge
                         variant="secondary"
-                        className="font-normal text-black cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ backgroundColor: tag.color }}
+                        className="font-normal cursor-pointer hover:opacity-80 transition-opacity"
+                        style={{
+                          backgroundColor: tag.color,
+                          color: getContrastText(tag.color),
+                        }}
                       >
                         {tag.name}
                       </Badge>

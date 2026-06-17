@@ -37,7 +37,13 @@ const INTAKE_QUEUE_STATUSES = [
   "unresponsive",
   "qualified",
   "rejected",
+  "phone-only",
 ] as const;
+
+const ALL_LEADS_STATUSES = INTAKE_QUEUE_STATUSES.filter(
+  (status) => status !== "phone-only",
+);
+const ALL_LEADS_FILTER = `(${ALL_LEADS_STATUSES.join(",")})`;
 
 const DISQUALIFIED_STATUSES = [
   "not-interested",
@@ -506,7 +512,7 @@ const getIntakeTabFilter = (
   baseFilters: Record<string, unknown>,
 ) => {
   if (tabId === "all") {
-    return { ...baseFilters };
+    return { ...baseFilters, "status@in": ALL_LEADS_FILTER };
   }
 
   if (tabId === "ready-review") {
@@ -557,11 +563,20 @@ const StatusTabBar = ({ allLeads }: { allLeads: IntakeLead[] }) => {
   }, [filterValues]);
 
   const tabs = [
-    { id: "all", label: "All Leads", count: allLeads.length },
+    {
+      id: "all",
+      label: "All Leads",
+      count: allLeads.filter((lead) => lead.status !== "phone-only").length,
+    },
     {
       id: "uncontacted",
       label: "First Touch",
       count: counts["uncontacted"] || 0,
+    },
+    {
+      id: "phone-only",
+      label: "Phone Outreach",
+      count: counts["phone-only"] || 0,
     },
     {
       id: "ready-review",

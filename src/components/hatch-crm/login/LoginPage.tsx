@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { useLogin, useNotify, useTranslate } from "ra-core";
+import { useDataProvider, useLogin, useNotify, useTranslate } from "ra-core";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Notification } from "@/components/admin/notification";
 import { useConfigurationContext } from "@/components/hatch-crm/root/ConfigurationContext.tsx";
 import { HatchCard } from "../_primitives";
+import type { CrmDataProvider } from "../providers/types";
 import { SSOAuthButton } from "./SSOAuthButton";
 
 type LoginData = {
@@ -32,9 +34,16 @@ export const LoginPage = (props: { redirectTo?: string }) => {
   const hasDisplayedRecoveryNotification = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const dataProvider = useDataProvider<CrmDataProvider>();
   const login = useLogin();
   const notify = useNotify();
   const translate = useTranslate();
+  const { data: isInitialized } = useQuery({
+    queryKey: ["init"],
+    queryFn: async () => {
+      return dataProvider.isInitialized();
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -237,17 +246,19 @@ export const LoginPage = (props: { redirectTo?: string }) => {
                     _: "Forgot password?",
                   })}
                 </Link>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="min-h-11 w-full border-[rgba(77,200,232,0.35)] bg-transparent font-semibold text-[#ECEEF5] hover:border-[#7DDCF0] hover:bg-[rgba(77,200,232,0.08)] hover:text-[#7DDCF0]"
-                >
-                  <Link to="/sign-up">
-                    {translate("crm.auth.signup.create_account", {
-                      _: "Create account",
-                    })}
-                  </Link>
-                </Button>
+                {isInitialized === false ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="min-h-11 w-full border-[rgba(77,200,232,0.35)] bg-transparent font-semibold text-[#ECEEF5] hover:border-[#7DDCF0] hover:bg-[rgba(77,200,232,0.08)] hover:text-[#7DDCF0]"
+                  >
+                    <Link to="/sign-up">
+                      {translate("crm.auth.signup.create_account", {
+                        _: "Create account",
+                      })}
+                    </Link>
+                  </Button>
+                ) : null}
               </div>
             )}
           </div>

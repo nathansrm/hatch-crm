@@ -15,6 +15,8 @@ const statusClasses: Record<string, string> = {
   qualified:
     "border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   rejected: "border-red-500/60 bg-red-500/10 text-red-700 dark:text-red-300",
+  "phone-only":
+    "border-amber-500/60 bg-amber-500/10 text-amber-700 dark:text-amber-300",
 };
 
 export const IntakeStatusBadge = ({ status }: { status: string }) => {

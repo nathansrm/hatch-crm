@@ -83,6 +83,21 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const MobileQuickLink = ({
+  children,
+  to,
+}: {
+  children: React.ReactNode;
+  to: string;
+}) => (
+  <Link
+    to={to}
+    className="inline-flex min-h-8 shrink-0 items-center rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-xs font-bold text-[#9aa3be]"
+  >
+    {children}
+  </Link>
+);
+
 const Loading = () => (
   <Wrapper>
     <div className="space-y-3">
@@ -529,8 +544,8 @@ export const MobileDashboard = () => {
           <MobilePill onClick={() => setActiveView("delivery")}>
             Delivery
           </MobilePill>
-          <MobilePill>Gmail</MobilePill>
-          <MobilePill>Pipeline</MobilePill>
+          <MobileQuickLink to="/intake_leads">Gmail</MobileQuickLink>
+          <MobileQuickLink to="/deals">Pipeline</MobileQuickLink>
         </div>
         {activeView === "sales" ? <DashboardView /> : <DeliveryView />}
       </div>
